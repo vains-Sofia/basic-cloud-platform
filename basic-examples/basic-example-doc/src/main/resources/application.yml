@@ -1,0 +1,8 @@
+basic:
+  cloud:
+    doc:
+      info:
+        title: 框架在线文档示例
+        description: 展示与测试封装的basic-framework-spring-doc模块
+        termsOfService: 服务条件
+        version: @project.version@

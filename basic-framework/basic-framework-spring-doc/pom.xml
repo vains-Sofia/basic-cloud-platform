@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.basic.cloud</groupId>
+        <artifactId>basic-framework</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>basic-framework-spring-doc</artifactId>
+    <name>basic-framework-spring-doc</name>
+    <description>basic-cloud-platform spring doc module</description>
+
+    <dependencies>
+        <!-- 引入webmvc的Spring Doc依赖，webflux看后期是否需要 -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
+        <!-- 框架核心包 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-core</artifactId>
+        </dependency>
+
+        <!-- yaml文件读取 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+</project>
