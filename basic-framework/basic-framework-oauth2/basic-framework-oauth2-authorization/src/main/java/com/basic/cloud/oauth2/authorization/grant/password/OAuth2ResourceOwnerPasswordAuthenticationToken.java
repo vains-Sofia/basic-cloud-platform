@@ -1,4 +1,4 @@
-package com.basic.cloud.oauth2.server.grant.password;
+package com.basic.cloud.oauth2.authorization.grant.password;
 
 import lombok.Getter;
 import org.springframework.lang.Nullable;

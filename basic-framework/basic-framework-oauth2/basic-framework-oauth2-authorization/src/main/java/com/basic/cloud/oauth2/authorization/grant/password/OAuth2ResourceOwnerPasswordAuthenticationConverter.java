@@ -1,7 +1,7 @@
-package com.basic.cloud.oauth2.server.grant.password;
+package com.basic.cloud.oauth2.authorization.grant.password;
 
-import com.basic.cloud.oauth2.server.core.BasicAuthorizationGrantType;
-import com.basic.cloud.oauth2.server.util.OAuth2EndpointUtils;
+import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
+import com.basic.cloud.oauth2.authorization.util.OAuth2EndpointUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

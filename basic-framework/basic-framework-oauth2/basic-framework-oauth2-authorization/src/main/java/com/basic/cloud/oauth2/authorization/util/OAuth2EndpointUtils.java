@@ -1,4 +1,4 @@
-package com.basic.cloud.oauth2.server.util;
+package com.basic.cloud.oauth2.authorization.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -84,6 +84,22 @@ public class OAuth2EndpointUtils {
             throwError(OAuth2ErrorCodes.INVALID_REQUEST, parameterName, ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
         return parametersFirst;
+    }
+
+    /**
+     * 获取必传参数，本次请求中该参数只能有一个，未传或多个情况下会抛出 {@link OAuth2AuthenticationException} {@link OAuth2ErrorCodes#INVALID_REQUEST} 异常
+     *
+     * @param request       当前http请求
+     * @param parameterName 参数名
+     * @return 参数值
+     */
+    public static String getRequiredParameter(HttpServletRequest request, String parameterName) {
+        String parameter = request.getParameter(parameterName);
+        if (!StringUtils.hasText(parameter) ||
+                request.getParameterValues(parameterName).length != 1) {
+            throwError(OAuth2ErrorCodes.INVALID_REQUEST, parameterName, ACCESS_TOKEN_REQUEST_ERROR_URI);
+        }
+        return parameter;
     }
 
 }

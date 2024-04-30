@@ -13,5 +13,6 @@
     <description>basic-cloud-platform oauth2 module</description>
     <modules>
         <module>basic-framework-oauth2-authorization-server</module>
+        <module>basic-framework-oauth2-authorization</module>
     </modules>
 </project>

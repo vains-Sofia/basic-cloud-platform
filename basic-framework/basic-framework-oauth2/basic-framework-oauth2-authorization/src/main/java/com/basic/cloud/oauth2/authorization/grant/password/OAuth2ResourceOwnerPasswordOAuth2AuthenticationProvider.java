@@ -1,7 +1,7 @@
-package com.basic.cloud.oauth2.server.grant.password;
+package com.basic.cloud.oauth2.authorization.grant.password;
 
-import com.basic.cloud.oauth2.server.core.AbstractAuthenticationProvider;
-import com.basic.cloud.oauth2.server.util.OAuth2AuthenticationProviderUtils;
+import com.basic.cloud.oauth2.authorization.util.OAuth2AuthenticationProviderUtils;
+import com.basic.cloud.oauth2.authorization.core.AbstractOAuth2AuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -33,11 +33,11 @@ import java.util.Set;
  * @author vains
  */
 @Slf4j
-public class OAuth2ResourceOwnerPasswordAuthenticationProvider extends AbstractAuthenticationProvider {
+public class OAuth2ResourceOwnerPasswordOAuth2AuthenticationProvider extends AbstractOAuth2AuthenticationProvider {
 
     private final OAuth2AuthorizationService authorizationService;
 
-    public OAuth2ResourceOwnerPasswordAuthenticationProvider(SessionRegistry sessionRegistry, OAuth2TokenGenerator<?> tokenGenerator, OAuth2AuthorizationService authorizationService, AbstractUserDetailsAuthenticationProvider userDetailsAuthenticationProvider) {
+    public OAuth2ResourceOwnerPasswordOAuth2AuthenticationProvider(SessionRegistry sessionRegistry, OAuth2TokenGenerator<?> tokenGenerator, OAuth2AuthorizationService authorizationService, AbstractUserDetailsAuthenticationProvider userDetailsAuthenticationProvider) {
         super(sessionRegistry, tokenGenerator, userDetailsAuthenticationProvider);
         this.authorizationService = authorizationService;
     }

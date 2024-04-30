@@ -1,7 +1,7 @@
-package com.basic.cloud.oauth2.server.core;
+package com.basic.cloud.oauth2.authorization.core;
 
-import com.basic.cloud.oauth2.server.grant.password.OAuth2ResourceOwnerPasswordAuthenticationToken;
-import com.basic.cloud.oauth2.server.util.OAuth2EndpointUtils;
+import com.basic.cloud.oauth2.authorization.grant.password.OAuth2ResourceOwnerPasswordAuthenticationToken;
+import com.basic.cloud.oauth2.authorization.util.OAuth2EndpointUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractAuthenticationProvider implements AuthenticationProvider {
+public abstract class AbstractOAuth2AuthenticationProvider implements AuthenticationProvider {
 
     private final SessionRegistry sessionRegistry;
 
