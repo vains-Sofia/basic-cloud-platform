@@ -17,7 +17,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  * @author vains
  */
 @Setter
-public class EmailCaptchaAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class EmailCaptchaLoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     /**
      * 是否只允许POST请求
@@ -37,19 +37,19 @@ public class EmailCaptchaAuthenticationFilter extends AbstractAuthenticationProc
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/login/email",
             "POST");
 
-    protected EmailCaptchaAuthenticationFilter() {
+    protected EmailCaptchaLoginAuthenticationFilter() {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
     }
 
-    protected EmailCaptchaAuthenticationFilter(String defaultFilterProcessesUrl) {
+    protected EmailCaptchaLoginAuthenticationFilter(String defaultFilterProcessesUrl) {
         super(new AntPathRequestMatcher(defaultFilterProcessesUrl, "POST"));
     }
 
-    protected EmailCaptchaAuthenticationFilter(AuthenticationManager authenticationManager) {
+    protected EmailCaptchaLoginAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager);
     }
 
-    protected EmailCaptchaAuthenticationFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager) {
+    protected EmailCaptchaLoginAuthenticationFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager) {
         super(new AntPathRequestMatcher(defaultFilterProcessesUrl, "POST"), authenticationManager);
     }
 
@@ -62,7 +62,7 @@ public class EmailCaptchaAuthenticationFilter extends AbstractAuthenticationProc
         email = (email != null) ? email.trim() : "";
         String captcha = obtainCaptcha(request);
         captcha = (captcha != null) ? captcha : "";
-        EmailCaptchaAuthenticationToken authRequest = EmailCaptchaAuthenticationToken.unauthenticated(email,
+        EmailCaptchaLoginAuthenticationToken authRequest = EmailCaptchaLoginAuthenticationToken.unauthenticated(email,
                 captcha);
         // Allow subclasses to set the "details" property
         setDetails(request, authRequest);
@@ -97,7 +97,7 @@ public class EmailCaptchaAuthenticationFilter extends AbstractAuthenticationProc
      * @param request     当前请求
      * @param authRequest 登录认证令牌
      */
-    protected void setDetails(HttpServletRequest request, EmailCaptchaAuthenticationToken authRequest) {
+    protected void setDetails(HttpServletRequest request, EmailCaptchaLoginAuthenticationToken authRequest) {
         authRequest.setDetails(this.authenticationDetailsSource.buildDetails(request));
     }
 

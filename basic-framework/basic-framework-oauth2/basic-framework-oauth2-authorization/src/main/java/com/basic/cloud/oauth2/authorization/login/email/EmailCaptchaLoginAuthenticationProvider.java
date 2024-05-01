@@ -18,11 +18,11 @@ import org.springframework.util.ObjectUtils;
  * @author vains
  */
 @Slf4j
-public class EmailCaptchaAuthenticationProvider extends AbstractLoginAuthenticationProvider {
+public class EmailCaptchaLoginAuthenticationProvider extends AbstractLoginAuthenticationProvider {
 
     private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
-    public EmailCaptchaAuthenticationProvider(UserDetailsService userDetailsService) {
+    public EmailCaptchaLoginAuthenticationProvider(UserDetailsService userDetailsService) {
         super(userDetailsService);
     }
 
@@ -43,7 +43,7 @@ public class EmailCaptchaAuthenticationProvider extends AbstractLoginAuthenticat
         // so subsequent attempts are successful even with encoded passwords.
         // Also ensure we return the original getDetails(), so that future
         // authentication events after cache expiry contain the details
-        EmailCaptchaAuthenticationToken result = EmailCaptchaAuthenticationToken.authenticated(principal,
+        EmailCaptchaLoginAuthenticationToken result = EmailCaptchaLoginAuthenticationToken.authenticated(principal,
                 authentication.getCredentials(), this.authoritiesMapper.mapAuthorities(user.getAuthorities()));
         result.setDetails(authentication.getDetails());
         log.debug("Authenticated user");
@@ -52,6 +52,6 @@ public class EmailCaptchaAuthenticationProvider extends AbstractLoginAuthenticat
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return EmailCaptchaAuthenticationToken.class.isAssignableFrom(authentication);
+        return EmailCaptchaLoginAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

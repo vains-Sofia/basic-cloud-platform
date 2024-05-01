@@ -10,13 +10,13 @@ import java.util.Collection;
  *
  * @author vains
  */
-public class EmailCaptchaAuthenticationToken extends AbstractLoginAuthenticationToken {
+public class EmailCaptchaLoginAuthenticationToken extends AbstractLoginAuthenticationToken {
 
-    public EmailCaptchaAuthenticationToken(Object principal, Object credentials) {
+    public EmailCaptchaLoginAuthenticationToken(Object principal, Object credentials) {
         super(principal, credentials);
     }
 
-    public EmailCaptchaAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+    public EmailCaptchaLoginAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);
     }
 
@@ -29,8 +29,8 @@ public class EmailCaptchaAuthenticationToken extends AbstractLoginAuthentication
      * @return UsernamePasswordAuthenticationToken with false isAuthenticated() result
      * @since 5.7
      */
-    public static EmailCaptchaAuthenticationToken unauthenticated(Object principal, Object credentials) {
-        return new EmailCaptchaAuthenticationToken(principal, credentials);
+    public static EmailCaptchaLoginAuthenticationToken unauthenticated(Object principal, Object credentials) {
+        return new EmailCaptchaLoginAuthenticationToken(principal, credentials);
     }
 
     /**
@@ -42,9 +42,9 @@ public class EmailCaptchaAuthenticationToken extends AbstractLoginAuthentication
      * @return UsernamePasswordAuthenticationToken with true isAuthenticated() result
      * @since 5.7
      */
-    public static EmailCaptchaAuthenticationToken authenticated(Object principal, Object credentials,
-                                                                Collection<? extends GrantedAuthority> authorities) {
-        return new EmailCaptchaAuthenticationToken(principal, credentials, authorities);
+    public static EmailCaptchaLoginAuthenticationToken authenticated(Object principal, Object credentials,
+                                                                     Collection<? extends GrantedAuthority> authorities) {
+        return new EmailCaptchaLoginAuthenticationToken(principal, credentials, authorities);
     }
 
 }

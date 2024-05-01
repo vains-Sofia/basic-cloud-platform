@@ -45,10 +45,10 @@ public class OAuth2EmailCaptchaAuthenticationConverter implements Authentication
                     Arrays.asList(StringUtils.delimitedListToStringArray(scope, " ")));
         }
 
-        // username (REQUIRED)
+        // 邮箱地址 (REQUIRED)
         OAuth2EndpointUtils.getRequiredParameter(parameters, emailParameter);
 
-        // password (REQUIRED)
+        // 邮件验证码 (REQUIRED)
         OAuth2EndpointUtils.getRequiredParameter(parameters, emailCaptchaParameter);
 
         // 这里目前是客户端认证信息

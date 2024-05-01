@@ -3,6 +3,7 @@ package com.basic.cloud.oauth2.authorization.grant.password;
 import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
 import com.basic.cloud.oauth2.authorization.util.OAuth2EndpointUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -17,7 +18,12 @@ import java.util.*;
  *
  * @author vains
  */
+@Setter
 public class OAuth2ResourceOwnerPasswordAuthenticationConverter implements AuthenticationConverter {
+
+    private String usernameParameter = OAuth2ParameterNames.USERNAME;
+
+    private String passwordParameter = OAuth2ParameterNames.PASSWORD;
 
     @Override
     public Authentication convert(HttpServletRequest request) {
@@ -42,10 +48,10 @@ public class OAuth2ResourceOwnerPasswordAuthenticationConverter implements Authe
         }
 
         // username (REQUIRED)
-        OAuth2EndpointUtils.getRequiredParameter(parameters, OAuth2ParameterNames.USERNAME);
+        OAuth2EndpointUtils.getRequiredParameter(parameters, usernameParameter);
 
         // password (REQUIRED)
-        OAuth2EndpointUtils.getRequiredParameter(parameters, OAuth2ParameterNames.PASSWORD);
+        OAuth2EndpointUtils.getRequiredParameter(parameters, passwordParameter);
 
         // 提取附加参数
         Map<String, Object> additionalParameters = new HashMap<>();

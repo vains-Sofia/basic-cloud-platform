@@ -1,6 +1,7 @@
 package com.basic.cloud.oauth2.authorization.login.email;
 
 import com.basic.cloud.oauth2.authorization.core.AbstractLoginFilterConfigurer;
+import com.basic.cloud.oauth2.authorization.util.OAuth2ConfigurerUtils;
 import lombok.Setter;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
@@ -16,12 +17,12 @@ import org.springframework.util.ObjectUtils;
  */
 @Setter
 public class EmailCaptchaLoginConfigurer<H extends HttpSecurityBuilder<H>> extends
-        AbstractLoginFilterConfigurer<H, EmailCaptchaLoginConfigurer<H>, EmailCaptchaAuthenticationFilter> {
+        AbstractLoginFilterConfigurer<H, EmailCaptchaLoginConfigurer<H>, EmailCaptchaLoginAuthenticationFilter> {
 
     private UserDetailsService userDetailsService;
 
     public EmailCaptchaLoginConfigurer() {
-        super(new EmailCaptchaAuthenticationFilter(), null);
+        super(new EmailCaptchaLoginAuthenticationFilter(), null);
         emailParameter("email");
         captchaParameter("captcha");
     }
@@ -62,7 +63,7 @@ public class EmailCaptchaLoginConfigurer<H extends HttpSecurityBuilder<H>> exten
         }
 
         if (userDetailsService == null) {
-            this.userDetailsService = super.getBeanOrNull(UserDetailsService.class);
+            this.userDetailsService = OAuth2ConfigurerUtils.getBeanOrNull(http, UserDetailsService.class);
         }
 
         super.init(http);
@@ -70,7 +71,7 @@ public class EmailCaptchaLoginConfigurer<H extends HttpSecurityBuilder<H>> exten
 
     @Override
     protected AuthenticationProvider authenticationProvider(H http) {
-        return new EmailCaptchaAuthenticationProvider(userDetailsService);
+        return new EmailCaptchaLoginAuthenticationProvider(userDetailsService);
     }
 
     /**

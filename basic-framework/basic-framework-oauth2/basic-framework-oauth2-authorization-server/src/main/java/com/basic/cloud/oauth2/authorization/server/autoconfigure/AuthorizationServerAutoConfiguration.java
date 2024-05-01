@@ -1,18 +1,33 @@
 package com.basic.cloud.oauth2.authorization.server.autoconfigure;
 
+import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
+import com.basic.cloud.oauth2.authorization.customizer.AuthorizationServerMetadataCustomizer;
+import com.basic.cloud.oauth2.authorization.customizer.OidcConfigurerCustomizer;
+import com.basic.cloud.oauth2.authorization.login.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.login.email.EmailCaptchaLoginConfigurer;
+import com.basic.cloud.oauth2.authorization.util.OAuth2ConfigurerUtils;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -32,6 +47,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -39,14 +55,24 @@ import java.util.UUID;
  *
  * @author vains
  */
+@EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class AuthorizationServerAutoConfiguration {
 
     @Bean
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
             throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .oidc(Customizer.withDefaults());    // Enable OpenID Connect 1.0
+
+        OAuth2AuthorizationServerConfigurer configurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
+
+        configurer.oidc(new OidcConfigurerCustomizer());
+        configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
+
+        // 添加邮件模式
+        OAuth2ConfigurerUtils.configureEmailGrantType(http, (null), (null));
+        // 添加密码模式
+        OAuth2ConfigurerUtils.configurePasswordGrantType(http, (null), (null));
 
         http
                 // Redirect to the login page when not authenticated from the
@@ -60,7 +86,6 @@ public class AuthorizationServerAutoConfiguration {
                 // Accept access tokens for User Info and/or Client Registration
                 .oauth2ResourceServer((resourceServer) -> resourceServer
                         .jwt(Customizer.withDefaults()));
-
         return http.build();
     }
 
@@ -77,6 +102,12 @@ public class AuthorizationServerAutoConfiguration {
         // authorization server filter chain
         http.formLogin(Customizer.withDefaults());
 
+        http.oauth2ResourceServer((resourceServer) -> resourceServer
+                .jwt(Customizer.withDefaults())
+        );
+
+        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+
         http.with(new EmailCaptchaLoginConfigurer<>(), c -> c
                 .successHandler((request, response, authentication) -> {
                     response.setContentType("text/html;charset=utf-8");
@@ -89,6 +120,37 @@ public class AuthorizationServerAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    public AuthenticationManager authenticationManager(
+            List<AuthenticationProvider> authenticationProviders) {
+        return new ProviderManager(authenticationProviders);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DaoAuthenticationProvider daoAuthenticationProvider(
+            UserDetailsService userDetailsService, PasswordEncoder encoder) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(encoder);
+        return authProvider;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public EmailCaptchaLoginAuthenticationProvider emailCaptchaLoginAuthenticationProvider(
+            UserDetailsService userDetailsService) {
+        return new EmailCaptchaLoginAuthenticationProvider(userDetailsService);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     public UserDetailsService userDetailsService() {
         UserDetails userDetails = User.withDefaultPasswordEncoder()
                 .username("user")
@@ -100,6 +162,7 @@ public class AuthorizationServerAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("oidc-client")
@@ -107,8 +170,11 @@ public class AuthorizationServerAutoConfiguration {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(BasicAuthorizationGrantType.EMAIL)
+                .authorizationGrantType(BasicAuthorizationGrantType.PASSWORD)
                 .redirectUri("https://www.baidu.com")
                 .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
+                .redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html")
                 .postLogoutRedirectUri("http://127.0.0.1:8080/")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
@@ -119,6 +185,7 @@ public class AuthorizationServerAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public JWKSource<SecurityContext> jwkSource() {
         KeyPair keyPair = generateRsaKey();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
@@ -144,6 +211,7 @@ public class AuthorizationServerAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }

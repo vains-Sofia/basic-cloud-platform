@@ -3,7 +3,7 @@ package com.basic.cloud.oauth2.authorization.grant.email;
 import com.basic.cloud.oauth2.authorization.core.AbstractOAuth2AuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.core.AbstractOAuth2AuthenticationToken;
 import com.basic.cloud.oauth2.authorization.core.BasicOAuth2ParameterNames;
-import com.basic.cloud.oauth2.authorization.login.email.EmailCaptchaAuthenticationToken;
+import com.basic.cloud.oauth2.authorization.login.email.EmailCaptchaLoginAuthenticationToken;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -51,7 +51,7 @@ public class OAuth2EmailCaptchaAuthenticationProvider extends AbstractOAuth2Auth
         Object email = additionalParameters.get(this.emailParameter);
         Object emailCaptcha = additionalParameters.get(this.emailCaptchaParameter);
         // 生成未认证的 UsernamePasswordAuthenticationToken
-        return EmailCaptchaAuthenticationToken.unauthenticated(email, emailCaptcha);
+        return EmailCaptchaLoginAuthenticationToken.unauthenticated(email, emailCaptcha);
     }
 
 }

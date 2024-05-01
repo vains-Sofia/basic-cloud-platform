@@ -3,7 +3,6 @@ package com.basic.cloud.oauth2.authorization.core;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,7 +29,10 @@ import java.util.Collections;
 /**
  * 抽象验证码登录配置类
  *
- * @author vains 2023/12/14
+ * @param <B> HttpSecurityBuilder 子类
+ * @param <C> 当前配置类的子类
+ * @param <F> 过滤器
+ * @author vains
  */
 public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilder<B>, C extends AbstractLoginFilterConfigurer<B, C, F>, F extends AbstractAuthenticationProcessingFilter>
         extends AbstractHttpConfigurer<AbstractLoginFilterConfigurer<B, C, F>, B> {
@@ -169,17 +171,6 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
         updateAuthenticationDefaults();
         this.customLoginPage = true;
         return getSelf();
-    }
-
-    protected <T> T getBeanOrNull(Class<T> type) {
-        ApplicationContext context = getBuilder().getSharedObject(ApplicationContext.class);
-        if (context != null) {
-            String[] names = context.getBeanNamesForType(type);
-            if (names.length == 1) {
-                return context.getBean(type);
-            }
-        }
-        return null;
     }
 
     @SuppressWarnings("unchecked")

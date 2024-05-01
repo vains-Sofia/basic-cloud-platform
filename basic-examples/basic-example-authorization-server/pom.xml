@@ -16,6 +16,11 @@
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-oauth2-authorization-server</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-spring-doc</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

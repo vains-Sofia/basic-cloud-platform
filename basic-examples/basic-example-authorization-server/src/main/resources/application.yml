@@ -1,3 +1,22 @@
-logging:
-  level:
-    root: debug
+basic:
+  cloud:
+    doc:
+      security:
+        - name: authorization_code
+          access-token-url: http://127.0.0.1:8080/oauth2/token
+          authorize-url: http://127.0.0.1:8080/oauth2/authorize
+          grant-type: authorization_code
+          scopes:
+            - name: openid
+              description: Openid Connect Id Token
+            - name: profile
+              description: 用户信息
+        - name: password
+          access-token-url: http://127.0.0.1:8080/oauth2/token
+          authorize-url: http://127.0.0.1:8080/oauth2/authorize
+          grant-type: password
+          scopes:
+            - name: openid
+              description: Openid Connect Id Token
+            - name: profile
+              description: 用户信息
