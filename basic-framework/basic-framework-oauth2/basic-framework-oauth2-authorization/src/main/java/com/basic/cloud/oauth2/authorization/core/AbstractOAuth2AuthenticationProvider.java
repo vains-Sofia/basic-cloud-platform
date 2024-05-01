@@ -1,13 +1,10 @@
 package com.basic.cloud.oauth2.authorization.core;
 
-import com.basic.cloud.oauth2.authorization.grant.password.OAuth2ResourceOwnerPasswordAuthenticationToken;
+import com.basic.cloud.oauth2.authorization.util.OAuth2AuthenticationProviderUtils;
 import com.basic.cloud.oauth2.authorization.util.OAuth2EndpointUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
@@ -18,8 +15,12 @@ import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContextHolder;
 import org.springframework.security.oauth2.server.authorization.token.DefaultOAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -30,6 +31,7 @@ import org.springframework.util.ObjectUtils;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,7 +49,9 @@ public abstract class AbstractOAuth2AuthenticationProvider implements Authentica
 
     private final OAuth2TokenGenerator<?> tokenGenerator;
 
-    private final AbstractUserDetailsAuthenticationProvider authenticationProvider;
+    private final AuthenticationProvider authenticationProvider;
+
+    private final OAuth2AuthorizationService authorizationService;
 
     private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
 
@@ -200,18 +204,87 @@ public abstract class AbstractOAuth2AuthenticationProvider implements Authentica
         return authorizedScopes;
     }
 
-    protected Authentication authenticateAuthenticationToken(AbstractAuthenticationToken authenticationToken) {
-        if (authenticationToken instanceof OAuth2ResourceOwnerPasswordAuthenticationToken resourceOwnerPasswordToken) {
-            Map<String, Object> additionalParameters = resourceOwnerPasswordToken.getAdditionalParameters();
-            // 获取账号密码
-            Object username = additionalParameters.get(OAuth2ParameterNames.USERNAME);
-            Object password = additionalParameters.get(OAuth2ParameterNames.PASSWORD);
-            // 生成未认证的 UsernamePasswordAuthenticationToken
-            UsernamePasswordAuthenticationToken unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(username, password);
-            // 交给 userDetailsAuthenticationProvider 进行认证
-            return authenticationProvider.authenticate(unauthenticated);
+    protected Authentication authenticateAuthenticationToken(AbstractOAuth2AuthenticationToken authenticationToken) {
+        Authentication unauthenticated = getUnauthenticatedToken(authenticationToken);
+        // 交给 userDetailsAuthenticationProvider 进行认证
+        return authenticationProvider.authenticate(unauthenticated);
+    }
+
+    /**
+     * 由子类实现该方法获取一个未认证的令牌，交由AuthorizationProvider认证
+     *
+     * @param authenticationToken oauth2认证登录生成的token
+     * @return 未认证的token
+     */
+    protected abstract Authentication getUnauthenticatedToken(AbstractOAuth2AuthenticationToken authenticationToken);
+
+    /**
+     * 组合provider中通用逻辑，包括验证客户端、scopes、用户信息，生成access token
+     *
+     * @param receivedToken oauth2认证登录令牌
+     * @return 返回oauth2 access token相关
+     */
+    protected Authentication authentication(AbstractOAuth2AuthenticationToken receivedToken) {
+        // 获取认证过的客户端信息
+        OAuth2ClientAuthenticationToken clientPrincipal =
+                OAuth2AuthenticationProviderUtils.getAuthenticatedClientElseThrowInvalidClient(receivedToken);
+        RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
+
+        // Ensure the client is configured to use this authorization grant type
+        if (registeredClient == null || !registeredClient.getAuthorizationGrantTypes().contains(receivedToken.getAuthorizationGrantType())) {
+            throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNSUPPORTED_RESPONSE_TYPE);
         }
-        return null;
+
+        if (log.isTraceEnabled()) {
+            log.trace("Retrieved registered client");
+        }
+
+        // 验证scopes
+        Set<String> authorizedScopes = this.getAuthorizedScopes(registeredClient, receivedToken.getScopes());
+
+        // 验证用户认证信息
+        Authentication principal = this.authenticateAuthenticationToken(receivedToken);
+
+        // 以下内容摘抄自OAuth2AuthorizationCodeAuthenticationProvider
+        DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
+                .registeredClient(registeredClient)
+                .principal(principal)
+                .authorizationServerContext(AuthorizationServerContextHolder.getContext())
+                .authorizedScopes(authorizedScopes)
+                .authorizationGrantType(receivedToken.getAuthorizationGrantType())
+                .authorizationGrant(receivedToken);
+
+        // Initialize the OAuth2Authorization
+        OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
+                // 存入授权scope
+                .authorizedScopes(authorizedScopes)
+                // 当前授权用户名称
+                .principalName(principal.getName())
+                // 设置当前用户认证信息
+                .attribute(Principal.class.getName(), principal)
+                .authorizationGrantType(receivedToken.getAuthorizationGrantType());
+
+        // 生成 access token
+        OAuth2AccessToken accessToken = this.generateAccessToken(tokenContextBuilder, authorizationBuilder);
+
+        // 生成 refresh token
+        OAuth2RefreshToken refreshToken = this.generateRefreshToken(tokenContextBuilder, authorizationBuilder, registeredClient);
+
+        // 生成oidcIdToken
+        OidcIdToken oidcIdToken = this.generateOidcIdToken(tokenContextBuilder, authorizationBuilder, receivedToken.getScopes(), principal);
+
+        OAuth2Authorization authorization = authorizationBuilder.build();
+
+        // Save the OAuth2Authorization
+        this.authorizationService.save(authorization);
+
+        Map<String, Object> additionalParameters = new HashMap<>(1);
+        if (oidcIdToken != null) {
+            // 放入idToken
+            additionalParameters.put(OidcParameterNames.ID_TOKEN, oidcIdToken.getTokenValue());
+        }
+
+        return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken, additionalParameters);
     }
 
     /**
@@ -249,5 +322,4 @@ public abstract class AbstractOAuth2AuthenticationProvider implements Authentica
         byte[] digest = md.digest(value.getBytes(StandardCharsets.US_ASCII));
         return Base64.getUrlEncoder().withoutPadding().encodeToString(digest);
     }
-
 }

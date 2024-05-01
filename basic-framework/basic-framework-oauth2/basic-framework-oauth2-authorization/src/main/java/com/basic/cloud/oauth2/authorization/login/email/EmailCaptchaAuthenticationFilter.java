@@ -1,6 +1,5 @@
 package com.basic.cloud.oauth2.authorization.login.email;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
@@ -11,8 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import java.io.IOException;
 
 /**
  * 邮件认证登录
@@ -57,7 +54,7 @@ public class EmailCaptchaAuthenticationFilter extends AbstractAuthenticationProc
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (this.postOnly && !request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }
@@ -73,18 +70,10 @@ public class EmailCaptchaAuthenticationFilter extends AbstractAuthenticationProc
     }
 
     /**
-     * Enables subclasses to override the composition of the password, such as by
-     * including additional values and a separator.
-     * <p>
-     * This might be used for example if a postcode/zipcode was required in addition to
-     * the password. A delimiter such as a pipe (|) should be used to separate the
-     * password and extended value(s). The <code>AuthenticationDao</code> will need to
-     * generate the expected password in a corresponding manner.
-     * </p>
+     * 从当前请求中获取验证码
      *
-     * @param request so that request attributes can be retrieved
-     * @return the password that will be presented in the <code>Authentication</code>
-     * request token to the <code>AuthenticationManager</code>
+     * @param request 当前请求
+     * @return 获取到的验证码会给 Authentication 然后传给 AuthenticationManager 中
      */
     @Nullable
     protected String obtainCaptcha(HttpServletRequest request) {
@@ -92,12 +81,10 @@ public class EmailCaptchaAuthenticationFilter extends AbstractAuthenticationProc
     }
 
     /**
-     * Enables subclasses to override the composition of the username, such as by
-     * including additional values and a separator.
+     * 从当前请求中获取邮箱
      *
-     * @param request so that request attributes can be retrieved
-     * @return the username that will be presented in the <code>Authentication</code>
-     * request token to the <code>AuthenticationManager</code>
+     * @param request 当前请求
+     * @return 获取到的邮箱会给 Authentication 然后传给 AuthenticationManager 中
      */
     @Nullable
     protected String obtainEmail(HttpServletRequest request) {
@@ -105,12 +92,10 @@ public class EmailCaptchaAuthenticationFilter extends AbstractAuthenticationProc
     }
 
     /**
-     * Provided so that subclasses may configure what is put into the authentication
-     * request's details property.
+     * 将请求详情设置进登录认证令牌中
      *
-     * @param request     that an authentication request is being created for
-     * @param authRequest the authentication request object that should have its details
-     *                    set
+     * @param request     当前请求
+     * @param authRequest 登录认证令牌
      */
     protected void setDetails(HttpServletRequest request, EmailCaptchaAuthenticationToken authRequest) {
         authRequest.setDetails(this.authenticationDetailsSource.buildDetails(request));

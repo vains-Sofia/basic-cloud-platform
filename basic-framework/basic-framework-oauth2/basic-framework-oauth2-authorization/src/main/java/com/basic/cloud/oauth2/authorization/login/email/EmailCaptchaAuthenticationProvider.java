@@ -1,25 +1,57 @@
 package com.basic.cloud.oauth2.authorization.login.email;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
+import com.basic.cloud.oauth2.authorization.core.AbstractLoginAuthenticationProvider;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 邮箱认证登录 provider
  *
  * @author vains
  */
-public class EmailCaptchaAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+@Slf4j
+public class EmailCaptchaAuthenticationProvider extends AbstractLoginAuthenticationProvider {
 
-    @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+    private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
+    public EmailCaptchaAuthenticationProvider(UserDetailsService userDetailsService) {
+        super(userDetailsService);
     }
 
     @Override
-    protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+    protected void additionalAuthenticationChecks(AbstractAuthenticationToken authentication) throws AuthenticationException {
+        log.info("校验验证码...");
+        if (ObjectUtils.isEmpty(authentication.getCredentials())) {
+            log.debug("Failed to authenticate since no credentials provided");
+            throw new BadCredentialsException(this.messages
+                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+        }
+        log.info("验证码校验成功.");
+    }
 
-        return null;
+    @Override
+    protected Authentication createSuccessAuthentication(Object principal, Authentication authentication, UserDetails user) {
+        // Ensure we return the original credentials the user supplied,
+        // so subsequent attempts are successful even with encoded passwords.
+        // Also ensure we return the original getDetails(), so that future
+        // authentication events after cache expiry contain the details
+        EmailCaptchaAuthenticationToken result = EmailCaptchaAuthenticationToken.authenticated(principal,
+                authentication.getCredentials(), this.authoritiesMapper.mapAuthorities(user.getAuthorities()));
+        result.setDetails(authentication.getDetails());
+        log.debug("Authenticated user");
+        return result;
+    }
+
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return EmailCaptchaAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

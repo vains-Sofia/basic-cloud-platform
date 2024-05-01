@@ -11,6 +11,14 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
  */
 public class BasicAuthorizationGrantType {
 
+    /**
+     * 邮件模式
+     */
+    public static final AuthorizationGrantType EMAIL = new AuthorizationGrantType("email");
+
+    /**
+     * 密码模式
+     */
     public static final AuthorizationGrantType PASSWORD = new AuthorizationGrantType("password");
 
 }

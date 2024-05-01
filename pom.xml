@@ -90,6 +90,20 @@
                 <artifactId>basic-framework-spring-doc</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!-- 认证服务包版本管理 -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-oauth2-authorization</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- 认证服务自动配置包版本管理 -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-oauth2-authorization-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

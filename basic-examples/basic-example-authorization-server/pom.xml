@@ -5,17 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.basic.cloud</groupId>
-        <artifactId>basic-framework-oauth2</artifactId>
+        <artifactId>basic-examples</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>basic-framework-oauth2-authorization-server</artifactId>
-    <description>basic-cloud-platform oauth2 module</description>
+    <artifactId>basic-example-authorization-server</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-oauth2-authorization</artifactId>
+            <artifactId>basic-framework-oauth2-authorization-server</artifactId>
         </dependency>
     </dependencies>
 

@@ -12,5 +12,6 @@
     <description>basic-cloud-platform example projects</description>
     <modules>
         <module>basic-example-doc</module>
+        <module>basic-example-authorization-server</module>
     </modules>
 </project>
