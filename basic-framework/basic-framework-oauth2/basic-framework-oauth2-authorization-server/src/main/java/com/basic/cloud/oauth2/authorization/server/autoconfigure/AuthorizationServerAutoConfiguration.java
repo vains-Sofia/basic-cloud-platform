@@ -22,7 +22,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -105,8 +104,6 @@ public class AuthorizationServerAutoConfiguration {
         http.oauth2ResourceServer((resourceServer) -> resourceServer
                 .jwt(Customizer.withDefaults())
         );
-
-        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
         http.with(new EmailCaptchaLoginConfigurer<>(), c -> c
                 .successHandler((request, response, authentication) -> {
