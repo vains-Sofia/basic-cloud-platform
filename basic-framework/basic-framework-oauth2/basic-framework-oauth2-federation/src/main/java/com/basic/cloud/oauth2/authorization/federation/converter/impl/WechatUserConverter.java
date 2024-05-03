@@ -29,6 +29,7 @@ public class WechatUserConverter implements OAuth2UserConverter {
         authenticatedUser.setThirdUsername(oAuth2User.getName());
         authenticatedUser.setLocation(attributes.get("province") + " " + attributes.get("city"));
         authenticatedUser.setAvatarUrl(String.valueOf(attributes.get("headimgurl")));
+        authenticatedUser.setAttributes(attributes);
 
         // 设置三方access token信息
         setThirdAccessTokenInfo(authenticatedUser, attributes);

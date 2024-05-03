@@ -31,6 +31,7 @@ public class GiteeUserConverter implements OAuth2UserConverter {
         authenticatedUser.setId(String.valueOf(attributes.get("id")));
         authenticatedUser.setBlog(attributes.get("blog") + "");
         authenticatedUser.setAvatarUrl(String.valueOf(attributes.get("avatar_url")));
+        authenticatedUser.setAttributes(attributes);
 
         // 设置三方access token信息
         setThirdAccessTokenInfo(authenticatedUser, attributes);

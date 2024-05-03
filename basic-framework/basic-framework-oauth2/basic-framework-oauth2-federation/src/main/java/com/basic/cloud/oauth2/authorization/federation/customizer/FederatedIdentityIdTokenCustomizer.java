@@ -14,8 +14,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.basic.cloud.oauth2.authorization.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
-import static com.basic.cloud.oauth2.authorization.core.BasicOAuth2ParameterNames.TOKEN_UNIQUE_ID;
+import static com.basic.cloud.oauth2.authorization.core.BasicOAuth2ParameterNames.*;
 
 /**
  * An {@link OAuth2TokenCustomizer} to map claims from a federated identity to
@@ -37,7 +36,9 @@ public final class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCust
             IdTokenClaimNames.AMR,
             IdTokenClaimNames.AZP,
             IdTokenClaimNames.AT_HASH,
-            IdTokenClaimNames.C_HASH
+            IdTokenClaimNames.C_HASH,
+            OAUTH2_ACCESS_TOKEN,
+            OAUTH2_ACCOUNT_PLATFORM
     );
 
     @Override

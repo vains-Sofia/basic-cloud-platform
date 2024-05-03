@@ -1,7 +1,7 @@
 package com.basic.cloud.oauth2.authorization.domain;
 
-import com.basic.cloud.core.util.JsonUtils;
 import com.basic.cloud.oauth2.authorization.enums.OAuth2AccountPlatformEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -89,6 +89,9 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
      */
     private LocalDateTime credentialsExpiresAt;
 
+    @JsonIgnore
+    private Map<String, Object> attributes;
+
     public DefaultAuthenticatedUser(String name, OAuth2AccountPlatformEnum accountPlatform, Collection<? extends GrantedAuthority> authorities) {
         this.name = name;
         this.accountPlatform = accountPlatform;
@@ -102,10 +105,5 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
                 Comparator.comparing(GrantedAuthority::getAuthority));
         sortedAuthorities.addAll(authorities);
         return sortedAuthorities;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return JsonUtils.objectToObject(this, Map.class, String.class, Object.class);
     }
 }
