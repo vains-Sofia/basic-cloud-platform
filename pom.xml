@@ -18,6 +18,7 @@
     <modules>
         <module>basic-framework</module>
         <module>basic-examples</module>
+        <module>basic-services</module>
     </modules>
 
     <properties>
@@ -88,13 +89,6 @@
             <dependency>
                 <groupId>com.basic.cloud</groupId>
                 <artifactId>basic-framework-spring-doc</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- 认证服务包版本管理 -->
-            <dependency>
-                <groupId>com.basic.cloud</groupId>
-                <artifactId>basic-framework-oauth2-authorization</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -13,9 +13,23 @@
     <description>basic-cloud-platform oauth2 module</description>
 
     <dependencies>
+        <!-- 核心依赖包 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-oauth2-authorization</artifactId>
+            <artifactId>basic-framework-core</artifactId>
+        </dependency>
+
+        <!-- 认证服务依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
+        </dependency>
+
+        <!-- yaml文件读取 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
