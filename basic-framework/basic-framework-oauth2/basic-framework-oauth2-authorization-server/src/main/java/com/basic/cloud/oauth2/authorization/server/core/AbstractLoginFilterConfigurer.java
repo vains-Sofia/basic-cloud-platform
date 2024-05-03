@@ -30,39 +30,69 @@ import java.util.Collections;
  * 抽象验证码登录配置类
  *
  * @param <B> HttpSecurityBuilder 子类
- * @param <C> 当前配置类的子类
+ * @param <C> 当前配置类，实现链式调用的子类
  * @param <F> 过滤器
  * @author vains
  */
 public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilder<B>, C extends AbstractLoginFilterConfigurer<B, C, F>, F extends AbstractAuthenticationProcessingFilter>
         extends AbstractHttpConfigurer<AbstractLoginFilterConfigurer<B, C, F>, B> {
 
+    /**
+     * 执行登录的过滤器
+     */
     @Getter
     @Setter
     private F authFilter;
 
+    /**
+     * 根据当前请求生成本次认证信息的详情信息
+     */
     private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource;
 
+    /**
+     * 登录成功后会取出在跳转登录页之前访问的请求，并重定向至该请求
+     */
     private final SavedRequestAwareAuthenticationSuccessHandler defaultSuccessHandler = new SavedRequestAwareAuthenticationSuccessHandler();
 
+    /**
+     * 认证成功处理，默认使用{@link SavedRequestAwareAuthenticationSuccessHandler}
+     */
     private AuthenticationSuccessHandler successHandler = this.defaultSuccessHandler;
 
+    /**
+     * 未登录处理
+     */
     @Getter
     @Setter
     private LoginUrlAuthenticationEntryPoint authenticationEntryPoint;
 
+    /**
+     * 是否使用自定义登录页
+     */
     @Getter
     private boolean customLoginPage;
 
+    /**
+     * 登录页面地址
+     */
     @Getter
     private String loginPage;
 
+    /**
+     * 处理登录地址
+     */
     @Getter
     @Setter
     private String loginProcessingUrl;
 
+    /**
+     * 登录失败处理
+     */
     private AuthenticationFailureHandler failureHandler;
 
+    /**
+     * 登录失败跳转的url
+     */
     @Getter
     @Setter
     private String failureUrl;
@@ -79,36 +109,78 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
         }
     }
 
+    /**
+     * 设置处理登录的地址
+     *
+     * @param loginProcessingUrl 处理登录
+     * @return 当前配置类，实现链式调用
+     */
     public C loginProcessingUrl(String loginProcessingUrl) {
         this.loginProcessingUrl = loginProcessingUrl;
         this.authFilter.setRequiresAuthenticationRequestMatcher(createLoginProcessingUrlMatcher(loginProcessingUrl));
         return getSelf();
     }
 
+    /**
+     * 设置保存认证信息的repository
+     *
+     * @param securityContextRepository 登录后保存认证信息的repository
+     * @return 当前配置类，实现链式调用
+     */
     public C securityContextRepository(SecurityContextRepository securityContextRepository) {
         this.authFilter.setSecurityContextRepository(securityContextRepository);
         return getSelf();
     }
 
+    /**
+     * 创建处理登录的 RequestMatcher 实例，子类需重写该类以完成实例化
+     *
+     * @param loginProcessingUrl 处理登录地址
+     * @return 处理登录的 RequestMatcher 实例
+     */
     protected abstract RequestMatcher createLoginProcessingUrlMatcher(String loginProcessingUrl);
 
+    /**
+     * 设置生成认证信息web详情的生成方式
+     *
+     * @param authenticationDetailsSource 认证信息实例
+     * @return 当前配置类，实现链式调用
+     */
     public C authenticationDetailsSource(
             AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource) {
         this.authenticationDetailsSource = authenticationDetailsSource;
         return getSelf();
     }
 
+    /**
+     * 自定义登录成功处理
+     *
+     * @param successHandler AuthenticationSuccessHandler及其子类实例
+     * @return 当前配置类，实现链式调用
+     */
     public C successHandler(AuthenticationSuccessHandler successHandler) {
         this.successHandler = successHandler;
         return getSelf();
     }
 
+    /**
+     * 设置登录失败跳转地址，并自动设置登录失败处理为{@link SimpleUrlAuthenticationFailureHandler}的实例
+     *
+     * @param authenticationFailureUrl 登录失败跳转地址
+     * @return 当前配置类，实现链式调用
+     */
     public C failureUrl(String authenticationFailureUrl) {
         C result = failureHandler(new SimpleUrlAuthenticationFailureHandler(authenticationFailureUrl));
         this.failureUrl = authenticationFailureUrl;
         return result;
     }
 
+    /**
+     * 设置登录失败处理器，并自动将 {@link AbstractLoginFilterConfigurer#failureUrl}属性置空
+     *
+     * @param authenticationFailureHandler 登录失败处理器
+     * @return 当前配置类，实现链式调用
+     */
     public C failureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
         this.failureUrl = null;
         this.failureHandler = authenticationFailureHandler;
@@ -117,6 +189,7 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
 
     @Override
     public void init(B http) throws Exception {
+        // 登录过滤器默认配置
         updateAuthenticationDefaults();
         registerAuthenticationEntryPoint(http, this.authenticationEntryPoint);
 
@@ -166,6 +239,12 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
      */
     protected abstract AuthenticationProvider authenticationProvider(B http);
 
+    /**
+     * 设置登录地址
+     *
+     * @param loginPage 登录地址
+     * @return 当前配置类，实现链式调用
+     */
     protected C loginPage(String loginPage) {
         setLoginPage(loginPage);
         updateAuthenticationDefaults();
@@ -173,24 +252,29 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
         return getSelf();
     }
 
+    /**
+     * 获取当前配置类
+     *
+     * @return 当前配置类
+     */
     @SuppressWarnings("unchecked")
     private C getSelf() {
         return (C) this;
     }
 
+    /**
+     * 设置登录失败处理器
+     *
+     * @param authenticationFailureHandler 登录失败处理器
+     * @return 当前配置类，实现链式调用
+     */
     public C loginFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
         this.failureHandler = authenticationFailureHandler;
         return getSelf();
     }
 
-    public C loginAuthenticationDetailsSource(
-            AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource) {
-        this.authenticationDetailsSource = authenticationDetailsSource;
-        return getSelf();
-    }
-
     /**
-     * Gets the Authentication Filter
+     * 过去当前处理登录的过滤器
      *
      * @return the Authentication Filter
      */
@@ -198,6 +282,9 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
         return this.authFilter;
     }
 
+    /**
+     * 设置默认登录处理地址
+     */
     protected final void updateAuthenticationDefaults() {
         if (this.loginProcessingUrl == null) {
             loginProcessingUrl(this.loginPage);
@@ -207,6 +294,12 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
         }
     }
 
+    /**
+     * 注册未登录处理
+     *
+     * @param http                     httpSecurity实例
+     * @param authenticationEntryPoint 未登录处理
+     */
     protected void registerAuthenticationEntryPoint(B http, AuthenticationEntryPoint authenticationEntryPoint) {
         @SuppressWarnings("unchecked")
         ExceptionHandlingConfigurer<B> exceptionHandling = http.getConfigurer(ExceptionHandlingConfigurer.class);
@@ -217,6 +310,12 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
                 getAuthenticationEntryPointMatcher(http));
     }
 
+    /**
+     * 获取登录失败 RequestMatcher，当不是Xhr请求是跳转页面，否则响应json
+     *
+     * @param http httpSecurity实例
+     * @return 登录失败 RequestMatcher
+     */
     protected RequestMatcher getAuthenticationEntryPointMatcher(B http) {
         ContentNegotiationStrategy contentNegotiationStrategy = http.getSharedObject(ContentNegotiationStrategy.class);
         if (contentNegotiationStrategy == null) {
@@ -231,6 +330,11 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
         return new AndRequestMatcher(Arrays.asList(notXRequestedWith, mediaMatcher));
     }
 
+    /**
+     * 获取登录成功后保存认证信息的repository
+     *
+     * @return SecurityContextRepository实例
+     */
     private SecurityContextRepository getSecurityContextRepository() {
         SecurityContextRepository securityContextRepository = getBuilder()
                 .getSharedObject(SecurityContextRepository.class);
@@ -241,6 +345,11 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
         return securityContextRepository;
     }
 
+    /**
+     * 设置登录地址，并自动设置未登录时跳转登录的处理器为 {@link LoginUrlAuthenticationEntryPoint}
+     *
+     * @param loginPage 登录页面地址
+     */
     public void setLoginPage(String loginPage) {
         this.loginPage = loginPage;
         this.authenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(loginPage);

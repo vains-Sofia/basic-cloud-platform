@@ -45,6 +45,15 @@ public class OAuth2EmailCaptchaAuthenticationConverter implements Authentication
                     Arrays.asList(StringUtils.delimitedListToStringArray(scope, " ")));
         }
 
+        // 提取附加参数
+        Map<String, Object> additionalParameters = new HashMap<>();
+        parameters.forEach((key, value) -> {
+            if (!key.equals(OAuth2ParameterNames.GRANT_TYPE) &&
+                    !key.equals(OAuth2ParameterNames.CLIENT_ID)) {
+                additionalParameters.put(key, value.getFirst());
+            }
+        });
+
         // 邮箱地址 (REQUIRED)
         OAuth2EndpointUtils.getRequiredParameter(parameters, emailParameter);
 
@@ -54,14 +63,6 @@ public class OAuth2EmailCaptchaAuthenticationConverter implements Authentication
         // 这里目前是客户端认证信息
         Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
 
-        // 提取附加参数
-        Map<String, Object> additionalParameters = new HashMap<>();
-        parameters.forEach((key, value) -> {
-            if (!key.equals(OAuth2ParameterNames.GRANT_TYPE) &&
-                    !key.equals(OAuth2ParameterNames.CLIENT_ID)) {
-                additionalParameters.put(key, value.getFirst());
-            }
-        });
         return new OAuth2EmailCaptchaAuthenticationToken(BasicAuthorizationGrantType.EMAIL, clientPrincipal, requestedScopes, additionalParameters);
     }
 }

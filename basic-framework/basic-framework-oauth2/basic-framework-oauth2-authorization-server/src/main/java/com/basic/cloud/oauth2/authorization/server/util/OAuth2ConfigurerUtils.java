@@ -41,6 +41,15 @@ import java.util.Map;
  */
 public class OAuth2ConfigurerUtils {
 
+    /**
+     * 从ioc中获取bean，如果ioc中没有则返回null
+     *
+     * @param builder httpSecurity实例
+     * @param type    要获取bean的class
+     * @param <T>     要获取的bean的具体类型
+     * @param <B>     HttpSecurityBuilder具体的子类
+     * @return bean的实例或null
+     */
     public static <T, B extends HttpSecurityBuilder<B>> T getBeanOrNull(HttpSecurityBuilder<B> builder, Class<T> type) {
         ApplicationContext context = builder.getSharedObject(ApplicationContext.class);
         if (context != null) {
@@ -52,6 +61,13 @@ public class OAuth2ConfigurerUtils {
         return null;
     }
 
+    /**
+     * 从httpSecurity的缓存中获取 {@link OAuth2AuthorizationService}的实例，
+     * 若获取失败从ioc中获取，若获取初始化一个基于内存的实例
+     *
+     * @param httpSecurity 实例
+     * @return OAuth2AuthorizationService的实例
+     */
     public static OAuth2AuthorizationService getAuthorizationService(HttpSecurity httpSecurity) {
         OAuth2AuthorizationService authorizationService = httpSecurity.getSharedObject(OAuth2AuthorizationService.class);
         if (authorizationService == null) {
@@ -64,6 +80,12 @@ public class OAuth2ConfigurerUtils {
         return authorizationService;
     }
 
+    /**
+     * 获取{@link OAuth2TokenGenerator}的实例，依次从 HttpSecurity 的缓存、IOC中获取，若获取失败则初始化一个默认的实例返回
+     *
+     * @param httpSecurity 实例
+     * @return {@link OAuth2TokenGenerator}的实例
+     */
     @SuppressWarnings("unchecked")
     public static OAuth2TokenGenerator<? extends OAuth2Token> getTokenGenerator(HttpSecurity httpSecurity) {
         OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator = httpSecurity.getSharedObject(OAuth2TokenGenerator.class);
@@ -90,6 +112,14 @@ public class OAuth2ConfigurerUtils {
         return tokenGenerator;
     }
 
+    /**
+     * 从ioc中获取bean的实例，当容器中对应的bean的实例数量大于1则抛出异常，若获取失败则返回null
+     *
+     * @param httpSecurity 配置实例
+     * @param type         bean的class
+     * @param <T>          bean的泛型
+     * @return bean的实例
+     */
     public static <T> T getOptionalBean(HttpSecurity httpSecurity, Class<T> type) {
         Map<String, T> beansMap = BeanFactoryUtils.beansOfTypeIncludingAncestors(
                 httpSecurity.getSharedObject(ApplicationContext.class), type);
@@ -101,6 +131,12 @@ public class OAuth2ConfigurerUtils {
         return (!beansMap.isEmpty() ? beansMap.values().iterator().next() : null);
     }
 
+    /**
+     * 获取jwt的生成器，依次从HttpSecurity的缓存、IOC中获取，获取失败则初始化一个默认的
+     *
+     * @param httpSecurity 配置实例
+     * @return jwt的生成器
+     */
     private static JwtGenerator getJwtGenerator(HttpSecurity httpSecurity) {
         JwtGenerator jwtGenerator = httpSecurity.getSharedObject(JwtGenerator.class);
         if (jwtGenerator == null) {
@@ -117,6 +153,12 @@ public class OAuth2ConfigurerUtils {
         return jwtGenerator;
     }
 
+    /**
+     * 获取jwt的生成器，依次从HttpSecurity的缓存、IOC中获取，获取失败则初始化一个默认的
+     *
+     * @param httpSecurity 配置实例
+     * @return jwt的生成器
+     */
     private static JwtEncoder getJwtEncoder(HttpSecurity httpSecurity) {
         JwtEncoder jwtEncoder = httpSecurity.getSharedObject(JwtEncoder.class);
         if (jwtEncoder == null) {
@@ -134,8 +176,13 @@ public class OAuth2ConfigurerUtils {
         return jwtEncoder;
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * 获取jwk源，依此从HttpSecurity缓存、IOC中获取，获取失败则返回null
+     *
+     * @return JWKSource
+     */
     public static JWKSource<SecurityContext> getJwkSource(HttpSecurity httpSecurity) {
+        @SuppressWarnings("unchecked")
         JWKSource<SecurityContext> jwkSource = httpSecurity.getSharedObject(JWKSource.class);
         if (jwkSource == null) {
             ResolvableType type = ResolvableType.forClassWithGenerics(JWKSource.class, SecurityContext.class);
@@ -147,6 +194,14 @@ public class OAuth2ConfigurerUtils {
         return jwkSource;
     }
 
+    /**
+     * 从ioc中获取bean的实例，当容器中对应的bean的实例数量大于1则抛出异常，若获取失败则返回null
+     *
+     * @param httpSecurity 配置实例
+     * @param type         bean的class
+     * @param <T>          bean的泛型
+     * @return bean的实例
+     */
     @SuppressWarnings("unchecked")
     public static <T> T getOptionalBean(HttpSecurity httpSecurity, ResolvableType type) {
         ApplicationContext context = httpSecurity.getSharedObject(ApplicationContext.class);
@@ -157,11 +212,23 @@ public class OAuth2ConfigurerUtils {
         return names.length == 1 ? (T) context.getBean(names[0]) : null;
     }
 
+    /**
+     * 获取jwt自定义器实例
+     *
+     * @param httpSecurity 配置实例
+     * @return jwt自定义器实例
+     */
     private static OAuth2TokenCustomizer<JwtEncodingContext> getJwtCustomizer(HttpSecurity httpSecurity) {
         ResolvableType type = ResolvableType.forClassWithGenerics(OAuth2TokenCustomizer.class, JwtEncodingContext.class);
         return getOptionalBean(httpSecurity, type);
     }
 
+    /**
+     * 获取Access Token自定义器实例
+     *
+     * @param httpSecurity 配置实例
+     * @return Access Token自定义器实例
+     */
     private static OAuth2TokenCustomizer<OAuth2TokenClaimsContext> getAccessTokenCustomizer(HttpSecurity httpSecurity) {
         ResolvableType type = ResolvableType.forClassWithGenerics(OAuth2TokenCustomizer.class, OAuth2TokenClaimsContext.class);
         return getOptionalBean(httpSecurity, type);

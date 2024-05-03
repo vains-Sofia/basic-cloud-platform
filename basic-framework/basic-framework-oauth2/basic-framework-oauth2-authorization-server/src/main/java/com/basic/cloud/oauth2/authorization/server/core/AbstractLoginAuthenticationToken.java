@@ -23,11 +23,6 @@ public abstract class AbstractLoginAuthenticationToken extends AbstractAuthentic
      */
     private Object credentials;
 
-    /**
-     * This constructor can be safely used by any code that wishes to create a
-     * <code>UsernamePasswordAuthenticationToken</code>, as the {@link #isAuthenticated()}
-     * will return <code>false</code>.
-     */
     public AbstractLoginAuthenticationToken(Object principal, Object credentials) {
         super(null);
         this.principal = principal;
@@ -35,18 +30,8 @@ public abstract class AbstractLoginAuthenticationToken extends AbstractAuthentic
         setAuthenticated(false);
     }
 
-    /**
-     * This constructor should only be used by <code>AuthenticationManager</code> or
-     * <code>AuthenticationProvider</code> implementations that are satisfied with
-     * producing a trusted (i.e. {@link #isAuthenticated()} = <code>true</code>)
-     * authentication token.
-     *
-     * @param principal   邮箱地址
-     * @param credentials 邮件验证码
-     * @param authorities 邮箱对应用户的权限
-     */
     public AbstractLoginAuthenticationToken(Object principal, Object credentials,
-                                           Collection<? extends GrantedAuthority> authorities) {
+                                            Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
         this.credentials = credentials;

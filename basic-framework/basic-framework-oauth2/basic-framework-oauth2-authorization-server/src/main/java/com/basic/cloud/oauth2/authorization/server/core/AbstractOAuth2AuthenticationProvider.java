@@ -204,6 +204,12 @@ public abstract class AbstractOAuth2AuthenticationProvider implements Authentica
         return authorizedScopes;
     }
 
+    /**
+     * 对用户提交的认证信息进行认证
+     *
+     * @param authenticationToken oauth2请求时生成的令牌(oauth2请求时携带的数据)
+     * @return 认证后的认证信息
+     */
     protected Authentication authenticateAuthenticationToken(AbstractOAuth2AuthenticationToken authenticationToken) {
         Authentication unauthenticated = getUnauthenticatedToken(authenticationToken);
         // 交给 userDetailsAuthenticationProvider 进行认证

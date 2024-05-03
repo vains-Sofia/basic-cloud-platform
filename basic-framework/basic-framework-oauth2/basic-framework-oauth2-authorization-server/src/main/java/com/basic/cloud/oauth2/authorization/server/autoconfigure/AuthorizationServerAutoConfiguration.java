@@ -13,15 +13,15 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -71,6 +71,9 @@ import java.util.UUID;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class AuthorizationServerAutoConfiguration {
 
+    /**
+     * 默认忽略鉴权的地址
+     */
     private final List<String> DEFAULT_IGNORE_PATHS = List.of(
             "/error",
             "/assets/**",
@@ -80,8 +83,18 @@ public class AuthorizationServerAutoConfiguration {
             "/v3/api-docs/**"
     );
 
+    /**
+     * 认证服务配置类
+     */
     private final OAuth2ServerProperties oAuth2ServerProperties;
 
+    /**
+     * 认证服务oauth2端点配置
+     *
+     * @param http httpSecurity 实例
+     * @return SecurityFilterChain认证服务过滤器链
+     * @throws Exception 配置错误时抛出
+     */
     @Bean
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
             throws Exception {
@@ -89,8 +102,10 @@ public class AuthorizationServerAutoConfiguration {
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(AbstractHttpConfigurer::disable);
 
+        // 认证服务默认配置
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
+        // 获取认证服务配置
         OAuth2AuthorizationServerConfigurer configurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
 
         // 开启oidc并在 /.well-known/openid-configuration 和 /.well-known/oauth-authorization-server 端点中添加自定义grant type
@@ -119,6 +134,13 @@ public class AuthorizationServerAutoConfiguration {
         return http.build();
     }
 
+    /**
+     * 认证与鉴权相关的过滤器链配置
+     *
+     * @param http httpSecurity 实例
+     * @return 认证鉴权相关的过滤器链
+     * @throws Exception 配置错误时抛出
+     */
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
             throws Exception {
@@ -139,6 +161,7 @@ public class AuthorizationServerAutoConfiguration {
         // authorization server filter chain
         http.formLogin(form -> form.loginPage(oAuth2ServerProperties.getServer().getLoginPageUri()));
 
+        // 添加BearerTokenAuthenticationFilter，将认证服务当做一个资源服务，解析请求头中的token
         http.oauth2ResourceServer((resourceServer) -> resourceServer
                 .jwt(Customizer.withDefaults())
         );
@@ -155,13 +178,26 @@ public class AuthorizationServerAutoConfiguration {
         return http.build();
     }
 
+    /**
+     * 将AuthenticationManager注入ioc中，其它需要使用地方可以直接从ioc中获取
+     *
+     * @param authenticationConfiguration 导出认证配置
+     * @return AuthenticationManager 认证管理器
+     */
     @Bean
+    @SneakyThrows
     @ConditionalOnMissingBean
-    public AuthenticationManager authenticationManager(
-            List<AuthenticationProvider> authenticationProviders) {
-        return new ProviderManager(authenticationProviders);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * 自定义grant type密码模式中需要使用，所以提前注入ioc中
+     *
+     * @param userDetailsService 获取用户信息的服务
+     * @param encoder            密码解析器
+     * @return DaoAuthenticationProvider实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public DaoAuthenticationProvider daoAuthenticationProvider(
@@ -172,6 +208,12 @@ public class AuthorizationServerAutoConfiguration {
         return authProvider;
     }
 
+    /**
+     * 自定义grant type邮件模式中需要使用，所以提前注入ioc中
+     *
+     * @param userDetailsService 获取用户信息的服务
+     * @return DaoAuthenticationProvider实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public EmailCaptchaLoginAuthenticationProvider emailCaptchaLoginAuthenticationProvider(
@@ -179,12 +221,23 @@ public class AuthorizationServerAutoConfiguration {
         return new EmailCaptchaLoginAuthenticationProvider(userDetailsService);
     }
 
+    /**
+     * 密码解析器
+     *
+     * @return 返回一个密码解析器委托类，根据密码找到对应的解析器
+     */
     @Bean
     @ConditionalOnMissingBean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
+    /**
+     * 基于内存的用户服务
+     *  TODO 待修改
+     *
+     * @return UserDetailsService 实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public UserDetailsService userDetailsService() {
@@ -196,6 +249,12 @@ public class AuthorizationServerAutoConfiguration {
         return new InMemoryUserDetailsManager(userDetails);
     }
 
+    /**
+     * 核心客户端服务
+     *  TODO 待修改
+     *
+     * @return RegisteredClientRepository实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public RegisteredClientRepository registeredClientRepository() {
@@ -230,12 +289,24 @@ public class AuthorizationServerAutoConfiguration {
         return clientRepository;
     }
 
+    /**
+     * 基于内存的授权确认服务
+     * TODO 待修改
+     *
+     * @return OAuth2AuthorizationConsentService实例
+     */
     @Bean
     @ConditionalOnMissingBean
     public OAuth2AuthorizationConsentService authorizationConsentService() {
         return new InMemoryOAuth2AuthorizationConsentService();
     }
 
+    /**
+     * 配置jwk源，使用非对称加密，公开用于检索匹配指定选择器的JWK的方法
+     *  TODO 待优化
+     *
+     * @return JWKSource
+     */
     @Bean
     @ConditionalOnMissingBean
     public JWKSource<SecurityContext> jwkSource() {
@@ -250,6 +321,11 @@ public class AuthorizationServerAutoConfiguration {
         return new ImmutableJWKSet<>(jwkSet);
     }
 
+    /**
+     * 生成rsa密钥对，提供给jwk
+     *
+     * @return 密钥对
+     */
     private static KeyPair generateRsaKey() {
         KeyPair keyPair;
         try {
@@ -262,12 +338,23 @@ public class AuthorizationServerAutoConfiguration {
         return keyPair;
     }
 
+    /**
+     * 配置jwt解析器
+     *
+     * @param jwkSource jwk源
+     * @return JwtDecoder
+     */
     @Bean
     @ConditionalOnMissingBean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
 
+    /**
+     * 配置认证服务跨域过滤器
+     *
+     * @return CorsConfigurationSource 实例
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
