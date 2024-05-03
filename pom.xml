@@ -98,24 +98,21 @@
                 <artifactId>basic-framework-oauth2-authorization-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!-- 认证核心模块 -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-oauth2-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- 联合身份认证模块 -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-oauth2-federation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

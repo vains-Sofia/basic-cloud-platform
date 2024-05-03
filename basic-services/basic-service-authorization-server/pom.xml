@@ -30,6 +30,12 @@
             <artifactId>basic-framework-spring-doc</artifactId>
         </dependency>
 
+        <!-- 联合身份认证/社交登录 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-oauth2-federation</artifactId>
+        </dependency>
+
         <!-- 页面渲染 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -45,5 +51,22 @@
             <artifactId>webjars-locator-core</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -1,4 +1,4 @@
-package com.basic.cloud.oauth2.authorization.server.core;
+package com.basic.cloud.oauth2.authorization.core;
 
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 

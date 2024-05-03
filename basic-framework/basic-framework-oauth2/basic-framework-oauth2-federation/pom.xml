@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.basic.cloud</groupId>
+        <artifactId>basic-framework-oauth2</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>basic-framework-oauth2-federation</artifactId>
+    <description>basic-cloud-platform oauth2 federated identity authentication module</description>
+
+    <dependencies>
+        <!-- oauth2核心包 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-oauth2-core</artifactId>
+        </dependency>
+
+        <!-- 客户端包 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
+        <!-- 认证服务包 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-authorization-server</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Spring Boot Web包 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+</project>

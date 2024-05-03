@@ -2,7 +2,7 @@ package com.basic.cloud.oauth2.authorization.server.grant.email;
 
 import com.basic.cloud.oauth2.authorization.server.core.AbstractOAuth2AuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.core.AbstractOAuth2AuthenticationToken;
-import com.basic.cloud.oauth2.authorization.server.core.BasicOAuth2ParameterNames;
+import com.basic.cloud.oauth2.authorization.core.BasicOAuth2ParameterNames;
 import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationToken;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

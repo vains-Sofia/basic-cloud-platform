@@ -1,4 +1,4 @@
-package com.basic.cloud.oauth2.authorization.server.property;
+package com.basic.cloud.oauth2.authorization.property;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

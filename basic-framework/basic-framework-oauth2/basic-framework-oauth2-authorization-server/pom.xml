@@ -13,11 +13,6 @@
     <description>basic-cloud-platform oauth2 module</description>
 
     <dependencies>
-        <!-- 核心依赖包 -->
-        <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-core</artifactId>
-        </dependency>
 
         <!-- 认证服务依赖 -->
         <dependency>
@@ -30,6 +25,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-oauth2-core</artifactId>
         </dependency>
     </dependencies>
 

@@ -3,13 +3,16 @@ package com.basic.cloud.authorization.server.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -32,6 +35,16 @@ public class AuthorizationController {
     private final RegisteredClientRepository registeredClientRepository;
 
     private final OAuth2AuthorizationConsentService authorizationConsentService;
+
+    @GetMapping("/login")
+    @Operation(summary = "登录页面", description = "渲染登录页面")
+    public String login(Model model, HttpSession session) {
+        Object attribute = session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+        if (attribute instanceof AuthenticationException exception) {
+            model.addAttribute("error", exception.getMessage());
+        }
+        return "login";
+    }
 
     @GetMapping("/activate")
     @Parameter(name = "user_code", description = "发起设备码授权申请时生成的用户码，当传入该参数时直接提交认证")

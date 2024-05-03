@@ -1,7 +1,7 @@
 package com.basic.cloud.oauth2.authorization.server.grant.email;
 
-import com.basic.cloud.oauth2.authorization.server.core.BasicAuthorizationGrantType;
-import com.basic.cloud.oauth2.authorization.server.core.BasicOAuth2ParameterNames;
+import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
+import com.basic.cloud.oauth2.authorization.core.BasicOAuth2ParameterNames;
 import com.basic.cloud.oauth2.authorization.server.util.OAuth2EndpointUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Setter;

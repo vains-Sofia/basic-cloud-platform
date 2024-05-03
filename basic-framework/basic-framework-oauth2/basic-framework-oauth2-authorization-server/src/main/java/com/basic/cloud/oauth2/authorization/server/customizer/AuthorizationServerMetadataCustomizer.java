@@ -1,6 +1,6 @@
 package com.basic.cloud.oauth2.authorization.server.customizer;
 
-import com.basic.cloud.oauth2.authorization.server.core.BasicAuthorizationGrantType;
+import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerMetadataEndpointConfigurer;
 

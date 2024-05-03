@@ -7,7 +7,7 @@ import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptch
 import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2ResourceOwnerPasswordAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2ResourceOwnerPasswordAuthenticationProvider;
-import com.basic.cloud.oauth2.authorization.server.property.OAuth2ServerProperties;
+import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.BeanFactoryUtils;
