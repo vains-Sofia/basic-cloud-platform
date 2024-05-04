@@ -245,7 +245,7 @@ public abstract class AbstractLoginFilterConfigurer<B extends HttpSecurityBuilde
      * @param loginPage 登录地址
      * @return 当前配置类，实现链式调用
      */
-    protected C loginPage(String loginPage) {
+    public C loginPage(String loginPage) {
         setLoginPage(loginPage);
         updateAuthenticationDefaults();
         this.customLoginPage = true;

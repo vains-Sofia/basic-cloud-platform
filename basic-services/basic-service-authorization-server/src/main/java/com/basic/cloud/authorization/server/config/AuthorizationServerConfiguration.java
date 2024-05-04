@@ -4,6 +4,7 @@ import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.basic.cloud.oauth2.authorization.server.customizer.AuthorizationServerMetadataCustomizer;
 import com.basic.cloud.oauth2.authorization.server.customizer.OidcConfigurerCustomizer;
 import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
+import com.basic.cloud.oauth2.authorization.server.handler.authorization.*;
 import com.basic.cloud.oauth2.authorization.server.util.OAuth2ConfigurerUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +15,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 import java.util.List;
@@ -48,6 +49,8 @@ public class AuthorizationServerConfiguration {
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
 
+    private final AuthorizationServerSettings authorizationServerSettings;
+
     /**
      * 认证服务oauth2端点配置
      *
@@ -58,9 +61,12 @@ public class AuthorizationServerConfiguration {
     @Bean
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
             throws Exception {
+        // 自定义认证服务配置文件
+        OAuth2ServerProperties.ServerProperties serverProperties = oAuth2ServerProperties.getServer();
+
         // 禁用 csrf 与 cors
+        http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
-        http.cors(AbstractHttpConfigurer::disable);
 
         // 认证服务默认配置
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
@@ -72,6 +78,13 @@ public class AuthorizationServerConfiguration {
         configurer.oidc(new OidcConfigurerCustomizer());
         configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
 
+        // 设置自定义用户确认授权页
+        configurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
+                .consentPage(serverProperties.getConsentPageUri())
+                .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
+                .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(serverProperties.getConsentPageUri()))
+        );
+
         // 添加邮件模式
         OAuth2ConfigurerUtils.configureEmailGrantType(http, (null), (null));
         // 添加密码模式
@@ -79,18 +92,19 @@ public class AuthorizationServerConfiguration {
         // 添加设备码流程
         OAuth2ConfigurerUtils.configureDeviceGrantType(http, oAuth2ServerProperties);
 
-        http
-                // Redirect to the login page when not authenticated from the
-                // authorization endpoint
-                .exceptionHandling((exceptions) -> exceptions
-                        .defaultAuthenticationEntryPointFor(
-                                new LoginUrlAuthenticationEntryPoint("/login"),
-                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                        )
+        // Redirect to the login page when not authenticated from the
+        // authorization endpoint
+        http.exceptionHandling((exceptions) -> exceptions
+                .defaultAuthenticationEntryPointFor(
+                        new LoginTargetAuthenticationEntryPoint(
+                                serverProperties.getLoginPageUri(), serverProperties.getDeviceVerificationUri(), authorizationServerSettings.getDeviceVerificationEndpoint()),
+                        new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                 )
-                // Accept access tokens for User Info and/or Client Registration
-                .oauth2ResourceServer((resourceServer) -> resourceServer
-                        .jwt(Customizer.withDefaults()));
+        );
+
+        // Accept access tokens for User Info and/or Client Registration
+        http.oauth2ResourceServer((resourceServer) -> resourceServer
+                .jwt(Customizer.withDefaults()));
         return http.build();
     }
 
@@ -104,9 +118,10 @@ public class AuthorizationServerConfiguration {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
             throws Exception {
+
         // 禁用 csrf 与 cors
+        http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
-        http.cors(AbstractHttpConfigurer::disable);
 
         // 合并默认忽略鉴权的地址和配置文件中添加的忽略鉴权的地址
         Set<String> ignoreUriPaths = oAuth2ServerProperties.getServer().getIgnoreUriPaths();
@@ -117,11 +132,16 @@ public class AuthorizationServerConfiguration {
                 .anyRequest().authenticated()
         );
 
+        // 自定义认证服务配置文件
+        OAuth2ServerProperties.ServerProperties serverProperties = oAuth2ServerProperties.getServer();
+
         // Form login handles the redirect to the login page from the
         // authorization server filter chain
         http.formLogin(form -> form
-                .loginPage(oAuth2ServerProperties.getServer().getLoginPageUri())
-                .loginProcessingUrl("/login")
+                .loginPage(serverProperties.getLoginPageUri())
+                .loginProcessingUrl(serverProperties.getLoginProcessingUri())
+                .successHandler(new LoginSuccessHandler(serverProperties.getLoginPageUri()))
+                .failureHandler(new LoginFailureHandler(serverProperties.getLoginPageUri()))
         );
 
         // 开启oauth2登录支持
@@ -136,11 +156,10 @@ public class AuthorizationServerConfiguration {
 
         // 添加邮件登录过滤器
         http.with(new EmailCaptchaLoginConfigurer<>(), c -> c
-                .successHandler((request, response, authentication) -> {
-                    response.setContentType("text/html;charset=utf-8");
-                    response.getWriter().write("登录成功");
-                    response.getWriter().flush();
-                })
+                .loginPage(serverProperties.getLoginPageUri())
+                .loginProcessingUrl(serverProperties.getEmailLoginProcessingUri())
+                .successHandler(new LoginSuccessHandler(serverProperties.getLoginPageUri()))
+                .failureHandler(new LoginFailureHandler(serverProperties.getLoginPageUri()))
         );
 
         return http.build();

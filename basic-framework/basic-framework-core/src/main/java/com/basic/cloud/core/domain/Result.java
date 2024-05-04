@@ -103,4 +103,16 @@ public class Result<T> implements Serializable {
         return Result.of(data, code, message);
     }
 
+    /**
+     * 操作失败返回
+     *
+     * @param code    错误码
+     * @param message 成功提示消息
+     * @param <T>     类型
+     * @return 返回统一响应
+     */
+    public static <T> Result<T> error(Integer code, String message) {
+        return Result.of((null), code, message);
+    }
+
 }

@@ -20,6 +20,14 @@ basic:
               description: Openid Connect Id Token
             - name: profile
               description: 用户信息
+    oauth2:
+      server:
+        login-page-uri: http://127.0.0.1:5173/login
+        allowed-origins:
+          - http://127.0.0.1:5173
+        ignore-uri-paths:
+          - /getCaptcha
+
 
 spring:
   security:
@@ -93,3 +101,6 @@ spring:
             user-name-attribute: login
       authorizationserver:
         issuer: http://127.0.0.1:8080
+logging:
+  level:
+    root: debug

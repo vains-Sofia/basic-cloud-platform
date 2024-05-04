@@ -1,5 +1,6 @@
 package com.basic.cloud.oauth2.authorization.server.util;
 
+import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationProvider;
@@ -7,7 +8,8 @@ import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptch
 import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2ResourceOwnerPasswordAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2ResourceOwnerPasswordAuthenticationProvider;
-import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
+import com.basic.cloud.oauth2.authorization.server.handler.authorization.ConsentAuthenticationFailureHandler;
+import com.basic.cloud.oauth2.authorization.server.handler.authorization.ConsentAuthorizationResponseHandler;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -326,14 +328,20 @@ public class OAuth2ConfigurerUtils {
 
         builder.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 // 设置自定义用户确认授权页
-                .authorizationEndpoint(authorizationEndpoint ->
-                        authorizationEndpoint.consentPage(serverProperties.getConsentPageUri()))
+                .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
+                        .consentPage(serverProperties.getConsentPageUri())
+                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
+                        .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(serverProperties.getConsentPageUri()))
+                )
                 // 设置设备码用户验证url(自定义用户验证页)
                 .deviceAuthorizationEndpoint(deviceAuthorizationEndpoint ->
                         deviceAuthorizationEndpoint.verificationUri(serverProperties.getDeviceVerificationUri()))
                 // 设置验证设备码用户确认页面
-                .deviceVerificationEndpoint(deviceVerificationEndpoint ->
-                        deviceVerificationEndpoint.consentPage(serverProperties.getConsentPageUri()))
+                .deviceVerificationEndpoint(deviceVerificationEndpoint -> deviceVerificationEndpoint
+                        .consentPage(serverProperties.getConsentPageUri())
+                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
+                        .deviceVerificationResponseHandler(new ConsentAuthorizationResponseHandler(serverProperties.getConsentPageUri()))
+                )
                 .clientAuthentication(clientAuthentication ->
                         // 客户端认证添加设备码的converter和provider
                         clientAuthentication

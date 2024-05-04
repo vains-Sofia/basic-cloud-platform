@@ -152,6 +152,7 @@ public class AuthorizationServerAutoConfiguration {
                 .authorizationGrantType(BasicAuthorizationGrantType.EMAIL)
                 .authorizationGrantType(BasicAuthorizationGrantType.PASSWORD)
                 .redirectUri("https://www.baidu.com")
+                .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
                 .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
                 .redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html")
                 .postLogoutRedirectUri("http://127.0.0.1:8080/")
