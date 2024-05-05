@@ -101,6 +101,6 @@ spring:
             user-name-attribute: login
       authorizationserver:
         issuer: http://127.0.0.1:8080
-logging:
-  level:
-    root: debug
+
+  application:
+    name: authorization-server
