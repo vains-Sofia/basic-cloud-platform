@@ -22,27 +22,27 @@ import java.util.Map;
  */
 @Slf4j
 @Setter
-public class OAuth2ResourceOwnerPasswordAuthenticationProvider extends AbstractOAuth2AuthenticationProvider {
+public class OAuth2PasswordAuthenticationProvider extends AbstractOAuth2AuthenticationProvider {
 
     private String usernameParameter = OAuth2ParameterNames.USERNAME;
 
     private String passwordParameter = OAuth2ParameterNames.PASSWORD;
 
-    public OAuth2ResourceOwnerPasswordAuthenticationProvider(SessionRegistry sessionRegistry, OAuth2TokenGenerator<?> tokenGenerator, AuthenticationProvider authenticationProvider, OAuth2AuthorizationService authorizationService) {
+    public OAuth2PasswordAuthenticationProvider(SessionRegistry sessionRegistry, OAuth2TokenGenerator<?> tokenGenerator, AuthenticationProvider authenticationProvider, OAuth2AuthorizationService authorizationService) {
         super(sessionRegistry, tokenGenerator, authenticationProvider, authorizationService);
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        OAuth2ResourceOwnerPasswordAuthenticationToken receivedToken =
-                (OAuth2ResourceOwnerPasswordAuthenticationToken) authentication;
+        OAuth2PasswordAuthenticationToken receivedToken =
+                (OAuth2PasswordAuthenticationToken) authentication;
 
         return super.authentication(receivedToken);
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return OAuth2ResourceOwnerPasswordAuthenticationToken.class.isAssignableFrom(authentication);
+        return OAuth2PasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 
     @Override

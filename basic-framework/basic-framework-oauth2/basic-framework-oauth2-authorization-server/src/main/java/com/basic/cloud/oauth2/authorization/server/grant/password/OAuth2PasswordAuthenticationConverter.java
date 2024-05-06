@@ -19,7 +19,7 @@ import java.util.*;
  * @author vains
  */
 @Setter
-public class OAuth2ResourceOwnerPasswordAuthenticationConverter implements AuthenticationConverter {
+public class OAuth2PasswordAuthenticationConverter implements AuthenticationConverter {
 
     private String usernameParameter = OAuth2ParameterNames.USERNAME;
 
@@ -62,6 +62,6 @@ public class OAuth2ResourceOwnerPasswordAuthenticationConverter implements Authe
             }
         });
 
-        return new OAuth2ResourceOwnerPasswordAuthenticationToken(BasicAuthorizationGrantType.PASSWORD, clientPrincipal, requestedScopes, additionalParameters);
+        return new OAuth2PasswordAuthenticationToken(BasicAuthorizationGrantType.PASSWORD, clientPrincipal, requestedScopes, additionalParameters);
     }
 }

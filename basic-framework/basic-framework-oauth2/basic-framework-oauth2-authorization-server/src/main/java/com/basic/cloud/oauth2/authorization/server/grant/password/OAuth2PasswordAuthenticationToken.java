@@ -12,9 +12,9 @@ import java.util.Set;
  *
  * @author vains
  */
-public class OAuth2ResourceOwnerPasswordAuthenticationToken extends AbstractOAuth2AuthenticationToken {
+public class OAuth2PasswordAuthenticationToken extends AbstractOAuth2AuthenticationToken {
 
-    public OAuth2ResourceOwnerPasswordAuthenticationToken(AuthorizationGrantType authorizationGrantType, Authentication clientPrincipal, Set<String> scopes, Map<String, Object> additionalParameters) {
+    public OAuth2PasswordAuthenticationToken(AuthorizationGrantType authorizationGrantType, Authentication clientPrincipal, Set<String> scopes, Map<String, Object> additionalParameters) {
         super(authorizationGrantType, clientPrincipal, scopes, additionalParameters);
     }
 }

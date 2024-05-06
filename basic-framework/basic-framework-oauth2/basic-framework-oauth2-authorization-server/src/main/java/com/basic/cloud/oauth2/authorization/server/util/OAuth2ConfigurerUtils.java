@@ -6,8 +6,8 @@ import com.basic.cloud.oauth2.authorization.server.grant.device.OAuth2DeviceClie
 import com.basic.cloud.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationProvider;
-import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2ResourceOwnerPasswordAuthenticationConverter;
-import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2ResourceOwnerPasswordAuthenticationProvider;
+import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationConverter;
+import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.handler.authorization.ConsentAuthenticationFailureHandler;
 import com.basic.cloud.oauth2.authorization.server.handler.authorization.ConsentAuthorizationResponseHandler;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -250,10 +250,10 @@ public class OAuth2ConfigurerUtils {
         OAuth2AuthorizationService authorizationService = OAuth2ConfigurerUtils.getAuthorizationService(builder);
 
         // 自定义密码模式认证转换器
-        OAuth2ResourceOwnerPasswordAuthenticationConverter converter =
-                new OAuth2ResourceOwnerPasswordAuthenticationConverter();
-        OAuth2ResourceOwnerPasswordAuthenticationProvider provider =
-                new OAuth2ResourceOwnerPasswordAuthenticationProvider(sessionRegistry, tokenGenerator, authenticationProvider, authorizationService);
+        OAuth2PasswordAuthenticationConverter converter =
+                new OAuth2PasswordAuthenticationConverter();
+        OAuth2PasswordAuthenticationProvider provider =
+                new OAuth2PasswordAuthenticationProvider(sessionRegistry, tokenGenerator, authenticationProvider, authorizationService);
         // 如果设置了账号密码参数名，则替换默认的
         if (!ObjectUtils.isEmpty(usernameParameter)) {
             converter.setUsernameParameter(usernameParameter);
