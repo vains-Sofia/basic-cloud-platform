@@ -42,6 +42,12 @@
             <artifactId>basic-framework-oauth2-federation</artifactId>
         </dependency>
 
+        <!-- 入参校验模块 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-data-validation</artifactId>
+        </dependency>
+
         <!-- 页面渲染 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

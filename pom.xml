@@ -112,6 +112,13 @@
                 <artifactId>basic-framework-oauth2-federation</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!-- 入参校验模块 -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-data-validation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -17,6 +17,7 @@
         <module>basic-framework-core</module>
         <module>basic-framework-spring-doc</module>
         <module>basic-framework-oauth2</module>
+        <module>basic-framework-data-validation</module>
     </modules>
 
 </project>

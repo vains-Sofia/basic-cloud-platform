@@ -1,6 +1,5 @@
 package com.basic.cloud.authorization.server.controller;
 
-import com.basic.cloud.core.domain.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,12 +18,9 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 认证服务页面渲染接口
@@ -39,29 +35,6 @@ public class AuthorizationController {
     private final RegisteredClientRepository registeredClientRepository;
 
     private final OAuth2AuthorizationConsentService authorizationConsentService;
-
-    @ResponseBody
-    @GetMapping("/getCaptcha")
-    public Result<Map<String, ? extends Serializable>> getCaptcha() {
-        // 字符串挑选模板
-        String baseCharNumber = "abcdefghijklmnopqrstuvwxyz".toUpperCase() + "abcdefghijklmnopqrstuvwxyz0123456789";
-        // 随机字符串长度
-        int randomLength = 4;
-
-        StringBuilder captchaBuilder = new StringBuilder(randomLength);
-
-        for(int i = 0; i < randomLength; ++i) {
-            int number = ThreadLocalRandom.current().nextInt(baseCharNumber.length());
-            captchaBuilder.append(baseCharNumber.charAt(number));
-        }
-
-        String captcha = captchaBuilder.toString();
-        // 生成一个唯一id
-        long id = System.currentTimeMillis();
-        Map<String, ? extends Serializable> map = Map.of("captchaId", String.valueOf(id), "code", captcha);
-        // 存入缓存中，5分钟后过期
-        return Result.success(map, "获取验证码成功.");
-    }
 
     @GetMapping("/login")
     @Operation(summary = "登录页面", description = "渲染登录页面")
