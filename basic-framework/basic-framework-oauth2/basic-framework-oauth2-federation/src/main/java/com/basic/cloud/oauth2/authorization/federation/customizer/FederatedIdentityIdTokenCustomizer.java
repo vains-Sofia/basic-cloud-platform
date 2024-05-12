@@ -1,5 +1,6 @@
 package com.basic.cloud.oauth2.authorization.federation.customizer;
 
+import com.basic.cloud.oauth2.authorization.constant.AuthorizeConstants;
 import com.basic.cloud.oauth2.authorization.domain.AuthenticatedUser;
 import com.basic.cloud.oauth2.authorization.domain.OidcAuthenticatedUser;
 import org.springframework.security.core.Authentication;
@@ -105,7 +106,7 @@ public final class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCust
 
         JwtClaimsSet.Builder claims = context.getClaims();
         // 将权限信息放入jwt的claims中（也可以生成一个以指定字符分割的字符串放入）
-//        claims.claim(SecurityConstants.AUTHORITIES_KEY, authoritySet);
+        claims.claim(AuthorizeConstants.AUTHORITIES, authoritySet);
         // 放入其它自定内容
         // 角色、头像...
     }

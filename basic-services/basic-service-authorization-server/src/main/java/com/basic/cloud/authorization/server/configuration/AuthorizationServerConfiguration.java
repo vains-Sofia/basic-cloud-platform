@@ -8,10 +8,12 @@ import com.basic.cloud.oauth2.authorization.server.customizer.AuthorizationServe
 import com.basic.cloud.oauth2.authorization.server.customizer.OidcConfigurerCustomizer;
 import com.basic.cloud.oauth2.authorization.server.util.OAuth2ConfigurerUtils;
 import com.basic.cloud.oauth2.authorization.util.SecurityUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -36,6 +38,8 @@ public class AuthorizationServerConfiguration {
     private final OAuth2ServerProperties oAuth2ServerProperties;
 
     private final AuthorizationServerSettings authorizationServerSettings;
+
+    private final AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver;
 
     /**
      * 认证服务oauth2端点配置
@@ -97,9 +101,9 @@ public class AuthorizationServerConfiguration {
 
         // Accept access tokens for User Info and/or Client Registration
         http.oauth2ResourceServer((resourceServer) -> resourceServer
-                .jwt(Customizer.withDefaults())
                 .accessDeniedHandler(SecurityUtils::exceptionHandler)
                 .authenticationEntryPoint(SecurityUtils::exceptionHandler)
+                .authenticationManagerResolver(authenticationManagerResolver)
         );
         return http.build();
     }

@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.authentication.OpaqueTokenAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
@@ -38,6 +39,11 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
             this.jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
         } else {
             this.jwtAuthenticationProvider = authenticationProvider;
+        }
+
+        JwtAuthenticationConverter authenticationConverter = this.getOptionalBean(applicationContext, JwtAuthenticationConverter.class);
+        if (authenticationConverter != null) {
+            this.jwtAuthenticationProvider.setJwtAuthenticationConverter(authenticationConverter);
         }
     }
 

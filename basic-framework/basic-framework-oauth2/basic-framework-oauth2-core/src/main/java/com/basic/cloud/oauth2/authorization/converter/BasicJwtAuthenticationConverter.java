@@ -1,0 +1,23 @@
+package com.basic.cloud.oauth2.authorization.converter;
+
+import com.basic.cloud.oauth2.authorization.constant.AuthorizeConstants;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+
+/**
+ * jwt token转换器
+ *
+ * @author vains
+ */
+public class BasicJwtAuthenticationConverter extends JwtAuthenticationConverter {
+
+    public BasicJwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        // 设置解析权限信息的前缀，设置为空是去掉前缀
+        grantedAuthoritiesConverter.setAuthorityPrefix(AuthorizeConstants.AUTHORITY_PREFIX);
+        // 设置权限信息在jwt claims中的key
+        grantedAuthoritiesConverter.setAuthoritiesClaimName(AuthorizeConstants.AUTHORITIES);
+
+        super.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+    }
+}

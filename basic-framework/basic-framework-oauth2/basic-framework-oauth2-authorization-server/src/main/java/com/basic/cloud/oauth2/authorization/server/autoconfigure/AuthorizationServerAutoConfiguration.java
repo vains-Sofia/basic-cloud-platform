@@ -1,5 +1,6 @@
 package com.basic.cloud.oauth2.authorization.server.autoconfigure;
 
+import com.basic.cloud.oauth2.authorization.converter.BasicJwtAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
 import com.basic.cloud.oauth2.authorization.manager.DelegatingTokenAuthenticationResolver;
 import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
@@ -40,6 +41,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.util.ObjectUtils;
@@ -306,9 +308,15 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DelegatingTokenAuthenticationResolver bothJwtOpaqueTokenSupportResolver(OpaqueTokenIntrospector opaqueTokenIntrospector,
-                                                                                   ApplicationContext applicationContext) {
+    public DelegatingTokenAuthenticationResolver delegatingTokenAuthenticationResolver(OpaqueTokenIntrospector opaqueTokenIntrospector,
+                                                                                       ApplicationContext applicationContext) {
         return new DelegatingTokenAuthenticationResolver(opaqueTokenIntrospector, applicationContext);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public JwtAuthenticationConverter authenticationConverter() {
+        return new BasicJwtAuthenticationConverter();
     }
 
 }
