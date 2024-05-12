@@ -23,13 +23,13 @@ import java.util.Map;
  *
  * @author vains
  */
-public class BothJwtOpaqueTokenSupportResolver implements AuthenticationManagerResolver<HttpServletRequest> {
+public class DelegatingTokenAuthenticationResolver implements AuthenticationManagerResolver<HttpServletRequest> {
 
     private final OpaqueTokenIntrospector opaqueTokenIntrospector;
 
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
-    public BothJwtOpaqueTokenSupportResolver(OpaqueTokenIntrospector opaqueTokenIntrospector, ApplicationContext applicationContext) {
+    public DelegatingTokenAuthenticationResolver(OpaqueTokenIntrospector opaqueTokenIntrospector, ApplicationContext applicationContext) {
         this.opaqueTokenIntrospector = opaqueTokenIntrospector;
         JwtAuthenticationProvider authenticationProvider = this.getOptionalBean(applicationContext, JwtAuthenticationProvider.class);
         if (ObjectUtils.isEmpty(authenticationProvider)) {

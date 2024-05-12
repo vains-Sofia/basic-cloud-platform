@@ -1,7 +1,7 @@
 package com.basic.cloud.oauth2.authorization.server.autoconfigure;
 
 import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
-import com.basic.cloud.oauth2.authorization.manager.BothJwtOpaqueTokenSupportResolver;
+import com.basic.cloud.oauth2.authorization.manager.DelegatingTokenAuthenticationResolver;
 import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.introspector.BasicOpaqueTokenIntrospector;
@@ -306,9 +306,9 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BothJwtOpaqueTokenSupportResolver bothJwtOpaqueTokenSupportResolver(OpaqueTokenIntrospector opaqueTokenIntrospector,
-                                                                               ApplicationContext applicationContext) {
-        return new BothJwtOpaqueTokenSupportResolver(opaqueTokenIntrospector, applicationContext);
+    public DelegatingTokenAuthenticationResolver bothJwtOpaqueTokenSupportResolver(OpaqueTokenIntrospector opaqueTokenIntrospector,
+                                                                                   ApplicationContext applicationContext) {
+        return new DelegatingTokenAuthenticationResolver(opaqueTokenIntrospector, applicationContext);
     }
 
 }
