@@ -1,12 +1,13 @@
 package com.basic.cloud.authorization.server.config;
 
+import com.basic.cloud.oauth2.authorization.handler.authentication.ConsentAuthenticationFailureHandler;
+import com.basic.cloud.oauth2.authorization.handler.authentication.ConsentAuthorizationResponseHandler;
+import com.basic.cloud.oauth2.authorization.handler.authentication.LoginTargetAuthenticationEntryPoint;
 import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.basic.cloud.oauth2.authorization.server.customizer.AuthorizationServerMetadataCustomizer;
 import com.basic.cloud.oauth2.authorization.server.customizer.OidcConfigurerCustomizer;
-import com.basic.cloud.oauth2.authorization.server.handler.authorization.ConsentAuthenticationFailureHandler;
-import com.basic.cloud.oauth2.authorization.server.handler.authorization.ConsentAuthorizationResponseHandler;
-import com.basic.cloud.oauth2.authorization.server.handler.authorization.LoginTargetAuthenticationEntryPoint;
 import com.basic.cloud.oauth2.authorization.server.util.OAuth2ConfigurerUtils;
+import com.basic.cloud.oauth2.authorization.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,6 +60,13 @@ public class AuthorizationServerConfiguration {
         // 获取认证服务配置
         OAuth2AuthorizationServerConfigurer configurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
 
+        // 设置自定义用户确认授权页
+        configurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
+                .consentPage(serverProperties.getConsentPageUri())
+                .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
+                .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(serverProperties.getConsentPageUri()))
+        );
+
         // 开启oidc并在 /.well-known/openid-configuration 和 /.well-known/oauth-authorization-server 端点中添加自定义grant type
         configurer.oidc(new OidcConfigurerCustomizer());
         configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
@@ -89,7 +97,10 @@ public class AuthorizationServerConfiguration {
 
         // Accept access tokens for User Info and/or Client Registration
         http.oauth2ResourceServer((resourceServer) -> resourceServer
-                .jwt(Customizer.withDefaults()));
+                .jwt(Customizer.withDefaults())
+                .accessDeniedHandler(SecurityUtils::exceptionHandler)
+                .authenticationEntryPoint(SecurityUtils::exceptionHandler)
+        );
         return http.build();
     }
 

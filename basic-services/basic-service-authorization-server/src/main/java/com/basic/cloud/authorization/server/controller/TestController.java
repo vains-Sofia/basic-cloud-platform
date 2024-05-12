@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +31,8 @@ public class TestController {
         return Result.success(phone);
     }
 
+    @PostMapping(value = "/validateForm")
     @Operation(summary = "测试表单验证", description = "测试表单验证")
-    @PostMapping(value = "/validateForm", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public Result<TestValidationDto> validateForm(@Valid TestValidationDto validationDto) {
         return Result.success(validationDto);
     }

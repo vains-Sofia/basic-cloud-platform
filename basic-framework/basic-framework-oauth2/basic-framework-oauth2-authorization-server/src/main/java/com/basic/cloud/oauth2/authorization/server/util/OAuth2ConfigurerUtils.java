@@ -8,8 +8,8 @@ import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptch
 import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationProvider;
-import com.basic.cloud.oauth2.authorization.server.handler.authorization.ConsentAuthenticationFailureHandler;
-import com.basic.cloud.oauth2.authorization.server.handler.authorization.ConsentAuthorizationResponseHandler;
+import com.basic.cloud.oauth2.authorization.handler.authentication.ConsentAuthenticationFailureHandler;
+import com.basic.cloud.oauth2.authorization.handler.authentication.ConsentAuthorizationResponseHandler;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -327,12 +327,6 @@ public class OAuth2ConfigurerUtils {
         OAuth2ServerProperties.ServerProperties serverProperties = oAuth2ServerProperties.getServer();
 
         builder.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                // 设置自定义用户确认授权页
-                .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
-                        .consentPage(serverProperties.getConsentPageUri())
-                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
-                        .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(serverProperties.getConsentPageUri()))
-                )
                 // 设置设备码用户验证url(自定义用户验证页)
                 .deviceAuthorizationEndpoint(deviceAuthorizationEndpoint ->
                         deviceAuthorizationEndpoint.verificationUri(serverProperties.getDeviceVerificationUri()))

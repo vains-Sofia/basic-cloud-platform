@@ -1,4 +1,4 @@
-package com.basic.cloud.oauth2.authorization.server.handler.authorization;
+package com.basic.cloud.oauth2.authorization.handler.authentication;
 
 import com.basic.cloud.core.domain.Result;
 import com.basic.cloud.oauth2.authorization.util.ServletUtils;

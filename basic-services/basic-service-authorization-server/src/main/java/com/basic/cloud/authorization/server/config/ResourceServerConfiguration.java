@@ -2,8 +2,9 @@ package com.basic.cloud.authorization.server.config;
 
 import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
-import com.basic.cloud.oauth2.authorization.server.handler.authorization.LoginFailureHandler;
-import com.basic.cloud.oauth2.authorization.server.handler.authorization.LoginSuccessHandler;
+import com.basic.cloud.oauth2.authorization.handler.authentication.LoginFailureHandler;
+import com.basic.cloud.oauth2.authorization.handler.authentication.LoginSuccessHandler;
+import com.basic.cloud.oauth2.authorization.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -86,6 +87,8 @@ public class ResourceServerConfiguration {
         // 添加BearerTokenAuthenticationFilter，将认证服务当做一个资源服务，解析请求头中的token
         http.oauth2ResourceServer((resourceServer) -> resourceServer
                 .jwt(Customizer.withDefaults())
+                .accessDeniedHandler(SecurityUtils::exceptionHandler)
+                .authenticationEntryPoint(SecurityUtils::exceptionHandler)
         );
 
         // 添加邮件登录过滤器
