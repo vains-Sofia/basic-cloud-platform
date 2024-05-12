@@ -90,7 +90,7 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
     private LocalDateTime credentialsExpiresAt;
 
     @JsonIgnore
-    private Map<String, Object> attributes;
+    private Map<String, Object> attributes = new HashMap<>();
 
     public DefaultAuthenticatedUser(String name, OAuth2AccountPlatformEnum accountPlatform, Collection<? extends GrantedAuthority> authorities) {
         this.name = name;

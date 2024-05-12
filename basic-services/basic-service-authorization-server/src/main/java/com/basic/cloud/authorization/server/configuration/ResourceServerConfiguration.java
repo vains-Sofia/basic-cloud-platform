@@ -1,13 +1,16 @@
-package com.basic.cloud.authorization.server.config;
+package com.basic.cloud.authorization.server.configuration;
 
+import com.basic.cloud.oauth2.authorization.manager.RequestContextAuthorizationManager;
 import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
 import com.basic.cloud.oauth2.authorization.handler.authentication.LoginFailureHandler;
 import com.basic.cloud.oauth2.authorization.handler.authentication.LoginSuccessHandler;
 import com.basic.cloud.oauth2.authorization.util.SecurityUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -43,6 +46,8 @@ public class ResourceServerConfiguration {
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
 
+    private final AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver;
+
     /**
      * 认证与鉴权相关的过滤器链配置
      *
@@ -64,7 +69,7 @@ public class ResourceServerConfiguration {
 
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(ignoreUriPaths.toArray(new String[]{})).permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().access(new RequestContextAuthorizationManager())
         );
 
         // 自定义认证服务配置文件
@@ -86,9 +91,9 @@ public class ResourceServerConfiguration {
 
         // 添加BearerTokenAuthenticationFilter，将认证服务当做一个资源服务，解析请求头中的token
         http.oauth2ResourceServer((resourceServer) -> resourceServer
-                .jwt(Customizer.withDefaults())
                 .accessDeniedHandler(SecurityUtils::exceptionHandler)
                 .authenticationEntryPoint(SecurityUtils::exceptionHandler)
+                .authenticationManagerResolver(authenticationManagerResolver)
         );
 
         // 添加邮件登录过滤器

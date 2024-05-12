@@ -1,4 +1,4 @@
-package com.basic.cloud.authorization.server.config;
+package com.basic.cloud.authorization.server.configuration;
 
 import com.basic.cloud.oauth2.authorization.handler.authentication.ConsentAuthenticationFailureHandler;
 import com.basic.cloud.oauth2.authorization.handler.authentication.ConsentAuthorizationResponseHandler;
