@@ -109,7 +109,7 @@ public class JsonUtils {
     }
 
     /**
-     * json字符串转为复杂类型List
+     * json字符串转为复杂类型List/Map
      *
      * @param json            json
      * @param collectionClazz 集合的class

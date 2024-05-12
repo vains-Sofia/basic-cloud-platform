@@ -1,4 +1,4 @@
-package com.basic.cloud.spring.doc.config;
+package com.basic.cloud.spring.doc.configuration;
 
 import com.basic.cloud.core.enums.BasicEnum;
 import lombok.RequiredArgsConstructor;

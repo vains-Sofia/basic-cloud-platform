@@ -1,6 +1,6 @@
 package com.basic.cloud.spring.doc.autoconfigure;
 
-import com.basic.cloud.spring.doc.config.WebmvcConfiguration;
+import com.basic.cloud.spring.doc.configuration.WebmvcConfiguration;
 import com.basic.cloud.spring.doc.customizer.ApiEnumParameterCustomizer;
 import com.basic.cloud.spring.doc.customizer.ApiEnumPropertyCustomizer;
 import com.basic.cloud.spring.doc.factory.EnumConverterFactory;
