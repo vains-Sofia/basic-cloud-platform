@@ -1,12 +1,14 @@
-package com.basic.cloud.resource.server.configuration;
+package com.basic.cloud.resource.server.autoconfigure;
 
 import com.basic.cloud.oauth2.authorization.converter.BasicJwtAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.manager.DelegatingTokenAuthenticationResolver;
 import com.basic.cloud.oauth2.authorization.manager.RequestContextAuthorizationManager;
 import com.basic.cloud.oauth2.authorization.util.SecurityUtils;
+import com.basic.cloud.resource.server.property.ResourceServerProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
@@ -24,13 +26,19 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableConfigurationProperties({ResourceServerProperties.class})
 @EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class ResourceServerConfiguration {
 
+    private final ResourceServerProperties resourceServerProperties;
+
     @Bean
+    @ConditionalOnMissingBean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
                                                           AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
+                // 忽略指定url的认证、鉴权
+                .requestMatchers(resourceServerProperties.getIgnoreUriPaths().toArray(new String[0])).permitAll()
                 .anyRequest().access(new RequestContextAuthorizationManager())
         );
         http.oauth2ResourceServer(oauth2 -> oauth2
