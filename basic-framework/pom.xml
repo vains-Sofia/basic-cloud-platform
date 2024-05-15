@@ -18,6 +18,7 @@
         <module>basic-framework-spring-doc</module>
         <module>basic-framework-oauth2</module>
         <module>basic-framework-data-validation</module>
+        <module>basic-framework-mybatis-plus</module>
     </modules>
 
 </project>

@@ -29,7 +29,8 @@ public class GithubUserConverter implements OAuth2UserConverter {
         // 提取location
         Object location = oAuth2User.getAttributes().get("location");
         authenticatedUser.setLocation(String.valueOf(location));
-        authenticatedUser.setId(String.valueOf(attributes.get("id")));
+        // TODO 将id存入unionId字段中
+        authenticatedUser.setId(Long.parseLong(String.valueOf(attributes.get("id"))));
         authenticatedUser.setBlog(String.valueOf(attributes.get("blog")));
         authenticatedUser.setAvatarUrl(String.valueOf(attributes.get("avatar_url")));
         authenticatedUser.setAttributes(attributes);

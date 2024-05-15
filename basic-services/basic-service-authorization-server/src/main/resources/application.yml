@@ -22,7 +22,6 @@ basic:
               description: 用户信息
     oauth2:
       server:
-        login-page-uri: http://127.0.0.1:5173/login
         allowed-origins:
           - http://127.0.0.1:5173
         ignore-uri-paths:

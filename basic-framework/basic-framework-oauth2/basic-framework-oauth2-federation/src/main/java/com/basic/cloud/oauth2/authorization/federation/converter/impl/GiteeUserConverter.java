@@ -28,7 +28,9 @@ public class GiteeUserConverter implements OAuth2UserConverter {
 
         // 转换至 统一用户信息类中
         authenticatedUser.setThirdUsername(oAuth2User.getName());
-        authenticatedUser.setId(String.valueOf(attributes.get("id")));
+        // TODO 将id存入unionId字段中
+        authenticatedUser.setNickname(oAuth2User.getName());
+        authenticatedUser.setId(Long.parseLong(String.valueOf(attributes.get("id"))));
         authenticatedUser.setBlog(attributes.get("blog") + "");
         authenticatedUser.setAvatarUrl(String.valueOf(attributes.get("avatar_url")));
         authenticatedUser.setAttributes(attributes);

@@ -2,6 +2,8 @@ package com.basic.cloud.oauth2.authorization.server.autoconfigure;
 
 import com.basic.cloud.oauth2.authorization.converter.BasicJwtAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
+import com.basic.cloud.oauth2.authorization.domain.DefaultAuthenticatedUser;
+import com.basic.cloud.oauth2.authorization.enums.OAuth2AccountPlatformEnum;
 import com.basic.cloud.oauth2.authorization.manager.DelegatingTokenAuthenticationResolver;
 import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
@@ -23,8 +25,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,6 +54,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -135,12 +137,14 @@ public class AuthorizationServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withUsername("user")
-                .password("{noop}password")
-                .roles("USER")
-                .build();
 
-        return new InMemoryUserDetailsManager(userDetails);
+        DefaultAuthenticatedUser user = new DefaultAuthenticatedUser("admin",
+                OAuth2AccountPlatformEnum.SYSTEM,
+                List.of(new SimpleGrantedAuthority("USER")));
+        user.setId(123L);
+        user.setPassword("{noop}123456");
+
+        return new InMemoryUserDetailsManager(user);
     }
 
     /**

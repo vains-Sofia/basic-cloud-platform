@@ -20,9 +20,14 @@ import java.util.*;
 public class DefaultAuthenticatedUser implements AuthenticatedUser {
 
     /**
-     * 用户名
+     * 账号
      */
     private final String name;
+
+    /**
+     * 密码
+     */
+    private String password;
 
     /**
      * 授权申请到的权限(scope)
@@ -37,7 +42,7 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
     /**
      * 用户id
      */
-    private String id;
+    private Long id;
 
     /**
      * 用户账号
@@ -45,9 +50,9 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
     private String sub;
 
     /**
-     * 账号
+     * 昵称
      */
-    private String account;
+    private String nickname;
 
     /**
      * 手机号
@@ -105,5 +110,10 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
                 Comparator.comparing(GrantedAuthority::getAuthority));
         sortedAuthorities.addAll(authorities);
         return sortedAuthorities;
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.password = null;
     }
 }

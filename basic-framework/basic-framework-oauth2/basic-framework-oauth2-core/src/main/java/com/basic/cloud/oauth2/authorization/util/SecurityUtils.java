@@ -1,12 +1,14 @@
 package com.basic.cloud.oauth2.authorization.util;
 
+import com.basic.cloud.oauth2.authorization.domain.AuthenticatedUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
@@ -22,8 +24,33 @@ import java.util.Map;
  *
  * @author vains
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class SecurityUtils {
+
+    /**
+     * 获取用户信息
+     *
+     * @return 用户信息
+     */
+    public static AuthenticatedUser getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AuthenticatedUser authenticatedUser) {
+            return authenticatedUser;
+        }
+        return null;
+    }
+
+    /**
+     * 获取用户id
+     *
+     * @return 用户id
+     */
+    public static Long getUserId() {
+        if (getAuthenticatedUser() != null) {
+            return getAuthenticatedUser().getId();
+        }
+        return null;
+    }
 
     /**
      * 认证与鉴权失败回调

@@ -126,6 +126,13 @@
                 <artifactId>basic-framework-oauth2-resource-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!-- 通用资源服务模块 -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-mybatis-plus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

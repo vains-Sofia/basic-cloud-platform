@@ -24,8 +24,9 @@ public class WechatUserConverter implements OAuth2UserConverter {
         DefaultAuthenticatedUser authenticatedUser = new DefaultAuthenticatedUser(
                 oAuth2User.getName(), OAuth2AccountPlatformEnum.WECHAT, oAuth2User.getAuthorities());
 
+        // TODO 将openid存入unionId字段中，attributes.get("openid")
         // 转换至 统一用户信息类中
-        authenticatedUser.setId(String.valueOf(attributes.get("openid")));
+        authenticatedUser.setId(0L);
         authenticatedUser.setThirdUsername(oAuth2User.getName());
         authenticatedUser.setLocation(attributes.get("province") + " " + attributes.get("city"));
         authenticatedUser.setAvatarUrl(String.valueOf(attributes.get("headimgurl")));

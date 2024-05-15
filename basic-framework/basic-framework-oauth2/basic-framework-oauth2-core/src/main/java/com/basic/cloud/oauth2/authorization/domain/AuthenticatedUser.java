@@ -1,6 +1,7 @@
 package com.basic.cloud.oauth2.authorization.domain;
 
 import com.basic.cloud.oauth2.authorization.enums.OAuth2AccountPlatformEnum;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -9,7 +10,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
  *
  * @author vains 2023/12/29
  */
-public interface AuthenticatedUser extends OAuth2User, UserDetails {
+public interface AuthenticatedUser extends OAuth2User, UserDetails, CredentialsContainer {
 
     @Override
     default boolean isAccountNonExpired() {
@@ -41,6 +42,13 @@ public interface AuthenticatedUser extends OAuth2User, UserDetails {
     default String getPassword() {
         return null;
     }
+
+    /**
+     * 获取用户id
+     *
+     * @return 用户id
+     */
+    Long getId();
 
     /**
      * 当三方登录时可通过该方法获取三方登录提供商类型
