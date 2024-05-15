@@ -43,7 +43,6 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.cors.CorsConfiguration;
@@ -312,9 +311,8 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DelegatingTokenAuthenticationResolver delegatingTokenAuthenticationResolver(OpaqueTokenIntrospector opaqueTokenIntrospector,
-                                                                                       ApplicationContext applicationContext) {
-        return new DelegatingTokenAuthenticationResolver(opaqueTokenIntrospector, applicationContext);
+    public DelegatingTokenAuthenticationResolver delegatingTokenAuthenticationResolver(ApplicationContext applicationContext) {
+        return new DelegatingTokenAuthenticationResolver(applicationContext);
     }
 
     @Bean

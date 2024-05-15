@@ -30,8 +30,8 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
 
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
-    public DelegatingTokenAuthenticationResolver(OpaqueTokenIntrospector opaqueTokenIntrospector, ApplicationContext applicationContext) {
-        this.opaqueTokenIntrospector = opaqueTokenIntrospector;
+    public DelegatingTokenAuthenticationResolver(ApplicationContext applicationContext) {
+        this.opaqueTokenIntrospector = this.getOptionalBean(applicationContext, OpaqueTokenIntrospector.class);
         JwtAuthenticationProvider authenticationProvider = this.getOptionalBean(applicationContext, JwtAuthenticationProvider.class);
         if (ObjectUtils.isEmpty(authenticationProvider)) {
             JwtDecoder jwtDecoder = this.getOptionalBean(applicationContext, JwtDecoder.class);
@@ -50,6 +50,9 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
     @Override
     public AuthenticationManager resolve(HttpServletRequest context) {
         AuthenticationManager jwt = new ProviderManager(jwtAuthenticationProvider);
+        if (this.opaqueTokenIntrospector == null) {
+            return jwt;
+        }
         AuthenticationManager opaqueToken = new ProviderManager(
                 new OpaqueTokenAuthenticationProvider(opaqueTokenIntrospector));
         return useJwt(context) ? jwt : opaqueToken;

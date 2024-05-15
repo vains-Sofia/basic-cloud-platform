@@ -8,7 +8,7 @@
     </parent>
     <artifactId>basic-example-doc</artifactId>
     <name>basic-example-doc</name>
-    <url>basic-cloud-platform example for doc</url>
+    <description>basic-cloud-platform example for doc</description>
 
     <dependencies>
         <!-- 引入框架在线文档包 -->
