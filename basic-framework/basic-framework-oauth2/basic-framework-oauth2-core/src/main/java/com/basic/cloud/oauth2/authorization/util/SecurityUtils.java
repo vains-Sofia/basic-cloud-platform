@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.server.resource.BearerTokenErrorCodes
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
 import org.springframework.util.StringUtils;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class SecurityUtils {
      *
      * @return 用户id
      */
-    public static Long getUserId() {
+    public static Serializable getUserId() {
         if (getAuthenticatedUser() != null) {
             return getAuthenticatedUser().getId();
         }

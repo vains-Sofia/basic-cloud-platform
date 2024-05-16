@@ -52,6 +52,11 @@
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-spring-doc</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-data-validation</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

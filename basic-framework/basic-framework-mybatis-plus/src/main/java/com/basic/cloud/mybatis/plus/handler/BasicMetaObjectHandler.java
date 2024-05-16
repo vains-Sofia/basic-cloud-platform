@@ -6,6 +6,7 @@ import com.basic.cloud.mybatis.plus.util.LambdaMethodUtils;
 import com.basic.cloud.oauth2.authorization.util.SecurityUtils;
 import org.apache.ibatis.reflection.MetaObject;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -18,9 +19,9 @@ public class BasicMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         this.strictInsertFill(metaObject, LambdaMethodUtils.extractMethodToProperty(BasicEntity::getCreateBy),
-                Long.class, SecurityUtils.getUserId());
+                Serializable.class, SecurityUtils.getUserId());
         this.strictInsertFill(metaObject, LambdaMethodUtils.extractMethodToProperty(BasicEntity::getUpdateBy),
-                Long.class, SecurityUtils.getUserId());
+                Serializable.class, SecurityUtils.getUserId());
         this.strictInsertFill(metaObject, LambdaMethodUtils.extractMethodToProperty(BasicEntity::getCreateTime),
                 LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, LambdaMethodUtils.extractMethodToProperty(BasicEntity::getUpdateTime),
@@ -30,7 +31,7 @@ public class BasicMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         this.strictInsertFill(metaObject, LambdaMethodUtils.extractMethodToProperty(BasicEntity::getUpdateBy),
-                Long.class, SecurityUtils.getUserId());
+                Serializable.class, SecurityUtils.getUserId());
         this.strictInsertFill(metaObject, LambdaMethodUtils.extractMethodToProperty(BasicEntity::getUpdateTime),
                 LocalDateTime.class, LocalDateTime.now());
     }

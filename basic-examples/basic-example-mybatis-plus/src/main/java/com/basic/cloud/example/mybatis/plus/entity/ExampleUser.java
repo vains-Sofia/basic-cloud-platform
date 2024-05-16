@@ -3,9 +3,9 @@ package com.basic.cloud.example.mybatis.plus.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.basic.cloud.example.mybatis.plus.enums.GenderEnum;
 import com.basic.cloud.mybatis.plus.domain.BasicEntity;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,6 +31,7 @@ public class ExampleUser extends BasicEntity {
     /**
      * 姓名
      */
+    @NotNull
     @TableField("name")
     private String name;
 
@@ -38,7 +39,7 @@ public class ExampleUser extends BasicEntity {
      * 性别
      */
     @TableField("gender")
-    private Integer gender;
+    private GenderEnum gender;
 
     /**
      * 是否开启

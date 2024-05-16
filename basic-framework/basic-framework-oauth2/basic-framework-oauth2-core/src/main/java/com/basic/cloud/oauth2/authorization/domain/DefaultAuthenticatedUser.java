@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -41,8 +42,9 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
 
     /**
      * 用户id
+     * TODO 用户id类型待优化
      */
-    private Long id;
+    private Serializable id;
 
     /**
      * 用户账号

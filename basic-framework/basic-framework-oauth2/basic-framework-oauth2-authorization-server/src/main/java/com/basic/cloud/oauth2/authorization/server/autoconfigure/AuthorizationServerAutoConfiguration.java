@@ -43,7 +43,6 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -137,13 +136,14 @@ public class AuthorizationServerAutoConfiguration {
     @ConditionalOnMissingBean
     public UserDetailsService userDetailsService() {
 
-        DefaultAuthenticatedUser user = new DefaultAuthenticatedUser("admin",
-                OAuth2AccountPlatformEnum.SYSTEM,
-                List.of(new SimpleGrantedAuthority("USER")));
-        user.setId(123L);
-        user.setPassword("{noop}123456");
-
-        return new InMemoryUserDetailsManager(user);
+        return username -> {
+            DefaultAuthenticatedUser user = new DefaultAuthenticatedUser("admin",
+                    OAuth2AccountPlatformEnum.SYSTEM,
+                    List.of(new SimpleGrantedAuthority("USER")));
+            user.setId(123L);
+            user.setPassword("{noop}123456");
+            return user;
+        };
     }
 
     /**

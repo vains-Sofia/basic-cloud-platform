@@ -18,12 +18,12 @@ public class BasicEntity implements Serializable {
     /**
      * 创建人
      */
-    private Long createBy;
+    private Serializable createBy;
 
     /**
      * 修改人
      */
-    private Long updateBy;
+    private Serializable updateBy;
 
     /**
      * 创建时间

@@ -1,6 +1,5 @@
 package com.basic.cloud.resource.server.property;
 
-import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -10,7 +9,7 @@ import java.util.Set;
 /**
  * 资源服务配置
  *
- * @author Yu jinxiang
+ * @author vains
  */
 @Data
 @ConfigurationProperties(prefix = ResourceServerProperties.PREFIX)

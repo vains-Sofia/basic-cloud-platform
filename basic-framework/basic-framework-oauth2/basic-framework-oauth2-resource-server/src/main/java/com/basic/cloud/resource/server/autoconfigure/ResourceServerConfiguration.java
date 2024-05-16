@@ -12,14 +12,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -52,6 +52,11 @@ public class ResourceServerConfiguration {
     @ConditionalOnMissingBean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
                                                           AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver) throws Exception {
+
+        // 禁用 csrf 与 cors
+        http.cors(Customizer.withDefaults());
+        http.csrf(AbstractHttpConfigurer::disable);
+
         http.authorizeHttpRequests(authorize -> authorize
                 // 忽略指定url的认证、鉴权
                 .requestMatchers(DEFAULT_IGNORE_PATHS.toArray(new String[0])).permitAll()

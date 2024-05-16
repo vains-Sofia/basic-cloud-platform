@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * 启动类
  *
- * @author Yu jinxiang
+ * @author vains
  */
 @SpringBootApplication
 @MapperScan("com.basic.cloud.example.mybatis.plus.mapper")
