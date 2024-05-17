@@ -15,6 +15,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -64,6 +65,7 @@ import java.util.UUID;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableConfigurationProperties({OAuth2ServerProperties.class})
+@MapperScan("com.basic.cloud.oauth2.authorization.server.mapper")
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class AuthorizationServerAutoConfiguration {
 

@@ -22,7 +22,7 @@ public class GeneratorTests {
         FastAutoGenerator.create("jdbc:mysql://192.168.187.128:3306/basic-examples?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8&tinyInt1isBit=true&remarks=true&useInformationSchema=true", "root", "root")
                 .globalConfig(builder -> {
                     builder.author("vains") // 设置作者
-                            .outputDir("D://"); // 指定输出目录
+                            .outputDir("D://generator//"); // 指定输出目录
                 })
                 .dataSourceConfig(builder -> builder.typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
                     int typeCode = metaInfo.getJdbcType().TYPE_CODE;
@@ -34,12 +34,12 @@ public class GeneratorTests {
 
                 }))
                 .packageConfig(builder -> {
-                    builder.parent("com.basic.cloud.example.mybatis") // 设置父包名
-                            .moduleName("plus") // 设置父包模块名
-                            .pathInfo(Collections.singletonMap(OutputFile.xml, "D://")); // 设置mapperXml生成路径
+                    builder.parent("com.basic.cloud.oauth2.authorization") // 设置父包名
+                            .moduleName("server") // 设置父包模块名
+                            .pathInfo(Collections.singletonMap(OutputFile.xml, "D://generator//")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("example_user") // 设置需要生成的表名
+                    builder.addInclude("authorization,authorization_consent,client") // 设置需要生成的表名
                             .addTablePrefix("t_", "c_") // 设置过滤表前缀
                             .entityBuilder()
                             .superClass(BasicEntity.class)

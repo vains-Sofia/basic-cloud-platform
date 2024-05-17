@@ -1,4 +1,4 @@
-package com.basic.cloud.authorization.server.domain.dto;
+package com.basic.cloud.authorization.server.domain.request;
 
 import com.basic.cloud.data.validation.annotation.Phone;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Data
 @Schema(name = "测试入参校验类", description = "测试入参校验类")
-public class TestValidationDto {
+public class TestValidationRequest {
 
     @Phone
     @NotBlank

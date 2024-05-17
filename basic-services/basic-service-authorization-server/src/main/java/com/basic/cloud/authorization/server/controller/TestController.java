@@ -1,6 +1,6 @@
 package com.basic.cloud.authorization.server.controller;
 
-import com.basic.cloud.authorization.server.domain.dto.TestValidationDto;
+import com.basic.cloud.authorization.server.domain.request.TestValidationRequest;
 import com.basic.cloud.core.domain.Result;
 import com.basic.cloud.data.validation.annotation.Phone;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,12 +33,12 @@ public class TestController {
 
     @PostMapping(value = "/validateForm")
     @Operation(summary = "测试表单验证", description = "测试表单验证")
-    public Result<TestValidationDto> validateForm(@Valid TestValidationDto validationDto) {
+    public Result<TestValidationRequest> validateForm(@Valid TestValidationRequest validationDto) {
         return Result.success(validationDto);
     }
 
     @PostMapping("/validateJson")
-    public Result<TestValidationDto> validateJson(@Valid @RequestBody TestValidationDto validationDto) {
+    public Result<TestValidationRequest> validateJson(@Valid @RequestBody TestValidationRequest validationDto) {
         return Result.success(validationDto);
     }
 
