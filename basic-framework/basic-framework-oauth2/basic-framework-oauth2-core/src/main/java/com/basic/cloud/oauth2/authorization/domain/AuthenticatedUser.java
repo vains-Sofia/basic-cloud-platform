@@ -5,8 +5,6 @@ import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.io.Serializable;
-
 /**
  * 统一用户信息
  *
@@ -51,7 +49,7 @@ public interface AuthenticatedUser extends OAuth2User, UserDetails, CredentialsC
      *
      * @return 用户id
      */
-    Serializable getId();
+    Long getId();
 
     /**
      * 当三方登录时可通过该方法获取三方登录提供商类型

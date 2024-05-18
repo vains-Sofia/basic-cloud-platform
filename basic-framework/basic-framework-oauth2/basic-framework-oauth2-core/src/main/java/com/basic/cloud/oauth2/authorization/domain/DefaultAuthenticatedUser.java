@@ -3,11 +3,11 @@ package com.basic.cloud.oauth2.authorization.domain;
 import com.basic.cloud.oauth2.authorization.enums.OAuth2AccountPlatformEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -18,12 +18,13 @@ import java.util.*;
  */
 @Data
 @Slf4j
+@NoArgsConstructor
 public class DefaultAuthenticatedUser implements AuthenticatedUser {
 
     /**
      * 账号
      */
-    private final String name;
+    private String name;
 
     /**
      * 密码
@@ -33,7 +34,7 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
     /**
      * 授权申请到的权限(scope)
      */
-    private final Set<GrantedAuthority> authorities;
+    private Set<GrantedAuthority> authorities;
 
     /**
      * OAuth2 登录三方提供商类型
@@ -42,9 +43,8 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
 
     /**
      * 用户id
-     * TODO 用户id类型待优化
      */
-    private Serializable id;
+    private Long id;
 
     /**
      * 用户账号

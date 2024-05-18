@@ -54,7 +54,7 @@ Invalid username or password.
         </div>
         <div class="code-container" id="codeContainer">
             <input type="text" id="code" name="code" class="form-control" placeholder="请输入验证码" onblur="leave()"/>
-            <img src="" id="code-image" onclick="getVerifyCode()"/>
+            <img src="data:image/png;base64,123" id="code-image" onclick="getVerifyCode()"/>
         </div>
         <div style="display: none; margin-bottom: 0" class="code-container" id="smsContainer">
             <input type="text" name="" class="form-control" placeholder="请输入验证码" onblur="leave()"/>
@@ -169,7 +169,7 @@ Invalid username or password.
                 if (r) {
                     let result = JSON.parse(r);
                     document.getElementById('captchaId').value = result.data.captchaId
-                    document.getElementById('code-image').src = result.data.imageData
+                    // document.getElementById('code-image').src = result.data.imageData
                 }
             })
             .catch(error => console.log('error', error));

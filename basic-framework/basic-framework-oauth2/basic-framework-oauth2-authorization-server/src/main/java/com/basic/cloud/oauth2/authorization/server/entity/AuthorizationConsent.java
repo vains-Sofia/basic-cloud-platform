@@ -19,7 +19,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@TableName("authorization_consent")
+@TableName(value = "authorization_consent", autoResultMap = true)
 public class AuthorizationConsent extends BasicEntity {
 
     /**

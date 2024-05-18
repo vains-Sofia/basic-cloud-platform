@@ -1,17 +1,21 @@
 package com.basic.cloud.core.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 
 /**
@@ -23,12 +27,8 @@ import java.text.SimpleDateFormat;
  * @since 2020-11-10
  */
 @Slf4j
+@UtilityClass
 public class JsonUtils {
-
-    private JsonUtils() {
-        // 禁止实例化工具类
-        throw new UnsupportedOperationException("Utility classes cannot be instantiated.");
-    }
 
     private final static ObjectMapper MAPPER = new ObjectMapper();
 
@@ -89,6 +89,25 @@ public class JsonUtils {
     }
 
     /**
+     * json字符串转为对象
+     *
+     * @param json json
+     * @param type 对象的类型
+     * @param <T>  泛型, 代表返回参数的类型
+     * @return 返回T的实例
+     */
+    public static <T> T toObject(String json, Type type) {
+        TypeFactory typeFactory = MAPPER.getTypeFactory();
+        JavaType javaType = typeFactory.constructType(type);
+        try {
+            return MAPPER.readValue(json, javaType);
+        } catch (JacksonException e) {
+            log.warn("deserialize json: {} to {} error {}", json, javaType, e.getMessage());
+        }
+        return null;
+    }
+
+    /**
      * 将流中的数据转为java对象
      *
      * @param inputStream 输入流
@@ -141,7 +160,7 @@ public class JsonUtils {
             return null;
         }
         try {
-            return o instanceof String ? (String) o : MAPPER.writeValueAsString(o);
+            return o instanceof String s ? s : MAPPER.writeValueAsString(o);
         } catch (IOException e) {
             log.error("json转换失败,原因:", e);
         }
@@ -162,6 +181,15 @@ public class JsonUtils {
     public static <T> T objectToObject(Object o, Class<?> collectionClazz, Class<?>... elementsClazz) {
         String json = toJson(o);
         return toObject(json, collectionClazz, elementsClazz);
+    }
+
+    /**
+     * 获取工具类使用的mapper
+     *
+     * @return ObjectMapper实例
+     */
+    public static ObjectMapper getMapper() {
+        return MAPPER;
     }
 
 }

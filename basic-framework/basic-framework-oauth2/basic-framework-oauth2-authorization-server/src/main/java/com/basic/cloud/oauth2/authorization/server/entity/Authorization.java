@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.basic.cloud.mybatis.plus.domain.BasicEntity;
+import com.basic.cloud.oauth2.authorization.server.handler.OAuth2MapTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -22,11 +23,11 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@TableName("authorization")
+@TableName(value = "authorization", autoResultMap = true)
 public class Authorization extends BasicEntity {
 
     @TableId("id")
-    private Long id;
+    private String id;
 
     @TableField("registered_client_id")
     private String registeredClientId;
@@ -40,7 +41,7 @@ public class Authorization extends BasicEntity {
     @TableField("authorized_scopes")
     private Set<String> authorizedScopes;
 
-    @TableField("attributes")
+    @TableField(value = "attributes", typeHandler = OAuth2MapTypeHandler.class)
     private Map<String, Object> attributes;
 
     @TableField("state")
@@ -56,7 +57,7 @@ public class Authorization extends BasicEntity {
     private LocalDateTime authorizationCodeExpiresAt;
 
     @TableField("authorization_code_metadata")
-    private String authorizationCodeMetadata;
+    private Map<String, Object> authorizationCodeMetadata;
 
     @TableField("access_token_value")
     private String accessTokenValue;
@@ -68,7 +69,7 @@ public class Authorization extends BasicEntity {
     private LocalDateTime accessTokenExpiresAt;
 
     @TableField("access_token_metadata")
-    private String accessTokenMetadata;
+    private Map<String, Object> accessTokenMetadata;
 
     @TableField("access_token_type")
     private String accessTokenType;
@@ -86,7 +87,7 @@ public class Authorization extends BasicEntity {
     private LocalDateTime refreshTokenExpiresAt;
 
     @TableField("refresh_token_metadata")
-    private String refreshTokenMetadata;
+    private Map<String, Object> refreshTokenMetadata;
 
     @TableField("oidc_id_token_value")
     private String oidcIdTokenValue;
@@ -98,10 +99,10 @@ public class Authorization extends BasicEntity {
     private LocalDateTime oidcIdTokenExpiresAt;
 
     @TableField("oidc_id_token_metadata")
-    private String oidcIdTokenMetadata;
+    private Map<String, Object> oidcIdTokenMetadata;
 
-    @TableField("oidc_id_token_claims")
-    private String oidcIdTokenClaims;
+    @TableField(value = "oidc_id_token_claims", typeHandler = OAuth2MapTypeHandler.class)
+    private Map<String, Object> oidcIdTokenClaims;
 
     @TableField("user_code_value")
     private String userCodeValue;
@@ -113,7 +114,7 @@ public class Authorization extends BasicEntity {
     private LocalDateTime userCodeExpiresAt;
 
     @TableField("user_code_metadata")
-    private String userCodeMetadata;
+    private Map<String, Object> userCodeMetadata;
 
     @TableField("device_code_value")
     private String deviceCodeValue;
@@ -125,5 +126,5 @@ public class Authorization extends BasicEntity {
     private LocalDateTime deviceCodeExpiresAt;
 
     @TableField("device_code_metadata")
-    private String deviceCodeMetadata;
+    private Map<String, Object> deviceCodeMetadata;
 }

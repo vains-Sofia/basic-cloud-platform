@@ -1,5 +1,7 @@
 package com.basic.cloud.mybatis.plus.domain;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,21 +20,25 @@ public class BasicEntity implements Serializable {
     /**
      * 创建人
      */
-    private Serializable createBy;
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
 
     /**
      * 修改人
      */
-    private Serializable updateBy;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Long updateBy;
 
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /**
      * 修改时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
 }
