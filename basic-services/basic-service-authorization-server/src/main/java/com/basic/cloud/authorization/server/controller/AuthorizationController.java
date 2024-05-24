@@ -1,5 +1,6 @@
 package com.basic.cloud.authorization.server.controller;
 
+import com.basic.cloud.core.exception.CloudServiceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -81,7 +82,7 @@ public class AuthorizationController {
         Set<String> previouslyApprovedScopes = new HashSet<>();
         RegisteredClient registeredClient = this.registeredClientRepository.findByClientId(clientId);
         if (registeredClient == null) {
-            throw new RuntimeException("客户端不存在");
+            throw new CloudServiceException("客户端不存在");
         }
 
         OAuth2AuthorizationConsent currentAuthorizationConsent =
