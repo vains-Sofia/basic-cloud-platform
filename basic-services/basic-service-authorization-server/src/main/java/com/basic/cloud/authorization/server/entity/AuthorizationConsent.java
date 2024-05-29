@@ -1,4 +1,4 @@
-package com.basic.cloud.oauth2.authorization.server.entity;
+package com.basic.cloud.authorization.server.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;

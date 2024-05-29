@@ -1,17 +1,18 @@
-package com.basic.cloud.oauth2.authorization.server.storage;
+package com.basic.cloud.authorization.server.storage;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.basic.cloud.oauth2.authorization.server.converter.Authorization2OAuth2AuthorizationConverter;
-import com.basic.cloud.oauth2.authorization.server.converter.OAuth2Authorization2AuthorizationConverter;
-import com.basic.cloud.oauth2.authorization.server.entity.Authorization;
-import com.basic.cloud.oauth2.authorization.server.mapper.AuthorizationMapper;
+import com.basic.cloud.authorization.server.converter.Authorization2OAuth2AuthorizationConverter;
+import com.basic.cloud.authorization.server.converter.OAuth2Authorization2AuthorizationConverter;
+import com.basic.cloud.authorization.server.entity.Authorization;
+import com.basic.cloud.authorization.server.mapper.AuthorizationMapper;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
@@ -19,6 +20,7 @@ import org.springframework.util.Assert;
  *
  * @author vains
  */
+@Component
 public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationService {
 
     private final AuthorizationMapper authorizationMapper;

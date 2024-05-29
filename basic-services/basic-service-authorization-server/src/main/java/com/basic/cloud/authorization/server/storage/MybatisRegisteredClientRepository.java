@@ -1,13 +1,14 @@
-package com.basic.cloud.oauth2.authorization.server.storage;
+package com.basic.cloud.authorization.server.storage;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.basic.cloud.oauth2.authorization.server.converter.Client2RegisteredClientConverter;
-import com.basic.cloud.oauth2.authorization.server.converter.RegisteredClient2ClientConverter;
-import com.basic.cloud.oauth2.authorization.server.entity.Client;
-import com.basic.cloud.oauth2.authorization.server.mapper.ClientMapper;
+import com.basic.cloud.authorization.server.converter.Client2RegisteredClientConverter;
+import com.basic.cloud.authorization.server.converter.RegisteredClient2ClientConverter;
+import com.basic.cloud.authorization.server.entity.Client;
+import com.basic.cloud.authorization.server.mapper.ClientMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.util.Assert;
  *
  * @author vains
  */
+@Component
 @RequiredArgsConstructor
 public class MybatisRegisteredClientRepository implements RegisteredClientRepository {
 

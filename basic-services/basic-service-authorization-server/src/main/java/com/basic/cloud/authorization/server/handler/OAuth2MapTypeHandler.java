@@ -1,4 +1,4 @@
-package com.basic.cloud.oauth2.authorization.server.handler;
+package com.basic.cloud.authorization.server.handler;
 
 import com.baomidou.mybatisplus.extension.handlers.AbstractJsonTypeHandler;
 import com.basic.cloud.oauth2.authorization.server.util.OAuth2JsonUtils;

@@ -106,8 +106,8 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/basic-cloud-platform?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://192.168.187.128:3306/basic-cloud-platform?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
     username: root
     password: root
 mybatis-plus:
-  type-handlers-package: com.basic.cloud.mybatis.plus.handler.type,com.basic.cloud.oauth2.authorization.server.handler.scan
+  type-handlers-package: com.basic.cloud.mybatis.plus.handler.type,com.basic.cloud.authorization.server.handler.scan

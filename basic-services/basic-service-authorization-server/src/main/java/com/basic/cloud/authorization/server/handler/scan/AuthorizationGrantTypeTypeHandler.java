@@ -1,4 +1,4 @@
-package com.basic.cloud.oauth2.authorization.server.handler.scan;
+package com.basic.cloud.authorization.server.handler.scan;
 
 import com.baomidou.mybatisplus.extension.handlers.AbstractJsonTypeHandler;
 import org.apache.ibatis.type.JdbcType;

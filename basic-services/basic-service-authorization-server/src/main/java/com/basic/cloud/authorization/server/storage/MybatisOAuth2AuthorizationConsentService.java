@@ -1,14 +1,15 @@
-package com.basic.cloud.oauth2.authorization.server.storage;
+package com.basic.cloud.authorization.server.storage;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.basic.cloud.oauth2.authorization.server.converter.Entity2OAuth2AuthorizationConsentConverter;
-import com.basic.cloud.oauth2.authorization.server.converter.OAuth2AuthorizationConsent2EntityConverter;
-import com.basic.cloud.oauth2.authorization.server.entity.AuthorizationConsent;
-import com.basic.cloud.oauth2.authorization.server.mapper.AuthorizationConsentMapper;
+import com.basic.cloud.authorization.server.converter.Entity2OAuth2AuthorizationConsentConverter;
+import com.basic.cloud.authorization.server.converter.OAuth2AuthorizationConsent2EntityConverter;
+import com.basic.cloud.authorization.server.mapper.AuthorizationConsentMapper;
+import com.basic.cloud.authorization.server.entity.AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.util.Assert;
  *
  * @author vains
  */
+@Component
 public class MybatisOAuth2AuthorizationConsentService implements OAuth2AuthorizationConsentService {
 
     private final AuthorizationConsentMapper authorizationConsentMapper;

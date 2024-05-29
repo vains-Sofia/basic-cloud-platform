@@ -1,7 +1,7 @@
-package com.basic.cloud.oauth2.authorization.server.converter;
+package com.basic.cloud.authorization.server.converter;
 
 import com.basic.cloud.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import com.basic.cloud.oauth2.authorization.server.entity.Client;
+import com.basic.cloud.authorization.server.entity.Client;
 import org.springframework.lang.Nullable;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 

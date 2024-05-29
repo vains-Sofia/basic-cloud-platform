@@ -31,11 +31,6 @@
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-oauth2-core</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-mybatis-plus</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

@@ -1,11 +1,11 @@
-package com.basic.cloud.oauth2.authorization.server.entity;
+package com.basic.cloud.authorization.server.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.basic.cloud.mybatis.plus.domain.BasicEntity;
-import com.basic.cloud.oauth2.authorization.server.handler.AuthenticationMethodsTypeHandler;
-import com.basic.cloud.oauth2.authorization.server.handler.AuthorizationGrantTypesTypeHandler;
+import com.basic.cloud.authorization.server.handler.AuthenticationMethodsTypeHandler;
+import com.basic.cloud.authorization.server.handler.AuthorizationGrantTypesTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;

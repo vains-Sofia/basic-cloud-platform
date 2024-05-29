@@ -1,6 +1,6 @@
-package com.basic.cloud.oauth2.authorization.server.mapper;
+package com.basic.cloud.authorization.server.mapper;
 
-import com.basic.cloud.oauth2.authorization.server.entity.Authorization;
+import com.basic.cloud.authorization.server.entity.Authorization;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

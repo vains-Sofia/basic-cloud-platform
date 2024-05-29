@@ -1,18 +1,13 @@
 package com.basic.cloud.oauth2.authorization.server.autoconfigure;
 
 import com.basic.cloud.oauth2.authorization.converter.BasicJwtAuthenticationConverter;
+import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
 import com.basic.cloud.oauth2.authorization.domain.DefaultAuthenticatedUser;
 import com.basic.cloud.oauth2.authorization.enums.OAuth2AccountPlatformEnum;
 import com.basic.cloud.oauth2.authorization.manager.DelegatingTokenAuthenticationResolver;
 import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.introspector.BasicOpaqueTokenIntrospector;
-import com.basic.cloud.oauth2.authorization.server.mapper.AuthorizationConsentMapper;
-import com.basic.cloud.oauth2.authorization.server.mapper.AuthorizationMapper;
-import com.basic.cloud.oauth2.authorization.server.mapper.ClientMapper;
-import com.basic.cloud.oauth2.authorization.server.storage.MybatisOAuth2AuthorizationConsentService;
-import com.basic.cloud.oauth2.authorization.server.storage.MybatisOAuth2AuthorizationService;
-import com.basic.cloud.oauth2.authorization.server.storage.MybatisRegisteredClientRepository;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -20,7 +15,6 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,11 +29,19 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.cors.CorsConfiguration;
@@ -62,7 +64,6 @@ import java.util.UUID;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableConfigurationProperties({OAuth2ServerProperties.class})
-@MapperScan("com.basic.cloud.oauth2.authorization.server.mapper")
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class AuthorizationServerAutoConfiguration {
 
@@ -146,14 +147,63 @@ public class AuthorizationServerAutoConfiguration {
     }
 
     /**
-     * 基于MybatisPlus的客户端服务
+     * 基于内存的客户端服务
      *
      * @return RegisteredClientRepository实例
      */
     @Bean
     @ConditionalOnMissingBean
-    public RegisteredClientRepository registeredClientRepository(ClientMapper clientMapper) {
-        return new MybatisRegisteredClientRepository(clientMapper);
+    public RegisteredClientRepository registeredClientRepository() {
+        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("oidc-client")
+                .clientSecret("{noop}secret")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(BasicAuthorizationGrantType.EMAIL)
+                .authorizationGrantType(BasicAuthorizationGrantType.PASSWORD)
+                .redirectUri("https://www.baidu.com")
+                .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
+                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
+                .redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html")
+                .postLogoutRedirectUri("http://127.0.0.1:8080/")
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .build();
+
+        RegisteredClient deviceClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("device-messaging-client")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+                .authorizationGrantType(AuthorizationGrantType.DEVICE_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .scope("message.read")
+                .scope("message.write")
+                .build();
+        InMemoryRegisteredClientRepository clientRepository = new InMemoryRegisteredClientRepository(oidcClient);
+        clientRepository.save(deviceClient);
+
+        RegisteredClient messagingClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("messaging-client")
+                .clientSecret("{noop}123456")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(BasicAuthorizationGrantType.EMAIL)
+                .authorizationGrantType(BasicAuthorizationGrantType.PASSWORD)
+                .redirectUri("https://www.baidu.com")
+                .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
+                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
+                .redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html")
+                .postLogoutRedirectUri("http://127.0.0.1:8080/")
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .build();
+
+        clientRepository.save(messagingClient);
+
+        return clientRepository;
     }
 
     /**
@@ -163,9 +213,8 @@ public class AuthorizationServerAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2AuthorizationService authorizationService(AuthorizationMapper authorizationMapper,
-                                                           RegisteredClientRepository registeredClientRepository) {
-        return new MybatisOAuth2AuthorizationService(authorizationMapper, registeredClientRepository);
+    public OAuth2AuthorizationService authorizationService() {
+        return new InMemoryOAuth2AuthorizationService();
     }
 
     /**
@@ -175,9 +224,8 @@ public class AuthorizationServerAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2AuthorizationConsentService authorizationConsentService(AuthorizationConsentMapper authorizationConsentMapper,
-                                                                         RegisteredClientRepository registeredClientRepository) {
-        return new MybatisOAuth2AuthorizationConsentService(authorizationConsentMapper, registeredClientRepository);
+    public OAuth2AuthorizationConsentService authorizationConsentService() {
+        return new InMemoryOAuth2AuthorizationConsentService();
     }
 
     /**

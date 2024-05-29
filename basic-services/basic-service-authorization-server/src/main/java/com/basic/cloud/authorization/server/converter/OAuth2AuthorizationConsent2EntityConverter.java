@@ -1,8 +1,8 @@
-package com.basic.cloud.oauth2.authorization.server.converter;
+package com.basic.cloud.authorization.server.converter;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.basic.cloud.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import com.basic.cloud.oauth2.authorization.server.entity.AuthorizationConsent;
+import com.basic.cloud.authorization.server.entity.AuthorizationConsent;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;

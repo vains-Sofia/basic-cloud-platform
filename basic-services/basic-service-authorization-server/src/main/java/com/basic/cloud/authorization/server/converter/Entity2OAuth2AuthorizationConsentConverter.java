@@ -1,7 +1,7 @@
-package com.basic.cloud.oauth2.authorization.server.converter;
+package com.basic.cloud.authorization.server.converter;
 
 import com.basic.cloud.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import com.basic.cloud.oauth2.authorization.server.entity.AuthorizationConsent;
+import com.basic.cloud.authorization.server.entity.AuthorizationConsent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.lang.Nullable;

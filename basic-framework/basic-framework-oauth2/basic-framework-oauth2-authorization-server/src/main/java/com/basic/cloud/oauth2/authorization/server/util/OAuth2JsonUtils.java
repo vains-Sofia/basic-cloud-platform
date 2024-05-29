@@ -1,7 +1,6 @@
 package com.basic.cloud.oauth2.authorization.server.util;
 
 import com.basic.cloud.core.util.JsonUtils;
-import com.basic.cloud.oauth2.authorization.server.handler.OAuth2MapTypeHandler;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -42,7 +41,7 @@ public class OAuth2JsonUtils {
                 JsonTypeInfo.As.PROPERTY);
 
         // 认证模块Jackson Mixin
-        ClassLoader classLoader = OAuth2MapTypeHandler.class.getClassLoader();
+        ClassLoader classLoader = OAuth2JsonUtils.class.getClassLoader();
         List<Module> securityModules = SecurityJackson2Modules.getModules(classLoader);
         objectMapper.registerModules(securityModules);
         objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
