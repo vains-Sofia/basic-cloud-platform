@@ -32,7 +32,7 @@ public class ValidationExceptionAdvice {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public Result<String> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         String errors = ValidationExceptionResolver.resolveFiledErrors(e.getBindingResult().getFieldErrors());
-        log.warn("Json参数校验失败：{}", errors);
+        log.error("参数校验失败：{}", errors, e);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 
@@ -45,7 +45,7 @@ public class ValidationExceptionAdvice {
     @ExceptionHandler(BindException.class)
     public Result<String> bindException(BindException e) {
         String errors = ValidationExceptionResolver.resolveFiledErrors(e.getFieldErrors());
-        log.warn("Form参数校验失败：{}", errors);
+        log.error("Form参数校验失败：{}", errors, e);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 
@@ -58,7 +58,7 @@ public class ValidationExceptionAdvice {
     @ExceptionHandler(ConstraintViolationException.class)
     public Result<String> methodArgumentNotValidException(ConstraintViolationException e) {
         String errors = ValidationExceptionResolver.resolveConstraintViolations(e);
-        log.warn("参数校验失败：{}", errors);
+        log.error("参数校验失败：{}", errors, e);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 

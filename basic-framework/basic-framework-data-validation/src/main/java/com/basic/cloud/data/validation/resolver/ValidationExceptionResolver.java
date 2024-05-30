@@ -6,6 +6,7 @@ import org.springframework.validation.FieldError;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,9 +31,15 @@ public class ValidationExceptionResolver {
      * @return 拼接后的异常信息
      */
     public static String resolveFiledErrors(List<FieldError> fieldErrors) {
+        // 将字段异常类转为字符串
+        Function<FieldError, Stream<String>> fieldErrorConverter =
+                fieldError -> Stream.of(fieldError.isBindingFailure() ? "" : fieldError.getField(),
+                        fieldError.isBindingFailure() ? "" : " ",
+                        fieldError.getDefaultMessage(), SEPARATOR_COMMA);
+        // 转为字符串
         return Optional.ofNullable(fieldErrors)
                 .map(fieldErrorsInner -> fieldErrorsInner.stream()
-                        .flatMap(fieldError -> Stream.of(fieldError.getField(), fieldError.getDefaultMessage(), SEPARATOR_COMMA))
+                        .flatMap(fieldErrorConverter)
                         .collect(Collectors.joining()))
                 .map(msg -> msg.substring(0, msg.length() - SEPARATOR_COMMA.length()))
                 .orElse(null);

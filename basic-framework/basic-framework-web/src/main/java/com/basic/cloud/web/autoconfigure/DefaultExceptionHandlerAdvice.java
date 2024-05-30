@@ -5,11 +5,14 @@ import com.basic.cloud.core.exception.CloudServiceException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.DataTruncation;
 import java.util.List;
@@ -19,6 +22,7 @@ import java.util.List;
  *
  * @author vains
  */
+@Slf4j
 @RestControllerAdvice
 public class DefaultExceptionHandlerAdvice {
 
@@ -28,31 +32,49 @@ public class DefaultExceptionHandlerAdvice {
      * @param e 转换异常
      * @return 返回处理后的异常信息
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Result<String> httpMessageNotReadableException(HttpMessageNotReadableException e) {
         if (e.getCause() instanceof InvalidFormatException invalidFormatException) {
             StringBuilder errors = new StringBuilder();
             List<JsonMappingException.Reference> path = invalidFormatException.getPath();
             for (JsonMappingException.Reference reference : path) {
-                errors.append("参数名：").append(reference.getFieldName()).append(" 输入不合法，需要的是 ").append(invalidFormatException.getTargetType().getName()).append(" 类型，").append("提交的值是：").append(invalidFormatException.getValue());
+                errors.append("参数[").append(reference.getFieldName()).append("]类型错误.");
             }
+            log.error(errors.toString(), e);
             return Result.error(HttpStatus.BAD_REQUEST.value(), errors.toString());
         } else if (e.getCause() instanceof JsonParseException) {
+            log.error(e.getMessage(), e);
             return Result.error(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
+        log.error("参数转换异常.", e);
         return Result.error(HttpStatus.BAD_REQUEST.value(), "参数转换异常");
     }
 
     /**
-     * 处理URL的类型转换异常
+     * 请求类型不支持
      *
-     * @param e 转换异常
-     * @return 返回处理后的异常信息
+     * @param e 请求类型不支持异常
+     * @return 统一响应类
      */
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public Result<String> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        String message = String.format("类型转换失败，参数%s需要的类型是：%s, 请传入正确的参数类型", e.getName(), e.getRequiredType());
-        return Result.error(HttpStatus.BAD_REQUEST.value(), message);
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+    public Result<String> handleNotSupportedHttpMethodException(HttpRequestMethodNotSupportedException e) {
+        log.error("{}.", e.getMessage(), e);
+        return Result.error(HttpStatus.METHOD_NOT_ALLOWED.value(), e.getMessage());
+    }
+
+    /**
+     * media type not support
+     *
+     * @param e media type not support 异常
+     * @return 统一响应类
+     */
+    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    @ExceptionHandler(value = HttpMediaTypeNotSupportedException.class)
+    public Result<String> handleNotSupportedHttpMethodException(HttpMediaTypeNotSupportedException e) {
+        log.error("{}.", e.getMessage(), e);
+        return Result.error(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), e.getMessage());
     }
 
     /**
