@@ -2,6 +2,7 @@ package com.basic.cloud.oauth2.authorization.server.autoconfigure;
 
 import com.basic.cloud.oauth2.authorization.converter.BasicJwtAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
+import com.basic.cloud.oauth2.authorization.customizer.FederatedIdentityIdTokenCustomizer;
 import com.basic.cloud.oauth2.authorization.domain.DefaultAuthenticatedUser;
 import com.basic.cloud.oauth2.authorization.enums.OAuth2AccountPlatformEnum;
 import com.basic.cloud.oauth2.authorization.manager.DelegatingTokenAuthenticationResolver;
@@ -42,6 +43,8 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.cors.CorsConfiguration;
@@ -316,6 +319,12 @@ public class AuthorizationServerAutoConfiguration {
     @ConditionalOnMissingBean
     public JwtAuthenticationConverter authenticationConverter() {
         return new BasicJwtAuthenticationConverter();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public OAuth2TokenCustomizer<JwtEncodingContext> identityIdTokenCustomizer() {
+        return new FederatedIdentityIdTokenCustomizer();
     }
 
 }

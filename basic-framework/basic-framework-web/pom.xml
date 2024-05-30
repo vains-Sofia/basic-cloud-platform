@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.basic.cloud</groupId>
+        <artifactId>basic-framework</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>basic-framework-web</artifactId>
+
+    <dependencies>
+        <!-- web包 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 核心包 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-core</artifactId>
+        </dependency>
+
+        <!-- 在线文档包 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-spring-doc</artifactId>
+        </dependency>
+
+        <!-- 入参校验 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-data-validation</artifactId>
+        </dependency>
+
+        <!-- 资源服务 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-oauth2-resource-server</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.basic.cloud.core.domain.Result;
-import com.basic.cloud.example.mybatis.plus.domain.request.PageUserRequest;
+import com.basic.cloud.example.mybatis.plus.domain.request.PageRequest;
 import com.basic.cloud.example.mybatis.plus.entity.ExampleUser;
 import com.basic.cloud.example.mybatis.plus.service.IExampleUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ public class ExampleUserController {
 
     @GetMapping("/page")
     @Operation(summary = "分页查询接口", description = "示例分页查询用户")
-    public Result<IPage<ExampleUser>> page(@Validated PageUserRequest userRequest) {
+    public Result<IPage<ExampleUser>> page(@Validated PageRequest userRequest) {
         LambdaQueryWrapper<ExampleUser> wrapper = Wrappers.lambdaQuery(ExampleUser.class)
                 .eq(userRequest.getId() != null, ExampleUser::getId, userRequest.getId());
         IPage<ExampleUser> page = Page.of(userRequest.getCurrent(), userRequest.getSize());

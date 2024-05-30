@@ -11,7 +11,7 @@ import lombok.Data;
  * @author vains
  */
 @Data
-public abstract class PageRequest {
+public abstract class Pageable {
 
     /**
      * 当前页码

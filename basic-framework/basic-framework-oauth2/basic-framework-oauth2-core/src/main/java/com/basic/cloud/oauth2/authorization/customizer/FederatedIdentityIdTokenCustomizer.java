@@ -1,4 +1,4 @@
-package com.basic.cloud.oauth2.authorization.federation.customizer;
+package com.basic.cloud.oauth2.authorization.customizer;
 
 import com.basic.cloud.oauth2.authorization.constant.AuthorizeConstants;
 import com.basic.cloud.oauth2.authorization.domain.AuthenticatedUser;

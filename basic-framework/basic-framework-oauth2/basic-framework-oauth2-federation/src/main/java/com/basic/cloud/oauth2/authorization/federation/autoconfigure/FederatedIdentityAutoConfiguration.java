@@ -5,7 +5,7 @@ import com.basic.cloud.oauth2.authorization.federation.converter.context.OAuth2U
 import com.basic.cloud.oauth2.authorization.federation.converter.impl.GiteeUserConverter;
 import com.basic.cloud.oauth2.authorization.federation.converter.impl.GithubUserConverter;
 import com.basic.cloud.oauth2.authorization.federation.converter.impl.WechatUserConverter;
-import com.basic.cloud.oauth2.authorization.federation.customizer.FederatedIdentityIdTokenCustomizer;
+import com.basic.cloud.oauth2.authorization.customizer.FederatedIdentityIdTokenCustomizer;
 import com.basic.cloud.oauth2.authorization.federation.service.BasicOAuth2UserService;
 import com.basic.cloud.oauth2.authorization.federation.wechat.BasicAccessTokenResponseClient;
 import com.basic.cloud.oauth2.authorization.federation.wechat.BasicAuthorizationRequestResolver;
