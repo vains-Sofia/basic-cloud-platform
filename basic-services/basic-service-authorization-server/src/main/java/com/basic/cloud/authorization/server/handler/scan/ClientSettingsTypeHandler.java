@@ -5,7 +5,9 @@ import com.basic.cloud.core.util.JsonUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.ConfigurationSettingNames;
 
 import java.util.Map;
 
@@ -25,6 +27,10 @@ public class ClientSettingsTypeHandler extends AbstractJsonTypeHandler<ClientSet
     @Override
     public ClientSettings parse(String json) {
         Map<String, Object> settings = JsonUtils.toObject(json, Map.class, String.class, Object.class);
+        if (settings.containsKey(ConfigurationSettingNames.Client.TOKEN_ENDPOINT_AUTHENTICATION_SIGNING_ALGORITHM)) {
+            String signName = (String) settings.get(ConfigurationSettingNames.Client.TOKEN_ENDPOINT_AUTHENTICATION_SIGNING_ALGORITHM);
+            settings.put(ConfigurationSettingNames.Client.TOKEN_ENDPOINT_AUTHENTICATION_SIGNING_ALGORITHM, SignatureAlgorithm.from(signName));
+        }
         return ClientSettings.withSettings(settings).build();
     }
 

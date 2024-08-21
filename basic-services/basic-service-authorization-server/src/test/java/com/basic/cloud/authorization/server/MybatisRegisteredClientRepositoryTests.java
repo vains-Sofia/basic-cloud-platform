@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
@@ -100,9 +101,35 @@ class MybatisRegisteredClientRepositoryTests {
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
 
+        RegisteredClient privateKeyJwtClient = RegisteredClient.withId(IdWorker.getIdStr())
+                .clientId("private-key-jwt-client")
+                .clientSecret("{noop}12345678")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(BasicAuthorizationGrantType.EMAIL)
+                .authorizationGrantType(BasicAuthorizationGrantType.PASSWORD)
+                .redirectUri("https://www.baidu.com")
+                .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
+                .redirectUri("http://127.0.0.1:8000/login/oauth2/code/messaging-client-oidc")
+                .redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html")
+                .postLogoutRedirectUri("http://127.0.0.1:8080/")
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                .clientSettings(
+                        ClientSettings.builder()
+                                .requireAuthorizationConsent(true)
+                                .jwkSetUrl("http://127.0.0.1:8000/jwkSet")
+                                .tokenEndpointAuthenticationSigningAlgorithm(SignatureAlgorithm.RS256)
+                                .build()
+                )
+                .build();
+
         this.registeredClientRepository.save(oidcClient);
         this.registeredClientRepository.save(deviceClient);
         this.registeredClientRepository.save(messagingClient);
+        this.registeredClientRepository.save(privateKeyJwtClient);
     }
 
 }
