@@ -112,7 +112,7 @@ class MybatisRegisteredClientRepositoryTests {
                 .authorizationGrantType(BasicAuthorizationGrantType.PASSWORD)
                 .redirectUri("https://www.baidu.com")
                 .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
-                .redirectUri("http://127.0.0.1:8000/login/oauth2/code/messaging-client-oidc")
+                .redirectUri("http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc")
                 .redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html")
                 .postLogoutRedirectUri("http://127.0.0.1:8080/")
                 .scope(OidcScopes.OPENID)
