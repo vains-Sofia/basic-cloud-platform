@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class TestController {
 
     @GetMapping("/test01")
-    @PreAuthorize("hasAnyAuthority('SCOPE_profile')")
+    @PreAuthorize("hasAnyAuthority('profile')")
     public String test01() {
         return "Hello, test01";
     }

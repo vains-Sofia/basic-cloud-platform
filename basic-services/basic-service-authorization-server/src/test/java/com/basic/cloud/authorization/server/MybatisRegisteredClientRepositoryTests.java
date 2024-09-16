@@ -74,6 +74,24 @@ class MybatisRegisteredClientRepositoryTests {
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
 
+        RegisteredClient swaggerClient = RegisteredClient.withId(IdWorker.getIdStr())
+                .clientId("swagger-client")
+                .clientSecret("{noop}123456")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(BasicAuthorizationGrantType.EMAIL)
+                .authorizationGrantType(BasicAuthorizationGrantType.PASSWORD)
+                .redirectUri("https://www.baidu.com")
+                .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
+                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
+                .redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html")
+                .postLogoutRedirectUri("http://127.0.0.1:8080/")
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .build();
+
         RegisteredClient deviceClient = RegisteredClient.withId(IdWorker.getIdStr())
                 .clientId("device-messaging-client")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
@@ -128,6 +146,7 @@ class MybatisRegisteredClientRepositoryTests {
 
         this.registeredClientRepository.save(oidcClient);
         this.registeredClientRepository.save(deviceClient);
+        this.registeredClientRepository.save(swaggerClient);
         this.registeredClientRepository.save(messagingClient);
         this.registeredClientRepository.save(privateKeyJwtClient);
     }
