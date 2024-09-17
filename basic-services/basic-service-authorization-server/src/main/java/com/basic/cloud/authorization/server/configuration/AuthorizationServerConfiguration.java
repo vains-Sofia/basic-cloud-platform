@@ -77,13 +77,6 @@ public class AuthorizationServerConfiguration {
         configurer.oidc(new OidcConfigurerCustomizer());
         configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
 
-        // 设置自定义用户确认授权页
-        configurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
-                .consentPage(serverProperties.getConsentPageUri())
-                .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
-                .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(serverProperties.getConsentPageUri()))
-        );
-
         // 添加邮件模式
         OAuth2ConfigurerUtils.configureEmailGrantType(http, (null), (null));
         // 添加密码模式

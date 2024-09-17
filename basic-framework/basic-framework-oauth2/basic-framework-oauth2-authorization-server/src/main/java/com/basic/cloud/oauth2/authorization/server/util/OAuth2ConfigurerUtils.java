@@ -1,5 +1,6 @@
 package com.basic.cloud.oauth2.authorization.server.util;
 
+import com.basic.cloud.oauth2.authorization.handler.authentication.DeviceAuthorizationResponseHandler;
 import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
 import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationConverter;
@@ -8,8 +9,6 @@ import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptch
 import com.basic.cloud.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationProvider;
 import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationProvider;
-import com.basic.cloud.oauth2.authorization.handler.authentication.ConsentAuthenticationFailureHandler;
-import com.basic.cloud.oauth2.authorization.handler.authentication.ConsentAuthorizationResponseHandler;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -333,8 +332,8 @@ public class OAuth2ConfigurerUtils {
                 // 设置验证设备码用户确认页面
                 .deviceVerificationEndpoint(deviceVerificationEndpoint -> deviceVerificationEndpoint
                         .consentPage(serverProperties.getConsentPageUri())
-                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
-                        .deviceVerificationResponseHandler(new ConsentAuthorizationResponseHandler(serverProperties.getConsentPageUri()))
+//                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
+                        .deviceVerificationResponseHandler(new DeviceAuthorizationResponseHandler(serverProperties.getDeviceActivatedPageUri()))
                 )
                 .clientAuthentication(clientAuthentication ->
                         // 客户端认证添加设备码的converter和provider
