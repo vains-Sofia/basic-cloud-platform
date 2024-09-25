@@ -144,6 +144,31 @@ class MybatisRegisteredClientRepositoryTests {
                 )
                 .build();
 
+        // PKCE客户端
+        RegisteredClient pkceClient = RegisteredClient.withId(IdWorker.getIdStr())
+                .clientId("pkce-message-client")
+                .clientName("PKCE流程")
+                // 公共客户端
+                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+                // 设备码授权
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
+                .redirectUri("http://127.0.0.1:5173/PkceRedirect")
+                .redirectUri("https://j1zr8ren8w.51xd.pub/PkceRedirect")
+                .redirectUri("https://flow-cloud.love/PkceRedirect")
+                .redirectUri("https://authorization-example.vercel.app/PkceRedirect")
+                // 开启 PKCE 流程
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(Boolean.TRUE).requireProofKey(Boolean.TRUE).build())
+                // 指定scope
+                .scope("message.read")
+                .scope("message.write")
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                .postLogoutRedirectUri("http://127.0.0.1:8080/getCaptcha")
+                .build();
+
+        this.registeredClientRepository.save(pkceClient);
         this.registeredClientRepository.save(oidcClient);
         this.registeredClientRepository.save(deviceClient);
         this.registeredClientRepository.save(swaggerClient);
