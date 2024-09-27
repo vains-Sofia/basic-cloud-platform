@@ -13,6 +13,7 @@ import io.swagger.v3.oas.models.security.*;
 import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.properties.SwaggerUiConfigParameters;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,12 +37,19 @@ public class OpenApiAutoConfiguration {
 
     private final DocProperties properties;
 
+    private final SwaggerUiConfigParameters swaggerUiConfigParameters;
+
     private final SpringDocConfigProperties springDocConfigProperties;
 
     @Bean
     public OpenAPI openApi() {
         // 接口在没有RequestBody注解时默认展开对象参数
         springDocConfigProperties.setDefaultFlatParamObject(Boolean.TRUE);
+        // 默认收起所有标签
+        String docExpansion = swaggerUiConfigParameters.getDocExpansion();
+        if (ObjectUtils.isEmpty(docExpansion)) {
+            swaggerUiConfigParameters.setDocExpansion("none");
+        }
         // 许可证信息
         License license = new License()
                 .name(properties.getLicense().getName())
