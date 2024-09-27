@@ -4,9 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.basic.cloud.authorization.server.converter.Entity2OAuth2AuthorizationConsentConverter;
 import com.basic.cloud.authorization.server.converter.OAuth2AuthorizationConsent2EntityConverter;
-import com.basic.cloud.authorization.server.mapper.AuthorizationConsentMapper;
-import com.basic.cloud.authorization.server.entity.AuthorizationConsent;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
+import com.basic.cloud.authorization.server.mapper.MybatisOAuth2AuthorizationConsentMapper;
+import com.basic.cloud.authorization.server.entity.MybatisOAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Component;
@@ -20,56 +19,56 @@ import org.springframework.util.Assert;
 @Component
 public class MybatisOAuth2AuthorizationConsentService implements OAuth2AuthorizationConsentService {
 
-    private final AuthorizationConsentMapper authorizationConsentMapper;
+    private final MybatisOAuth2AuthorizationConsentMapper MybatisOAuth2AuthorizationConsentMapper;
 
     private final Entity2OAuth2AuthorizationConsentConverter authorizationConsentConverter;
 
     private final OAuth2AuthorizationConsent2EntityConverter entityConverter = new OAuth2AuthorizationConsent2EntityConverter();
 
-    public MybatisOAuth2AuthorizationConsentService(AuthorizationConsentMapper authorizationConsentMapper, RegisteredClientRepository registeredClientRepository) {
-        this.authorizationConsentMapper = authorizationConsentMapper;
+    public MybatisOAuth2AuthorizationConsentService(MybatisOAuth2AuthorizationConsentMapper MybatisOAuth2AuthorizationConsentMapper, RegisteredClientRepository registeredClientRepository) {
+        this.MybatisOAuth2AuthorizationConsentMapper = MybatisOAuth2AuthorizationConsentMapper;
         this.authorizationConsentConverter = new Entity2OAuth2AuthorizationConsentConverter(registeredClientRepository);
     }
 
     @Override
-    public void save(OAuth2AuthorizationConsent authorizationConsent) {
-        Assert.notNull(authorizationConsent, "authorizationConsent cannot be null");
+    public void save(org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent OAuth2AuthorizationConsent) {
+        Assert.notNull(OAuth2AuthorizationConsent, "authorizationConsent cannot be null");
 
-        LambdaQueryWrapper<AuthorizationConsent> wrapper = Wrappers.lambdaQuery(AuthorizationConsent.class)
-                .eq(AuthorizationConsent::getPrincipalName, authorizationConsent.getPrincipalName())
-                .eq(AuthorizationConsent::getRegisteredClientId, authorizationConsent.getRegisteredClientId());
+        LambdaQueryWrapper<MybatisOAuth2AuthorizationConsent> wrapper = Wrappers.lambdaQuery(MybatisOAuth2AuthorizationConsent.class)
+                .eq(MybatisOAuth2AuthorizationConsent::getPrincipalName, OAuth2AuthorizationConsent.getPrincipalName())
+                .eq(MybatisOAuth2AuthorizationConsent::getRegisteredClientId, OAuth2AuthorizationConsent.getRegisteredClientId());
 
-        AuthorizationConsent existingConsent = this.authorizationConsentMapper.selectOne(wrapper);
+        MybatisOAuth2AuthorizationConsent existingConsent = this.MybatisOAuth2AuthorizationConsentMapper.selectOne(wrapper);
         if (existingConsent != null) {
-            this.authorizationConsentMapper.deleteById(existingConsent);
+            this.MybatisOAuth2AuthorizationConsentMapper.deleteById(existingConsent);
         }
-        AuthorizationConsent consent = this.entityConverter.convert(authorizationConsent);
-        this.authorizationConsentMapper.insert(consent);
+        MybatisOAuth2AuthorizationConsent consent = this.entityConverter.convert(OAuth2AuthorizationConsent);
+        this.MybatisOAuth2AuthorizationConsentMapper.insert(consent);
     }
 
     @Override
-    public void remove(OAuth2AuthorizationConsent authorizationConsent) {
-        Assert.notNull(authorizationConsent, "authorizationConsent cannot be null");
+    public void remove(org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent OAuth2AuthorizationConsent) {
+        Assert.notNull(OAuth2AuthorizationConsent, "authorizationConsent cannot be null");
         // 如果存在就删除
-        LambdaQueryWrapper<AuthorizationConsent> wrapper = Wrappers.lambdaQuery(AuthorizationConsent.class)
-                .eq(AuthorizationConsent::getPrincipalName, authorizationConsent.getPrincipalName())
-                .eq(AuthorizationConsent::getRegisteredClientId, authorizationConsent.getRegisteredClientId());
+        LambdaQueryWrapper<MybatisOAuth2AuthorizationConsent> wrapper = Wrappers.lambdaQuery(MybatisOAuth2AuthorizationConsent.class)
+                .eq(MybatisOAuth2AuthorizationConsent::getPrincipalName, OAuth2AuthorizationConsent.getPrincipalName())
+                .eq(MybatisOAuth2AuthorizationConsent::getRegisteredClientId, OAuth2AuthorizationConsent.getRegisteredClientId());
 
-        AuthorizationConsent existingConsent = this.authorizationConsentMapper.selectOne(wrapper);
+        MybatisOAuth2AuthorizationConsent existingConsent = this.MybatisOAuth2AuthorizationConsentMapper.selectOne(wrapper);
         if (existingConsent != null) {
-            this.authorizationConsentMapper.deleteById(existingConsent.getId());
+            this.MybatisOAuth2AuthorizationConsentMapper.deleteById(existingConsent.getId());
         }
     }
 
     @Override
-    public OAuth2AuthorizationConsent findById(String registeredClientId, String principalName) {
+    public org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent findById(String registeredClientId, String principalName) {
         Assert.hasText(registeredClientId, "registeredClientId cannot be empty");
         Assert.hasText(principalName, "principalName cannot be empty");
-        LambdaQueryWrapper<AuthorizationConsent> wrapper = Wrappers.lambdaQuery(AuthorizationConsent.class)
-                .eq(AuthorizationConsent::getPrincipalName, principalName)
-                .eq(AuthorizationConsent::getRegisteredClientId, registeredClientId);
+        LambdaQueryWrapper<MybatisOAuth2AuthorizationConsent> wrapper = Wrappers.lambdaQuery(MybatisOAuth2AuthorizationConsent.class)
+                .eq(MybatisOAuth2AuthorizationConsent::getPrincipalName, principalName)
+                .eq(MybatisOAuth2AuthorizationConsent::getRegisteredClientId, registeredClientId);
 
-        AuthorizationConsent existingConsent = this.authorizationConsentMapper.selectOne(wrapper);
+        MybatisOAuth2AuthorizationConsent existingConsent = this.MybatisOAuth2AuthorizationConsentMapper.selectOne(wrapper);
         return this.authorizationConsentConverter.convert(existingConsent);
     }
 }

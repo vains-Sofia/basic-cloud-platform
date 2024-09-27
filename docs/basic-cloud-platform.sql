@@ -2,10 +2,10 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for authorization
+-- Table structure for oauth2_authorization
 -- ----------------------------
-DROP TABLE IF EXISTS `authorization`;
-CREATE TABLE `authorization`  (
+DROP TABLE IF EXISTS `oauth2_authorization`;
+CREATE TABLE `oauth2_authorization`  (
   `id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `registered_client_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `principal_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
@@ -48,10 +48,10 @@ CREATE TABLE `authorization`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for authorization_consent
+-- Table structure for oauth2_authorization_consent
 -- ----------------------------
-DROP TABLE IF EXISTS `authorization_consent`;
-CREATE TABLE `authorization_consent`  (
+DROP TABLE IF EXISTS `oauth2_authorization_consent`;
+CREATE TABLE `oauth2_authorization_consent`  (
   `id` bigint(20) NOT NULL COMMENT '主键',
   `registered_client_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `principal_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
@@ -64,10 +64,10 @@ CREATE TABLE `authorization_consent`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for client
+-- Table structure for oauth2_application
 -- ----------------------------
-DROP TABLE IF EXISTS `client`;
-CREATE TABLE `client`  (
+DROP TABLE IF EXISTS `oauth2_application`;
+CREATE TABLE `oauth2_application`  (
   `id` bigint(20) NOT NULL,
   `client_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `client_id_issued_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

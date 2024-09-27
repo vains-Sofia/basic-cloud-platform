@@ -1,7 +1,7 @@
 package com.basic.cloud.authorization.server.converter;
 
+import com.basic.cloud.authorization.server.entity.MybatisOAuth2Authorization;
 import com.basic.cloud.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import com.basic.cloud.authorization.server.entity.Authorization;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.lang.Nullable;
@@ -23,12 +23,12 @@ import org.springframework.util.StringUtils;
  * @author vains
  */
 @RequiredArgsConstructor
-public class Authorization2OAuth2AuthorizationConverter implements BasicCoreServiceConverter<Authorization, OAuth2Authorization> {
+public class Authorization2OAuth2AuthorizationConverter implements BasicCoreServiceConverter<MybatisOAuth2Authorization, OAuth2Authorization> {
 
     private final RegisteredClientRepository registeredClientRepository;
 
     @Override
-    public OAuth2Authorization convert(@Nullable Authorization source) {
+    public OAuth2Authorization convert(@Nullable MybatisOAuth2Authorization source) {
         if (source == null) {
             return null;
         }
@@ -86,7 +86,7 @@ public class Authorization2OAuth2AuthorizationConverter implements BasicCoreServ
             OAuth2UserCode userCode = new OAuth2UserCode(
                     source.getUserCodeValue(),
                     timeToInstant(source.getUserCodeIssuedAt()),
-                            timeToInstant(source.getUserCodeExpiresAt()));
+                    timeToInstant(source.getUserCodeExpiresAt()));
             authorization.token(userCode, metadata -> metadata.putAll(source.getUserCodeMetadata()));
         }
 
@@ -94,7 +94,7 @@ public class Authorization2OAuth2AuthorizationConverter implements BasicCoreServ
             OAuth2DeviceCode deviceCode = new OAuth2DeviceCode(
                     source.getDeviceCodeValue(),
                     timeToInstant(source.getDeviceCodeIssuedAt()),
-                            timeToInstant(source.getDeviceCodeExpiresAt()));
+                    timeToInstant(source.getDeviceCodeExpiresAt()));
             authorization.token(deviceCode, metadata -> metadata.putAll(source.getDeviceCodeMetadata()));
         }
 

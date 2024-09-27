@@ -26,8 +26,8 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@TableName(value = "client", autoResultMap = true)
-public class Client extends BasicEntity {
+@TableName(value = "oauth2_application", autoResultMap = true)
+public class MybatisOAuth2Application extends BasicEntity {
 
     @TableId("id")
     private Long id;

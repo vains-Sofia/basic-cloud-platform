@@ -1,6 +1,6 @@
 package com.basic.cloud.authorization.server.mapper;
 
-import com.basic.cloud.authorization.server.entity.Client;
+import com.basic.cloud.authorization.server.entity.MybatisOAuth2Application;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author vains
  * @since 2024-05-17
  */
-public interface ClientMapper extends BaseMapper<Client> {
+public interface MybatisOAuth2ApplicationMapper extends BaseMapper<MybatisOAuth2Application> {
 
 }

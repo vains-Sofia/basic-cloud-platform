@@ -1,7 +1,7 @@
 package com.basic.cloud.authorization.server.converter;
 
+import com.basic.cloud.authorization.server.entity.MybatisOAuth2Application;
 import com.basic.cloud.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import com.basic.cloud.authorization.server.entity.Client;
 import org.springframework.lang.Nullable;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 
@@ -10,10 +10,10 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
  *
  * @author vains
  */
-public class Client2RegisteredClientConverter implements BasicCoreServiceConverter<Client, RegisteredClient> {
+public class Client2RegisteredClientConverter implements BasicCoreServiceConverter<MybatisOAuth2Application, RegisteredClient> {
 
     @Override
-    public RegisteredClient convert(@Nullable Client source) {
+    public RegisteredClient convert(@Nullable MybatisOAuth2Application source) {
         if (source == null) {
             return null;
         }

@@ -1,7 +1,7 @@
 package com.basic.cloud.authorization.server.converter;
 
+import com.basic.cloud.authorization.server.entity.MybatisOAuth2Authorization;
 import com.basic.cloud.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import com.basic.cloud.authorization.server.entity.Authorization;
 import org.springframework.lang.Nullable;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2DeviceCode;
@@ -18,47 +18,47 @@ import org.springframework.util.StringUtils;
  *
  * @author vains
  */
-public class OAuth2Authorization2AuthorizationConverter implements BasicCoreServiceConverter<OAuth2Authorization, Authorization> {
+public class OAuth2Authorization2AuthorizationConverter implements BasicCoreServiceConverter<OAuth2Authorization, MybatisOAuth2Authorization> {
 
     @Override
-    public Authorization convert(@Nullable OAuth2Authorization source) {
+    public MybatisOAuth2Authorization convert(@Nullable OAuth2Authorization source) {
         if (source == null) {
             return null;
         }
-        Authorization authorization = new Authorization();
-        authorization.setId(source.getId());
-        authorization.setRegisteredClientId(source.getRegisteredClientId());
-        authorization.setPrincipalName(source.getPrincipalName());
-        authorization.setAuthorizationGrantType(source.getAuthorizationGrantType());
-        authorization.setAuthorizedScopes(source.getAuthorizedScopes());
-        authorization.setAttributes(source.getAttributes());
-        authorization.setState(source.getAttribute(OAuth2ParameterNames.STATE));
+        MybatisOAuth2Authorization MybatisOAuth2Authorization = new MybatisOAuth2Authorization();
+        MybatisOAuth2Authorization.setId(source.getId());
+        MybatisOAuth2Authorization.setRegisteredClientId(source.getRegisteredClientId());
+        MybatisOAuth2Authorization.setPrincipalName(source.getPrincipalName());
+        MybatisOAuth2Authorization.setAuthorizationGrantType(source.getAuthorizationGrantType());
+        MybatisOAuth2Authorization.setAuthorizedScopes(source.getAuthorizedScopes());
+        MybatisOAuth2Authorization.setAttributes(source.getAttributes());
+        MybatisOAuth2Authorization.setState(source.getAttribute(OAuth2ParameterNames.STATE));
 
         OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode =
                 source.getToken(OAuth2AuthorizationCode.class);
         setTokenValues(authorizationCode,
-                authorization::setAuthorizationCodeValue,
-                authorization::setAuthorizationCodeIssuedAt,
-                authorization::setAuthorizationCodeExpiresAt,
-                authorization::setAuthorizationCodeMetadata);
-        
+                MybatisOAuth2Authorization::setAuthorizationCodeValue,
+                MybatisOAuth2Authorization::setAuthorizationCodeIssuedAt,
+                MybatisOAuth2Authorization::setAuthorizationCodeExpiresAt,
+                MybatisOAuth2Authorization::setAuthorizationCodeMetadata);
+
         OAuth2Authorization.Token<OAuth2AccessToken> accessToken =
                 source.getToken(OAuth2AccessToken.class);
         setTokenValues(
                 accessToken,
-                authorization::setAccessTokenValue,
-                authorization::setAccessTokenIssuedAt,
-                authorization::setAccessTokenExpiresAt,
-                authorization::setAccessTokenMetadata
+                MybatisOAuth2Authorization::setAccessTokenValue,
+                MybatisOAuth2Authorization::setAccessTokenIssuedAt,
+                MybatisOAuth2Authorization::setAccessTokenExpiresAt,
+                MybatisOAuth2Authorization::setAccessTokenMetadata
         );
 
         if (accessToken != null) {
             if (accessToken.getToken().getScopes() != null) {
-                authorization.setAccessTokenScopes(StringUtils.collectionToDelimitedString(accessToken.getToken().getScopes(), ","));
+                MybatisOAuth2Authorization.setAccessTokenScopes(StringUtils.collectionToDelimitedString(accessToken.getToken().getScopes(), ","));
             }
 
             if (accessToken.getToken().getTokenType() != null) {
-                authorization.setAccessTokenType(accessToken.getToken().getTokenType().getValue());
+                MybatisOAuth2Authorization.setAccessTokenType(accessToken.getToken().getTokenType().getValue());
             }
         }
 
@@ -66,44 +66,44 @@ public class OAuth2Authorization2AuthorizationConverter implements BasicCoreServ
                 source.getToken(OAuth2RefreshToken.class);
         setTokenValues(
                 refreshToken,
-                authorization::setRefreshTokenValue,
-                authorization::setRefreshTokenIssuedAt,
-                authorization::setRefreshTokenExpiresAt,
-                authorization::setRefreshTokenMetadata
+                MybatisOAuth2Authorization::setRefreshTokenValue,
+                MybatisOAuth2Authorization::setRefreshTokenIssuedAt,
+                MybatisOAuth2Authorization::setRefreshTokenExpiresAt,
+                MybatisOAuth2Authorization::setRefreshTokenMetadata
         );
 
         OAuth2Authorization.Token<OidcIdToken> oidcIdToken =
                 source.getToken(OidcIdToken.class);
         setTokenValues(
                 oidcIdToken,
-                authorization::setOidcIdTokenValue,
-                authorization::setOidcIdTokenIssuedAt,
-                authorization::setOidcIdTokenExpiresAt,
-                authorization::setOidcIdTokenMetadata
+                MybatisOAuth2Authorization::setOidcIdTokenValue,
+                MybatisOAuth2Authorization::setOidcIdTokenIssuedAt,
+                MybatisOAuth2Authorization::setOidcIdTokenExpiresAt,
+                MybatisOAuth2Authorization::setOidcIdTokenMetadata
         );
         if (oidcIdToken != null) {
-            authorization.setOidcIdTokenClaims(oidcIdToken.getClaims());
+            MybatisOAuth2Authorization.setOidcIdTokenClaims(oidcIdToken.getClaims());
         }
 
         OAuth2Authorization.Token<OAuth2UserCode> userCode =
                 source.getToken(OAuth2UserCode.class);
         setTokenValues(
                 userCode,
-                authorization::setUserCodeValue,
-                authorization::setUserCodeIssuedAt,
-                authorization::setUserCodeExpiresAt,
-                authorization::setUserCodeMetadata
+                MybatisOAuth2Authorization::setUserCodeValue,
+                MybatisOAuth2Authorization::setUserCodeIssuedAt,
+                MybatisOAuth2Authorization::setUserCodeExpiresAt,
+                MybatisOAuth2Authorization::setUserCodeMetadata
         );
 
         OAuth2Authorization.Token<OAuth2DeviceCode> deviceCode =
                 source.getToken(OAuth2DeviceCode.class);
         setTokenValues(
                 deviceCode,
-                authorization::setDeviceCodeValue,
-                authorization::setDeviceCodeIssuedAt,
-                authorization::setDeviceCodeExpiresAt,
-                authorization::setDeviceCodeMetadata
+                MybatisOAuth2Authorization::setDeviceCodeValue,
+                MybatisOAuth2Authorization::setDeviceCodeIssuedAt,
+                MybatisOAuth2Authorization::setDeviceCodeExpiresAt,
+                MybatisOAuth2Authorization::setDeviceCodeMetadata
         );
-        return authorization;
+        return MybatisOAuth2Authorization;
     }
 }

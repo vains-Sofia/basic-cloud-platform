@@ -19,8 +19,8 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@TableName(value = "authorization_consent", autoResultMap = true)
-public class AuthorizationConsent extends BasicEntity {
+@TableName(value = "oauth2_authorization_consent", autoResultMap = true)
+public class MybatisOAuth2AuthorizationConsent extends BasicEntity {
 
     /**
      * 主键

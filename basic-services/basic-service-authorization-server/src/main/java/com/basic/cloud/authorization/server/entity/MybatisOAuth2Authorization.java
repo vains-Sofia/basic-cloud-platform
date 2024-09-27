@@ -23,8 +23,8 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@TableName(value = "authorization", autoResultMap = true)
-public class Authorization extends BasicEntity {
+@TableName(value = "oauth2_authorization", autoResultMap = true)
+public class MybatisOAuth2Authorization extends BasicEntity {
 
     @TableId("id")
     private String id;

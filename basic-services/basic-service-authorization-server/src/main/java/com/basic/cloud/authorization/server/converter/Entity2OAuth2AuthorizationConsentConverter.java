@@ -1,7 +1,7 @@
 package com.basic.cloud.authorization.server.converter;
 
+import com.basic.cloud.authorization.server.entity.MybatisOAuth2AuthorizationConsent;
 import com.basic.cloud.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import com.basic.cloud.authorization.server.entity.AuthorizationConsent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.lang.Nullable;
@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
  * @author vains
  */
 @RequiredArgsConstructor
-public class Entity2OAuth2AuthorizationConsentConverter implements BasicCoreServiceConverter<AuthorizationConsent, OAuth2AuthorizationConsent> {
+public class Entity2OAuth2AuthorizationConsentConverter implements BasicCoreServiceConverter<MybatisOAuth2AuthorizationConsent, OAuth2AuthorizationConsent> {
 
     private final RegisteredClientRepository registeredClientRepository;
 
     @Override
-    public OAuth2AuthorizationConsent convert(@Nullable AuthorizationConsent source) {
+    public OAuth2AuthorizationConsent convert(@Nullable MybatisOAuth2AuthorizationConsent source) {
         if (source == null) {
             return null;
         }
