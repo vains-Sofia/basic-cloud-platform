@@ -25,13 +25,14 @@ public class TokenSettingsTypeHandler extends AbstractJsonTypeHandler<TokenSetti
 
     @Override
     public TokenSettings parse(String json) {
-        Map<String, Object> settings = OAuth2JsonUtils.toObject(json, new TypeReference<Map<String, Object>>() {}.getType());
+        Map<String, Object> settings = OAuth2JsonUtils.toObject(json, new TypeReference<Map<String, Object>>() {
+        }.getType());
         return TokenSettings.withSettings(settings).build();
     }
 
     @Override
-    public String toJson(Object obj) {
-        if (obj instanceof TokenSettings tokenSettings) {
+    public String toJson(TokenSettings tokenSettings) {
+        if (tokenSettings != null) {
             return OAuth2JsonUtils.toJson(tokenSettings.getSettings());
         }
         return null;

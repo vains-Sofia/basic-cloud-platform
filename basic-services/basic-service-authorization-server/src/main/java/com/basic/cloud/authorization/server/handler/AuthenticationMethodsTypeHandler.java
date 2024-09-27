@@ -35,9 +35,7 @@ public class AuthenticationMethodsTypeHandler extends AbstractJsonTypeHandler<Se
     }
 
     @Override
-    public String toJson(Object obj) {
-        @SuppressWarnings("unchecked")
-        Set<ClientAuthenticationMethod> authenticationMethods = (Set<ClientAuthenticationMethod>) obj;
+    public String toJson(Set<ClientAuthenticationMethod> authenticationMethods) {
         Set<String> strings = authenticationMethods.stream().map(ClientAuthenticationMethod::getValue).collect(Collectors.toSet());
         return JsonUtils.toJson(strings);
     }

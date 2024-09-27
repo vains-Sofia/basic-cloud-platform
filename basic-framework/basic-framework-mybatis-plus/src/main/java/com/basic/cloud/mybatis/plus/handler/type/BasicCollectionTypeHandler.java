@@ -35,7 +35,7 @@ public class BasicCollectionTypeHandler<T> extends AbstractJsonTypeHandler<Colle
     }
 
     @Override
-    public String toJson(Object obj) {
+    public String toJson(Collection<T> obj) {
         return JsonUtils.toJson(obj);
     }
 

@@ -31,7 +31,7 @@ public class OAuth2MapTypeHandler<K, V> extends AbstractJsonTypeHandler<Map<K, V
     }
 
     @Override
-    public String toJson(Object obj) {
+    public String toJson(Map<K, V> obj) {
         return OAuth2JsonUtils.toJson(obj);
     }
 }

@@ -2,10 +2,13 @@ package com.basic.cloud.authorization.server.controller;
 
 import com.basic.cloud.authorization.server.domain.response.CaptchaResponse;
 import com.basic.cloud.core.domain.Result;
+import com.basic.cloud.data.validation.annotation.Phone;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author vains
  */
+@Validated
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "验证码接口", description = "生成验证码并返回")
@@ -45,9 +49,9 @@ public class CaptchaController {
     }
 
     @GetMapping("/getSmsCaptcha")
-    @Parameter(name = "手机号", description = "验证码将发送至该手机号中.")
+    @Parameter(name = "phone", description = "验证码将发送至该手机号中.")
     @Operation(summary = "获取短信验证码", description = "获取短信验证码")
-    public Result<String> getSmsCaptcha(String phone) {
+    public Result<String> getSmsCaptcha(@Phone String phone) {
         // 示例项目，固定1234
         String smsCaptcha = "666999";
         // 存入缓存中，5分钟后过期
@@ -55,9 +59,9 @@ public class CaptchaController {
     }
 
     @GetMapping("/getEmailCaptcha")
-    @Parameter(name = "邮箱", description = "验证码将发送至该邮箱中.")
+    @Parameter(name = "email", description = "验证码将发送至该邮箱中.")
     @Operation(summary = "获取邮件验证码", description = "获取邮件验证码")
-    public Result<String> getEmailCaptcha(String email) {
+    public Result<String> getEmailCaptcha(@Email String email) {
         // 示例项目，固定1234
         String smsCaptcha = "666999";
         // 存入缓存中，5分钟后过期

@@ -35,8 +35,8 @@ public class ClientSettingsTypeHandler extends AbstractJsonTypeHandler<ClientSet
     }
 
     @Override
-    public String toJson(Object obj) {
-        if (obj instanceof ClientSettings clientSettings) {
+    public String toJson(ClientSettings clientSettings) {
+        if (clientSettings != null) {
             return JsonUtils.toJson(clientSettings.getSettings());
         }
         return null;

@@ -33,7 +33,7 @@ public class BasicMapTypeHandler<K, V> extends AbstractJsonTypeHandler<Map<K, V>
     }
 
     @Override
-    public String toJson(Object obj) {
+    public String toJson(Map<K, V> obj) {
         return JsonUtils.toJson(obj);
     }
 

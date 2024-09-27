@@ -35,9 +35,7 @@ public class AuthorizationGrantTypesTypeHandler extends AbstractJsonTypeHandler<
     }
 
     @Override
-    public String toJson(Object obj) {
-        @SuppressWarnings("unchecked")
-        Set<AuthorizationGrantType> authenticationMethods = (Set<AuthorizationGrantType>) obj;
+    public String toJson(Set<AuthorizationGrantType> authenticationMethods) {
         Set<String> strings = authenticationMethods.stream().map(AuthorizationGrantType::getValue).collect(Collectors.toSet());
         return JsonUtils.toJson(strings);
     }

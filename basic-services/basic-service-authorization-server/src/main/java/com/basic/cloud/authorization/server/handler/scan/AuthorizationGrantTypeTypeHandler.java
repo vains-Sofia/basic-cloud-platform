@@ -25,8 +25,8 @@ public class AuthorizationGrantTypeTypeHandler extends AbstractJsonTypeHandler<A
     }
 
     @Override
-    public String toJson(Object obj) {
-        if (obj instanceof AuthorizationGrantType grantType) {
+    public String toJson(AuthorizationGrantType grantType) {
+        if (grantType != null) {
             return grantType.getValue();
         }
         return null;
