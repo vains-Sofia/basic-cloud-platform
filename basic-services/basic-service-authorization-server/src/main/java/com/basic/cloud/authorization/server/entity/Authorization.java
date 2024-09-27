@@ -56,7 +56,7 @@ public class Authorization extends BasicEntity {
     @TableField("authorization_code_expires_at")
     private LocalDateTime authorizationCodeExpiresAt;
 
-    @TableField("authorization_code_metadata")
+    @TableField(value = "authorization_code_metadata", typeHandler = OAuth2MapTypeHandler.class)
     private Map<String, Object> authorizationCodeMetadata;
 
     @TableField("access_token_value")
@@ -68,7 +68,7 @@ public class Authorization extends BasicEntity {
     @TableField("access_token_expires_at")
     private LocalDateTime accessTokenExpiresAt;
 
-    @TableField("access_token_metadata")
+    @TableField(value = "access_token_metadata", typeHandler = OAuth2MapTypeHandler.class)
     private Map<String, Object> accessTokenMetadata;
 
     @TableField("access_token_type")
@@ -86,7 +86,7 @@ public class Authorization extends BasicEntity {
     @TableField("refresh_token_expires_at")
     private LocalDateTime refreshTokenExpiresAt;
 
-    @TableField("refresh_token_metadata")
+    @TableField(value = "refresh_token_metadata", typeHandler = OAuth2MapTypeHandler.class)
     private Map<String, Object> refreshTokenMetadata;
 
     @TableField("oidc_id_token_value")
@@ -98,7 +98,7 @@ public class Authorization extends BasicEntity {
     @TableField("oidc_id_token_expires_at")
     private LocalDateTime oidcIdTokenExpiresAt;
 
-    @TableField("oidc_id_token_metadata")
+    @TableField(value = "oidc_id_token_metadata", typeHandler = OAuth2MapTypeHandler.class)
     private Map<String, Object> oidcIdTokenMetadata;
 
     @TableField(value = "oidc_id_token_claims", typeHandler = OAuth2MapTypeHandler.class)
@@ -113,7 +113,7 @@ public class Authorization extends BasicEntity {
     @TableField("user_code_expires_at")
     private LocalDateTime userCodeExpiresAt;
 
-    @TableField("user_code_metadata")
+    @TableField(value = "user_code_metadata", typeHandler = OAuth2MapTypeHandler.class)
     private Map<String, Object> userCodeMetadata;
 
     @TableField("device_code_value")
@@ -125,6 +125,6 @@ public class Authorization extends BasicEntity {
     @TableField("device_code_expires_at")
     private LocalDateTime deviceCodeExpiresAt;
 
-    @TableField("device_code_metadata")
+    @TableField(value = "device_code_metadata", typeHandler = OAuth2MapTypeHandler.class)
     private Map<String, Object> deviceCodeMetadata;
 }

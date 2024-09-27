@@ -27,7 +27,7 @@
         <!-- 指定Java版本 -->
         <java.version>21</java.version>
         <!-- Spring Doc 版本号 -->
-        <spring-doc.version>2.5.0</spring-doc.version>
+        <spring-doc.version>2.6.0</spring-doc.version>
         <!-- Mybatis Plus 版本号 -->
         <mybatis-plus.version>3.5.6</mybatis-plus.version>
         <!-- Spring Cloud 版本号 -->
