@@ -8,6 +8,7 @@ import com.basic.cloud.authorization.server.entity.MybatisOAuth2Authorization;
 import com.basic.cloud.authorization.server.mapper.MybatisOAuth2AuthorizationMapper;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -34,7 +35,7 @@ public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationSer
     }
 
     @Override
-    public void save(org.springframework.security.oauth2.server.authorization.OAuth2Authorization OAuth2Authorization) {
+    public void save(OAuth2Authorization OAuth2Authorization) {
         Assert.notNull(OAuth2Authorization, "authorization cannot be null");
         MybatisOAuth2Authorization storageMybatisOAuth2Authorization = MybatisOAuth2AuthorizationMapper.selectById(OAuth2Authorization.getId());
         if (storageMybatisOAuth2Authorization != null) {
@@ -45,20 +46,20 @@ public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationSer
     }
 
     @Override
-    public void remove(org.springframework.security.oauth2.server.authorization.OAuth2Authorization OAuth2Authorization) {
+    public void remove(OAuth2Authorization OAuth2Authorization) {
         Assert.notNull(OAuth2Authorization, "authorization cannot be null");
         this.MybatisOAuth2AuthorizationMapper.deleteById(OAuth2Authorization.getId());
     }
 
     @Override
-    public org.springframework.security.oauth2.server.authorization.OAuth2Authorization findById(String id) {
+    public OAuth2Authorization findById(String id) {
         Assert.hasText(id, "id cannot be empty");
         MybatisOAuth2Authorization MybatisOAuth2Authorization = this.MybatisOAuth2AuthorizationMapper.selectById(id);
         return this.oAuth2AuthorizationConverter.convert(MybatisOAuth2Authorization);
     }
 
     @Override
-    public org.springframework.security.oauth2.server.authorization.OAuth2Authorization findByToken(String token, OAuth2TokenType tokenType) {
+    public OAuth2Authorization findByToken(String token, OAuth2TokenType tokenType) {
         Assert.hasText(token, "token cannot be empty");
 
         LambdaQueryWrapper<MybatisOAuth2Authorization> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Authorization.class);

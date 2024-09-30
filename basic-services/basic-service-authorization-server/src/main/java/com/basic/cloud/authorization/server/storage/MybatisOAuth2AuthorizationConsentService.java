@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.basic.cloud.authorization.server.converter.Entity2OAuth2AuthorizationConsentConverter;
 import com.basic.cloud.authorization.server.converter.OAuth2AuthorizationConsent2EntityConverter;
-import com.basic.cloud.authorization.server.mapper.MybatisOAuth2AuthorizationConsentMapper;
 import com.basic.cloud.authorization.server.entity.MybatisOAuth2AuthorizationConsent;
+import com.basic.cloud.authorization.server.mapper.MybatisOAuth2AuthorizationConsentMapper;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ public class MybatisOAuth2AuthorizationConsentService implements OAuth2Authoriza
     }
 
     @Override
-    public void save(org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent OAuth2AuthorizationConsent) {
+    public void save(OAuth2AuthorizationConsent OAuth2AuthorizationConsent) {
         Assert.notNull(OAuth2AuthorizationConsent, "authorizationConsent cannot be null");
 
         LambdaQueryWrapper<MybatisOAuth2AuthorizationConsent> wrapper = Wrappers.lambdaQuery(MybatisOAuth2AuthorizationConsent.class)
@@ -47,7 +48,7 @@ public class MybatisOAuth2AuthorizationConsentService implements OAuth2Authoriza
     }
 
     @Override
-    public void remove(org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent OAuth2AuthorizationConsent) {
+    public void remove(OAuth2AuthorizationConsent OAuth2AuthorizationConsent) {
         Assert.notNull(OAuth2AuthorizationConsent, "authorizationConsent cannot be null");
         // 如果存在就删除
         LambdaQueryWrapper<MybatisOAuth2AuthorizationConsent> wrapper = Wrappers.lambdaQuery(MybatisOAuth2AuthorizationConsent.class)
@@ -61,7 +62,7 @@ public class MybatisOAuth2AuthorizationConsentService implements OAuth2Authoriza
     }
 
     @Override
-    public org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent findById(String registeredClientId, String principalName) {
+    public OAuth2AuthorizationConsent findById(String registeredClientId, String principalName) {
         Assert.hasText(registeredClientId, "registeredClientId cannot be empty");
         Assert.hasText(principalName, "principalName cannot be empty");
         LambdaQueryWrapper<MybatisOAuth2AuthorizationConsent> wrapper = Wrappers.lambdaQuery(MybatisOAuth2AuthorizationConsent.class)
