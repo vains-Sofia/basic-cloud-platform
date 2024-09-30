@@ -13,26 +13,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 public interface AuthenticatedUser extends OAuth2User, UserDetails, CredentialsContainer {
 
     @Override
-    default boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    default boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    default boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    default boolean isEnabled() {
-        return true;
-    }
-
-    @Override
     default String getUsername() {
         return this.getName();
     }

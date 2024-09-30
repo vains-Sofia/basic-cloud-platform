@@ -7,9 +7,8 @@ import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,7 +17,7 @@ import java.util.Set;
  * @author vains
  */
 @MappedJdbcTypes(JdbcType.VARCHAR)
-@MappedTypes({HashSet.class, ArrayList.class, Set.class})
+@MappedTypes({Collection.class, List.class, Set.class})
 public class BasicCollectionTypeHandler<T> extends AbstractJsonTypeHandler<Collection<T>> {
 
     public BasicCollectionTypeHandler(Class<?> type) {

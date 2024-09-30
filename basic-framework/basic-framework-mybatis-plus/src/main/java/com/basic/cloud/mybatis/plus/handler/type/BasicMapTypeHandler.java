@@ -7,7 +7,6 @@ import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,8 +14,8 @@ import java.util.Map;
  *
  * @author vains
  */
+@MappedTypes({Map.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
-@MappedTypes({Map.class, HashMap.class})
 public class BasicMapTypeHandler<K, V> extends AbstractJsonTypeHandler<Map<K, V>> {
 
     public BasicMapTypeHandler(Class<?> type) {

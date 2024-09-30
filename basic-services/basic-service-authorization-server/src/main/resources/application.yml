@@ -110,4 +110,4 @@ spring:
     username: root
     password: root
 mybatis-plus:
-  type-handlers-package: com.basic.cloud.mybatis.plus.handler.type,com.basic.cloud.authorization.server.handler.scan
+  type-handlers-package: com.basic.cloud.authorization.server.handler.scan

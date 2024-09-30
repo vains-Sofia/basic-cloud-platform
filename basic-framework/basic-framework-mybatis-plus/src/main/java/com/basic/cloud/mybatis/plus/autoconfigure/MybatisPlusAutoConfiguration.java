@@ -1,6 +1,7 @@
 package com.basic.cloud.mybatis.plus.autoconfigure;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusPropertiesCustomizer;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -8,6 +9,8 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.basic.cloud.mybatis.plus.handler.BasicMetaObjectHandler;
 import com.basic.cloud.mybatis.plus.handler.MybatisBasicEnumTypeHandler;
+import com.basic.cloud.mybatis.plus.handler.type.BasicCollectionTypeHandler;
+import com.basic.cloud.mybatis.plus.handler.type.BasicMapTypeHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -43,6 +46,19 @@ public class MybatisPlusAutoConfiguration {
             MybatisPlusProperties.CoreConfiguration configuration = new MybatisPlusProperties.CoreConfiguration();
             configuration.setDefaultEnumTypeHandler(MybatisBasicEnumTypeHandler.class);
             properties.setConfiguration(configuration);
+        };
+    }
+
+    /**
+     * 注册Mybatis Plus的TypeHandler，无需在yaml中添加包扫描即可生效
+     *
+     * @return ConfigurationCustomizer
+     */
+    @Bean
+    public ConfigurationCustomizer configurationCustomizer() {
+        return configuration -> {
+            configuration.getTypeHandlerRegistry().register(BasicMapTypeHandler.class);
+            configuration.getTypeHandlerRegistry().register(BasicCollectionTypeHandler.class);
         };
     }
 
