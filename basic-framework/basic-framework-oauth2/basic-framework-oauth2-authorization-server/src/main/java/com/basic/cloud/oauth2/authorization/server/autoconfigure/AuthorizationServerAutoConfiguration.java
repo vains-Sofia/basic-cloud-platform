@@ -1,5 +1,6 @@
 package com.basic.cloud.oauth2.authorization.server.autoconfigure;
 
+import com.basic.cloud.oauth2.authorization.annotation.ConditionalOnInMemoryStorage;
 import com.basic.cloud.oauth2.authorization.converter.BasicJwtAuthenticationConverter;
 import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
 import com.basic.cloud.oauth2.authorization.customizer.FederatedIdentityIdTokenCustomizer;
@@ -156,6 +157,7 @@ public class AuthorizationServerAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnInMemoryStorage
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("oidc-client")
@@ -216,6 +218,7 @@ public class AuthorizationServerAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnInMemoryStorage
     public OAuth2AuthorizationService authorizationService() {
         return new InMemoryOAuth2AuthorizationService();
     }
@@ -227,6 +230,7 @@ public class AuthorizationServerAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnInMemoryStorage
     public OAuth2AuthorizationConsentService authorizationConsentService() {
         return new InMemoryOAuth2AuthorizationConsentService();
     }

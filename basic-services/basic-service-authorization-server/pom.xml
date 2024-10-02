@@ -80,6 +80,12 @@
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-mybatis-plus</artifactId>
         </dependency>
+
+        <!-- 认证服务存储实现 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-oauth2-storage-mybatis</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

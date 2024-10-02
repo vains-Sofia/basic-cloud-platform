@@ -1,5 +1,6 @@
 package com.basic.cloud.oauth2.authorization.property;
 
+import com.basic.cloud.oauth2.authorization.enums.CoreServiceStorageEnum;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -72,6 +73,11 @@ public class OAuth2ServerProperties {
          * 设备码验证成功地址
          */
         private String deviceActivatedPageUri = "/activated";
+
+        /**
+         * 核心服务实现类型，默认MybatisPlus的实现
+         */
+        private CoreServiceStorageEnum coreServiceStorage = CoreServiceStorageEnum.MYBATIS_PLUS;
 
     }
 }

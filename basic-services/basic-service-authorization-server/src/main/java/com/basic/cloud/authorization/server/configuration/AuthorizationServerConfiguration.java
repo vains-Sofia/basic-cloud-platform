@@ -10,7 +10,6 @@ import com.basic.cloud.oauth2.authorization.server.util.OAuth2ConfigurerUtils;
 import com.basic.cloud.oauth2.authorization.util.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -31,7 +30,6 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
  */
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
-@MapperScan("com.basic.cloud.authorization.server.mapper")
 public class AuthorizationServerConfiguration {
 
     /**

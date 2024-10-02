@@ -17,4 +17,9 @@ public class AuthorizeConstants {
      */
     public static final String AUTHORITY_PREFIX = "";
 
+    /**
+     * 存储位置在yml中的key
+     */
+    public static final String CORE_SERVICE_STORAGE = "basic.cloud.oauth2.server.core-service-storage";
+
 }

@@ -16,5 +16,6 @@
         <module>basic-framework-oauth2-core</module>
         <module>basic-framework-oauth2-federation</module>
         <module>basic-framework-oauth2-resource-server</module>
+        <module>basic-framework-oauth2-storage</module>
     </modules>
 </project>
