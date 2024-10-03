@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.basic.cloud</groupId>
+        <artifactId>basic-examples</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <name>basic-example-redis</name>
+    <artifactId>basic-example-redis</artifactId>
+    <description>basic-cloud-platform example for redis.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

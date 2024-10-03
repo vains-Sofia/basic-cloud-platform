@@ -80,6 +80,14 @@
                 <version>${spring-doc.version}</version>
             </dependency>
 
+            <!-- 分布式锁Redisson实现 -->
+            <!-- https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+
             <!-- 项目核心包版本管理 -->
             <dependency>
                 <groupId>com.basic.cloud</groupId>
@@ -150,12 +158,11 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- 分布式锁Redisson实现 -->
-            <!-- https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter -->
+            <!-- 认证服务存储实现 -->
             <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson-spring-boot-starter</artifactId>
-                <version>${redisson.version}</version>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-redis</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

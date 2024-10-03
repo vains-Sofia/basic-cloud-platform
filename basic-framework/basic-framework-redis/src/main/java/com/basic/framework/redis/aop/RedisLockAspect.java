@@ -1,8 +1,8 @@
 package com.basic.framework.redis.aop;
 
-import com.basic.framework.redis.exception.RedisLockException;
 import com.basic.framework.redis.annotation.RedisLock;
 import com.basic.framework.redis.enums.RedissonLockType;
+import com.basic.framework.redis.exception.RedisLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -68,19 +68,26 @@ public class RedisLockAspect {
             log.warn("获取注解失败，请检查aop配置.");
             return pjp.proceed();
         }
-        // 获取 lockKey
-        String lockKey = this.getLockKey(pjp, redisLock);
 
+        String defaultKey;
         // 检验是否需要生成默认的key
-        if (ObjectUtils.isEmpty(lockKey)) {
+        if (ObjectUtils.isEmpty(redisLock.value())) {
             MethodSignature signature = (MethodSignature) pjp.getSignature();
             Method method = signature.getMethod();
             // 根据方法生成默认的key
-            String defaultKey = String.join(pjp.getTarget().getClass().getName(), DELIMITER, method.getName());
-            lockKey = defaultKey;
+            defaultKey = String.join(DELIMITER, pjp.getTarget().getClass().getName(), method.getName());
             if (log.isDebugEnabled()) {
                 log.debug("Redis分布式锁的key未指定，默认根据方法生成key：[{}].", defaultKey);
             }
+        } else {
+            defaultKey = null;
+        }
+
+        String lockKey;
+        if (ObjectUtils.isEmpty(defaultKey)) {
+            lockKey = this.getLockKey(pjp, redisLock);
+        } else {
+            lockKey = KEY_PREFIX.concat(defaultKey);
         }
 
         // 根据指定锁类型获取锁

@@ -13,5 +13,6 @@
     <modules>
         <module>basic-example-doc</module>
         <module>basic-example-mybatis-plus</module>
+        <module>basic-example-redis</module>
     </modules>
 </project>
