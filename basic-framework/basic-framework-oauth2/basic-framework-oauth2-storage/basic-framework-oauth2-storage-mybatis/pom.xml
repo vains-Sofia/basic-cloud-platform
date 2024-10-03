@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>basic-framework-oauth2-storage-mybatis</artifactId>
-    <name>basic-framework-oauth2-storage</name>
+    <name>basic-framework-oauth2-storage-mybatis</name>
     <description>oauth2 server storage module for mybatis plus</description>
 
     <dependencies>

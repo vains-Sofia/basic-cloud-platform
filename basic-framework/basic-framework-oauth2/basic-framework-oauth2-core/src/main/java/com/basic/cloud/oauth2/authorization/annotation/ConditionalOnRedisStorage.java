@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * 使用Redis实现的核心services的条件注解
  *
- * @author YuJx
+ * @author vains
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

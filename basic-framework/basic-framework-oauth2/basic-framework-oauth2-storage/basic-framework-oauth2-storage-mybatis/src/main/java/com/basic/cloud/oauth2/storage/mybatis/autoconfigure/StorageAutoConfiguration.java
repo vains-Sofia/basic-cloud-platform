@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 /**
  * 自动注入Mybatis Plus的存储实现
  *
- * @author YuJx
+ * @author vains
  */
 @Slf4j
 @RequiredArgsConstructor

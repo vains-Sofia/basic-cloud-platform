@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.basic.cloud</groupId>
+        <artifactId>basic-framework</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>basic-framework-redis</artifactId>
+    <name>basic-framework-redis</name>
+    <description>basic-cloud-platform redis module</description>
+
+    <dependencies>
+        <!-- 分布式锁Redisson实现 -->
+        <!-- https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- AspectJ依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- web包 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-core</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

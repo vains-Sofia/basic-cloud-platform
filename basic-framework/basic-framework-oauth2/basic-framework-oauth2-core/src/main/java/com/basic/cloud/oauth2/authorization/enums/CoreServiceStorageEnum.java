@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * 核心服务存储位置枚举
  *
- * @author YuJx
+ * @author vains
  */
 @Getter
 @RequiredArgsConstructor

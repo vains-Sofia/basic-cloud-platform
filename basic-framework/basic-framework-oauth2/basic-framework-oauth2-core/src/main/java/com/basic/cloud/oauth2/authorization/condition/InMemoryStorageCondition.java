@@ -11,7 +11,7 @@ import org.springframework.lang.Nullable;
 /**
  * 基于内存的存储实现条件
  *
- * @author YuJx
+ * @author vains
  */
 @Slf4j
 public class InMemoryStorageCondition implements Condition {
