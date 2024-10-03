@@ -1,6 +1,6 @@
 package com.basic.cloud.spring.doc.configuration;
 
-import com.basic.cloud.core.enums.BasicEnum;
+import com.basic.framework.core.enums.BasicEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.format.FormatterRegistry;

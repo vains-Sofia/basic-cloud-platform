@@ -1,6 +1,6 @@
 package com.basic.cloud.spring.doc.factory;
 
-import com.basic.cloud.core.enums.BasicEnum;
+import com.basic.framework.core.enums.BasicEnum;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.NonNull;
 import org.springframework.core.convert.converter.Converter;

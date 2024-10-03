@@ -1,1 +1,1 @@
-com.basic.cloud.oauth2.authorization.federation.autoconfigure.FederatedIdentityAutoConfiguration
+com.basic.framework.oauth2.federation.autoconfigure.FederatedIdentityAutoConfiguration

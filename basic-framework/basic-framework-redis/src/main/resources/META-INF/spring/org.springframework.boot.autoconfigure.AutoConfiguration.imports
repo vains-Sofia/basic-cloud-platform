@@ -1,2 +1,2 @@
-com.basic.cloud.redis.support.RedisOperator
-com.basic.cloud.redis.autoconfigure.RedisAutoConfiguration
+com.basic.framework.redis.support.RedisOperator
+com.basic.framework.redis.autoconfigure.RedisAutoConfiguration

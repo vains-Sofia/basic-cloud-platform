@@ -1,11 +1,11 @@
 package com.basic.cloud.authorization.server.configuration;
 
-import com.basic.cloud.oauth2.authorization.manager.RequestContextAuthorizationManager;
-import com.basic.cloud.oauth2.authorization.property.OAuth2ServerProperties;
-import com.basic.cloud.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
-import com.basic.cloud.oauth2.authorization.handler.authentication.LoginFailureHandler;
-import com.basic.cloud.oauth2.authorization.handler.authentication.LoginSuccessHandler;
-import com.basic.cloud.oauth2.authorization.util.SecurityUtils;
+import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
+import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
+import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
+import com.basic.framework.oauth2.core.handler.authentication.LoginFailureHandler;
+import com.basic.framework.oauth2.core.handler.authentication.LoginSuccessHandler;
+import com.basic.framework.oauth2.core.util.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

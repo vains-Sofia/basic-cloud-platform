@@ -1,6 +1,6 @@
 package com.basic.cloud.spring.doc.property;
 
-import com.basic.cloud.core.enums.BasicEnum;
+import com.basic.framework.core.enums.BasicEnum;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;

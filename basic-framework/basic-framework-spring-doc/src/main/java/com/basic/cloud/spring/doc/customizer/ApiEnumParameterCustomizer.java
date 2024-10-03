@@ -1,6 +1,6 @@
 package com.basic.cloud.spring.doc.customizer;
 
-import com.basic.cloud.core.enums.BasicEnum;
+import com.basic.framework.core.enums.BasicEnum;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.springdoc.core.customizers.ParameterCustomizer;

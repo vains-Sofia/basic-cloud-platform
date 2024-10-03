@@ -1,9 +1,9 @@
 package com.basic.cloud.authorization.server;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.basic.cloud.oauth2.authorization.core.BasicAuthorizationGrantType;
-import com.basic.cloud.oauth2.authorization.domain.DefaultAuthenticatedUser;
-import com.basic.cloud.oauth2.authorization.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
+import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
+import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

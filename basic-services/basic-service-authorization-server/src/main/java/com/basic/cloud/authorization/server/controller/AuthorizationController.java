@@ -1,6 +1,6 @@
 package com.basic.cloud.authorization.server.controller;
 
-import com.basic.cloud.core.exception.CloudServiceException;
+import com.basic.framework.core.exception.CloudServiceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,6 +1,6 @@
 package com.basic.cloud.authorization.server.domain.request;
 
-import com.basic.cloud.data.validation.annotation.Phone;
+import com.basic.framework.data.validation.annotation.Phone;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,1 +1,1 @@
-com.basic.cloud.oauth2.authorization.server.autoconfigure.AuthorizationServerAutoConfiguration
+com.basic.framework.oauth2.authorization.server.autoconfigure.AuthorizationServerAutoConfiguration

@@ -1,2 +1,2 @@
-com.basic.cloud.web.autoconfigure.DateAutoConfiguration
-com.basic.cloud.web.autoconfigure.DefaultExceptionHandlerAdvice
+com.basic.framework.web.autoconfigure.DateAutoConfiguration
+com.basic.framework.web.autoconfigure.DefaultExceptionHandlerAdvice

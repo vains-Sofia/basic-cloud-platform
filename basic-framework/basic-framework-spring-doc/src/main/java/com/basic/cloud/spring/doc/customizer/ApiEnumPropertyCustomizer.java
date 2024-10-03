@@ -1,6 +1,6 @@
 package com.basic.cloud.spring.doc.customizer;
 
-import com.basic.cloud.core.enums.BasicEnum;
+import com.basic.framework.core.enums.BasicEnum;
 import com.fasterxml.jackson.databind.type.SimpleType;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.oas.models.media.Schema;

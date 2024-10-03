@@ -1,8 +1,8 @@
 package com.basic.cloud.authorization.server.controller;
 
 import com.basic.cloud.authorization.server.domain.response.CaptchaResponse;
-import com.basic.cloud.core.domain.Result;
-import com.basic.cloud.data.validation.annotation.Phone;
+import com.basic.framework.core.domain.Result;
+import com.basic.framework.data.validation.annotation.Phone;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
