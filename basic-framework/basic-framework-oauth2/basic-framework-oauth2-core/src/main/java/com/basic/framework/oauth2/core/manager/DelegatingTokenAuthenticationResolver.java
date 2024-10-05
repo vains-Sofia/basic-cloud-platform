@@ -20,7 +20,6 @@ import java.util.Map;
 
 /**
  * 同时支持匿名token与jwt token解析配置
- * TODO 待完善
  *
  * @author vains
  */
@@ -61,6 +60,7 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
     /**
      * 判断请求头是否有key ： token-type，有值不是jwt
      * 这里根据自己业务实现，可以获取token后再判断token是jwt还是匿名token
+     * TODO 待完善
      *
      * @param request 请求对象
      * @return 是否使用jwt token

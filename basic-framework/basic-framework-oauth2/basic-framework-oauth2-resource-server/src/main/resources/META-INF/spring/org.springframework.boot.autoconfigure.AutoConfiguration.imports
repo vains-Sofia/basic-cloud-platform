@@ -1,1 +1,1 @@
-com.basic.framework.oauth2.resource.server.autoconfigure.ResourceServerConfiguration
+com.basic.framework.oauth2.resource.server.autoconfigure.ResourceServerAutoConfiguration

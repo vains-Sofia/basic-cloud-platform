@@ -14,7 +14,7 @@ public class BasicJwtAuthenticationConverter extends JwtAuthenticationConverter 
     public BasicJwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         // 设置解析权限信息的前缀，设置为空是去掉前缀
-        grantedAuthoritiesConverter.setAuthorityPrefix(AuthorizeConstants.AUTHORITY_PREFIX);
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
         // 设置权限信息在jwt claims中的key
         grantedAuthoritiesConverter.setAuthoritiesClaimName(AuthorizeConstants.AUTHORITIES);
 

@@ -6,6 +6,7 @@ import com.basic.framework.oauth2.core.annotation.ConditionalOnInMemoryStorage;
 import com.basic.framework.oauth2.core.converter.BasicJwtAuthenticationConverter;
 import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
 import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
+import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.core.manager.DelegatingTokenAuthenticationResolver;
@@ -45,6 +46,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.util.ObjectUtils;
@@ -141,7 +143,7 @@ public class AuthorizationServerAutoConfiguration {
     public UserDetailsService userDetailsService() {
 
         return username -> {
-            DefaultAuthenticatedUser user = new DefaultAuthenticatedUser("admin",
+            DefaultAuthenticatedUser user = new DefaultAuthenticatedUser("user",
                     OAuth2AccountPlatformEnum.SYSTEM,
                     List.of(new SimpleGrantedAuthority("USER")));
             user.setId(123L);
@@ -329,6 +331,12 @@ public class AuthorizationServerAutoConfiguration {
     @ConditionalOnMissingBean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
         return new JwtIdTokenCustomizer();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer() {
+        return new OpaqueIdTokenCustomizer();
     }
 
 }

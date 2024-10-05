@@ -1,6 +1,7 @@
 package com.basic.framework.oauth2.federation.autoconfigure;
 
 import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
+import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
 import com.basic.framework.oauth2.federation.converter.context.OAuth2UserConverterContext;
 import com.basic.framework.oauth2.federation.converter.impl.GiteeUserConverter;
@@ -20,6 +21,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
 import java.util.Map;
@@ -39,6 +41,12 @@ public class FederatedIdentityAutoConfiguration {
     @ConditionalOnMissingBean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
         return new JwtIdTokenCustomizer();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer() {
+        return new OpaqueIdTokenCustomizer();
     }
 
     @Bean

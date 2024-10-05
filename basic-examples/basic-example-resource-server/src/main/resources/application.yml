@@ -1,0 +1,13 @@
+server:
+  port: 8090
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://127.0.0.1:8080
+        opaquetoken:
+          client-id: opaque-client
+          client-secret: 123456
+          introspection-uri: http://127.0.0.1:8080/oauth2/introspect

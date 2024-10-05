@@ -2,9 +2,8 @@ package com.basic.framework.oauth2.core.util;
 
 import com.basic.framework.core.util.JsonUtils;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
@@ -14,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author vains
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class ServletUtils {
 
     /**

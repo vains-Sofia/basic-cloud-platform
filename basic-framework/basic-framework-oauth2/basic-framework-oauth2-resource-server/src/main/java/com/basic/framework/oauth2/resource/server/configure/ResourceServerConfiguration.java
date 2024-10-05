@@ -1,6 +1,6 @@
-package com.basic.framework.oauth2.resource.server.autoconfigure;
+package com.basic.framework.oauth2.resource.server.configure;
 
-import com.basic.framework.oauth2.core.converter.BasicJwtAuthenticationConverter;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.manager.DelegatingTokenAuthenticationResolver;
 import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
@@ -8,19 +8,18 @@ import com.basic.framework.oauth2.resource.server.property.ResourceServerPropert
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.Set;
 
 /**
  * 通用资源服务配置
@@ -29,22 +28,11 @@ import java.util.Set;
  */
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({ResourceServerProperties.class})
 @EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class ResourceServerConfiguration {
-
-    /**
-     * 默认忽略鉴权的地址
-     */
-    private final Set<String> DEFAULT_IGNORE_PATHS = Set.of(
-            "/login",
-            "/error",
-            "/assets/**",
-            "/favicon.ico",
-            "/login/email",
-            "/swagger-ui/**",
-            "/v3/api-docs/**"
-    );
 
     private final ResourceServerProperties resourceServerProperties;
 
@@ -57,10 +45,11 @@ public class ResourceServerConfiguration {
         http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
 
+        // 合并权限
+        AuthorizeConstants.DEFAULT_IGNORE_PATHS.addAll(resourceServerProperties.getIgnoreUriPaths());
         http.authorizeHttpRequests(authorize -> authorize
                 // 忽略指定url的认证、鉴权
-                .requestMatchers(DEFAULT_IGNORE_PATHS.toArray(new String[0])).permitAll()
-                .requestMatchers(resourceServerProperties.getIgnoreUriPaths().toArray(new String[0])).permitAll()
+                .requestMatchers(AuthorizeConstants.DEFAULT_IGNORE_PATHS.toArray(new String[0])).permitAll()
                 .anyRequest().access(new RequestContextAuthorizationManager())
         );
         http.oauth2ResourceServer(oauth2 -> oauth2
@@ -76,12 +65,6 @@ public class ResourceServerConfiguration {
     @ConditionalOnMissingBean
     public AuthenticationManagerResolver<HttpServletRequest> delegatingTokenAuthenticationResolver(ApplicationContext applicationContext) {
         return new DelegatingTokenAuthenticationResolver(applicationContext);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public JwtAuthenticationConverter authenticationConverter() {
-        return new BasicJwtAuthenticationConverter();
     }
 
 }

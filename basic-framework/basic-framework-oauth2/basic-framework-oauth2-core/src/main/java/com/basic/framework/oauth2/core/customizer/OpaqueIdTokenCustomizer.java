@@ -9,8 +9,8 @@ import org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNam
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsSet;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
 import java.util.*;
@@ -21,11 +21,11 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
 /**
  * An {@link OAuth2TokenCustomizer} to map claims from a federated identity to
  * the {@code id_token} produced by this authorization server.
- * Jwt token.
+ *  opaque token.
  *
  * @author vains
  */
-public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
+public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAuth2TokenClaimsContext> {
 
     private static final Set<String> ID_TOKEN_CLAIMS = Set.of(
             IdTokenClaimNames.ISS,
@@ -45,10 +45,11 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
     );
 
     @Override
-    public void customize(JwtEncodingContext context) {
+    public void customize(OAuth2TokenClaimsContext context) {
+        OAuth2TokenClaimsSet.Builder claims = context.getClaims();
         if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
             Map<String, Object> thirdPartyClaims = extractClaims(context.getPrincipal());
-            context.getClaims().claims(existingClaims -> {
+            claims.claims(existingClaims -> {
                 // Remove conflicting claims set by this authorization server
                 existingClaims.keySet().forEach(thirdPartyClaims::remove);
 
@@ -62,7 +63,6 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
 
         // 检查登录用户信息是不是OAuth2User，在token中添加loginType属性
         if (context.getPrincipal().getPrincipal() instanceof AuthenticatedUser user) {
-            JwtClaimsSet.Builder claims = context.getClaims();
             // 同时检验是否为String和是否不为空
             claims.claim(OAUTH2_ACCOUNT_PLATFORM, user.getAccountPlatform());
             claims.claim(TOKEN_UNIQUE_ID, user.getUsername());
@@ -95,7 +95,7 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
         return new HashMap<>(claims);
     }
 
-    public void transferToContext(Collection<? extends GrantedAuthority> authorities, JwtEncodingContext context) {
+    public void transferToContext(Collection<? extends GrantedAuthority> authorities, OAuth2TokenClaimsContext context) {
         // 获取申请的scopes
         Set<String> scopes = context.getAuthorizedScopes();
         // 提取权限并转为字符串
@@ -111,7 +111,7 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
         // 添加前缀，后续或许可以根据客户端针对性的做一些个性化配置(从客户端中获取前缀)
         Set<String> hadPrefixAuthorities = authoritySet.stream().map(AuthorizeConstants.AUTHORITY_PREFIX::concat).collect(Collectors.toSet());
 
-        JwtClaimsSet.Builder claims = context.getClaims();
+        OAuth2TokenClaimsSet.Builder claims = context.getClaims();
         // 将权限信息放入jwt的claims中（也可以生成一个以指定字符分割的字符串放入）
         claims.claim(AuthorizeConstants.AUTHORITIES, hadPrefixAuthorities);
         // 放入其它自定内容

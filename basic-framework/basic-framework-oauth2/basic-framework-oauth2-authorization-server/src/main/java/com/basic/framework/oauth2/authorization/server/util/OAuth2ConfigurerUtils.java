@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.util;
 
+import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.handler.authentication.DeviceAuthorizationResponseHandler;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
@@ -33,6 +34,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * oauth2配置类工具类
@@ -96,9 +98,7 @@ public class OAuth2ConfigurerUtils {
                 JwtGenerator jwtGenerator = getJwtGenerator(httpSecurity);
                 OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
                 OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer = getAccessTokenCustomizer(httpSecurity);
-                if (accessTokenCustomizer != null) {
-                    accessTokenGenerator.setAccessTokenCustomizer(accessTokenCustomizer);
-                }
+                accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, OpaqueIdTokenCustomizer::new));
                 OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
                 if (jwtGenerator != null) {
                     tokenGenerator = new DelegatingOAuth2TokenGenerator(
