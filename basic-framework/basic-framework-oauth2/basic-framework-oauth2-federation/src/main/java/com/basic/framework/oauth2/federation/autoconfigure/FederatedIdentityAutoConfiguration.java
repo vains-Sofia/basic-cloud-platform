@@ -1,11 +1,11 @@
 package com.basic.framework.oauth2.federation.autoconfigure;
 
+import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
 import com.basic.framework.oauth2.federation.converter.context.OAuth2UserConverterContext;
 import com.basic.framework.oauth2.federation.converter.impl.GiteeUserConverter;
 import com.basic.framework.oauth2.federation.converter.impl.GithubUserConverter;
 import com.basic.framework.oauth2.federation.converter.impl.WechatUserConverter;
-import com.basic.framework.oauth2.core.customizer.FederatedIdentityIdTokenCustomizer;
 import com.basic.framework.oauth2.federation.service.BasicOAuth2UserService;
 import com.basic.framework.oauth2.federation.wechat.BasicAccessTokenResponseClient;
 import com.basic.framework.oauth2.federation.wechat.BasicAuthorizationRequestResolver;
@@ -34,10 +34,11 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
 @RequiredArgsConstructor
 public class FederatedIdentityAutoConfiguration {
 
+
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<JwtEncodingContext> identityIdTokenCustomizer() {
-        return new FederatedIdentityIdTokenCustomizer();
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
+        return new JwtIdTokenCustomizer();
     }
 
     @Bean

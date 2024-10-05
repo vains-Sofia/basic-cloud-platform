@@ -18,6 +18,8 @@ import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 
 import java.util.List;
 
@@ -40,18 +42,6 @@ class MybatisRegisteredClientRepositoryTests {
         UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
                 .authenticated(user, user.getPassword(), user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-    }
-
-    @Test
-    public void findById() {
-        RegisteredClient registeredClient = this.registeredClientRepository.findById("1791832160811171843");
-        System.out.println(registeredClient);
-    }
-
-    @Test
-    public void findByClientId() {
-        RegisteredClient registeredClient = this.registeredClientRepository.findByClientId("device-messaging-client");
-        System.out.println(registeredClient);
     }
 
     @Test
@@ -168,12 +158,64 @@ class MybatisRegisteredClientRepositoryTests {
                 .postLogoutRedirectUri("http://127.0.0.1:8080/getCaptcha")
                 .build();
 
+        // 匿名令牌客户端
+        RegisteredClient opaqueClient = RegisteredClient.withId(IdWorker.getIdStr())
+                // 客户端id
+                .clientId("opaque-client")
+                // 客户端名称
+                .clientName("匿名token")
+                // 客户端秘钥，使用密码解析器加密
+                .clientSecret("{noop}123456")
+                // 客户端认证方式，基于请求头的认证
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                // 配置资源服务器使用该客户端获取授权时支持的方式
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
+                .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
+                .redirectUri("https://flow-cloud.love/OAuth2Redirect")
+                .redirectUri("https://j1zr8ren8w.51xd.pub/OAuth2Redirect")
+                .redirectUri("https://authorization-example.vercel.app/OAuth2Redirect")
+                // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                // 指定scope
+                .scope("message.read")
+                .scope("message.write")
+                // 客户端设置，设置用户需要确认授权
+                .clientSettings(
+                        ClientSettings.builder()
+                                .requireAuthorizationConsent(Boolean.TRUE)
+                                .build()
+                )
+                // token相关配置, 设置token为匿名token(opaque token)
+                .tokenSettings(
+                        TokenSettings.builder()
+                                .accessTokenFormat(OAuth2TokenFormat.REFERENCE)
+                                .build()
+                )
+                .build();
+
         this.registeredClientRepository.save(pkceClient);
         this.registeredClientRepository.save(oidcClient);
+        this.registeredClientRepository.save(opaqueClient);
         this.registeredClientRepository.save(deviceClient);
         this.registeredClientRepository.save(swaggerClient);
         this.registeredClientRepository.save(messagingClient);
         this.registeredClientRepository.save(privateKeyJwtClient);
+    }
+
+    @Test
+    public void findById() {
+        RegisteredClient registeredClient = this.registeredClientRepository.findByClientId("opaque-client");
+        System.out.println(registeredClient);
+    }
+
+    @Test
+    public void findByClientId() {
+        RegisteredClient registeredClient = this.registeredClientRepository.findByClientId("device-messaging-client");
+        System.out.println(registeredClient);
     }
 
 }

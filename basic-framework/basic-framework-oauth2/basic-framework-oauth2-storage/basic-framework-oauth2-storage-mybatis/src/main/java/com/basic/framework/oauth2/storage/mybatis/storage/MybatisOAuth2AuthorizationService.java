@@ -62,14 +62,13 @@ public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationSer
 
         LambdaQueryWrapper<MybatisOAuth2Authorization> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Authorization.class);
         if (tokenType == null) {
-            wrapper.or(e -> e.eq(MybatisOAuth2Authorization::getState, token)
-                    .eq(MybatisOAuth2Authorization::getUserCodeValue, token)
-                    .eq(MybatisOAuth2Authorization::getDeviceCodeValue, token)
-                    .eq(MybatisOAuth2Authorization::getAccessTokenValue, token)
-                    .eq(MybatisOAuth2Authorization::getOidcIdTokenValue, token)
-                    .eq(MybatisOAuth2Authorization::getRefreshTokenValue, token)
-                    .eq(MybatisOAuth2Authorization::getAuthorizationCodeValue, token)
-            );
+            wrapper.eq(MybatisOAuth2Authorization::getState, token)
+                    .or().eq(MybatisOAuth2Authorization::getUserCodeValue, token)
+                    .or().eq(MybatisOAuth2Authorization::getDeviceCodeValue, token)
+                    .or().eq(MybatisOAuth2Authorization::getAccessTokenValue, token)
+                    .or().eq(MybatisOAuth2Authorization::getOidcIdTokenValue, token)
+                    .or().eq(MybatisOAuth2Authorization::getRefreshTokenValue, token)
+                    .or().eq(MybatisOAuth2Authorization::getAuthorizationCodeValue, token);
         } else if (OAuth2ParameterNames.STATE.equals(tokenType.getValue())) {
             wrapper.eq(MybatisOAuth2Authorization::getState, token);
         } else if (OAuth2ParameterNames.CODE.equals(tokenType.getValue())) {

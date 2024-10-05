@@ -64,12 +64,21 @@ public class AuthorizationServerConfiguration {
         // 获取认证服务配置
         OAuth2AuthorizationServerConfigurer configurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
 
-        // 设置自定义用户确认授权页
+        // 授权申请的/oauth2/authorize相关端点的自定义配置
         configurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
+                // 设置自定义用户确认授权页
                 .consentPage(serverProperties.getConsentPageUri())
+                // 异常处理
                 .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
+                // 授权申请成功响应处理
                 .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(serverProperties.getConsentPageUri()))
         );
+
+        // 获取access token的/oauth2/token端点的自定义配置
+        configurer.tokenEndpoint(tokenEndpoint -> {
+            // 请求access token端点异常处理
+            tokenEndpoint.errorResponseHandler(SecurityUtils::exceptionHandler);
+        });
 
         // 开启oidc并在 /.well-known/openid-configuration 和 /.well-known/oauth-authorization-server 端点中添加自定义grant type
         configurer.oidc(new OidcConfigurerCustomizer());

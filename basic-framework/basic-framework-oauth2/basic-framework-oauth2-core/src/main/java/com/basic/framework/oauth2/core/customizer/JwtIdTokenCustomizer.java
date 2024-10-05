@@ -20,10 +20,11 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
 /**
  * An {@link OAuth2TokenCustomizer} to map claims from a federated identity to
  * the {@code id_token} produced by this authorization server.
+ * Jwt token.
  *
  * @author vains
  */
-public final class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
+public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
 
     private static final Set<String> ID_TOKEN_CLAIMS = Set.of(
             IdTokenClaimNames.ISS,

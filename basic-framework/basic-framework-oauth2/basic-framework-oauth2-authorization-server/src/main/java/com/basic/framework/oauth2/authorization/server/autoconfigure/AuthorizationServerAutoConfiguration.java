@@ -1,15 +1,15 @@
 package com.basic.framework.oauth2.authorization.server.autoconfigure;
 
+import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
+import com.basic.framework.oauth2.authorization.server.introspector.BasicOpaqueTokenIntrospector;
 import com.basic.framework.oauth2.core.annotation.ConditionalOnInMemoryStorage;
 import com.basic.framework.oauth2.core.converter.BasicJwtAuthenticationConverter;
 import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
-import com.basic.framework.oauth2.core.customizer.FederatedIdentityIdTokenCustomizer;
+import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.core.manager.DelegatingTokenAuthenticationResolver;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
-import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
-import com.basic.framework.oauth2.authorization.server.introspector.BasicOpaqueTokenIntrospector;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -327,8 +327,8 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<JwtEncodingContext> identityIdTokenCustomizer() {
-        return new FederatedIdentityIdTokenCustomizer();
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
+        return new JwtIdTokenCustomizer();
     }
 
 }
