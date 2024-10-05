@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author vains
  */
 @SpringBootApplication
-@MapperScan("com.basic.cloud.example.mybatis.plus.mapper")
+@MapperScan("com.basic.example.mybatis.plus.mapper")
 public class MybatisExampleApplication {
 
     public static void main(String[] args) {
