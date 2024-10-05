@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * redis分布式锁测试接口
  *
- * @author YuJx
+ * @author vains
  */
 @Slf4j
 @RestController

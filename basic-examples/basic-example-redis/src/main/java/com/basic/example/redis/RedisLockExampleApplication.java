@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Redis分布式锁测试服务
  *
- * @author YuJx
+ * @author vains
  */
 @SpringBootApplication
 public class RedisLockExampleApplication {
