@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * 自定义匿名token权限解析(webflux)
  *
- * @author YuJx
+ * @author vains
  */
 public class BasicReactiveOpaqueTokenConverter implements Converter<OAuth2TokenIntrospectionClaimAccessor, Mono<? extends OAuth2AuthenticatedPrincipal>> {
 

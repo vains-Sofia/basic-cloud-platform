@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.util;
 
+import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.handler.authentication.DeviceAuthorizationResponseHandler;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
@@ -146,7 +147,7 @@ public class OAuth2ConfigurerUtils {
                 jwtGenerator = new JwtGenerator(jwtEncoder);
                 OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer = getJwtCustomizer(httpSecurity);
                 if (jwtCustomizer != null) {
-                    jwtGenerator.setJwtCustomizer(jwtCustomizer);
+                    jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, JwtIdTokenCustomizer::new));
                 }
                 httpSecurity.setSharedObject(JwtGenerator.class, jwtGenerator);
             }
