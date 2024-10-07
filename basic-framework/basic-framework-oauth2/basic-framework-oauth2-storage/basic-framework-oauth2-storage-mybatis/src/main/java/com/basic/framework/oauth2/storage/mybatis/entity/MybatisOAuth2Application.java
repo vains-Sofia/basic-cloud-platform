@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.basic.framework.mybatis.plus.domain.BasicEntity;
+import com.basic.framework.mybatis.plus.handler.type.BasicCollectionTypeHandler;
 import com.basic.framework.oauth2.storage.mybatis.handler.AuthenticationMethodsTypeHandler;
 import com.basic.framework.oauth2.storage.mybatis.handler.AuthorizationGrantTypesTypeHandler;
+import com.basic.framework.oauth2.storage.mybatis.handler.scan.ClientSettingsTypeHandler;
+import com.basic.framework.oauth2.storage.mybatis.handler.scan.TokenSettingsTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -17,9 +20,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
- * <p>
- *
- * </p>
+ * oauth2 客户端信息实体
+ * 必须在MybatisPlus注解中显示的指定TypeHandler，否则调用updateById时获取不到对应的TypeHandler，字段类型全部为Object
  *
  * @author vains
  * @since 2024-05-17
@@ -53,18 +55,18 @@ public class MybatisOAuth2Application extends BasicEntity {
     @TableField(value = "authorization_grant_types", typeHandler = AuthorizationGrantTypesTypeHandler.class)
     private Set<AuthorizationGrantType> authorizationGrantTypes;
 
-    @TableField("redirect_uris")
+    @TableField(value = "redirect_uris", typeHandler = BasicCollectionTypeHandler.class)
     private Set<String> redirectUris;
 
-    @TableField("post_logout_redirect_uris")
+    @TableField(value = "post_logout_redirect_uris", typeHandler = BasicCollectionTypeHandler.class)
     private Set<String> postLogoutRedirectUris;
 
-    @TableField("scopes")
+    @TableField(value = "scopes", typeHandler = BasicCollectionTypeHandler.class)
     private Set<String> scopes;
 
-    @TableField(value = "client_settings")
+    @TableField(value = "client_settings", typeHandler = ClientSettingsTypeHandler.class)
     private ClientSettings clientSettings;
 
-    @TableField(value = "token_settings")
+    @TableField(value = "token_settings", typeHandler = TokenSettingsTypeHandler.class)
     private TokenSettings tokenSettings;
 }
