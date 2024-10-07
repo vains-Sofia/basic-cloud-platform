@@ -169,6 +169,8 @@ public class Clients {
                 .postLogoutRedirectUri("http://127.0.0.1:8080/getCaptcha")
                 .build();
 
+        clientSettingsBuilder.requireProofKey(Boolean.FALSE);
+
         // 匿名令牌客户端
         RegisteredClient opaqueClient = RegisteredClient.withId(IdWorker.getIdStr())
                 // 客户端id
@@ -199,6 +201,7 @@ public class Clients {
                 // token相关配置, 设置token为匿名token(opaque token)
                 .tokenSettings(tokenSettingsBuilder.accessTokenFormat(OAuth2TokenFormat.REFERENCE).build())
                 .build();
+        tokenSettingsBuilder.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED);
         clients.add(pkceClient);
         clients.add(oidcClient);
         clients.add(opaqueClient);
