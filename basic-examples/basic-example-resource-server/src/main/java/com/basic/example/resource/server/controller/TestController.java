@@ -35,7 +35,7 @@ public class TestController {
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasAnyAuthority('USER')")
+    @PreAuthorize("hasAnyAuthority('message.read')")
     public Mono<Object> user() {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)

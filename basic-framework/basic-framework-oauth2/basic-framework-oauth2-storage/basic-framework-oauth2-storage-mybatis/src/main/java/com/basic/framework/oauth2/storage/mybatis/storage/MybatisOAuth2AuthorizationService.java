@@ -2,31 +2,23 @@ package com.basic.framework.oauth2.storage.mybatis.storage;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.storage.mybatis.converter.Authorization2OAuth2AuthorizationConverter;
 import com.basic.framework.oauth2.storage.mybatis.converter.OAuth2Authorization2AuthorizationConverter;
 import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Authorization;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2AuthorizationMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
-import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.util.Assert;
-
-import java.security.Principal;
 
 /**
  * 核心services——认证信息
  *
  * @author vains
  */
-@Slf4j
 public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationService {
 
     private final MybatisOAuth2AuthorizationMapper mybatisOAuth2AuthorizationMapper;
@@ -41,31 +33,13 @@ public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationSer
     }
 
     @Override
-    public void save(OAuth2Authorization oauth2Authorization) {
-        Assert.notNull(oauth2Authorization, "authorization cannot be null");
-        MybatisOAuth2Authorization storageMybatisOAuth2Authorization = this.mybatisOAuth2AuthorizationMapper.selectById(oauth2Authorization.getId());
-
-        MybatisOAuth2Authorization convert = this.authorizationConverter.convert(oauth2Authorization);
-        if (convert == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("authorization convert failed. Interrupt OAuth2Authorization save.");
-            }
-            return;
-        }
+    public void save(OAuth2Authorization OAuth2Authorization) {
+        Assert.notNull(OAuth2Authorization, "authorization cannot be null");
+        MybatisOAuth2Authorization storageMybatisOAuth2Authorization = this.mybatisOAuth2AuthorizationMapper.selectById(OAuth2Authorization.getId());
         if (storageMybatisOAuth2Authorization != null) {
-            this.mybatisOAuth2AuthorizationMapper.deleteById(oauth2Authorization.getId());
-            convert.setCreateTime(storageMybatisOAuth2Authorization.getCreateTime());
+            this.mybatisOAuth2AuthorizationMapper.deleteById(OAuth2Authorization.getId());
         }
-        if (SecurityContextHolder.getContext().getAuthentication() instanceof OAuth2ClientAuthenticationToken) {
-            // 现在拿不到当前登录用户，直接从认证对象中拿
-            Object attribute = oauth2Authorization.getAttribute(Principal.class.getName());
-            if (attribute instanceof UsernamePasswordAuthenticationToken authenticationToken) {
-                if (authenticationToken.getPrincipal() instanceof AuthenticatedUser user) {
-                    convert.setUpdateBy(user.getId());
-                    convert.setCreateBy(user.getId());
-                }
-            }
-        }
+        MybatisOAuth2Authorization convert = this.authorizationConverter.convert(OAuth2Authorization);
         this.mybatisOAuth2AuthorizationMapper.insert(convert);
     }
 
@@ -112,7 +86,7 @@ public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationSer
         } else {
             return null;
         }
-        MybatisOAuth2Authorization mybatisOAuth2Authorization = this.mybatisOAuth2AuthorizationMapper.selectOne(wrapper);
-        return this.oAuth2AuthorizationConverter.convert(mybatisOAuth2Authorization);
+        MybatisOAuth2Authorization MybatisOAuth2Authorization = this.mybatisOAuth2AuthorizationMapper.selectOne(wrapper);
+        return this.oAuth2AuthorizationConverter.convert(MybatisOAuth2Authorization);
     }
 }

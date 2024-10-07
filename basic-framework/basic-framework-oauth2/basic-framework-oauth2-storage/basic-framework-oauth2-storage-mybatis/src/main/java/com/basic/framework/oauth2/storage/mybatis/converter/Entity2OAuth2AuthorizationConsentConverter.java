@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.storage.mybatis.converter;
 
-import com.basic.framework.oauth2.authorization.server.core.BasicCoreServiceConverter;
 import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2AuthorizationConsent;
+import com.basic.framework.oauth2.authorization.server.core.BasicCoreServiceConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.lang.Nullable;
@@ -26,8 +26,11 @@ public class Entity2OAuth2AuthorizationConsentConverter implements BasicCoreServ
     private final RegisteredClientRepository registeredClientRepository;
 
     @Override
-    @Nullable
-    public OAuth2AuthorizationConsent convert(MybatisOAuth2AuthorizationConsent source) {
+    public OAuth2AuthorizationConsent convert(@Nullable MybatisOAuth2AuthorizationConsent source) {
+        if (source == null) {
+            return null;
+        }
+
         String registeredClientId = source.getRegisteredClientId();
         RegisteredClient registeredClient = this.registeredClientRepository.findById(registeredClientId);
         if (registeredClient == null) {
