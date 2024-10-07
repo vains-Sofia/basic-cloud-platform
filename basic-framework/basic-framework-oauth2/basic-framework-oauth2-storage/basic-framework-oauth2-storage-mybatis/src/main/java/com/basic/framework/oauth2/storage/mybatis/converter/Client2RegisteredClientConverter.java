@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.storage.mybatis.converter;
 
-import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application;
 import com.basic.framework.oauth2.authorization.server.core.BasicCoreServiceConverter;
+import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application;
 import org.springframework.lang.Nullable;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 
@@ -13,10 +13,8 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 public class Client2RegisteredClientConverter implements BasicCoreServiceConverter<MybatisOAuth2Application, RegisteredClient> {
 
     @Override
-    public RegisteredClient convert(@Nullable MybatisOAuth2Application source) {
-        if (source == null) {
-            return null;
-        }
+    @Nullable
+    public RegisteredClient convert(MybatisOAuth2Application source) {
         RegisteredClient.Builder client = RegisteredClient.withId(String.valueOf(source.getId()));
         client.clientId(source.getClientId());
         client.clientIdIssuedAt(timeToInstant(source.getClientIdIssuedAt()));
