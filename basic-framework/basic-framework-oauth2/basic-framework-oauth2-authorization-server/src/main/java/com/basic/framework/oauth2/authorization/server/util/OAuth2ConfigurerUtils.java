@@ -324,17 +324,16 @@ public class OAuth2ConfigurerUtils {
         OAuth2DeviceClientAuthenticationProvider provider =
                 new OAuth2DeviceClientAuthenticationProvider(registeredClientRepository);
 
-        OAuth2ServerProperties.ServerProperties serverProperties = oAuth2ServerProperties.getServer();
 
         builder.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 // 设置设备码用户验证url(自定义用户验证页)
                 .deviceAuthorizationEndpoint(deviceAuthorizationEndpoint ->
-                        deviceAuthorizationEndpoint.verificationUri(serverProperties.getDeviceVerificationUri()))
+                        deviceAuthorizationEndpoint.verificationUri(oAuth2ServerProperties.getDeviceVerificationUri()))
                 // 设置验证设备码用户确认页面
                 .deviceVerificationEndpoint(deviceVerificationEndpoint -> deviceVerificationEndpoint
-                        .consentPage(serverProperties.getConsentPageUri())
+                        .consentPage(oAuth2ServerProperties.getConsentPageUri())
 //                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
-                        .deviceVerificationResponseHandler(new DeviceAuthorizationResponseHandler(serverProperties.getDeviceActivatedPageUri()))
+                        .deviceVerificationResponseHandler(new DeviceAuthorizationResponseHandler(oAuth2ServerProperties.getDeviceActivatedPageUri()))
                 )
                 .clientAuthentication(clientAuthentication ->
                         // 客户端认证添加设备码的converter和provider

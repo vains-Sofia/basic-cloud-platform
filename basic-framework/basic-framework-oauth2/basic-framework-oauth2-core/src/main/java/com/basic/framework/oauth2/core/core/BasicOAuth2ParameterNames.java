@@ -1,5 +1,7 @@
 package com.basic.framework.oauth2.core.core;
 
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+
 /**
  * oauth2认证参数名
  *
@@ -10,12 +12,12 @@ public class BasicOAuth2ParameterNames {
     /**
      * {@code email } - used in Access Token Request.
      */
-    public static final String EMAIL = "email";
+    public static final String EMAIL = AuthorizeConstants.EMAIL_PARAMETER;
 
     /**
      * {@code captcha } - used in Access Token Request.
      */
-    public static final String EMAIL_CAPTCHA = "captcha";
+    public static final String EMAIL_CAPTCHA = AuthorizeConstants.EMAIL_CAPTCHA_PARAMETER;
 
     /**
      * 三方登录相关参数——登录类型

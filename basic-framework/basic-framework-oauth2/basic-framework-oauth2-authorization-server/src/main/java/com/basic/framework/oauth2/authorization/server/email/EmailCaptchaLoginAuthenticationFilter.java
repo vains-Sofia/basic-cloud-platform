@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.email;
 
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
@@ -27,12 +28,12 @@ public class EmailCaptchaLoginAuthenticationFilter extends AbstractAuthenticatio
     /**
      * 邮箱参数名
      */
-    private String emailParameter = "email";
+    private String emailParameter = AuthorizeConstants.EMAIL_PARAMETER;
 
     /**
      * 邮箱验证码参数名
      */
-    private String captchaParameter = "captcha";
+    private String captchaParameter = AuthorizeConstants.EMAIL_CAPTCHA_PARAMETER;
 
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/login/email",
             "POST");

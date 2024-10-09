@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.oauth2.core.*;
@@ -212,8 +213,14 @@ public abstract class AbstractOAuth2AuthenticationProvider implements Authentica
      */
     protected Authentication authenticateAuthenticationToken(AbstractOAuth2AuthenticationToken authenticationToken) {
         Authentication unauthenticated = getUnauthenticatedToken(authenticationToken);
-        // 交给 userDetailsAuthenticationProvider 进行认证
-        return authenticationProvider.authenticate(unauthenticated);
+        try {
+            // 交给 userDetailsAuthenticationProvider 进行认证
+            return authenticationProvider.authenticate(unauthenticated);
+        } catch (AuthenticationException e) {
+            // 包装异常为OAuth2AuthenticationException，使OAuth2TokenEndpointFilter的异常处理可以正确捕获异常信息
+            log.debug("Authentication failed", e);
+            throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST, e.getMessage(), ERROR_URI), e);
+        }
     }
 
     /**

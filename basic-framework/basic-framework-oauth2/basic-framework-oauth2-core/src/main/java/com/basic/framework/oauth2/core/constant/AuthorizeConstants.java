@@ -26,6 +26,16 @@ public class AuthorizeConstants {
     public static final String CORE_SERVICE_STORAGE = "basic.cloud.oauth2.server.core-service-storage";
 
     /**
+     * 邮箱验证码邮件参数名
+     */
+    public static final String EMAIL_PARAMETER = "email";
+
+    /**
+     * 邮箱验证码在参数中的名字
+     */
+    public static final String EMAIL_CAPTCHA_PARAMETER = "captcha";
+
+    /**
      * 默认忽略鉴权的地址
      */
     public static final Set<String> DEFAULT_IGNORE_PATHS = new HashSet<>(Set.of(

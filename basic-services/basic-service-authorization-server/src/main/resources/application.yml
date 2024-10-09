@@ -27,6 +27,7 @@ basic:
           - http://127.0.0.1:8000
         ignore-uri-paths:
           - /getCaptcha
+          - /getEmailCaptcha
 
 spring:
   security:
@@ -113,8 +114,20 @@ spring:
     nacos:
       username: nacos
       password: nacos
+  # 响应前端时时间少8小时问题
+  jackson:
+    time-zone: GMT+8
+  mail:
+    host: smtp.163.com
+    port: 25
+    username: 17683906991@163.com
+    password: ${MAIL_PASSWORD}
 mybatis-plus:
   type-handlers-package: com.basic.framework.oauth2.storage.mybatis.handler.scan
+
+logging:
+  level:
+    com.baomidou.example.mapper: debug
 
 springdoc:
   show-oauth2-endpoints: true

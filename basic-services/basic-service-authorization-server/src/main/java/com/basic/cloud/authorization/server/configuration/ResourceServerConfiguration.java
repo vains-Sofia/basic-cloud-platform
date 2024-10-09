@@ -1,10 +1,10 @@
 package com.basic.cloud.authorization.server.configuration;
 
-import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
-import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
 import com.basic.framework.oauth2.core.handler.authentication.LoginFailureHandler;
 import com.basic.framework.oauth2.core.handler.authentication.LoginSuccessHandler;
+import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
+import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +64,7 @@ public class ResourceServerConfiguration {
         http.csrf(AbstractHttpConfigurer::disable);
 
         // 合并默认忽略鉴权的地址和配置文件中添加的忽略鉴权的地址
-        Set<String> ignoreUriPaths = oAuth2ServerProperties.getServer().getIgnoreUriPaths();
+        Set<String> ignoreUriPaths = oAuth2ServerProperties.getIgnoreUriPaths();
         ignoreUriPaths.addAll(DEFAULT_IGNORE_PATHS);
 
         http.authorizeHttpRequests(authorize -> authorize
@@ -72,21 +72,18 @@ public class ResourceServerConfiguration {
                 .anyRequest().access(new RequestContextAuthorizationManager())
         );
 
-        // 自定义认证服务配置文件
-        OAuth2ServerProperties.ServerProperties serverProperties = oAuth2ServerProperties.getServer();
-
         // Form login handles the redirect to the login page from the
         // authorization server filter chain
         http.formLogin(form -> form
-                .loginPage(serverProperties.getLoginPageUri())
-                .loginProcessingUrl(serverProperties.getLoginProcessingUri())
-                .successHandler(new LoginSuccessHandler(serverProperties.getLoginPageUri()))
-                .failureHandler(new LoginFailureHandler(serverProperties.getLoginPageUri()))
+                .loginPage(oAuth2ServerProperties.getLoginPageUri())
+                .loginProcessingUrl(oAuth2ServerProperties.getLoginProcessingUri())
+                .successHandler(new LoginSuccessHandler(oAuth2ServerProperties.getLoginPageUri()))
+                .failureHandler(new LoginFailureHandler(oAuth2ServerProperties.getLoginPageUri()))
         );
 
         // 开启oauth2登录支持
         http.oauth2Login(oauth2Login -> oauth2Login
-                .loginPage(oAuth2ServerProperties.getServer().getLoginPageUri())
+                .loginPage(oAuth2ServerProperties.getLoginPageUri())
         );
 
         // 添加BearerTokenAuthenticationFilter，将认证服务当做一个资源服务，解析请求头中的token
@@ -98,10 +95,10 @@ public class ResourceServerConfiguration {
 
         // 添加邮件登录过滤器
         http.with(new EmailCaptchaLoginConfigurer<>(), c -> c
-                .loginPage(serverProperties.getLoginPageUri())
-                .loginProcessingUrl(serverProperties.getEmailLoginProcessingUri())
-                .successHandler(new LoginSuccessHandler(serverProperties.getLoginPageUri()))
-                .failureHandler(new LoginFailureHandler(serverProperties.getLoginPageUri()))
+                .loginPage(oAuth2ServerProperties.getLoginPageUri())
+                .loginProcessingUrl(oAuth2ServerProperties.getEmailLoginProcessingUri())
+                .successHandler(new LoginSuccessHandler(oAuth2ServerProperties.getLoginPageUri()))
+                .failureHandler(new LoginFailureHandler(oAuth2ServerProperties.getLoginPageUri()))
         );
 
         return http.build();

@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.email;
 
+import com.basic.framework.oauth2.authorization.server.captcha.CaptchaService;
 import com.basic.framework.oauth2.authorization.server.core.AbstractLoginAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -20,21 +21,26 @@ import org.springframework.util.ObjectUtils;
 @Slf4j
 public class EmailCaptchaLoginAuthenticationProvider extends AbstractLoginAuthenticationProvider {
 
+    private final CaptchaService captchaService;
+
     private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
-    public EmailCaptchaLoginAuthenticationProvider(UserDetailsService userDetailsService) {
+    public EmailCaptchaLoginAuthenticationProvider(UserDetailsService userDetailsService, CaptchaService captchaService) {
         super(userDetailsService);
+        this.captchaService = captchaService;
     }
 
     @Override
     protected void additionalAuthenticationChecks(AbstractAuthenticationToken authentication) throws AuthenticationException {
-        log.info("校验验证码...");
+        log.debug("校验验证码...");
         if (ObjectUtils.isEmpty(authentication.getCredentials())) {
             log.debug("Failed to authenticate since no credentials provided");
             throw new BadCredentialsException(this.messages
                     .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         }
-        log.info("验证码校验成功.");
+        // 验证邮件验证码
+        this.captchaService.validate();
+        log.debug("验证码校验成功.");
     }
 
     @Override

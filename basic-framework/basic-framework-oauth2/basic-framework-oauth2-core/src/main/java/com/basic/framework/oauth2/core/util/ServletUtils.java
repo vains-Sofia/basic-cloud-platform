@@ -1,10 +1,13 @@
 package com.basic.framework.oauth2.core.util;
 
 import com.basic.framework.core.util.JsonUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.MediaType;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.nio.charset.StandardCharsets;
 
@@ -28,6 +31,16 @@ public class ServletUtils {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(JsonUtils.toJson(data));
         response.getWriter().flush();
+    }
+
+    /**
+     * 获取当前请求
+     *
+     * @return 当前请求，获取失败会返回null
+     */
+    public static HttpServletRequest getRequest() {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        return sra == null ? null : sra.getRequest();
     }
 
 }

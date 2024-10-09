@@ -1,5 +1,7 @@
 package com.basic.framework.oauth2.authorization.server.autoconfigure;
 
+import com.basic.framework.oauth2.authorization.server.captcha.CaptchaService;
+import com.basic.framework.oauth2.authorization.server.captcha.impl.RedisCaptchaService;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.introspector.BasicOpaqueTokenIntrospector;
 import com.basic.framework.oauth2.core.annotation.ConditionalOnInMemoryStorage;
@@ -11,6 +13,7 @@ import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.core.manager.DelegatingTokenAuthenticationResolver;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
+import com.basic.framework.redis.support.RedisOperator;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -23,6 +26,7 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2Res
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -69,6 +73,7 @@ import java.util.UUID;
  */
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Import(RedisOperator.class)
 @EnableConfigurationProperties({OAuth2ServerProperties.class})
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class AuthorizationServerAutoConfiguration {
@@ -117,8 +122,20 @@ public class AuthorizationServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public EmailCaptchaLoginAuthenticationProvider emailCaptchaLoginAuthenticationProvider(
-            UserDetailsService userDetailsService) {
-        return new EmailCaptchaLoginAuthenticationProvider(userDetailsService);
+            UserDetailsService userDetailsService, CaptchaService captchaService) {
+        return new EmailCaptchaLoginAuthenticationProvider(userDetailsService, captchaService);
+    }
+
+    /**
+     * 注入一个验证码Service
+     *
+     * @param redisOperator redis操作类
+     * @return CaptchaService
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public CaptchaService captchaService(RedisOperator<String> redisOperator) {
+        return new RedisCaptchaService(oAuth2ServerProperties, redisOperator);
     }
 
     /**
@@ -297,7 +314,7 @@ public class AuthorizationServerAutoConfiguration {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        Set<String> allowedOrigins = oAuth2ServerProperties.getServer().getAllowedOrigins();
+        Set<String> allowedOrigins = oAuth2ServerProperties.getAllowedOrigins();
         if (!ObjectUtils.isEmpty(allowedOrigins)) {
             // 设置允许跨域的域名,如果允许携带cookie的话,路径就不能写*号, *表示所有的域名都可以跨域访问
             allowedOrigins.forEach(config::addAllowedOrigin);

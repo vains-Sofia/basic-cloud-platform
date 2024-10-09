@@ -30,22 +30,21 @@
             <artifactId>basic-framework-oauth2-authorization-server</artifactId>
         </dependency>
 
-        <!-- 封装的在线文档模块 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-spring-doc</artifactId>
+            <artifactId>basic-framework-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.basic.cloud</groupId>
+                    <artifactId>basic-framework-oauth2-resource-server</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- 联合身份认证/社交登录 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-oauth2-federation</artifactId>
-        </dependency>
-
-        <!-- 入参校验模块 -->
-        <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-data-validation</artifactId>
         </dependency>
 
         <!-- 页面渲染 -->
@@ -76,6 +75,7 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- MybatisPlus依赖 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-mybatis-plus</artifactId>
@@ -85,6 +85,12 @@
         <dependency>
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-oauth2-storage-mybatis</artifactId>
+        </dependency>
+
+        <!-- 发送邮件支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
     </dependencies>
 

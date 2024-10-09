@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * 客户端信息类
  *
- * @author YuJx
+ * @author vains
  */
 @UtilityClass
 public class Clients {

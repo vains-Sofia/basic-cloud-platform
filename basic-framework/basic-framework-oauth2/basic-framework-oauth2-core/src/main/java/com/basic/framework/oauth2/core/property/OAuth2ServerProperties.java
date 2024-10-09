@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.core.property;
 
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.enums.CoreServiceStorageEnum;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -19,65 +20,56 @@ public class OAuth2ServerProperties {
     /**
      * 配置在yaml中的前缀
      */
-    static final String PREFIX = "basic.cloud.oauth2";
+    static final String PREFIX = "basic.cloud.oauth2.server";
 
     /**
-     * 登录相关配置
+     * 设置允许跨域的域名,如果允许携带cookie的话,路径就不能写*号, *表示所有的域名都可以跨域访问
      */
-    private ServerProperties server = new ServerProperties();
+    private Set<String> allowedOrigins = new HashSet<>();
 
     /**
-     * 登录相关配置类
-     *
-     * @author vains
+     * 登录页面地址
      */
-    @Data
-    public static class ServerProperties {
+    private String loginPageUri = "/login";
 
-        /**
-         * 设置允许跨域的域名,如果允许携带cookie的话,路径就不能写*号, *表示所有的域名都可以跨域访问
-         */
-        private Set<String> allowedOrigins = new HashSet<>();
+    /**
+     * 登录处理地址
+     */
+    private String loginProcessingUri = "/login";
 
-        /**
-         * 登录页面地址
-         */
-        private String loginPageUri = "/login";
+    /**
+     * 邮件登录处理地址
+     */
+    private String emailLoginProcessingUri = "/login/email";
 
-        /**
-         * 登录处理地址
-         */
-        private String loginProcessingUri = "/login";
+    /**
+     * 授权确认地址
+     */
+    private String consentPageUri = "/oauth2/consent";
 
-        /**
-         * 邮件登录处理地址
-         */
-        private String emailLoginProcessingUri = "/login/email";
+    /**
+     * 不需要鉴权的地址
+     */
+    private Set<String> ignoreUriPaths = new HashSet<>();
 
-        /**
-         * 授权确认地址
-         */
-        private String consentPageUri = "/oauth2/consent";
+    /**
+     * 设备码验证页面地址
+     */
+    private String deviceVerificationUri = "/activate";
 
-        /**
-         * 不需要鉴权的地址
-         */
-        private Set<String> ignoreUriPaths = new HashSet<>();
+    /**
+     * 设备码验证成功地址
+     */
+    private String deviceActivatedPageUri = "/activated";
 
-        /**
-         * 设备码验证页面地址
-         */
-        private String deviceVerificationUri = "/activate";
+    /**
+     * 核心服务实现类型，默认MybatisPlus的实现
+     */
+    private CoreServiceStorageEnum coreServiceStorage = CoreServiceStorageEnum.MYBATIS_PLUS;
 
-        /**
-         * 设备码验证成功地址
-         */
-        private String deviceActivatedPageUri = "/activated";
+    /**
+     * 邮件验证码配置
+     */
+    private OAuth2ServerCaptchaRequestProperties email = new OAuth2ServerCaptchaRequestProperties(AuthorizeConstants.EMAIL_PARAMETER);
 
-        /**
-         * 核心服务实现类型，默认MybatisPlus的实现
-         */
-        private CoreServiceStorageEnum coreServiceStorage = CoreServiceStorageEnum.MYBATIS_PLUS;
-
-    }
 }

@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.server.resource.BearerTokenErrorCodes
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
 import org.springframework.util.StringUtils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -68,7 +70,7 @@ public class SecurityUtils {
     public static void exceptionHandler(HttpServletRequest request, HttpServletResponse response, Throwable e) {
         Map<String, String> parameters = getErrorParameter(request, response, e);
         String wwwAuthenticate = computeWwwAuthenticateHeaderValue(parameters);
-        response.addHeader(HttpHeaders.WWW_AUTHENTICATE, wwwAuthenticate);
+        response.addHeader(HttpHeaders.WWW_AUTHENTICATE, URLEncoder.encode(wwwAuthenticate, StandardCharsets.UTF_8));
         ServletUtils.renderJson(response, parameters);
     }
 

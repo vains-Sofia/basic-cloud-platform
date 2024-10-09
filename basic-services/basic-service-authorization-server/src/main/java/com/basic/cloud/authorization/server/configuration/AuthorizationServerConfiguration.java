@@ -51,8 +51,6 @@ public class AuthorizationServerConfiguration {
     @Bean
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
             throws Exception {
-        // 自定义认证服务配置文件
-        OAuth2ServerProperties.ServerProperties serverProperties = oAuth2ServerProperties.getServer();
 
         // 禁用 csrf 与 cors
         http.cors(Customizer.withDefaults());
@@ -67,11 +65,11 @@ public class AuthorizationServerConfiguration {
         // 授权申请的/oauth2/authorize相关端点的自定义配置
         configurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
                 // 设置自定义用户确认授权页
-                .consentPage(serverProperties.getConsentPageUri())
+                .consentPage(oAuth2ServerProperties.getConsentPageUri())
                 // 异常处理
-                .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
+                .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri()))
                 // 授权申请成功响应处理
-                .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(serverProperties.getConsentPageUri()))
+                .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(oAuth2ServerProperties.getConsentPageUri()))
         );
 
         // 获取access token的/oauth2/token端点的自定义配置
@@ -96,7 +94,7 @@ public class AuthorizationServerConfiguration {
         http.exceptionHandling((exceptions) -> exceptions
                 .defaultAuthenticationEntryPointFor(
                         new LoginTargetAuthenticationEntryPoint(
-                                serverProperties.getLoginPageUri(), serverProperties.getDeviceVerificationUri(), authorizationServerSettings.getDeviceVerificationEndpoint()),
+                                oAuth2ServerProperties.getLoginPageUri(), oAuth2ServerProperties.getDeviceVerificationUri(), authorizationServerSettings.getDeviceVerificationEndpoint()),
                         new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                 )
         );

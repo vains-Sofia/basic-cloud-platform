@@ -27,9 +27,16 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- oauth2 core包 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-oauth2-core</artifactId>
+        </dependency>
+
+        <!-- 封装的redis模块 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-redis</artifactId>
         </dependency>
     </dependencies>
 

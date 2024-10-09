@@ -1,7 +1,9 @@
 package com.basic.framework.oauth2.authorization.server.email;
 
+import com.basic.framework.oauth2.authorization.server.captcha.CaptchaService;
 import com.basic.framework.oauth2.authorization.server.core.AbstractLoginFilterConfigurer;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2ConfigurerUtils;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import lombok.Setter;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
@@ -19,12 +21,14 @@ import org.springframework.util.ObjectUtils;
 public class EmailCaptchaLoginConfigurer<H extends HttpSecurityBuilder<H>> extends
         AbstractLoginFilterConfigurer<H, EmailCaptchaLoginConfigurer<H>, EmailCaptchaLoginAuthenticationFilter> {
 
+    private CaptchaService captchaService;
+
     private UserDetailsService userDetailsService;
 
     public EmailCaptchaLoginConfigurer() {
         super(new EmailCaptchaLoginAuthenticationFilter(), null);
-        emailParameter("email");
-        captchaParameter("captcha");
+        emailParameter(AuthorizeConstants.EMAIL_PARAMETER);
+        captchaParameter(AuthorizeConstants.EMAIL_CAPTCHA_PARAMETER);
     }
 
     @Override
@@ -66,12 +70,16 @@ public class EmailCaptchaLoginConfigurer<H extends HttpSecurityBuilder<H>> exten
             this.userDetailsService = OAuth2ConfigurerUtils.getBeanOrNull(http, UserDetailsService.class);
         }
 
+        if (captchaService == null) {
+            this.captchaService = OAuth2ConfigurerUtils.getBeanOrNull(http, CaptchaService.class);
+        }
+
         super.init(http);
     }
 
     @Override
     protected AuthenticationProvider authenticationProvider(H http) {
-        return new EmailCaptchaLoginAuthenticationProvider(userDetailsService);
+        return new EmailCaptchaLoginAuthenticationProvider(userDetailsService, captchaService);
     }
 
     /**
