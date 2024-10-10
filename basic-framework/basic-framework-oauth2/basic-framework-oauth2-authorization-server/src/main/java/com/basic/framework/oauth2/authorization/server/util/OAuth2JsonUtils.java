@@ -1,6 +1,7 @@
 package com.basic.framework.oauth2.authorization.server.util;
 
 import com.basic.framework.core.util.JsonUtils;
+import com.basic.framework.oauth2.authorization.server.mixin.BasicAuthorizationServerJackson2Module;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -44,6 +45,7 @@ public class OAuth2JsonUtils {
         ClassLoader classLoader = OAuth2JsonUtils.class.getClassLoader();
         List<Module> securityModules = SecurityJackson2Modules.getModules(classLoader);
         objectMapper.registerModules(securityModules);
+        objectMapper.registerModule(new BasicAuthorizationServerJackson2Module());
         objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
     }
 

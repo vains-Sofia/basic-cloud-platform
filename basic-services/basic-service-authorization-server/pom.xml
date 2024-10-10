@@ -12,11 +12,6 @@
     <artifactId>basic-service-authorization-server</artifactId>
     <description>basic-services authorization server</description>
 
-    <properties>
-        <!-- BootStrap版本号 -->
-        <webjars.bootstrap.version>5.2.3</webjars.bootstrap.version>
-    </properties>
-
     <dependencies>
         <!-- Spring Cloud Alibaba 服务发现 -->
         <dependency>
@@ -51,15 +46,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>${webjars.bootstrap.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator-core</artifactId>
         </dependency>
 
         <!-- 测试包 -->

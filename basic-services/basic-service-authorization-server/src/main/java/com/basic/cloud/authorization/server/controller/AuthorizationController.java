@@ -44,7 +44,7 @@ public class AuthorizationController {
         if (attribute instanceof AuthenticationException exception) {
             model.addAttribute("error", exception.getMessage());
         }
-        return "login";
+        return "login-new";
     }
 
     @GetMapping("/activate")
