@@ -1,4 +1,4 @@
-FROM maven:3.9-ibm-semeru-21-jammy AS build
+FROM m.daocloud.io/docker.io/library/maven:3.9-ibm-semeru-21-jammy AS build
 WORKDIR /app
 COPY . .
 RUN mvn clean install && mvn package -s settings.xml -DskipTests
@@ -11,7 +11,7 @@ ARG JAR_FILE=/app/target/*.jar
 COPY --from=build ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
-FROM eclipse-temurin:21-jre
+FROM m.daocloud.io/docker.io/library/eclipse-temurin:21-jre
 WORKDIR application
 COPY --from=builder application/dependencies/ ./
 COPY --from=builder application/spring-boot-loader/ ./
