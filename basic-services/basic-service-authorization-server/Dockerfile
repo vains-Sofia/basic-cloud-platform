@@ -1,7 +1,7 @@
 FROM registry.cn-guangzhou.aliyuncs.com/vains/maven:3.9-ibm-semeru-21-jammy AS build
 WORKDIR /app
 RUN cd ../../ && \
-    ls &&
+    ls
 
 COPY . .
 
