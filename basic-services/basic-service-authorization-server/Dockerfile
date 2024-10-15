@@ -1,10 +1,8 @@
 FROM registry.cn-guangzhou.aliyuncs.com/vains/maven:3.9-ibm-semeru-21-jammy AS build
-WORKDIR /app
 RUN cd ../../ && \
     ls
-
+WORKDIR /app
 COPY . .
-
 RUN ls && \
     mvn clean install -s settings.xml -DskipTests && \
     cd basic-services/basic-service-authorization-server && \
