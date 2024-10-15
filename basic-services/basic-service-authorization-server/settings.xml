@@ -104,20 +104,20 @@ under the License.
           <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
         </proxy>
         -->
-<!--        <proxy>-->
-<!--            <id>http-proxy</id>-->
-<!--            <active>true</active>-->
-<!--            <protocol>http</protocol>-->
-<!--            <host>127.0.0.1</host>-->
-<!--            <port>7897</port>-->
-<!--        </proxy>-->
-<!--        <proxy>-->
-<!--            <id>https-proxy</id>-->
-<!--            <active>true</active>-->
-<!--            <protocol>https</protocol>-->
-<!--            <host>127.0.0.1</host>-->
-<!--            <port>7897</port>-->
-<!--        </proxy>-->
+        <!--        <proxy>-->
+        <!--            <id>http-proxy</id>-->
+        <!--            <active>true</active>-->
+        <!--            <protocol>http</protocol>-->
+        <!--            <host>127.0.0.1</host>-->
+        <!--            <port>7897</port>-->
+        <!--        </proxy>-->
+        <!--        <proxy>-->
+        <!--            <id>https-proxy</id>-->
+        <!--            <active>true</active>-->
+        <!--            <protocol>https</protocol>-->
+        <!--            <host>127.0.0.1</host>-->
+        <!--            <port>7897</port>-->
+        <!--        </proxy>-->
     </proxies>
 
     <!-- servers
@@ -146,6 +146,12 @@ under the License.
           <passphrase>optional; leave empty if not used.</passphrase>
         </server>
         -->
+
+        <server>
+            <id>cloudflow</id>
+            <username>${MAVEN_USERNAME}</username>
+            <password>${MAVEN_PASSWORD}</password>
+        </server>
     </servers>
 
     <!-- mirrors
@@ -273,6 +279,22 @@ under the License.
           </properties>
         </profile>
         -->
+
+        <profile>
+            <id>cloudflow</id>
+            <repositories>
+                <repository>
+                    <id>cloudflow</id>
+                    <url>${MAVEN_REPOSITORY}</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
     </profiles>
 
     <!-- activeProfiles
@@ -283,4 +305,8 @@ under the License.
       <activeProfile>anotherAlwaysActiveProfile</activeProfile>
     </activeProfiles>
     -->
+
+    <activeProfiles>
+        <activeProfile>cloudflow</activeProfile>
+    </activeProfiles>
 </settings>
