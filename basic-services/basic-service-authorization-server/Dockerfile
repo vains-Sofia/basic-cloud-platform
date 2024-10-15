@@ -7,7 +7,7 @@ RUN mvn clean package -s settings.xml -DskipTests
 
 FROM m.daocloud.io/docker.io/library/eclipse-temurin:21-jre AS builder
 WORKDIR application
-ARG JAR_FILE=target/*.jar
+ARG JAR_FILE=/app/target/*.jar
 COPY --from=build ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
