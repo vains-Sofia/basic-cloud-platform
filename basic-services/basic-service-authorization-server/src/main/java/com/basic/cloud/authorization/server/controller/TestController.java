@@ -4,6 +4,7 @@ import com.basic.cloud.authorization.server.domain.request.TestValidationRequest
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.data.validation.annotation.Phone;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +28,8 @@ public class TestController {
     }
 
     @GetMapping("/validatePhone")
+    @Parameter(name = "phone", description = "手机号")
+    @Operation(summary = "测试手机号验证", description = "测试手机号验证")
     public Result<String> validatePhone(@NotBlank @Phone String phone) {
         return Result.success(phone);
     }
