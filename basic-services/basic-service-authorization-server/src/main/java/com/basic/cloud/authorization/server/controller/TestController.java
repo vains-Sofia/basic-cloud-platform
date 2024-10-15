@@ -23,6 +23,7 @@ public class TestController {
 
     @GetMapping("/test01")
     @PreAuthorize("hasAnyAuthority('profile')")
+    @Operation(summary = "测试接口，需要有profile权限", description = "测试接口，需要有profile权限")
     public String test01() {
         return "Hello, test01";
     }
