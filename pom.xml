@@ -167,4 +167,17 @@
         </dependencies>
     </dependencyManagement>
 
+    <repositories>
+        <repository>
+            <id>cloudflow</id>
+            <url>https://packages.aliyun.com/64cde605132d10ed34af3c73/maven/cloudflow</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
 </project>
