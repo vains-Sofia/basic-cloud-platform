@@ -38,6 +38,7 @@ public class TestController {
     }
 
     @PostMapping("/validateJson")
+    @Operation(summary = "测试Json请求验证", description = "测试Json请求验证")
     public Result<TestValidationRequest> validateJson(@Valid @RequestBody TestValidationRequest validationDto) {
         return Result.success(validationDto);
     }
