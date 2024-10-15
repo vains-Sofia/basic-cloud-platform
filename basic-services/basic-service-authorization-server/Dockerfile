@@ -1,6 +1,8 @@
 FROM registry.cn-guangzhou.aliyuncs.com/vains/maven:3.9-ibm-semeru-21-jammy AS build
 WORKDIR /app
-COPY ../../ .
+RUN cd ../../
+RUN ll
+COPY . .
 RUN mvn clean install -s settings.xml -DskipTests
 RUN cd basic-services/basic-service-authorization-server
 RUN mvn package -s settings.xml -DskipTests
