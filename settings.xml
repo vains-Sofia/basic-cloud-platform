@@ -146,6 +146,12 @@ under the License.
           <passphrase>optional; leave empty if not used.</passphrase>
         </server>
         -->
+
+        <server>
+            <id>cloudflow</id>
+            <username>64cde5fa0afbe478e7806c24</username>
+            <password>ik4]sJgj0e1V</password>
+        </server>
     </servers>
 
     <!-- mirrors
