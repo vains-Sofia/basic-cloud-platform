@@ -1,4 +1,14 @@
 FROM registry.cn-guangzhou.aliyuncs.com/vains/maven:3.9-ibm-semeru-21-jammy AS build
+
+# 引用环境变量
+ARG MAVEN_USERNAME
+ARG MAVEN_PASSWORD
+ARG MAVEN_REPOSITORY
+# 添加至docker环境
+RUN echo $MAVEN_USERNAME
+RUN echo $MAVEN_PASSWORD
+RUN echo $MAVEN_REPOSITORY
+
 WORKDIR /app
 COPY . .
 RUN mvn clean package -s settings.xml -DskipTests
