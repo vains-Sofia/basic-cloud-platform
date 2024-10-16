@@ -1,10 +1,10 @@
 package com.basic.framework.oauth2.authorization.server.email;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;

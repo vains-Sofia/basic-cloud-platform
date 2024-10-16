@@ -1,9 +1,9 @@
 package com.basic.framework.oauth2.authorization.server.grant.device;
 
 import com.basic.framework.oauth2.authorization.server.util.OAuth2EndpointUtils;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpMethod;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;

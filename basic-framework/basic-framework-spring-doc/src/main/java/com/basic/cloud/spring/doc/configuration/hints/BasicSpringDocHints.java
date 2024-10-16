@@ -2,11 +2,11 @@ package com.basic.cloud.spring.doc.configuration.hints;
 
 import com.basic.cloud.spring.doc.customizer.ApiEnumParameterCustomizer;
 import com.basic.cloud.spring.doc.customizer.ApiEnumPropertyCustomizer;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
-import org.springframework.lang.Nullable;
 
 import java.util.Arrays;
 

@@ -1,8 +1,8 @@
 package com.basic.framework.oauth2.storage.mybatis.converter;
 
-import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application;
 import com.basic.framework.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import org.springframework.lang.Nullable;
+import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application;
+import jakarta.annotation.Nullable;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 
 /**

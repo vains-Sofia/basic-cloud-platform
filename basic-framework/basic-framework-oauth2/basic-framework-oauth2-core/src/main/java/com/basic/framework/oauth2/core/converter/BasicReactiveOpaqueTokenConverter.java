@@ -2,7 +2,6 @@ package com.basic.framework.oauth2.core.converter;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 public class BasicReactiveOpaqueTokenConverter implements Converter<OAuth2TokenIntrospectionClaimAccessor, Mono<? extends OAuth2AuthenticatedPrincipal>> {
 
     @Override
-    @Nullable
     public Mono<? extends OAuth2AuthenticatedPrincipal> convert(OAuth2TokenIntrospectionClaimAccessor accessor) {
         Object claim = accessor.getClaims().get(AuthorizeConstants.AUTHORITIES);
         Set<GrantedAuthority> authorities;

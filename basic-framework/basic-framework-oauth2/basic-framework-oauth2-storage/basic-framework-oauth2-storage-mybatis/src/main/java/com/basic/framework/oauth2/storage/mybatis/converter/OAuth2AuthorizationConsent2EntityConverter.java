@@ -1,9 +1,9 @@
 package com.basic.framework.oauth2.storage.mybatis.converter;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2AuthorizationConsent;
 import com.basic.framework.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import org.springframework.lang.Nullable;
+import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2AuthorizationConsent;
+import jakarta.annotation.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.util.ObjectUtils;
