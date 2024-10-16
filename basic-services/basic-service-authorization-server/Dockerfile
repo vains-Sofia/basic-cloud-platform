@@ -11,4 +11,4 @@ COPY --from=builder application/extracted/dependencies/ ./
 COPY --from=builder application/extracted/spring-boot-loader/ ./
 COPY --from=builder application/extracted/snapshot-dependencies/ ./
 COPY --from=builder application/extracted/application/ ./
-ENTRYPOINT ["java", "-jar", "application.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=test", "-jar", "application.jar"]
