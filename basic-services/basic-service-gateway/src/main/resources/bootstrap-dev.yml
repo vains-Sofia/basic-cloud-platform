@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        namespace: a29400b0-9f79-47a0-80df-6ceab61d3029
+      config:
+        namespace: a29400b0-9f79-47a0-80df-6ceab61d3029
+        file-extension: yaml
