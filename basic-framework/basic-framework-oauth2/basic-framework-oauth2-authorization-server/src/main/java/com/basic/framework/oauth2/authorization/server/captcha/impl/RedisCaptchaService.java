@@ -9,6 +9,7 @@ import com.basic.framework.redis.support.RedisOperator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.ServletRequestBindingException;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.ServletRequestUtils;
  *
  * @author vains
  */
+@Slf4j
 @RequiredArgsConstructor
 public class RedisCaptchaService implements CaptchaService {
 
@@ -79,5 +81,6 @@ public class RedisCaptchaService implements CaptchaService {
         } catch (ServletRequestBindingException e) {
             throw new InvalidCaptchaException("获取验证码失败，请重试.");
         }
+        log.info("验证码验证通过.");
     }
 }

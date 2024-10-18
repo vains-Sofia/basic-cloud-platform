@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,6 +25,7 @@ import java.util.UUID;
  *
  * @author vains
  */
+@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -73,6 +75,7 @@ public class CaptchaController {
         message.setTo(email);
         message.setSubject("Your Verification Code");
         message.setText("Your verification code is: " + captcha);
+        log.info("Send email to {}, Verification Code {}", email, captcha);
         mailSender.send(message);
 
         this.captchaService.save(captcha);
