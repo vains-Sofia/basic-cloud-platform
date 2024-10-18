@@ -118,4 +118,9 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
     public void eraseCredentials() {
         this.password = null;
     }
+
+    @Override
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities == null ? Collections.emptySet() : Collections.unmodifiableSet(new LinkedHashSet<>(authorities));
+    }
 }

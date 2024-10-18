@@ -2,8 +2,11 @@ package com.basic.framework.oauth2.core.domain;
 
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+
+import java.util.Collection;
 
 /**
  * 统一用户信息
@@ -37,5 +40,7 @@ public interface AuthenticatedUser extends OAuth2User, UserDetails, CredentialsC
      * @return 三方登录提供商类型
      */
     OAuth2AccountPlatformEnum getAccountPlatform();
+
+    void setAuthorities(Collection<? extends GrantedAuthority> authorities);
 
 }
