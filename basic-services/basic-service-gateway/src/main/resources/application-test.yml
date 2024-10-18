@@ -9,3 +9,6 @@ spring:
         namespace: 122b6435-5eaf-4232-af57-7bf6e576870c
         file-extension: yaml
       server-addr: 192.168.2.178:8848
+  config:
+    import:
+      - nacos:${spring.application.name}.yaml?refresh=true

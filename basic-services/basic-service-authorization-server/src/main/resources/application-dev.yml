@@ -1,6 +1,6 @@
 spring:
   application:
-    name: gateway
+    name: authorization-server
   cloud:
     nacos:
       username: nacos
@@ -9,4 +9,9 @@ spring:
         namespace: a29400b0-9f79-47a0-80df-6ceab61d3029
       config:
         namespace: a29400b0-9f79-47a0-80df-6ceab61d3029
-        file-extension: yaml
+
+  config:
+    import:
+      - nacos:spring-doc.yaml?refresh=true
+      - nacos:federation-client.yaml?refresh=true
+      - nacos:${spring.application.name}.yaml?refresh=true

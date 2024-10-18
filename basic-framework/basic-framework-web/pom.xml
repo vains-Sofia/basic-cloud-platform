@@ -53,12 +53,6 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
-
-        <!-- Spring Cloud 下优先读取bootstrap.yml -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

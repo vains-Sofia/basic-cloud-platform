@@ -1,6 +1,6 @@
 spring:
   application:
-    name: authorization-server
+    name: gateway
   cloud:
     nacos:
       username: nacos
@@ -12,5 +12,4 @@ spring:
         file-extension: yaml
   config:
     import:
-      - nacos:spring-doc.yaml?refresh=true
-      - nacos:federation-client.yaml?refresh=true
+      - nacos:${spring.application.name}.yaml?refresh=true
