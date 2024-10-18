@@ -3,21 +3,9 @@ spring:
     name: gateway
   cloud:
     nacos:
-      username: nacos
-      password: nacos
       discovery:
         namespace: 122b6435-5eaf-4232-af57-7bf6e576870c
       config:
         namespace: 122b6435-5eaf-4232-af57-7bf6e576870c
         file-extension: yaml
       server-addr: 192.168.2.178:8848
-
-    gateway:
-      routes:
-        - id: authorization-server
-          uri: lb://authorization-server
-          predicates:
-            - Path=/authorization-server/**
-
-server:
-  port: 9000
