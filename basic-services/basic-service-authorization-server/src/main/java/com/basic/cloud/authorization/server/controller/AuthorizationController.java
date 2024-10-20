@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -32,6 +33,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Tag(name = "认证服务页面渲染", description = "渲染认证服务需要的页面")
 public class AuthorizationController {
+
+    private final ServerProperties serverProperties;
 
     private final RegisteredClientRepository registeredClientRepository;
 
@@ -110,10 +113,12 @@ public class AuthorizationController {
         model.addAttribute("previouslyApprovedScopes", withDescription(previouslyApprovedScopes));
         model.addAttribute("principalName", principal.getName());
         model.addAttribute("userCode", userCode);
+        ServerProperties.Servlet servlet = serverProperties.getServlet();
+        model.addAttribute("contextPath", servlet.getContextPath());
         if (StringUtils.hasText(userCode)) {
-            model.addAttribute("requestURI", "/authorization-server/oauth2/device_verification");
+            model.addAttribute("requestURI", "/oauth2/device_verification");
         } else {
-            model.addAttribute("requestURI", "/authorization-server/oauth2/authorize");
+            model.addAttribute("requestURI", "/oauth2/authorize");
         }
 
         return "consent";

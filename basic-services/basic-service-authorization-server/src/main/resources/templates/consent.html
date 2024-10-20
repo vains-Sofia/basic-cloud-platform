@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Custom consent page - Consent required</title>
-  <link rel="stylesheet" href="/assets/css/bootstrap.css" />
+  <link rel="stylesheet" th:href="${contextPath} + '/assets/css/bootstrap.css'" />
   <script>
     function cancelConsent() {
       document.consent_form.reset();
@@ -46,7 +46,7 @@
   </div>
   <div class="row">
     <div class="col text-center">
-      <form name="consent_form" method="post" th:action="${requestURI}">
+      <form name="consent_form" method="post" th:action="${contextPath} + ${requestURI}">
         <input type="hidden" name="client_id" th:value="${clientId}">
         <input type="hidden" name="state" th:value="${state}">
         <input th:if="${userCode}" type="hidden" name="user_code" th:value="${userCode}">

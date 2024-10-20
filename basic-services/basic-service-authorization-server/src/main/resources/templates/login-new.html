@@ -114,7 +114,7 @@
             redirect: 'follow'
         };
 
-        fetch(`${window.location.origin}/authorization-server/getEmailCaptcha?email=${phone}`, requestOptions)
+        fetch(`${window.location.origin}${window.location.pathname.replace('/login', '')}/getEmailCaptcha?email=${phone}`, requestOptions)
             .then(response => response.text())
             .then(r => {
                 if (r) {
