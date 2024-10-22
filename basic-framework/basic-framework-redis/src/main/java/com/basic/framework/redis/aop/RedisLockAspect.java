@@ -104,7 +104,7 @@ public class RedisLockAspect {
         try {
             // 是否成功获取锁
             boolean success;
-            if (redisLock.leaseTime() == -1) {
+            if (redisLock.leaseTime() != -1) {
                 success = lock.tryLock(redisLock.waitTime(), redisLock.leaseTime(), redisLock.timeUnit());
             } else {
                 success = lock.tryLock(redisLock.waitTime(), redisLock.timeUnit());
