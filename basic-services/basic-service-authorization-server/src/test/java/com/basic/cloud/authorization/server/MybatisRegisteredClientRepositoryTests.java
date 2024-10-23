@@ -48,4 +48,10 @@ class MybatisRegisteredClientRepositoryTests {
         System.out.println(registeredClient);
     }
 
+    @Test
+    public void findSwaggerClient() {
+        RegisteredClient registeredClient = this.registeredClientRepository.findByClientId("swagger-client");
+        System.out.println(registeredClient);
+    }
+
 }
