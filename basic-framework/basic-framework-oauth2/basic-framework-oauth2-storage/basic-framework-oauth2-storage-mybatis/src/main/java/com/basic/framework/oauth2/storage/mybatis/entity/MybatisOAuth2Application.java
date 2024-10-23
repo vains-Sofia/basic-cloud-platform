@@ -3,18 +3,13 @@ package com.basic.framework.oauth2.storage.mybatis.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.basic.framework.mybatis.plus.domain.BasicEntity;
 import com.basic.framework.mybatis.plus.handler.type.BasicCollectionTypeHandler;
-import com.basic.framework.oauth2.storage.mybatis.handler.AuthenticationMethodsTypeHandler;
-import com.basic.framework.oauth2.storage.mybatis.handler.AuthorizationGrantTypesTypeHandler;
-import com.basic.framework.oauth2.storage.mybatis.handler.scan.ClientSettingsTypeHandler;
-import com.basic.framework.oauth2.storage.mybatis.handler.scan.TokenSettingsTypeHandler;
+import com.basic.framework.oauth2.storage.core.domain.OAuth2ClientSettings;
+import com.basic.framework.oauth2.storage.core.domain.OAuth2TokenSettings;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -49,11 +44,11 @@ public class MybatisOAuth2Application extends BasicEntity {
     @TableField("client_name")
     private String clientName;
 
-    @TableField(value = "client_authentication_methods", typeHandler = AuthenticationMethodsTypeHandler.class)
-    private Set<ClientAuthenticationMethod> clientAuthenticationMethods;
+    @TableField(value = "client_authentication_methods", typeHandler = BasicCollectionTypeHandler.class)
+    private Set<String> clientAuthenticationMethods;
 
-    @TableField(value = "authorization_grant_types", typeHandler = AuthorizationGrantTypesTypeHandler.class)
-    private Set<AuthorizationGrantType> authorizationGrantTypes;
+    @TableField(value = "authorization_grant_types", typeHandler = BasicCollectionTypeHandler.class)
+    private Set<String> authorizationGrantTypes;
 
     @TableField(value = "redirect_uris", typeHandler = BasicCollectionTypeHandler.class)
     private Set<String> redirectUris;
@@ -64,9 +59,9 @@ public class MybatisOAuth2Application extends BasicEntity {
     @TableField(value = "scopes", typeHandler = BasicCollectionTypeHandler.class)
     private Set<String> scopes;
 
-    @TableField(value = "client_settings", typeHandler = ClientSettingsTypeHandler.class)
-    private ClientSettings clientSettings;
+    @TableField(value = "client_settings", typeHandler = JacksonTypeHandler.class)
+    private OAuth2ClientSettings clientSettings;
 
-    @TableField(value = "token_settings", typeHandler = TokenSettingsTypeHandler.class)
-    private TokenSettings tokenSettings;
+    @TableField(value = "token_settings", typeHandler = JacksonTypeHandler.class)
+    private OAuth2TokenSettings tokenSettings;
 }

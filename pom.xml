@@ -158,7 +158,7 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- 认证服务存储实现 -->
+            <!-- 分布式锁模块 -->
             <dependency>
                 <groupId>com.basic.cloud</groupId>
                 <artifactId>basic-framework-redis</artifactId>

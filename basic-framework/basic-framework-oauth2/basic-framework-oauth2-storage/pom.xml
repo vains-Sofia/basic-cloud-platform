@@ -11,7 +11,19 @@
     <name>basic-framework-oauth2-storage</name>
     <modules>
         <module>basic-framework-oauth2-storage-mybatis</module>
+        <module>basic-framework-oauth2-storage-core</module>
     </modules>
     <packaging>pom</packaging>
     <description>oauth2 server storage module</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 认证服务存储核心模块 -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-oauth2-storage-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

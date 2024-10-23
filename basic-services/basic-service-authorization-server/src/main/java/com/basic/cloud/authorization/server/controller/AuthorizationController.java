@@ -1,12 +1,16 @@
 package com.basic.cloud.authorization.server.controller;
 
+import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.exception.CloudServiceException;
+import com.basic.framework.oauth2.storage.core.entity.OAuth2Application;
+import com.basic.framework.oauth2.storage.core.service.OAuth2ApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -20,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 import java.util.*;
@@ -36,9 +41,21 @@ public class AuthorizationController {
 
     private final ServerProperties serverProperties;
 
+    private final OAuth2ApplicationService applicationService;
+
     private final RegisteredClientRepository registeredClientRepository;
 
     private final OAuth2AuthorizationConsentService authorizationConsentService;
+
+    @ResponseBody
+    @GetMapping("/findByClientId")
+    @PreAuthorize("hasAnyAuthority('message.read')")
+    @Parameter(name = "clientId", description = "客户端id")
+    @Operation(summary = "根据客户端id查询客户端信息", description = "根据客户端id查询客户端信息")
+    public Result<OAuth2Application> findByClientId(String clientId) {
+        OAuth2Application application = applicationService.findByClientId(clientId);
+        return Result.success(application);
+    }
 
     @GetMapping("/login")
     @Operation(summary = "登录页面", description = "渲染登录页面")

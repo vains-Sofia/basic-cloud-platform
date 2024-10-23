@@ -1,18 +1,20 @@
 package com.basic.framework.oauth2.storage.mybatis.storage;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.basic.framework.oauth2.storage.core.entity.OAuth2Application;
+import com.basic.framework.oauth2.storage.core.service.OAuth2ApplicationService;
 import com.basic.framework.oauth2.storage.mybatis.converter.Client2RegisteredClientConverter;
 import com.basic.framework.oauth2.storage.mybatis.converter.RegisteredClient2ClientConverter;
 import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application;
-import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ApplicationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.util.Assert;
 
 /**
  * 核心 services —— 客户端
+ * 该实现仅限框架调用，对外提供接口时请使用{@link OAuth2ApplicationService}
  *
  * @author vains
  */
@@ -20,7 +22,7 @@ import org.springframework.util.Assert;
 @RequiredArgsConstructor
 public class MybatisRegisteredClientRepository implements RegisteredClientRepository {
 
-    private final MybatisOAuth2ApplicationMapper oAuth2ApplicationMapper;
+    private final OAuth2ApplicationService applicationService;
 
     private final RegisteredClient2ClientConverter registeredClient2ClientConverter = new RegisteredClient2ClientConverter();
 
@@ -28,6 +30,7 @@ public class MybatisRegisteredClientRepository implements RegisteredClientReposi
 
     @Override
     public void save(RegisteredClient registeredClient) {
+        // 该方法仅限框架内部使用，外部接口使用时不能使用该方法
         Assert.notNull(registeredClient, "registeredClient cannot be null");
         MybatisOAuth2Application mybatisOAuth2Application = this.registeredClient2ClientConverter.convert(registeredClient);
         if (mybatisOAuth2Application == null) {
@@ -36,30 +39,28 @@ public class MybatisRegisteredClientRepository implements RegisteredClientReposi
             }
             return;
         }
-        MybatisOAuth2Application selectOne = this.oAuth2ApplicationMapper.selectOne(Wrappers.lambdaQuery(MybatisOAuth2Application.class).eq(MybatisOAuth2Application::getClientId, registeredClient.getClientId()));
-        if (selectOne != null) {
-            mybatisOAuth2Application.setId(selectOne.getId());
-            mybatisOAuth2Application.setCreateBy(selectOne.getCreateBy());
-            mybatisOAuth2Application.setCreateTime(selectOne.getCreateTime());
-            this.oAuth2ApplicationMapper.updateById(mybatisOAuth2Application);
-        } else {
-            this.oAuth2ApplicationMapper.insert(mybatisOAuth2Application);
-        }
+        OAuth2Application oAuth2Application = new OAuth2Application();
+        BeanUtils.copyProperties(mybatisOAuth2Application, oAuth2Application);
+        applicationService.save(oAuth2Application);
     }
 
     @Override
     public RegisteredClient findById(String id) {
         Assert.hasText(id, "id cannot be empty");
-        MybatisOAuth2Application MybatisOAuth2Application = this.oAuth2ApplicationMapper.selectById(id);
-        return client2RegisteredClientConverter.convert(MybatisOAuth2Application);
+        OAuth2Application application = this.applicationService.findById(id);
+        MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
+        BeanUtils.copyProperties(application, mybatisOAuth2Application);
+        return client2RegisteredClientConverter.convert(mybatisOAuth2Application);
     }
 
     @Override
     public RegisteredClient findByClientId(String clientId) {
         Assert.hasText(clientId, "clientId cannot be empty");
-        MybatisOAuth2Application selectOne = this.oAuth2ApplicationMapper.selectOne(Wrappers.lambdaQuery(MybatisOAuth2Application.class).eq(MybatisOAuth2Application::getClientId, clientId));
-        if (selectOne != null) {
-            return client2RegisteredClientConverter.convert(selectOne);
+        OAuth2Application application = this.applicationService.findByClientId(clientId);
+        if (application != null) {
+            MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
+            BeanUtils.copyProperties(application, mybatisOAuth2Application);
+            return client2RegisteredClientConverter.convert(mybatisOAuth2Application);
         }
         return null;
     }

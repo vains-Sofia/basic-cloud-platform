@@ -31,6 +31,12 @@
             <artifactId>basic-framework-mybatis-plus</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- 认证服务存储核心模块 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-oauth2-storage-core</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
