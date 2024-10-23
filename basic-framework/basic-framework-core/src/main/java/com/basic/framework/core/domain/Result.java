@@ -18,31 +18,30 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@Schema(name = "统一响应类", description = "统一响应类")
 public class Result<T> implements Serializable {
 
     /**
      * 响应数据
      */
-    @Schema(description = "接口响应数据")
+    @Schema(title = "接口响应数据")
     private T data;
 
     /**
      * 状态码
      */
-    @Schema(description = "接口状态码")
+    @Schema(title = "接口状态码")
     private Integer code;
 
     /**
      * 响应信息
      */
-    @Schema(description = "接口响应信息")
+    @Schema(title = "接口响应信息")
     private String message;
 
     /**
      * 当前时间戳
      */
-    @Schema(description = "接口响应时间戳")
+    @Schema(title = "接口响应时间戳")
     private Long timestamp;
 
     /**

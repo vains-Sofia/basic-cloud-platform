@@ -41,8 +41,6 @@ public class ApiEnumPropertyCustomizer implements PropertyCustomizer, BasicEnumC
                     // 重置字段注释和标题为从枚举中提取的
                     if (ObjectUtils.isEmpty(property.getTitle())) {
                         schema.setTitle(description);
-                    } else {
-                        schema.setTitle(property.getTitle() + " (" + description + ")");
                     }
                     if (ObjectUtils.isEmpty(property.getDescription())) {
                         schema.setDescription(description);

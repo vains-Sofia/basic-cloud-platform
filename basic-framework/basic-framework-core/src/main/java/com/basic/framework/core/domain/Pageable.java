@@ -5,20 +5,23 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 分页请求入参
  *
  * @author vains
  */
 @Data
-public abstract class Pageable {
+@Schema(title = "分页请求入参")
+public abstract class Pageable implements Serializable {
 
     /**
      * 当前页码
      */
     @Min(1)
     @NotNull
-    @Schema(description = "当前页码")
+    @Schema(title = "当前页码")
     private Long current;
 
     /**
@@ -26,7 +29,7 @@ public abstract class Pageable {
      */
     @Min(1)
     @NotNull
-    @Schema(description = "每页行数")
+    @Schema(title = "每页行数")
     private Long size;
 
 }
