@@ -6,7 +6,6 @@ import org.springdoc.core.properties.AbstractSwaggerUiConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigParameters;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
@@ -43,8 +42,6 @@ public class DynamicDocGroupHandler implements ApplicationListener<RefreshRoutes
      */
     private final String PATH_PREDICATE = "Path";
 
-    private final ServerProperties serverProperties;
-
     private final RouteDefinitionLocator routeDefinitionLocator;
 
     private final SwaggerUiConfigParameters swaggerUiConfigParameters;
@@ -53,10 +50,9 @@ public class DynamicDocGroupHandler implements ApplicationListener<RefreshRoutes
 
     private final Set<AbstractSwaggerUiConfigProperties.SwaggerUrl> DEFAULT_SWAGGER_URLS;
 
-    public DynamicDocGroupHandler(ServerProperties serverProperties, RouteDefinitionLocator routeDefinitionLocator,
+    public DynamicDocGroupHandler(RouteDefinitionLocator routeDefinitionLocator,
                                   SwaggerUiConfigParameters swaggerUiConfigParameters,
                                   SwaggerUiConfigProperties swaggerUiConfigProperties) {
-        this.serverProperties = serverProperties;
         this.routeDefinitionLocator = routeDefinitionLocator;
         this.swaggerUiConfigParameters = swaggerUiConfigParameters;
         this.swaggerUiConfigProperties = swaggerUiConfigProperties;
@@ -101,7 +97,7 @@ public class DynamicDocGroupHandler implements ApplicationListener<RefreshRoutes
                 }
 
                 // 拦截路径的习惯一般是 /path/** ，所以这里直接替换掉最后的/**
-                String docUrl = serverProperties.getServlet().getContextPath() + pathArg.replaceAll("/\\*\\*", "") + DEFAULT_API_DOCS_URL;
+                String docUrl = pathArg.replaceAll("/\\*\\*", "") + DEFAULT_API_DOCS_URL;
                 // 把路由id当做模块名
                 String docName = routeDefinition.getId();
 
