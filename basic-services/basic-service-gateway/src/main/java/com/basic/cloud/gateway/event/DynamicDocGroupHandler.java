@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.properties.AbstractSwaggerUiConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigParameters;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
@@ -31,6 +32,9 @@ import static org.springdoc.core.utils.Constants.SPRINGDOC_SWAGGER_UI_ENABLED;
 @Component
 @ConditionalOnProperty(name = SPRINGDOC_SWAGGER_UI_ENABLED, matchIfMissing = true)
 public class DynamicDocGroupHandler implements ApplicationListener<RefreshRoutesEvent> {
+
+    @Value("${PROXY_PATH:''}")
+    private String proxyPath;
 
     /**
      * swagger只收集统一微服务下的模块
@@ -97,7 +101,7 @@ public class DynamicDocGroupHandler implements ApplicationListener<RefreshRoutes
                 }
 
                 // 拦截路径的习惯一般是 /path/** ，所以这里直接替换掉最后的/**
-                String docUrl = pathArg.replaceAll("/\\*\\*", "") + DEFAULT_API_DOCS_URL;
+                String docUrl = proxyPath + pathArg.replaceAll("/\\*\\*", "") + DEFAULT_API_DOCS_URL;
                 // 把路由id当做模块名
                 String docName = routeDefinition.getId();
 
