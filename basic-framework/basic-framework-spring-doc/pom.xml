@@ -12,10 +12,18 @@
     <description>basic-cloud-platform spring doc module</description>
 
     <dependencies>
-        <!-- 引入webmvc的Spring Doc依赖，webflux看后期是否需要 -->
+        <!-- 适用于webmvc的Spring Doc依赖 -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 适用于webflux的SpringDoc依赖 -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- 框架核心包 -->

@@ -30,6 +30,12 @@
             <artifactId>basic-framework-spring-doc</artifactId>
         </dependency>
 
+        <!-- 适用于webmvc的Spring Doc依赖 -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
         <!-- 入参校验 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>

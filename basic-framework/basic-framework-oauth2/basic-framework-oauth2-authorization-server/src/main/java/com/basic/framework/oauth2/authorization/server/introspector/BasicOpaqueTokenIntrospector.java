@@ -75,7 +75,6 @@ public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
         }
 
         Collection<String> stringAuthorities = Collections.emptyList();
-        ;
         Map<String, Object> claims = authorizedToken.getClaims();
         if (!ObjectUtils.isEmpty(claims) && claims.containsKey(AuthorizeConstants.AUTHORITIES)) {
             Object authorities = claims.get(AuthorizeConstants.AUTHORITIES);

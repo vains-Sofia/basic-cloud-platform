@@ -1,6 +1,5 @@
 package com.basic.cloud.spring.doc.autoconfigure;
 
-import com.basic.cloud.spring.doc.configuration.WebmvcConfiguration;
 import com.basic.cloud.spring.doc.customizer.ApiEnumParameterCustomizer;
 import com.basic.cloud.spring.doc.customizer.ApiEnumPropertyCustomizer;
 import com.basic.cloud.spring.doc.factory.EnumConverterFactory;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigParameters;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -30,9 +28,12 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @EnableConfigurationProperties({DocProperties.class})
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnProperty(name = "springdoc.api-docs.enabled", matchIfMissing = true)
-@Import({EnumConverterFactory.class, WebmvcConfiguration.class, ApiEnumParameterCustomizer.class, ApiEnumPropertyCustomizer.class})
+@Import({
+        EnumConverterFactory.class,
+        ApiEnumParameterCustomizer.class,
+        ApiEnumPropertyCustomizer.class
+})
 public class OpenApiAutoConfiguration {
 
     private final DocProperties properties;

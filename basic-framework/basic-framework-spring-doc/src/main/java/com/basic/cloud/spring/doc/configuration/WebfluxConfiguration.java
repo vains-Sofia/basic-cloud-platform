@@ -1,22 +1,22 @@
 package com.basic.cloud.spring.doc.configuration;
 
 import com.basic.framework.core.enums.BasicEnum;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 /**
  * 添加自定义枚举转换配置
  *
  * @author vains
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-public class WebmvcConfiguration implements WebMvcConfigurer {
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+public class WebfluxConfiguration implements WebFluxConfigurer {
 
     private final ConverterFactory<String, ? extends BasicEnum<?, ?>> enumConverterFactory;
 
