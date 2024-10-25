@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.properties.AbstractSwaggerUiConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigParameters;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
@@ -19,15 +20,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springdoc.core.utils.Constants.DEFAULT_API_DOCS_URL;
+import static org.springdoc.core.utils.Constants.SPRINGDOC_SWAGGER_UI_ENABLED;
 
 /**
- * 路由刷新监听
+ * 通过路由更新的监听动态刷新Spring Doc的Group
  *
  * @author YuJx
  */
 @Slf4j
 @Component
-public class RefreshRoutesEventListener implements ApplicationListener<RefreshRoutesEvent> {
+@ConditionalOnProperty(name = SPRINGDOC_SWAGGER_UI_ENABLED, matchIfMissing = true)
+public class DynamicDocGroupHandler implements ApplicationListener<RefreshRoutesEvent> {
 
     /**
      * swagger只收集统一微服务下的模块
@@ -47,9 +50,9 @@ public class RefreshRoutesEventListener implements ApplicationListener<RefreshRo
 
     private final Set<AbstractSwaggerUiConfigProperties.SwaggerUrl> DEFAULT_SWAGGER_URLS;
 
-    public RefreshRoutesEventListener(RouteDefinitionLocator routeDefinitionLocator,
-                                      SwaggerUiConfigParameters swaggerUiConfigParameters,
-                                      SwaggerUiConfigProperties swaggerUiConfigProperties) {
+    public DynamicDocGroupHandler(RouteDefinitionLocator routeDefinitionLocator,
+                                  SwaggerUiConfigParameters swaggerUiConfigParameters,
+                                  SwaggerUiConfigProperties swaggerUiConfigProperties) {
         this.routeDefinitionLocator = routeDefinitionLocator;
         this.swaggerUiConfigParameters = swaggerUiConfigParameters;
         this.swaggerUiConfigProperties = swaggerUiConfigProperties;
