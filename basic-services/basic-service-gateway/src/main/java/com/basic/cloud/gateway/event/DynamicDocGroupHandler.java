@@ -25,7 +25,7 @@ import static org.springdoc.core.utils.Constants.SPRINGDOC_SWAGGER_UI_ENABLED;
 /**
  * 通过路由更新的监听动态刷新Spring Doc的Group
  *
- * @author YuJx
+ * @author vains
  */
 @Slf4j
 @Component
