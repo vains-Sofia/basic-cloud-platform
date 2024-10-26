@@ -1,25 +1,15 @@
 package com.basic.framework.oauth2.storage.mybatis.storage;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.storage.core.domain.BasicAuthorization;
+import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
 import com.basic.framework.oauth2.storage.mybatis.converter.Authorization2OAuth2AuthorizationConverter;
 import com.basic.framework.oauth2.storage.mybatis.converter.OAuth2Authorization2AuthorizationConverter;
-import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Authorization;
-import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2AuthorizationMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
-import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
-import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.util.Assert;
-
-import java.security.Principal;
 
 /**
  * 核心services——认证信息
@@ -29,90 +19,46 @@ import java.security.Principal;
 @Slf4j
 public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationService {
 
-    private final MybatisOAuth2AuthorizationMapper mybatisOAuth2AuthorizationMapper;
+    private final BasicAuthorizationService basicAuthorizationService;
 
     private final Authorization2OAuth2AuthorizationConverter oAuth2AuthorizationConverter;
 
     private final OAuth2Authorization2AuthorizationConverter authorizationConverter = new OAuth2Authorization2AuthorizationConverter();
 
-    public MybatisOAuth2AuthorizationService(MybatisOAuth2AuthorizationMapper mybatisOAuth2AuthorizationMapper, RegisteredClientRepository registeredClientRepository) {
-        this.mybatisOAuth2AuthorizationMapper = mybatisOAuth2AuthorizationMapper;
+    public MybatisOAuth2AuthorizationService(BasicAuthorizationService basicAuthorizationService, RegisteredClientRepository registeredClientRepository) {
+        this.basicAuthorizationService = basicAuthorizationService;
         this.oAuth2AuthorizationConverter = new Authorization2OAuth2AuthorizationConverter(registeredClientRepository);
     }
 
     @Override
     public void save(OAuth2Authorization oauth2Authorization) {
         Assert.notNull(oauth2Authorization, "authorization cannot be null");
-        MybatisOAuth2Authorization storageMybatisOAuth2Authorization = this.mybatisOAuth2AuthorizationMapper.selectById(oauth2Authorization.getId());
-
-        MybatisOAuth2Authorization convert = this.authorizationConverter.convert(oauth2Authorization);
+        BasicAuthorization convert = this.authorizationConverter.convert(oauth2Authorization);
         if (convert == null) {
             if (log.isDebugEnabled()) {
                 log.debug("authorization convert failed. Interrupt OAuth2Authorization save.");
             }
             return;
         }
-        if (storageMybatisOAuth2Authorization != null) {
-            this.mybatisOAuth2AuthorizationMapper.deleteById(oauth2Authorization.getId());
-            convert.setCreateTime(storageMybatisOAuth2Authorization.getCreateTime());
-        }
-        if (SecurityContextHolder.getContext().getAuthentication() instanceof OAuth2ClientAuthenticationToken) {
-            // 现在拿不到当前登录用户，直接从认证对象中拿
-            Object attribute = oauth2Authorization.getAttribute(Principal.class.getName());
-            if (attribute instanceof UsernamePasswordAuthenticationToken authenticationToken) {
-                if (authenticationToken.getPrincipal() instanceof AuthenticatedUser user) {
-                    convert.setUpdateBy(user.getId());
-                    convert.setCreateBy(user.getId());
-                }
-            }
-        }
-        this.mybatisOAuth2AuthorizationMapper.insert(convert);
+
+        this.basicAuthorizationService.save(convert);
     }
 
     @Override
-    public void remove(OAuth2Authorization OAuth2Authorization) {
-        Assert.notNull(OAuth2Authorization, "authorization cannot be null");
-        this.mybatisOAuth2AuthorizationMapper.deleteById(OAuth2Authorization.getId());
+    public void remove(OAuth2Authorization authorization) {
+        this.basicAuthorizationService.remove(authorization.getId());
     }
 
     @Override
     public OAuth2Authorization findById(String id) {
         Assert.hasText(id, "id cannot be empty");
-        MybatisOAuth2Authorization MybatisOAuth2Authorization = this.mybatisOAuth2AuthorizationMapper.selectById(id);
-        return this.oAuth2AuthorizationConverter.convert(MybatisOAuth2Authorization);
+        BasicAuthorization authorization = this.basicAuthorizationService.findById(id);
+        return this.oAuth2AuthorizationConverter.convert(authorization);
     }
 
     @Override
     public OAuth2Authorization findByToken(String token, OAuth2TokenType tokenType) {
-        Assert.hasText(token, "token cannot be empty");
-
-        LambdaQueryWrapper<MybatisOAuth2Authorization> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Authorization.class);
-        if (tokenType == null) {
-            wrapper.eq(MybatisOAuth2Authorization::getState, token)
-                    .or().eq(MybatisOAuth2Authorization::getUserCodeValue, token)
-                    .or().eq(MybatisOAuth2Authorization::getDeviceCodeValue, token)
-                    .or().eq(MybatisOAuth2Authorization::getAccessTokenValue, token)
-                    .or().eq(MybatisOAuth2Authorization::getOidcIdTokenValue, token)
-                    .or().eq(MybatisOAuth2Authorization::getRefreshTokenValue, token)
-                    .or().eq(MybatisOAuth2Authorization::getAuthorizationCodeValue, token);
-        } else if (OAuth2ParameterNames.STATE.equals(tokenType.getValue())) {
-            wrapper.eq(MybatisOAuth2Authorization::getState, token);
-        } else if (OAuth2ParameterNames.CODE.equals(tokenType.getValue())) {
-            wrapper.eq(MybatisOAuth2Authorization::getAuthorizationCodeValue, token);
-        } else if (OAuth2TokenType.ACCESS_TOKEN.equals(tokenType)) {
-            wrapper.eq(MybatisOAuth2Authorization::getAccessTokenValue, token);
-        } else if (OidcParameterNames.ID_TOKEN.equals(tokenType.getValue())) {
-            wrapper.eq(MybatisOAuth2Authorization::getOidcIdTokenValue, token);
-        } else if (OAuth2TokenType.REFRESH_TOKEN.equals(tokenType)) {
-            wrapper.eq(MybatisOAuth2Authorization::getRefreshTokenValue, token);
-        } else if (OAuth2ParameterNames.USER_CODE.equals(tokenType.getValue())) {
-            wrapper.eq(MybatisOAuth2Authorization::getUserCodeValue, token);
-        } else if (OAuth2ParameterNames.DEVICE_CODE.equals(tokenType.getValue())) {
-            wrapper.eq(MybatisOAuth2Authorization::getDeviceCodeValue, token);
-        } else {
-            return null;
-        }
-        MybatisOAuth2Authorization mybatisOAuth2Authorization = this.mybatisOAuth2AuthorizationMapper.selectOne(wrapper);
-        return this.oAuth2AuthorizationConverter.convert(mybatisOAuth2Authorization);
+        BasicAuthorization authorization = this.basicAuthorizationService.findByToken(token, tokenType);
+        return this.oAuth2AuthorizationConverter.convert(authorization);
     }
 }

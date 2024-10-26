@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.storage.core.util;
 
-import com.basic.framework.oauth2.storage.core.domain.OAuth2ClientSettings;
-import com.basic.framework.oauth2.storage.core.domain.OAuth2TokenSettings;
+import com.basic.framework.oauth2.storage.core.domain.model.BasicClientSettings;
+import com.basic.framework.oauth2.storage.core.domain.model.BasicTokenSettings;
 import com.basic.framework.oauth2.storage.core.enums.TimeToLiveUnitEnum;
 import lombok.experimental.UtilityClass;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -29,7 +29,7 @@ public class ClientUtils {
      * @param clientSettings 客户端设置入参
      * @return 返回客户端设置
      */
-    public static ClientSettings resolveOAuth2ClientSettings(OAuth2ClientSettings clientSettings, Set<String> clientAuthenticationMethods) {
+    public static ClientSettings resolveOAuth2ClientSettings(BasicClientSettings clientSettings, Set<String> clientAuthenticationMethods) {
         ClientSettings.Builder builder = ClientSettings.builder();
         if (clientSettings == null) {
             return builder.build();
@@ -72,8 +72,8 @@ public class ClientUtils {
      * @param clientSettings 客户端设置
      * @return 设置
      */
-    public static OAuth2ClientSettings resolveClientSettings(ClientSettings clientSettings) {
-        OAuth2ClientSettings model = new OAuth2ClientSettings();
+    public static BasicClientSettings resolveClientSettings(ClientSettings clientSettings) {
+        BasicClientSettings model = new BasicClientSettings();
 
         if (clientSettings == null) {
             return model;
@@ -95,7 +95,7 @@ public class ClientUtils {
      * @param tokenSettings Token设置入参
      * @return 返回Token设置
      */
-    public static TokenSettings resolveOAuth2TokenSettings(OAuth2TokenSettings tokenSettings) {
+    public static TokenSettings resolveOAuth2TokenSettings(BasicTokenSettings tokenSettings) {
         TokenSettings.Builder builder = TokenSettings.builder();
         if (tokenSettings == null) {
             return builder.build();
@@ -159,8 +159,8 @@ public class ClientUtils {
      * @param tokenSettings Token设置入参
      * @return 返回Token设置
      */
-    public static OAuth2TokenSettings resolveTokenSettings(TokenSettings tokenSettings) {
-        OAuth2TokenSettings model = new OAuth2TokenSettings();
+    public static BasicTokenSettings resolveTokenSettings(TokenSettings tokenSettings) {
+        BasicTokenSettings model = new BasicTokenSettings();
         if (tokenSettings == null) {
             return model;
         }

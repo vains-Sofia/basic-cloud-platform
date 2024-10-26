@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.storage.core.domain;
+package com.basic.framework.oauth2.storage.core.domain.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
  */
 @Data
 @Schema(title = "客户端设置")
-public class OAuth2ClientSettings {
+public class BasicClientSettings {
 
     /**
      * 授权码流程时是否需要提供challenge and verifier (PKCE模式)

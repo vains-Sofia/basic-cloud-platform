@@ -4,13 +4,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.basic.framework.mybatis.plus.domain.BasicEntity;
-import com.basic.framework.oauth2.storage.mybatis.handler.OAuth2MapTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -36,13 +33,13 @@ public class MybatisOAuth2Authorization extends BasicEntity {
     private String principalName;
 
     @TableField("authorization_grant_type")
-    private AuthorizationGrantType authorizationGrantType;
+    private String authorizationGrantType;
 
     @TableField("authorized_scopes")
     private Set<String> authorizedScopes;
 
-    @TableField(value = "attributes", typeHandler = OAuth2MapTypeHandler.class)
-    private Map<String, Object> attributes;
+    @TableField(value = "attributes")
+    private String attributes;
 
     @TableField("state")
     private String state;
@@ -56,8 +53,8 @@ public class MybatisOAuth2Authorization extends BasicEntity {
     @TableField("authorization_code_expires_at")
     private LocalDateTime authorizationCodeExpiresAt;
 
-    @TableField(value = "authorization_code_metadata", typeHandler = OAuth2MapTypeHandler.class)
-    private Map<String, Object> authorizationCodeMetadata;
+    @TableField(value = "authorization_code_metadata")
+    private String authorizationCodeMetadata;
 
     @TableField("access_token_value")
     private String accessTokenValue;
@@ -68,8 +65,8 @@ public class MybatisOAuth2Authorization extends BasicEntity {
     @TableField("access_token_expires_at")
     private LocalDateTime accessTokenExpiresAt;
 
-    @TableField(value = "access_token_metadata", typeHandler = OAuth2MapTypeHandler.class)
-    private Map<String, Object> accessTokenMetadata;
+    @TableField(value = "access_token_metadata")
+    private String accessTokenMetadata;
 
     @TableField("access_token_type")
     private String accessTokenType;
@@ -86,8 +83,8 @@ public class MybatisOAuth2Authorization extends BasicEntity {
     @TableField("refresh_token_expires_at")
     private LocalDateTime refreshTokenExpiresAt;
 
-    @TableField(value = "refresh_token_metadata", typeHandler = OAuth2MapTypeHandler.class)
-    private Map<String, Object> refreshTokenMetadata;
+    @TableField(value = "refresh_token_metadata")
+    private String refreshTokenMetadata;
 
     @TableField("oidc_id_token_value")
     private String oidcIdTokenValue;
@@ -98,11 +95,11 @@ public class MybatisOAuth2Authorization extends BasicEntity {
     @TableField("oidc_id_token_expires_at")
     private LocalDateTime oidcIdTokenExpiresAt;
 
-    @TableField(value = "oidc_id_token_metadata", typeHandler = OAuth2MapTypeHandler.class)
-    private Map<String, Object> oidcIdTokenMetadata;
+    @TableField(value = "oidc_id_token_metadata")
+    private String oidcIdTokenMetadata;
 
-    @TableField(value = "oidc_id_token_claims", typeHandler = OAuth2MapTypeHandler.class)
-    private Map<String, Object> oidcIdTokenClaims;
+    @TableField(value = "oidc_id_token_claims")
+    private String oidcIdTokenClaims;
 
     @TableField("user_code_value")
     private String userCodeValue;
@@ -113,8 +110,8 @@ public class MybatisOAuth2Authorization extends BasicEntity {
     @TableField("user_code_expires_at")
     private LocalDateTime userCodeExpiresAt;
 
-    @TableField(value = "user_code_metadata", typeHandler = OAuth2MapTypeHandler.class)
-    private Map<String, Object> userCodeMetadata;
+    @TableField(value = "user_code_metadata")
+    private String userCodeMetadata;
 
     @TableField("device_code_value")
     private String deviceCodeValue;
@@ -125,6 +122,6 @@ public class MybatisOAuth2Authorization extends BasicEntity {
     @TableField("device_code_expires_at")
     private LocalDateTime deviceCodeExpiresAt;
 
-    @TableField(value = "device_code_metadata", typeHandler = OAuth2MapTypeHandler.class)
-    private Map<String, Object> deviceCodeMetadata;
+    @TableField(value = "device_code_metadata")
+    private String deviceCodeMetadata;
 }

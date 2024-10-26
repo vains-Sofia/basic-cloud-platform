@@ -2,8 +2,8 @@ package com.basic.cloud.authorization.server.controller;
 
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.exception.CloudServiceException;
-import com.basic.framework.oauth2.storage.core.entity.OAuth2Application;
-import com.basic.framework.oauth2.storage.core.service.OAuth2ApplicationService;
+import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
+import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,7 +41,7 @@ public class AuthorizationController {
 
     private final ServerProperties serverProperties;
 
-    private final OAuth2ApplicationService applicationService;
+    private final BasicApplicationService applicationService;
 
     private final RegisteredClientRepository registeredClientRepository;
 
@@ -52,8 +52,8 @@ public class AuthorizationController {
     @PreAuthorize("hasAnyAuthority('message.read')")
     @Parameter(name = "clientId", description = "客户端id")
     @Operation(summary = "根据客户端id查询客户端信息", description = "根据客户端id查询客户端信息")
-    public Result<OAuth2Application> findByClientId(String clientId) {
-        OAuth2Application application = applicationService.findByClientId(clientId);
+    public Result<BasicApplication> findByClientId(String clientId) {
+        BasicApplication application = applicationService.findByClientId(clientId);
         return Result.success(application);
     }
 

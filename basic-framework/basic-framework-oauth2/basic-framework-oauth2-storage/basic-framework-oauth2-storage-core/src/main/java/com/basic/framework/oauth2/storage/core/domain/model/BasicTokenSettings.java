@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.storage.core.domain;
+package com.basic.framework.oauth2.storage.core.domain.model;
 
 import com.basic.framework.oauth2.storage.core.enums.TimeToLiveUnitEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.server.authorization.settings.OAuth2T
  */
 @Data
 @Schema(title = "客户端对应的token生成设置")
-public class OAuth2TokenSettings {
+public class BasicTokenSettings {
 
     /**
      * 授权码有效时长

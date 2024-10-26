@@ -83,6 +83,7 @@ public class Clients {
                 .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
                 .redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html")
                 .redirectUri("http://127.0.0.1:8080/auth/swagger-ui/oauth2-redirect.html")
+                .redirectUri("https://cloudflow.top/webjars/swagger-ui/oauth2-redirect.html")
                 .postLogoutRedirectUri("http://127.0.0.1:8080/")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)

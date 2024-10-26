@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.basic.framework.mybatis.plus.domain.BasicEntity;
 import com.basic.framework.mybatis.plus.handler.type.BasicCollectionTypeHandler;
-import com.basic.framework.oauth2.storage.core.domain.OAuth2ClientSettings;
-import com.basic.framework.oauth2.storage.core.domain.OAuth2TokenSettings;
+import com.basic.framework.oauth2.storage.core.domain.model.BasicClientSettings;
+import com.basic.framework.oauth2.storage.core.domain.model.BasicTokenSettings;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -60,8 +60,8 @@ public class MybatisOAuth2Application extends BasicEntity {
     private Set<String> scopes;
 
     @TableField(value = "client_settings", typeHandler = JacksonTypeHandler.class)
-    private OAuth2ClientSettings clientSettings;
+    private BasicClientSettings clientSettings;
 
     @TableField(value = "token_settings", typeHandler = JacksonTypeHandler.class)
-    private OAuth2TokenSettings tokenSettings;
+    private BasicTokenSettings tokenSettings;
 }

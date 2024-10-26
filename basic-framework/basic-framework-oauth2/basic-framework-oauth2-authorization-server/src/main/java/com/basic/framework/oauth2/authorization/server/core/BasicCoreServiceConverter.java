@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.core;
 
+import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
@@ -7,7 +8,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -45,13 +45,13 @@ public interface BasicCoreServiceConverter<T, R> extends Converter<T, R> {
             Consumer<String> tokenValueConsumer,
             Consumer<LocalDateTime> issuedAtConsumer,
             Consumer<LocalDateTime> expiresAtConsumer,
-            Consumer<Map<String, Object>> metadataConsumer) {
+            Consumer<String> metadataConsumer) {
         if (token != null) {
             OAuth2Token oAuth2Token = token.getToken();
             tokenValueConsumer.accept(oAuth2Token.getTokenValue());
             issuedAtConsumer.accept(instantToTime(oAuth2Token.getIssuedAt()));
             expiresAtConsumer.accept(instantToTime(oAuth2Token.getExpiresAt()));
-            metadataConsumer.accept(token.getMetadata());
+            metadataConsumer.accept(OAuth2JsonUtils.toJson(token.getMetadata()));
         }
     }
 

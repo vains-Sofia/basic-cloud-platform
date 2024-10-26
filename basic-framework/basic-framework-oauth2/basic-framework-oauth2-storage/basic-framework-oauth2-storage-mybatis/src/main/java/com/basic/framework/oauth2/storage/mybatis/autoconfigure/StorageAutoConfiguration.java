@@ -1,11 +1,15 @@
 package com.basic.framework.oauth2.storage.mybatis.autoconfigure;
 
 import com.basic.framework.oauth2.core.annotation.ConditionalOnMybatisPlusStorage;
-import com.basic.framework.oauth2.storage.core.service.OAuth2ApplicationService;
+import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
+import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
+import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ApplicationMapper;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2AuthorizationConsentMapper;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2AuthorizationMapper;
-import com.basic.framework.oauth2.storage.mybatis.service.MybatisOAuth2ApplicationService;
+import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicApplicationService;
+import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicAuthorizationConsentService;
+import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicAuthorizationService;
 import com.basic.framework.oauth2.storage.mybatis.storage.MybatisOAuth2AuthorizationConsentService;
 import com.basic.framework.oauth2.storage.mybatis.storage.MybatisOAuth2AuthorizationService;
 import com.basic.framework.oauth2.storage.mybatis.storage.MybatisRegisteredClientRepository;
@@ -35,23 +39,39 @@ public class StorageAutoConfiguration {
     }
 
     @Bean
-    public OAuth2ApplicationService oAuth2ApplicationService(MybatisOAuth2ApplicationMapper mybatisOAuth2ApplicationMapper) {
-        return new MybatisOAuth2ApplicationService(mybatisOAuth2ApplicationMapper);
+    public BasicApplicationService basicApplicationService(
+            MybatisOAuth2ApplicationMapper mybatisOAuth2ApplicationMapper) {
+        return new MybatisBasicApplicationService(mybatisOAuth2ApplicationMapper);
     }
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository(OAuth2ApplicationService applicationService) {
+    public BasicAuthorizationService basicAuthorizationService(
+            MybatisOAuth2AuthorizationMapper oAuth2AuthorizationMapper) {
+        return new MybatisBasicAuthorizationService(oAuth2AuthorizationMapper);
+    }
+
+    @Bean
+    public BasicAuthorizationConsentService basicAuthorizationConsentService(
+            MybatisOAuth2AuthorizationConsentMapper oAuth2AuthorizationConsentMapper) {
+        return new MybatisBasicAuthorizationConsentService(oAuth2AuthorizationConsentMapper);
+    }
+
+    @Bean
+    public RegisteredClientRepository registeredClientRepository(
+            BasicApplicationService applicationService) {
         return new MybatisRegisteredClientRepository(applicationService);
     }
 
     @Bean
-    public OAuth2AuthorizationService authorizationService(MybatisOAuth2AuthorizationMapper mybatisOAuth2AuthorizationMapper, RegisteredClientRepository registeredClientRepository) {
-        return new MybatisOAuth2AuthorizationService(mybatisOAuth2AuthorizationMapper, registeredClientRepository);
+    public OAuth2AuthorizationService authorizationService(
+            BasicAuthorizationService basicAuthorizationService, RegisteredClientRepository registeredClientRepository) {
+        return new MybatisOAuth2AuthorizationService(basicAuthorizationService, registeredClientRepository);
     }
 
     @Bean
-    public OAuth2AuthorizationConsentService authorizationConsentService(MybatisOAuth2AuthorizationConsentMapper mybatisOAuth2AuthorizationConsentMapper, RegisteredClientRepository registeredClientRepository) {
-        return new MybatisOAuth2AuthorizationConsentService(mybatisOAuth2AuthorizationConsentMapper, registeredClientRepository);
+    public OAuth2AuthorizationConsentService authorizationConsentService(
+            BasicAuthorizationConsentService basicAuthorizationConsentService, RegisteredClientRepository registeredClientRepository) {
+        return new MybatisOAuth2AuthorizationConsentService(basicAuthorizationConsentService, registeredClientRepository);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.storage.mybatis.converter;
 
 import com.basic.framework.oauth2.authorization.server.core.BasicCoreServiceConverter;
-import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2AuthorizationConsent;
+import com.basic.framework.oauth2.storage.core.domain.BasicAuthorizationConsent;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
  * @author vains
  */
 @RequiredArgsConstructor
-public class Entity2OAuth2AuthorizationConsentConverter implements BasicCoreServiceConverter<MybatisOAuth2AuthorizationConsent, OAuth2AuthorizationConsent> {
+public class Entity2OAuth2AuthorizationConsentConverter implements BasicCoreServiceConverter<BasicAuthorizationConsent, OAuth2AuthorizationConsent> {
 
     private final RegisteredClientRepository registeredClientRepository;
 
     @Override
-    public OAuth2AuthorizationConsent convert(@Nullable MybatisOAuth2AuthorizationConsent source) {
+    public OAuth2AuthorizationConsent convert(@Nullable BasicAuthorizationConsent source) {
         if (source == null) {
             return null;
         }

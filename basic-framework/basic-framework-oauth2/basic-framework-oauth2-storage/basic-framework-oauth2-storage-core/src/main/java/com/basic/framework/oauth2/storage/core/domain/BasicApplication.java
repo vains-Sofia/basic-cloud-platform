@@ -1,7 +1,7 @@
-package com.basic.framework.oauth2.storage.core.entity;
+package com.basic.framework.oauth2.storage.core.domain;
 
-import com.basic.framework.oauth2.storage.core.domain.OAuth2ClientSettings;
-import com.basic.framework.oauth2.storage.core.domain.OAuth2TokenSettings;
+import com.basic.framework.oauth2.storage.core.domain.model.BasicClientSettings;
+import com.basic.framework.oauth2.storage.core.domain.model.BasicTokenSettings;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -17,7 +17,7 @@ import java.util.Set;
  */
 @Data
 @Schema(name = "客户端信息")
-public class OAuth2Application {
+public class BasicApplication {
 
     /**
      * 客户端数据id
@@ -89,13 +89,13 @@ public class OAuth2Application {
      * 客户端设置
      */
     @Schema(title = "客户端设置")
-    private OAuth2ClientSettings clientSettings;
+    private BasicClientSettings clientSettings;
 
     /**
      * 客户端申请的access token设置
      */
     @Schema(title = "客户端申请的access token设置")
-    private OAuth2TokenSettings tokenSettings;
+    private BasicTokenSettings tokenSettings;
 
     /**
      * 创建人
