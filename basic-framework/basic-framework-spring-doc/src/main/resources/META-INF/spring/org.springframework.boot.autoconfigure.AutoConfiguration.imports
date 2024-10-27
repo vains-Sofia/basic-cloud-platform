@@ -1,3 +1,4 @@
-com.basic.cloud.spring.doc.configuration.WebmvcConfiguration
-com.basic.cloud.spring.doc.configuration.WebfluxConfiguration
+com.basic.cloud.spring.doc.configuration.DocWelcomeWebFlux
+com.basic.cloud.spring.doc.configuration.WebMvcConfiguration
+com.basic.cloud.spring.doc.configuration.WebFluxConfiguration
 com.basic.cloud.spring.doc.autoconfigure.OpenApiAutoConfiguration

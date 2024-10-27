@@ -2,6 +2,8 @@ package com.basic.cloud.spring.doc.autoconfigure;
 
 import com.basic.cloud.spring.doc.customizer.ApiEnumParameterCustomizer;
 import com.basic.cloud.spring.doc.customizer.ApiEnumPropertyCustomizer;
+import com.basic.cloud.spring.doc.customizer.WebFluxServerBaseUrlCustomizer;
+import com.basic.cloud.spring.doc.customizer.WebMvcServerBaseUrlCustomizer;
 import com.basic.cloud.spring.doc.factory.EnumConverterFactory;
 import com.basic.cloud.spring.doc.property.DocProperties;
 import io.swagger.v3.oas.models.Components;
@@ -31,8 +33,10 @@ import java.util.List;
 @ConditionalOnProperty(name = "springdoc.api-docs.enabled", matchIfMissing = true)
 @Import({
         EnumConverterFactory.class,
+        ApiEnumPropertyCustomizer.class,
         ApiEnumParameterCustomizer.class,
-        ApiEnumPropertyCustomizer.class
+        WebMvcServerBaseUrlCustomizer.class,
+        WebFluxServerBaseUrlCustomizer.class
 })
 public class OpenApiAutoConfiguration {
 
