@@ -1,4 +1,4 @@
-package com.basic.cloud.gateway.event;
+package com.basic.cloud.gateway.doc;
 
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
