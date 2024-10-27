@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springdoc.core.utils.Constants.DEFAULT_API_DOCS_URL;
-import static org.springdoc.core.utils.Constants.SPRINGDOC_SWAGGER_UI_ENABLED;
 
 /**
  * 通过路由更新的监听动态刷新Spring Doc的Group
@@ -29,7 +28,7 @@ import static org.springdoc.core.utils.Constants.SPRINGDOC_SWAGGER_UI_ENABLED;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(name = SPRINGDOC_SWAGGER_UI_ENABLED, matchIfMissing = true)
+@ConditionalOnProperty(name = "springdoc.api-docs.enabled", matchIfMissing = true)
 public class DynamicDocGroupHandler implements ApplicationListener<RefreshRoutesEvent> {
 
     /**
