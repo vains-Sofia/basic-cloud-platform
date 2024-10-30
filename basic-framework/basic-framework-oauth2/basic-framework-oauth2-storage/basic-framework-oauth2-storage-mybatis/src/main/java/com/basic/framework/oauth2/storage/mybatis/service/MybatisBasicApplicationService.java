@@ -88,6 +88,7 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
         this.validRedirectUris(request);
         MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
         BeanUtils.copyProperties(request, mybatisOAuth2Application);
+        mybatisOAuth2Application.setId(IdWorker.getId());
         // 密码加密
         String password = IdWorker.get32UUID();
         String encodePassword = passwordEncoder.encode(password);

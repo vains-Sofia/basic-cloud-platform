@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.storage.mybatis.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -25,7 +26,7 @@ public class MybatisOAuth2AuthorizationConsent extends BasicEntity {
     /**
      * 主键
      */
-    @TableId("id")
+    @TableId(value = "id", type = IdType.INPUT)
     private Long id;
 
     @TableField("registered_client_id")

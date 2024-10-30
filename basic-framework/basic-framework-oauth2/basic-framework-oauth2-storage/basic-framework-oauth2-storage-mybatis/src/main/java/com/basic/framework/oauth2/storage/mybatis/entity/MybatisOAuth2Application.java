@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.storage.mybatis.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -26,7 +27,7 @@ import java.util.Set;
 @TableName(value = "oauth2_application", autoResultMap = true)
 public class MybatisOAuth2Application extends BasicEntity {
 
-    @TableId("id")
+    @TableId(value = "id", type = IdType.INPUT)
     private Long id;
 
     @TableField("client_id")
