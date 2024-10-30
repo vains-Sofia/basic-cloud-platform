@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -84,6 +85,7 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
 
     @Override
     public String saveApplication(SaveApplicationRequest request) {
+        this.validRedirectUris(request);
         MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
         BeanUtils.copyProperties(request, mybatisOAuth2Application);
         // 密码加密
@@ -98,6 +100,7 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
 
     @Override
     public void updateApplication(SaveApplicationRequest request) {
+        this.validRedirectUris(request);
         MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
         BeanUtils.copyProperties(request, mybatisOAuth2Application);
         this.oAuth2ApplicationMapper.updateById(mybatisOAuth2Application);
@@ -108,5 +111,17 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
         LambdaQueryWrapper<MybatisOAuth2Application> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Application.class)
                 .eq(MybatisOAuth2Application::getClientId, clientId);
         this.oAuth2ApplicationMapper.delete(wrapper);
+    }
+
+    /**
+     * 验证回调地址
+     *
+     * @param request 保存/更新客户端入参
+     */
+    private void validRedirectUris(SaveApplicationRequest request) {
+        if (request.getAuthorizationGrantTypes().contains(AuthorizationGrantType.AUTHORIZATION_CODE.getValue())) {
+            // 授权码/PKCE模式下回调地址不能为空
+            Assert.notEmpty(request.getRedirectUris(), "回调地址不能为空.");
+        }
     }
 }
