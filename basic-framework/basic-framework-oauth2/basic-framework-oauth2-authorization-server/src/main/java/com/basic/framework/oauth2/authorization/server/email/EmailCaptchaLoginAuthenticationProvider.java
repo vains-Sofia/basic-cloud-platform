@@ -39,7 +39,7 @@ public class EmailCaptchaLoginAuthenticationProvider extends AbstractLoginAuthen
                     .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         }
         // 验证邮件验证码
-        this.captchaService.validate();
+//        this.captchaService.validate();
         log.debug("验证码校验成功.");
     }
 

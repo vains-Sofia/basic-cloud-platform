@@ -44,6 +44,9 @@ public class MybatisOAuth2Application extends BasicEntity {
     @TableField("client_name")
     private String clientName;
 
+    @TableField("client_logo")
+    private String clientLogo;
+
     @TableField(value = "client_authentication_methods", typeHandler = BasicCollectionTypeHandler.class)
     private Set<String> clientAuthenticationMethods;
 

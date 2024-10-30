@@ -1,6 +1,10 @@
 package com.basic.framework.oauth2.storage.core.service;
 
+import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
+import com.basic.framework.oauth2.storage.core.domain.request.FindApplicationPageRequest;
+import com.basic.framework.oauth2.storage.core.domain.request.SaveApplicationRequest;
+import com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationResponse;
 
 /**
  * oauth2客户端信息服务接口
@@ -32,4 +36,32 @@ public interface BasicApplicationService {
      */
     BasicApplication findByClientId(String clientId);
 
+    /**
+     * 根据条件分页查询客户端信息
+     *
+     * @param request 分页参数
+     * @return 分页的客户端信息
+     */
+    PageResult<BasicApplicationResponse> findByPage(FindApplicationPageRequest request);
+
+    /**
+     * 创建客户端信息
+     *
+     * @param request 新的客户端信息
+     */
+    String saveApplication(SaveApplicationRequest request);
+
+    /**
+     * 更新客户端信息
+     *
+     * @param request 新的客户端信息
+     */
+    void updateApplication(SaveApplicationRequest request);
+
+    /**
+     * 根据客户端id删除客户端信息
+     *
+     * @param clientId 客户端id
+     */
+    void removeByClientId(String clientId);
 }

@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -40,8 +41,9 @@ public class StorageAutoConfiguration {
 
     @Bean
     public BasicApplicationService basicApplicationService(
+            PasswordEncoder passwordEncoder,
             MybatisOAuth2ApplicationMapper mybatisOAuth2ApplicationMapper) {
-        return new MybatisBasicApplicationService(mybatisOAuth2ApplicationMapper);
+        return new MybatisBasicApplicationService(passwordEncoder, mybatisOAuth2ApplicationMapper);
     }
 
     @Bean

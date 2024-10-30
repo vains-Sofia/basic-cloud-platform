@@ -1,22 +1,22 @@
-package com.basic.framework.oauth2.storage.core.domain;
+package com.basic.framework.oauth2.storage.core.domain.response;
 
 import com.basic.framework.oauth2.storage.core.domain.model.BasicClientSettings;
 import com.basic.framework.oauth2.storage.core.domain.model.BasicTokenSettings;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
- * oauth2 客户端信息
+ * 客户端响应bean
  *
  * @author vains
- * @since 2024-05-17
  */
 @Data
 @Schema(name = "客户端信息")
-public class BasicApplication {
+public class BasicApplicationResponse implements Serializable {
 
     /**
      * 客户端数据id
@@ -35,12 +35,6 @@ public class BasicApplication {
      */
     @Schema(title = "客户端id签发时间")
     private LocalDateTime clientIdIssuedAt;
-
-    /**
-     * 客户端密钥
-     */
-    @Schema(title = "客户端密钥")
-    private String clientSecret;
 
     /**
      * 客户端密钥过期时间
@@ -125,4 +119,5 @@ public class BasicApplication {
      */
     @Schema(title = "修改时间")
     private LocalDateTime updateTime;
+
 }

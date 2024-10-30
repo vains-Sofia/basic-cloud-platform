@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ApplicationMapper">
+
+    <select id="selectConditionPage"
+            resultType="com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationResponse">
+        SELECT * FROM oauth2_application
+        <where>
+            <if test="request.clientId != null and request.clientId != ''">
+                AND client_id LIKE CONCAT('%', #{request.clientId}, '%')
+            </if>
+            <if test="request.applicationName != null and request.applicationName != ''">
+                AND client_name LIKE CONCAT('%', #{request.applicationName}, '%')
+            </if>
+            <if test="request.authorizationGrantType != null and request.authorizationGrantType != ''">
+                AND JSON_CONTAINS(authorization_grant_types, CONCAT('"', #{request.authorizationGrantType}, '"'))
+            </if>
+            <if test="request.clientAuthenticationMethod != null and request.clientAuthenticationMethod != ''">
+                AND JSON_CONTAINS(client_authentication_methods, CONCAT('"', #{request.clientAuthenticationMethod}, '"'))
+            </if>
+        </where>
+    </select>
+</mapper>

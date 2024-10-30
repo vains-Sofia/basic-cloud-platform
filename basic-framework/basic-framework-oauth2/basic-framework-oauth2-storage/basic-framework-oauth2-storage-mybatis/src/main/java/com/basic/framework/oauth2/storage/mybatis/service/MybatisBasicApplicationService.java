@@ -1,15 +1,25 @@
 package com.basic.framework.oauth2.storage.mybatis.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
+import com.basic.framework.oauth2.storage.core.domain.request.FindApplicationPageRequest;
+import com.basic.framework.oauth2.storage.core.domain.request.SaveApplicationRequest;
+import com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationResponse;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ApplicationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
+
+import java.time.LocalDateTime;
 
 /**
  * 客户端服务的MybatisPlus实现
@@ -19,6 +29,8 @@ import org.springframework.util.Assert;
 @Slf4j
 @RequiredArgsConstructor
 public class MybatisBasicApplicationService implements BasicApplicationService {
+
+    private final PasswordEncoder passwordEncoder;
 
     private final MybatisOAuth2ApplicationMapper oAuth2ApplicationMapper;
 
@@ -61,5 +73,40 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
             return basicApplication;
         }
         return null;
+    }
+
+    @Override
+    public PageResult<BasicApplicationResponse> findByPage(FindApplicationPageRequest request) {
+        IPage<BasicApplicationResponse> pageResult = oAuth2ApplicationMapper.selectConditionPage(Page.of(request.getCurrent(), request.getSize()), request);
+
+        return PageResult.of(pageResult.getCurrent(), pageResult.getSize(), pageResult.getTotal(), pageResult.getRecords());
+    }
+
+    @Override
+    public String saveApplication(SaveApplicationRequest request) {
+        MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
+        BeanUtils.copyProperties(request, mybatisOAuth2Application);
+        // 密码加密
+        String password = IdWorker.get32UUID();
+        String encodePassword = passwordEncoder.encode(password);
+        mybatisOAuth2Application.setClientSecret(encodePassword);
+        // 设置客户端id签发时间
+        mybatisOAuth2Application.setClientIdIssuedAt(LocalDateTime.now());
+        this.oAuth2ApplicationMapper.insert(mybatisOAuth2Application);
+        return password;
+    }
+
+    @Override
+    public void updateApplication(SaveApplicationRequest request) {
+        MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
+        BeanUtils.copyProperties(request, mybatisOAuth2Application);
+        this.oAuth2ApplicationMapper.updateById(mybatisOAuth2Application);
+    }
+
+    @Override
+    public void removeByClientId(String clientId) {
+        LambdaQueryWrapper<MybatisOAuth2Application> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Application.class)
+                .eq(MybatisOAuth2Application::getClientId, clientId);
+        this.oAuth2ApplicationMapper.delete(wrapper);
     }
 }

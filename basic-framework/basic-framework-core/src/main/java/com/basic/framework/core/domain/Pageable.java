@@ -21,7 +21,7 @@ public abstract class Pageable implements Serializable {
      */
     @Min(1)
     @NotNull
-    @Schema(title = "当前页码")
+    @Schema(title = "当前页码", description = "当前页码")
     private Long current;
 
     /**
@@ -29,7 +29,7 @@ public abstract class Pageable implements Serializable {
      */
     @Min(1)
     @NotNull
-    @Schema(title = "每页行数")
+    @Schema(title = "每页行数", description = "每页行数")
     private Long size;
 
 }

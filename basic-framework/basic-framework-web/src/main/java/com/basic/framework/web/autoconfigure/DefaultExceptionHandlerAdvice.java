@@ -107,6 +107,7 @@ public class DefaultExceptionHandlerAdvice {
      */
     @ExceptionHandler(Exception.class)
     public Result<String> exception(Exception e) {
+        log.warn(e.getMessage());
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
 
