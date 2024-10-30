@@ -11,6 +11,7 @@ import com.basic.framework.oauth2.storage.core.domain.request.FindApplicationPag
 import com.basic.framework.oauth2.storage.core.domain.request.SaveApplicationRequest;
 import com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationResponse;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
+import com.basic.framework.oauth2.storage.core.util.ClientUtils;
 import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ApplicationMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -89,6 +91,10 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
         MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
         BeanUtils.copyProperties(request, mybatisOAuth2Application);
         mybatisOAuth2Application.setId(IdWorker.getId());
+        // 如果没有token设置，则使用默认的
+        if (mybatisOAuth2Application.getTokenSettings() == null) {
+            mybatisOAuth2Application.setTokenSettings(ClientUtils.resolveTokenSettings(TokenSettings.builder().build()));
+        }
         // 密码加密
         String password = IdWorker.get32UUID();
         String encodePassword = passwordEncoder.encode(password);
