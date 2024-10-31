@@ -2,8 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ApplicationMapper">
 
-    <select id="selectConditionPage"
-            resultType="com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application">
+    <resultMap id="BaseResponseResultMap"
+               type="com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationResponse">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="clientId" column="client_id" jdbcType="VARCHAR"/>
+        <result property="clientIdIssuedAt" column="client_id_issued_at" jdbcType="TIMESTAMP"/>
+<!--        <result property="clientSecret" column="client_secret" jdbcType="VARCHAR"/>-->
+        <result property="clientSecretExpiresAt" column="client_secret_expires_at" jdbcType="TIMESTAMP"/>
+        <result property="clientName" column="client_name" jdbcType="VARCHAR"/>
+        <result property="clientLogo" column="client_logo" jdbcType="VARCHAR"/>
+        <result property="clientAuthenticationMethods" column="client_authentication_methods" jdbcType="VARCHAR"/>
+        <result property="authorizationGrantTypes" column="authorization_grant_types" jdbcType="VARCHAR"/>
+        <result property="redirectUris" column="redirect_uris" jdbcType="VARCHAR"/>
+        <result property="postLogoutRedirectUris" column="post_logout_redirect_uris" jdbcType="VARCHAR"/>
+        <result property="scopes" column="scopes" jdbcType="VARCHAR"/>
+        <result property="clientSettings" column="client_settings" jdbcType="VARCHAR" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="tokenSettings" column="token_settings" jdbcType="VARCHAR" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="selectConditionPage" resultMap="BaseResponseResultMap">
         SELECT * FROM oauth2_application
         <where>
             <if test="request.clientId != null and request.clientId != ''">

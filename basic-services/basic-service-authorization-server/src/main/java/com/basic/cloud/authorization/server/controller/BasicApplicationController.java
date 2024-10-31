@@ -43,7 +43,7 @@ public class BasicApplicationController {
     }
 
     @GetMapping("/findByPage")
-    @PreAuthorize("hasAnyAuthority('message.read')")
+//    @PreAuthorize("hasAnyAuthority('message.read')")
     @Operation(summary = "根据入参分页查询客户端信息", description = "根据入参分页查询客户端信息")
     public Result<PageResult<BasicApplicationResponse>> findByPage(@Validated FindApplicationPageRequest request) {
         PageResult<BasicApplicationResponse> result = applicationService.findByPage(request);
