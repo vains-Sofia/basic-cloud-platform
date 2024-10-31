@@ -19,9 +19,11 @@ public class ApiEnumParameterCustomizer implements ParameterCustomizer, BasicEnu
 
         // 枚举处理
         if (BasicEnum.class.isAssignableFrom(parameterType)) {
+
             parameterModel.setDescription(getDescription(parameterType));
             Schema<Object> schema = new Schema<>();
             schema.setEnum(getValues(parameterType));
+
             parameterModel.setSchema(schema);
         }
 
