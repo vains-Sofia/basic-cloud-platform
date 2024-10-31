@@ -1,5 +1,6 @@
 package com.basic.framework.web.autoconfigure;
 
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
@@ -114,6 +115,7 @@ public class DateAutoConfiguration {
     @ConditionalOnMissingBean
     public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
         return builder -> {
+            builder.serializerByType(Long.class, ToStringSerializer.instance);
             builder.serializerByType(LocalDateTime.class, localDateTimeSerializer());
             builder.deserializerByType(LocalDateTime.class, localDateTimeDeserializer());
             builder.simpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
