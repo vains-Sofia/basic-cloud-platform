@@ -3,7 +3,7 @@
 <mapper namespace="com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ApplicationMapper">
 
     <select id="selectConditionPage"
-            resultType="com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationResponse">
+            resultType="com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application">
         SELECT * FROM oauth2_application
         <where>
             <if test="request.clientId != null and request.clientId != ''">

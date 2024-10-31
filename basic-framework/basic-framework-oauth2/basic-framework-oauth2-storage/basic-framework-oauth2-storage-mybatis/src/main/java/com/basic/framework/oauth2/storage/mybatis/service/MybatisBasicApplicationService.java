@@ -80,9 +80,14 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
 
     @Override
     public PageResult<BasicApplicationResponse> findByPage(FindApplicationPageRequest request) {
-        IPage<BasicApplicationResponse> pageResult = oAuth2ApplicationMapper.selectConditionPage(Page.of(request.getCurrent(), request.getSize()), request);
-
-        return PageResult.of(pageResult.getCurrent(), pageResult.getSize(), pageResult.getTotal(), pageResult.getRecords());
+        IPage<MybatisOAuth2Application> pageResult = oAuth2ApplicationMapper.selectConditionPage(Page.of(request.getCurrent(), request.getSize()), request);
+        // 转换为响应bean
+        IPage<BasicApplicationResponse> responseIPage = pageResult.convert(entity -> {
+            BasicApplicationResponse basicApplicationResponse = new BasicApplicationResponse();
+            BeanUtils.copyProperties(entity, basicApplicationResponse);
+            return basicApplicationResponse;
+        });
+        return PageResult.of(pageResult.getCurrent(), pageResult.getSize(), pageResult.getTotal(), responseIPage.getRecords());
     }
 
     @Override

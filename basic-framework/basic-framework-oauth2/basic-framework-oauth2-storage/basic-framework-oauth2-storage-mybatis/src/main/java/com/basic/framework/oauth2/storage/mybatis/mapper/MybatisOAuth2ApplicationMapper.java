@@ -24,5 +24,5 @@ public interface MybatisOAuth2ApplicationMapper extends BaseMapper<MybatisOAuth2
      * @param request 其它入参
      * @return 分页的客户端信息
      */
-    IPage<BasicApplicationResponse> selectConditionPage(@Param("page") Page<BasicApplicationResponse> page, @Param("request") FindApplicationPageRequest request);
+    IPage<MybatisOAuth2Application> selectConditionPage(@Param("page") Page<BasicApplicationResponse> page, @Param("request") FindApplicationPageRequest request);
 }
