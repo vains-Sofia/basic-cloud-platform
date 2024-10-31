@@ -3,6 +3,10 @@
 # 分层的RUN命令和COPY命令是配合使用的，没有单独摘出来测试
 
 FROM registry.cn-guangzhou.aliyuncs.com/vains/eclipse-temurin:21-jre AS builder
+# 设置时区
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 WORKDIR application
 COPY . .
 ARG JAR_FILE=target/*.jar
