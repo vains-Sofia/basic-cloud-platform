@@ -1,6 +1,9 @@
 package com.basic.framework.oauth2.core.util;
 
+import com.basic.framework.core.enums.BasicEnum;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
+import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.experimental.UtilityClass;
@@ -8,9 +11,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrorCodes;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
@@ -18,8 +23,12 @@ import org.springframework.util.StringUtils;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.basic.framework.oauth2.core.constant.AuthorizeConstants.AUTHORITIES;
+import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
+import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.TOKEN_UNIQUE_ID;
 
 /**
  * 安全帮助类
@@ -43,6 +52,31 @@ public class SecurityUtils {
             return null;
         }
         if (authentication.getPrincipal() instanceof AuthenticatedUser authenticatedUser) {
+            return authenticatedUser;
+        }
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            // TODO 后续可以考虑从redis中获取用户信息
+            Map<String, Object> claims = jwt.getClaims();
+            // 提取账号来源
+            String accountPlatformValue = (String) claims.get(OAUTH2_ACCOUNT_PLATFORM);
+            // 提取权限信息
+            Object authoritiesValue = claims.get(AUTHORITIES);
+            // 获取用户id
+            Object userId = claims.get(TOKEN_UNIQUE_ID);
+            Set<SimpleGrantedAuthority> authorities = null;
+
+            // 解析权限
+            if (authoritiesValue instanceof String authorityStr) {
+                authorities = Arrays.stream(authorityStr.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+            }
+            if (authoritiesValue instanceof Collection<?> authorityArr) {
+                authorities = authorityArr.stream().map(String::valueOf).map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+            }
+            OAuth2AccountPlatformEnum accountPlatformEnum = BasicEnum.fromValue(accountPlatformValue, OAuth2AccountPlatformEnum.class);
+
+            // 构建统一信息
+            DefaultAuthenticatedUser authenticatedUser = new DefaultAuthenticatedUser(authentication.getName(), accountPlatformEnum, authorities);
+            authenticatedUser.setId(Long.valueOf(userId.toString()));
             return authenticatedUser;
         }
         return null;

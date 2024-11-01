@@ -1,14 +1,12 @@
 package com.basic.framework.oauth2.authorization.server.introspector;
 
-import com.basic.framework.oauth2.authorization.server.core.AbstractLoginAuthenticationToken;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
@@ -34,16 +32,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
 
-    private final OAuth2ResourceServerProperties properties;
-
     private final OAuth2AuthorizationService authorizationService;
 
     @Override
     public OAuth2AuthenticatedPrincipal introspect(String token) {
-        if (properties != null && (!ObjectUtils.isEmpty(properties.getOpaquetoken().getIntrospectionUri()) || !ObjectUtils.isEmpty(properties.getJwt().getIssuerUri()))) {
-            // 远程令牌自省
-            return null;
-        }
         // 本地令牌自省
         OAuth2Authorization authorization = this.authorizationService.findByToken(token, (null));
         if (authorization == null) {
@@ -91,17 +83,10 @@ public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
         Set<SimpleGrantedAuthority> authorities = stringAuthorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
 
         Object attribute = authorization.getAttribute(Principal.class.getName());
-        if (attribute instanceof UsernamePasswordAuthenticationToken authenticationToken) {
+        if (attribute instanceof AbstractAuthenticationToken authenticationToken) {
             if (authenticationToken.getPrincipal() instanceof User user) {
                 return new DefaultAuthenticatedUser(user.getUsername(), OAuth2AccountPlatformEnum.SYSTEM, authorities);
             }
-            if (authenticationToken.getPrincipal() instanceof AuthenticatedUser user) {
-                user.setAuthorities(authorities);
-                return user;
-            }
-        }
-
-        if (attribute instanceof AbstractLoginAuthenticationToken authenticationToken) {
             if (authenticationToken.getPrincipal() instanceof AuthenticatedUser user) {
                 user.setAuthorities(authorities);
                 return user;

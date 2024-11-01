@@ -3,6 +3,7 @@ package com.basic.framework.oauth2.core.customizer;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.OidcAuthenticatedUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames;
@@ -25,6 +26,7 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
  *
  * @author vains
  */
+@Slf4j
 public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
 
     private static final Set<String> ID_TOKEN_CLAIMS = Set.of(
@@ -63,9 +65,12 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
         // 检查登录用户信息是不是OAuth2User，在token中添加loginType属性
         if (context.getPrincipal().getPrincipal() instanceof AuthenticatedUser user) {
             JwtClaimsSet.Builder claims = context.getClaims();
-            // 同时检验是否为String和是否不为空
-            claims.claim(OAUTH2_ACCOUNT_PLATFORM, user.getAccountPlatform());
-            claims.claim(TOKEN_UNIQUE_ID, user.getUsername());
+            // TODO 后续可以考虑根据jti存储用户信息至redis
+            String jti = claims.build().getId();
+            log.debug("Jwt的id为：{}", jti);
+            // 存入用户信息
+            claims.claim(OAUTH2_ACCOUNT_PLATFORM, user.getAccountPlatform().getValue());
+            claims.claim(TOKEN_UNIQUE_ID, user.getId());
             // 资源服务自省时需要该属性
             claims.claim(OAuth2TokenIntrospectionClaimNames.USERNAME, user.getUsername());
 

@@ -59,7 +59,7 @@ public class BasicApplicationController {
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasAnyAuthority('message.write')")
+//    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "更新客户端信息", description = "更新保存客户端信息")
     public Result<String> updateApplication(@RequestBody @Validated(Update.class) SaveApplicationRequest request) {
         applicationService.updateApplication(request);
