@@ -1,12 +1,16 @@
 package com.basic.framework.oauth2.core.manager;
 
+import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
 import com.basic.framework.oauth2.core.converter.BasicReactiveOpaqueTokenConverter;
 import com.nimbusds.jwt.JWTParser;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManagerResolver;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.*;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtReactiveAuthenticationManager;
+import org.springframework.security.oauth2.server.resource.authentication.OpaqueTokenReactiveAuthenticationManager;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.oauth2.server.resource.introspection.SpringReactiveOpaqueTokenIntrospector;
 import org.springframework.security.oauth2.server.resource.web.server.authentication.ServerBearerTokenAuthenticationConverter;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
@@ -59,7 +63,7 @@ public class DelegatingReactiveTokenAuthenticationResolver implements ReactiveAu
         }
 
         // 获取jwt转换器，获取到通过适配器给webflux的jwt解析manager使用
-        JwtAuthenticationConverter authenticationConverter = this.getOptionalBean(applicationContext, JwtAuthenticationConverter.class);
+        BasicJwtRedisAuthenticationConverter authenticationConverter = this.getOptionalBean(applicationContext, BasicJwtRedisAuthenticationConverter.class);
         if (authenticationConverter != null) {
             this.jwtAuthenticationManager.setJwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(authenticationConverter));
         }

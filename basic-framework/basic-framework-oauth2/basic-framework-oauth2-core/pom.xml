@@ -45,6 +45,11 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-framework-redis</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

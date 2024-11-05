@@ -2,22 +2,20 @@ package com.basic.framework.oauth2.core.customizer;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.domain.OidcAuthenticatedUser;
+import com.basic.framework.redis.support.RedisOperator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
+import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCESS_TOKEN;
+import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
 
 /**
  * An {@link OAuth2TokenCustomizer} to map claims from a federated identity to
@@ -27,7 +25,10 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
  * @author vains
  */
 @Slf4j
+@RequiredArgsConstructor
 public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
+
+    private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private static final Set<String> ID_TOKEN_CLAIMS = Set.of(
             IdTokenClaimNames.ISS,
@@ -48,79 +49,21 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
 
     @Override
     public void customize(JwtEncodingContext context) {
-        if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
-            Map<String, Object> thirdPartyClaims = extractClaims(context.getPrincipal());
-            context.getClaims().claims(existingClaims -> {
-                // Remove conflicting claims set by this authorization server
-                existingClaims.keySet().forEach(thirdPartyClaims::remove);
-
-                // Remove standard id_token claims that could cause problems with clients
-                ID_TOKEN_CLAIMS.forEach(thirdPartyClaims::remove);
-
-                // Add all other claims directly to id_token
-                existingClaims.putAll(thirdPartyClaims);
-            });
-        }
 
         // 检查登录用户信息是不是OAuth2User，在token中添加loginType属性
         if (context.getPrincipal().getPrincipal() instanceof AuthenticatedUser user) {
-            JwtClaimsSet.Builder claims = context.getClaims();
-            // TODO 后续可以考虑根据jti存储用户信息至redis
-            String jti = claims.build().getId();
-            log.debug("Jwt的id为：{}", jti);
-            // 存入用户信息
-            claims.claim(OAUTH2_ACCOUNT_PLATFORM, user.getAccountPlatform().getValue());
-            claims.claim(TOKEN_UNIQUE_ID, user.getId());
-            // 资源服务自省时需要该属性
-            claims.claim(OAuth2TokenIntrospectionClaimNames.USERNAME, user.getUsername());
-
-            // 获取用户的权限
-            Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
-            transferToContext(authorities, context);
+            if (!OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
+                // id token不缓存用户信息
+                JwtClaimsSet.Builder claims = context.getClaims();
+                JwtClaimsSet claimsSet = claims.build();
+                // 获取jwt的id(jti)
+                String jti = claimsSet.getId();
+                // 计算token有效时长
+                long expire = ChronoUnit.SECONDS.between(claimsSet.getIssuedAt(), claimsSet.getExpiresAt());
+                log.debug("Jwt的id为：{}", jti);
+                redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + jti), user, expire);
+            }
         }
-    }
-
-    /**
-     * 从认证信息中提取 Claims
-     *
-     * @param principal 当前登录用户认证信息
-     * @return 当前用户的信息
-     */
-    private Map<String, Object> extractClaims(Authentication principal) {
-        Map<String, Object> claims;
-        if (principal.getPrincipal() instanceof OidcAuthenticatedUser oidcUser) {
-            OidcIdToken idToken = oidcUser.getIdToken();
-            claims = idToken.getClaims();
-        } else if (principal.getPrincipal() instanceof AuthenticatedUser oAuth2User) {
-            claims = oAuth2User.getAttributes();
-        } else {
-            claims = Collections.emptyMap();
-        }
-
-        return new HashMap<>(claims);
-    }
-
-    public void transferToContext(Collection<? extends GrantedAuthority> authorities, JwtEncodingContext context) {
-        // 获取申请的scopes
-        Set<String> scopes = context.getAuthorizedScopes();
-        // 提取权限并转为字符串
-        Set<String> authoritySet = Optional.ofNullable(authorities).orElse(Collections.emptyList()).stream()
-                // 获取权限字符串
-                .map(GrantedAuthority::getAuthority)
-                // 去重
-                .collect(Collectors.toSet());
-
-        // 合并scope与用户信息
-        authoritySet.addAll(scopes);
-
-        // 添加前缀，后续或许可以根据客户端针对性的做一些个性化配置(从客户端中获取前缀)
-        Set<String> hadPrefixAuthorities = authoritySet.stream().map(AuthorizeConstants.AUTHORITY_PREFIX::concat).collect(Collectors.toSet());
-
-        JwtClaimsSet.Builder claims = context.getClaims();
-        // 将权限信息放入jwt的claims中（也可以生成一个以指定字符分割的字符串放入）
-        claims.claim(AuthorizeConstants.AUTHORITIES, hadPrefixAuthorities);
-        // 放入其它自定内容
-        // 角色、头像...
     }
 
 }

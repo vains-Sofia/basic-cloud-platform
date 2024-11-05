@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.federation.converter;
 
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
+import com.basic.framework.oauth2.federation.domain.ThirdAuthenticatedUser;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -26,7 +26,7 @@ public interface OAuth2UserConverter extends Converter<OAuth2User, Authenticated
      * @param authenticatedUser 统一用户信息
      * @param attributes        三方登录获取的用户信息
      */
-    default void setThirdAccessTokenInfo(DefaultAuthenticatedUser authenticatedUser, Map<String, Object> attributes) {
+    default void setThirdAccessTokenInfo(ThirdAuthenticatedUser authenticatedUser, Map<String, Object> attributes) {
         // 获取三方accessToken信息
         Object accessTokenObj = attributes.get(OAUTH2_ACCESS_TOKEN);
         if (accessTokenObj instanceof OAuth2AccessToken accessToken) {

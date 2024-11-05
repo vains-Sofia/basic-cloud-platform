@@ -1,9 +1,9 @@
 package com.basic.framework.oauth2.federation.converter.impl;
 
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
+import com.basic.framework.oauth2.federation.domain.ThirdAuthenticatedUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -23,7 +23,7 @@ public class GiteeUserConverter implements OAuth2UserConverter {
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         // 初始化统一用户信息实例
-        DefaultAuthenticatedUser authenticatedUser = new DefaultAuthenticatedUser(
+        ThirdAuthenticatedUser authenticatedUser = new ThirdAuthenticatedUser(
                 oAuth2User.getName(), OAuth2AccountPlatformEnum.GITEE, oAuth2User.getAuthorities());
 
         // 转换至 统一用户信息类中

@@ -2,6 +2,7 @@ package com.basic.framework.oauth2.authorization.server.util;
 
 import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.handler.authentication.DeviceAuthorizationResponseHandler;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
@@ -11,6 +12,7 @@ import com.basic.framework.oauth2.authorization.server.grant.email.OAuth2EmailCa
 import com.basic.framework.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationConverter;
 import com.basic.framework.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationProvider;
+import com.basic.framework.redis.support.RedisOperator;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -147,7 +149,9 @@ public class OAuth2ConfigurerUtils {
                 jwtGenerator = new JwtGenerator(jwtEncoder);
                 OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer = getJwtCustomizer(httpSecurity);
                 if (jwtCustomizer != null) {
-                    jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, JwtIdTokenCustomizer::new));
+                    ResolvableType type = ResolvableType.forClassWithGenerics(RedisOperator.class, AuthenticatedUser.class);
+                    RedisOperator<AuthenticatedUser> redisOperator = getOptionalBean(httpSecurity, type);
+                    jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, () -> new JwtIdTokenCustomizer(redisOperator)));
                 }
                 httpSecurity.setSharedObject(JwtGenerator.class, jwtGenerator);
             }

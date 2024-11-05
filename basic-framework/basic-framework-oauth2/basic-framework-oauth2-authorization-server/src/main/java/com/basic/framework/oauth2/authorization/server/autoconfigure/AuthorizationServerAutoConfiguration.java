@@ -5,10 +5,11 @@ import com.basic.framework.oauth2.authorization.server.captcha.impl.RedisCaptcha
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.introspector.BasicOpaqueTokenIntrospector;
 import com.basic.framework.oauth2.core.annotation.ConditionalOnInMemoryStorage;
-import com.basic.framework.oauth2.core.converter.BasicJwtAuthenticationConverter;
+import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
 import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
 import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.core.manager.DelegatingTokenAuthenticationResolver;
@@ -22,7 +23,6 @@ import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +52,7 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -73,7 +73,7 @@ import java.util.UUID;
  */
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Import(RedisOperator.class)
+@Import({RedisAutoConfiguration.class, RedisOperator.class})
 @EnableConfigurationProperties({OAuth2ServerProperties.class})
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class AuthorizationServerAutoConfiguration {
@@ -82,6 +82,8 @@ public class AuthorizationServerAutoConfiguration {
      * 认证服务配置类
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
+
+    private final RedisOperator<AuthenticatedUser> redisOperator;
 
     /**
      * 将AuthenticationManager注入ioc中，其它需要使用地方可以直接从ioc中获取
@@ -165,6 +167,7 @@ public class AuthorizationServerAutoConfiguration {
                     List.of(new SimpleGrantedAuthority("USER")));
             user.setId(123L);
             user.setPassword("{noop}123456");
+            user.setSub(user.getUsername());
             return user;
         };
     }
@@ -327,9 +330,8 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BasicOpaqueTokenIntrospector opaqueTokenIntrospector(OAuth2ResourceServerProperties properties,
-                                                                OAuth2AuthorizationService authorizationService) {
-        return new BasicOpaqueTokenIntrospector(properties, authorizationService);
+    public BasicOpaqueTokenIntrospector opaqueTokenIntrospector(OAuth2AuthorizationService authorizationService) {
+        return new BasicOpaqueTokenIntrospector(authorizationService);
     }
 
     @Bean
@@ -340,14 +342,17 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public JwtAuthenticationConverter authenticationConverter() {
-        return new BasicJwtAuthenticationConverter();
+    public JwtAuthenticationProvider authenticationConverter(JwtDecoder jwtDecoder) {
+        JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
+
+        authenticationProvider.setJwtAuthenticationConverter(new BasicJwtRedisAuthenticationConverter(redisOperator));
+        return authenticationProvider;
     }
 
     @Bean
     @ConditionalOnMissingBean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
-        return new JwtIdTokenCustomizer();
+        return new JwtIdTokenCustomizer(redisOperator);
     }
 
     @Bean

@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.core.manager;
 
+import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
 import com.nimbusds.jwt.JWTParser;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.ApplicationContext;
@@ -7,7 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.authentication.OpaqueTokenAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
@@ -56,7 +56,7 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
         }
 
         // 获取jwt转换器，获取到直接给转换器使用
-        JwtAuthenticationConverter authenticationConverter = this.getOptionalBean(applicationContext, JwtAuthenticationConverter.class);
+        BasicJwtRedisAuthenticationConverter authenticationConverter = this.getOptionalBean(applicationContext, BasicJwtRedisAuthenticationConverter.class);
         if (authenticationConverter != null) {
             this.jwtAuthenticationProvider.setJwtAuthenticationConverter(authenticationConverter);
         }

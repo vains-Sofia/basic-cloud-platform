@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RedisOperator<V> {
 
-    private final RedisTemplate<String, V> redisTemplate;
+    private final RedisTemplate<Object, V> redisTemplate;
 
     private final RedisTemplate<Object, Object> redisHashTemplate;
 
@@ -267,7 +267,7 @@ public class RedisOperator<V> {
 
     /**
      * 将传入的参数列表添加至key的列表中，并设置key的存活时间
-     *  默认单位是秒(s)
+     * 默认单位是秒(s)
      *
      * @param key     缓存key
      * @param values  值列表
@@ -297,7 +297,7 @@ public class RedisOperator<V> {
      *
      * @return ValueOperations
      */
-    private ValueOperations<String, V> valueOperations() {
+    private ValueOperations<Object, V> valueOperations() {
         return redisTemplate.opsForValue();
     }
 
@@ -315,7 +315,7 @@ public class RedisOperator<V> {
      *
      * @return ValueOperations
      */
-    private ListOperations<String, V> listOperations() {
+    private ListOperations<Object, V> listOperations() {
         return redisTemplate.opsForList();
     }
 
