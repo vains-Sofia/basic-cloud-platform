@@ -10,6 +10,7 @@ import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
 import com.basic.framework.oauth2.storage.core.domain.request.FindApplicationPageRequest;
 import com.basic.framework.oauth2.storage.core.domain.request.SaveApplicationRequest;
 import com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationResponse;
+import com.basic.framework.oauth2.storage.core.exception.BasicApplicationStorageException;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.core.util.ClientUtils;
 import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application;
@@ -86,6 +87,14 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
 
     @Override
     public String saveApplication(SaveApplicationRequest request) {
+        // 唯一校验
+        LambdaQueryWrapper<MybatisOAuth2Application> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Application.class)
+                .eq(MybatisOAuth2Application::getClientId, request.getClientId());
+        MybatisOAuth2Application application = oAuth2ApplicationMapper.selectOne(wrapper);
+        if (application != null) {
+            throw new BasicApplicationStorageException("客户端已存在.");
+        }
+
         this.validRedirectUris(request);
         MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
         BeanUtils.copyProperties(request, mybatisOAuth2Application);
@@ -106,6 +115,14 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
 
     @Override
     public void updateApplication(SaveApplicationRequest request) {
+        // 唯一校验
+        LambdaQueryWrapper<MybatisOAuth2Application> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Application.class)
+                .eq(MybatisOAuth2Application::getClientId, request.getClientId());
+        MybatisOAuth2Application application = oAuth2ApplicationMapper.selectOne(wrapper);
+        if (application == null) {
+            throw new BasicApplicationStorageException("客户端不存在.");
+        }
+
         this.validRedirectUris(request);
         MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
         BeanUtils.copyProperties(request, mybatisOAuth2Application);
