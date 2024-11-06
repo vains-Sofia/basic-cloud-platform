@@ -15,7 +15,6 @@ public class AuthorizationServerMetadataCustomizer implements Customizer<OAuth2A
     public void customize(OAuth2AuthorizationServerMetadataEndpointConfigurer metadataEndpointConfigurer) {
         // 让认证服务器元数据中有自定义的认证方式
         metadataEndpointConfigurer.authorizationServerMetadataCustomizer(customizer -> customizer
-                .grantType(BasicAuthorizationGrantType.EMAIL.getValue())
                 .grantType(BasicAuthorizationGrantType.PASSWORD.getValue())
         );
     }

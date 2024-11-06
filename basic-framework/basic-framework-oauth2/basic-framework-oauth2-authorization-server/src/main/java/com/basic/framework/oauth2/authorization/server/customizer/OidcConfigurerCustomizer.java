@@ -17,7 +17,6 @@ public class OidcConfigurerCustomizer implements Customizer<OidcConfigurer> {
                 .providerConfigurationCustomizer(customizer -> customizer
                         // 为OIDC端点添加密码模式的grant type
                         .grantType(BasicAuthorizationGrantType.PASSWORD.getValue())
-                        .grantType(BasicAuthorizationGrantType.EMAIL.getValue())
                 )
         );
     }
