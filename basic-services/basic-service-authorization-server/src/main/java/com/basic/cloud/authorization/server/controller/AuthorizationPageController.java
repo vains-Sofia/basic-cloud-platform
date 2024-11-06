@@ -32,7 +32,7 @@ import java.util.*;
 @Controller
 @RequiredArgsConstructor
 @Tag(name = "认证服务页面渲染", description = "渲染认证服务需要的页面")
-public class AuthorizationController {
+public class AuthorizationPageController {
 
     private final ServerProperties serverProperties;
 
