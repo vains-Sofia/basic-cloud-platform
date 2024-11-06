@@ -1,17 +1,22 @@
 package com.basic.framework.oauth2.storage.mybatis.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.storage.core.domain.BasicAuthorization;
+import com.basic.framework.oauth2.storage.core.domain.request.FindAuthorizationPageRequest;
+import com.basic.framework.oauth2.storage.core.domain.response.FindAuthorizationPageResponse;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
 import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Authorization;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2AuthorizationMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
@@ -52,7 +57,7 @@ public class MybatisBasicAuthorizationService implements BasicAuthorizationServi
             if (attributes != null) {
                 // 现在拿不到当前登录用户，直接从认证对象中拿
                 Object attribute = attributes.get(Principal.class.getName());
-                if (attribute instanceof UsernamePasswordAuthenticationToken authenticationToken) {
+                if (attribute instanceof AbstractAuthenticationToken authenticationToken) {
                     if (authenticationToken.getPrincipal() instanceof AuthenticatedUser user) {
                         convert.setUpdateBy(user.getId());
                         convert.setCreateBy(user.getId());
@@ -112,5 +117,13 @@ public class MybatisBasicAuthorizationService implements BasicAuthorizationServi
         BasicAuthorization authorization = new BasicAuthorization();
         BeanUtils.copyProperties(mybatisOAuth2Authorization, authorization);
         return authorization;
+    }
+
+    @Override
+    public PageResult<FindAuthorizationPageResponse> findAuthorizationPage(FindAuthorizationPageRequest request) {
+        Page<FindAuthorizationPageResponse> pageQuery = Page.of(request.getCurrent(), request.getSize());
+        IPage<FindAuthorizationPageResponse> pageResult = mybatisOAuth2AuthorizationMapper.selectConditionPage(pageQuery, request);
+
+        return PageResult.of(pageResult.getCurrent(), pageResult.getSize(), pageResult.getTotal(), pageResult.getRecords());
     }
 }

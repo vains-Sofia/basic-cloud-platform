@@ -40,5 +40,6 @@
                 AND JSON_CONTAINS(client_authentication_methods, CONCAT('"', #{request.clientAuthenticationMethod}, '"'))
             </if>
         </where>
+        ORDER BY update_time DESC
     </select>
 </mapper>

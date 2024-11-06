@@ -81,7 +81,9 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
 
     @Override
     public PageResult<BasicApplicationResponse> findByPage(FindApplicationPageRequest request) {
-        IPage<BasicApplicationResponse> pageResult = oAuth2ApplicationMapper.selectConditionPage(Page.of(request.getCurrent(), request.getSize()), request);
+        Page<BasicApplicationResponse> pageQuery = Page.of(request.getCurrent(), request.getSize());
+        IPage<BasicApplicationResponse> pageResult = oAuth2ApplicationMapper.selectConditionPage(pageQuery, request);
+
         return PageResult.of(pageResult.getCurrent(), pageResult.getSize(), pageResult.getTotal(), pageResult.getRecords());
     }
 

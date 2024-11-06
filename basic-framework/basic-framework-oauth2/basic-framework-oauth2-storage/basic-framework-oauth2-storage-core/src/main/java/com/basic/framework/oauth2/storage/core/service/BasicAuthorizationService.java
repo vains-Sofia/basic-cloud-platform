@@ -1,6 +1,9 @@
 package com.basic.framework.oauth2.storage.core.service;
 
+import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.oauth2.storage.core.domain.BasicAuthorization;
+import com.basic.framework.oauth2.storage.core.domain.request.FindAuthorizationPageRequest;
+import com.basic.framework.oauth2.storage.core.domain.response.FindAuthorizationPageResponse;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 
 /**
@@ -40,5 +43,13 @@ public interface BasicAuthorizationService {
      * @return 认证信息
      */
     BasicAuthorization findByToken(String token, OAuth2TokenType tokenType);
+
+    /**
+     * 分页查询认证信息列表
+     *
+     * @param request 分页请求入参
+     * @return 认证信息分页列表
+     */
+    PageResult<FindAuthorizationPageResponse> findAuthorizationPage(FindAuthorizationPageRequest request);
 
 }
