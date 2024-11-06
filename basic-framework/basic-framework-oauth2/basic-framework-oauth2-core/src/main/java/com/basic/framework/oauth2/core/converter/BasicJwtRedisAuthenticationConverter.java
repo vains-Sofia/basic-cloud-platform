@@ -11,6 +11,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.BearerTokenError;
+import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.util.ObjectUtils;
@@ -46,7 +48,11 @@ public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, Abst
         AuthenticatedUser authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + jti);
         if (authenticatedUser == null) {
             // Jwt被正常解析但是无法获取到Redis的用户信息，这种情况一般是登出、管理平台下线后出现的问题
-            throw new OAuth2AuthenticationException("Jwt异常，access token已失效或已下线.");
+            // RFC6750规定字符只能是 %x21 / %x23-5B/ %x5D-7E，以%x20分割(https://datatracker.ietf.org/doc/rfc6750/)
+            // %x21 表示 !   %x23-5B 表示 # 到 [, 包括：#、$、%、&、'、(、)、*、+、,、-、.、/、0-9、:、;、<、=、>、?、@、A-Z 和 [
+            // %x5D-7E 表示 ] 到 ~，包括：]、^、_、`、a-z、{、|、} 和 ~    %x20 表示空格，用于分隔多个 scope 值。
+            BearerTokenError bearerTokenError = BearerTokenErrors.invalidToken("Access token is invalid or has been logged out.");
+            throw new OAuth2AuthenticationException(bearerTokenError);
         }
         // 合并scope与用户权限
         if (!ObjectUtils.isEmpty(grantedAuthorities)) {

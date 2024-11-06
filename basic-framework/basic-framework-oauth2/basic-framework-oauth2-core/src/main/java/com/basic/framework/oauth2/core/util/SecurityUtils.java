@@ -55,7 +55,6 @@ public class SecurityUtils {
             return authenticatedUser;
         }
         if (authentication.getPrincipal() instanceof Jwt jwt) {
-            // TODO 后续可以考虑从redis中获取用户信息
             Map<String, Object> claims = jwt.getClaims();
             // 提取账号来源
             String accountPlatformValue = (String) claims.get(OAUTH2_ACCOUNT_PLATFORM);
