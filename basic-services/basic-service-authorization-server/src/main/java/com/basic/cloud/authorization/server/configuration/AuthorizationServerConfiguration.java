@@ -82,8 +82,6 @@ public class AuthorizationServerConfiguration {
         configurer.oidc(new OidcConfigurerCustomizer());
         configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
 
-        // 添加邮件模式
-//        OAuth2ConfigurerUtils.configureEmailGrantType(http, (null), (null));
         // 添加密码模式
         OAuth2ConfigurerUtils.configurePasswordGrantType(http, (null), (null));
         // 添加设备码流程
