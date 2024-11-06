@@ -2,12 +2,16 @@ package com.basic.framework.web.autoconfigure;
 
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.exception.CloudServiceException;
+import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -97,6 +101,20 @@ public class DefaultExceptionHandlerAdvice {
     @ExceptionHandler(CloudServiceException.class)
     public Result<String> cloudServiceException(CloudServiceException e) {
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+    }
+
+    /**
+     * 无权限异常
+     *
+     * @param e 具体地校验异常
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public void accessDeniedException(AccessDeniedException e,
+                                      HttpServletRequest request,
+                                      HttpServletResponse response) {
+        log.debug("访问[{}]时权限不足，{}", request.getRequestURI(), e.getMessage());
+        // 处理并写回异常信息
+        SecurityUtils.exceptionHandler(request, response, e);
     }
 
     /**
