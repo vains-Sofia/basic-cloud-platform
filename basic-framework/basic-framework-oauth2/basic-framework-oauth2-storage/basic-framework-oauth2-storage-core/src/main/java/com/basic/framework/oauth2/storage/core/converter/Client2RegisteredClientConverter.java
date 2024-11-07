@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.storage.mybatis.converter;
+package com.basic.framework.oauth2.storage.core.converter;
 
 import com.basic.framework.oauth2.authorization.server.core.BasicCoreServiceConverter;
 import com.basic.framework.oauth2.storage.core.domain.BasicApplication;

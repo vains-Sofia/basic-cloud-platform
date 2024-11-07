@@ -1,6 +1,5 @@
-package com.basic.framework.oauth2.storage.mybatis.converter;
+package com.basic.framework.oauth2.storage.core.converter;
 
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.basic.framework.oauth2.authorization.server.core.BasicCoreServiceConverter;
 import com.basic.framework.oauth2.storage.core.domain.BasicAuthorizationConsent;
 import jakarta.annotation.Nullable;
@@ -24,7 +23,6 @@ public class OAuth2AuthorizationConsent2EntityConverter implements BasicCoreServ
             return null;
         }
         BasicAuthorizationConsent authorizationConsent = new BasicAuthorizationConsent();
-        authorizationConsent.setId(IdWorker.getId());
         authorizationConsent.setRegisteredClientId(source.getRegisteredClientId());
         authorizationConsent.setPrincipalName(source.getPrincipalName());
         if (!ObjectUtils.isEmpty(source.getAuthorities())) {

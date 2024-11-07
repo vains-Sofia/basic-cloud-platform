@@ -12,12 +12,6 @@
     <description>oauth2 server storage module for mybatis plus</description>
 
     <dependencies>
-        <!-- 封装的认证服务模块 -->
-        <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-oauth2-authorization-server</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!-- MySQL 驱动 -->
         <dependency>
             <groupId>com.mysql</groupId>

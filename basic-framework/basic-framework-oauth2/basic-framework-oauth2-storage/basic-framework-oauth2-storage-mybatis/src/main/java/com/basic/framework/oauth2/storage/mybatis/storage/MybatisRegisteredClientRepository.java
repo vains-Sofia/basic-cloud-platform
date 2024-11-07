@@ -2,8 +2,8 @@ package com.basic.framework.oauth2.storage.mybatis.storage;
 
 import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
-import com.basic.framework.oauth2.storage.mybatis.converter.Client2RegisteredClientConverter;
-import com.basic.framework.oauth2.storage.mybatis.converter.RegisteredClient2ClientConverter;
+import com.basic.framework.oauth2.storage.core.converter.Client2RegisteredClientConverter;
+import com.basic.framework.oauth2.storage.core.converter.RegisteredClient2ClientConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;

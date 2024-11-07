@@ -2,8 +2,8 @@ package com.basic.framework.oauth2.storage.mybatis.storage;
 
 import com.basic.framework.oauth2.storage.core.domain.BasicAuthorization;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
-import com.basic.framework.oauth2.storage.mybatis.converter.Authorization2OAuth2AuthorizationConverter;
-import com.basic.framework.oauth2.storage.mybatis.converter.OAuth2Authorization2AuthorizationConverter;
+import com.basic.framework.oauth2.storage.core.converter.Authorization2OAuth2AuthorizationConverter;
+import com.basic.framework.oauth2.storage.core.converter.OAuth2Authorization2AuthorizationConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;

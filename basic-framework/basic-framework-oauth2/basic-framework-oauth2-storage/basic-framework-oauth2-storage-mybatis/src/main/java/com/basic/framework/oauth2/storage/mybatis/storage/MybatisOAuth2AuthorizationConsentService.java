@@ -1,9 +1,10 @@
 package com.basic.framework.oauth2.storage.mybatis.storage;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.basic.framework.oauth2.storage.core.domain.BasicAuthorizationConsent;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
-import com.basic.framework.oauth2.storage.mybatis.converter.Entity2OAuth2AuthorizationConsentConverter;
-import com.basic.framework.oauth2.storage.mybatis.converter.OAuth2AuthorizationConsent2EntityConverter;
+import com.basic.framework.oauth2.storage.core.converter.Entity2OAuth2AuthorizationConsentConverter;
+import com.basic.framework.oauth2.storage.core.converter.OAuth2AuthorizationConsent2EntityConverter;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -29,6 +30,10 @@ public class MybatisOAuth2AuthorizationConsentService implements OAuth2Authoriza
     @Override
     public void save(OAuth2AuthorizationConsent OAuth2AuthorizationConsent) {
         BasicAuthorizationConsent consent = this.entityConverter.convert(OAuth2AuthorizationConsent);
+        if (consent == null) {
+            return;
+        }
+        consent.setId(IdWorker.getId());
         this.basicAuthorizationConsentService.save(consent);
     }
 

@@ -14,12 +14,6 @@
 
     <dependencies>
 
-        <!-- 封装的认证服务模块 -->
-        <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-oauth2-authorization-server</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-web</artifactId>

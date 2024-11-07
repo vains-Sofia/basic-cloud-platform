@@ -31,11 +31,11 @@ public class OAuth2ApplicationController {
 
     private final BasicApplicationService applicationService;
 
-    @GetMapping("/findByClientId")
+    @GetMapping("/findByClientId/{clientId}")
     @PreAuthorize("hasAnyAuthority('message.read')")
     @Parameter(name = "clientId", description = "客户端id")
     @Operation(summary = "根据客户端id查询客户端信息", description = "根据客户端id查询客户端信息")
-    public Result<BasicApplicationResponse> findByClientId(String clientId) {
+    public Result<BasicApplicationResponse> findByClientId(@PathVariable String clientId) {
         BasicApplication application = applicationService.findByClientId(clientId);
         BasicApplicationResponse response = new BasicApplicationResponse();
         BeanUtils.copyProperties(application, response);
