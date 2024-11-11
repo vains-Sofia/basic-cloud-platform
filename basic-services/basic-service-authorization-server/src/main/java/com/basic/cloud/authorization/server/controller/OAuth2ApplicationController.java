@@ -43,7 +43,7 @@ public class OAuth2ApplicationController {
     }
 
     @GetMapping("/findByPage")
-//    @PreAuthorize("hasAnyAuthority('message.read')")
+    @PreAuthorize("hasAnyAuthority('message.read')")
     @Operation(summary = "根据入参分页查询客户端信息", description = "根据入参分页查询客户端信息")
     public Result<PageResult<BasicApplicationResponse>> findByPage(@Validated FindApplicationPageRequest request) {
         PageResult<BasicApplicationResponse> result = applicationService.findByPage(request);
@@ -59,7 +59,7 @@ public class OAuth2ApplicationController {
     }
 
     @PutMapping("/update")
-//    @PreAuthorize("hasAnyAuthority('message.write')")
+    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "更新客户端信息", description = "更新保存客户端信息")
     public Result<String> updateApplication(@RequestBody @Validated(Update.class) SaveApplicationRequest request) {
         applicationService.updateApplication(request);

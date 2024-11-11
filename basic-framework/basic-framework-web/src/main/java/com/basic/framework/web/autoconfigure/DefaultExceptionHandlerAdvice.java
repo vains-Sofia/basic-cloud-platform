@@ -64,7 +64,7 @@ public class DefaultExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public Result<String> handleNotSupportedHttpMethodException(HttpRequestMethodNotSupportedException e) {
-        log.error("{}.", e.getMessage(), e);
+        log.warn("{}.", e.getMessage());
         return Result.error(HttpStatus.METHOD_NOT_ALLOWED.value(), e.getMessage());
     }
 
@@ -77,7 +77,7 @@ public class DefaultExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(value = HttpMediaTypeNotSupportedException.class)
     public Result<String> handleNotSupportedHttpMethodException(HttpMediaTypeNotSupportedException e) {
-        log.error("{}.", e.getMessage(), e);
+        log.warn("{}.", e.getMessage());
         return Result.error(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), e.getMessage());
     }
 
@@ -89,6 +89,7 @@ public class DefaultExceptionHandlerAdvice {
      */
     @ExceptionHandler(DataTruncation.class)
     public Result<String> dataTruncation(DataTruncation e) {
+        log.error("{}.", e.getMessage(), e);
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
 
@@ -100,6 +101,7 @@ public class DefaultExceptionHandlerAdvice {
      */
     @ExceptionHandler(CloudServiceException.class)
     public Result<String> cloudServiceException(CloudServiceException e) {
+        log.warn("{}.", e.getMessage());
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
 

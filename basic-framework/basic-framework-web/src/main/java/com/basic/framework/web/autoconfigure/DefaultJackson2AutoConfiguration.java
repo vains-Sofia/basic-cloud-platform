@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
  * @author vains
  */
 @RequiredArgsConstructor
-public class DateAutoConfiguration {
+public class DefaultJackson2AutoConfiguration {
 
     /**
      * 默认日期时间格式

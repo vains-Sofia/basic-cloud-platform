@@ -1,2 +1,2 @@
-com.basic.framework.web.autoconfigure.DateAutoConfiguration
 com.basic.framework.web.autoconfigure.DefaultExceptionHandlerAdvice
+com.basic.framework.web.autoconfigure.DefaultJackson2AutoConfiguration
