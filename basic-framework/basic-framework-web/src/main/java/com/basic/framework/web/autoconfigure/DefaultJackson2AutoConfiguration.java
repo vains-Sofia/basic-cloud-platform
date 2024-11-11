@@ -1,5 +1,7 @@
 package com.basic.framework.web.autoconfigure;
 
+import com.basic.framework.web.deserializer.TimeStampLocalDateTimeDeserializer;
+import com.basic.framework.web.serizalizer.TimeStampLocalDateTimeSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -17,6 +19,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import static com.basic.framework.core.constants.DateFormatConstants.*;
+
 /**
  * 时间格式化自定义处理类，自动注入ioc
  *
@@ -26,21 +30,6 @@ import java.time.format.DateTimeFormatter;
 public class DefaultJackson2AutoConfiguration {
 
     /**
-     * 默认日期时间格式
-     */
-    public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
-    /**
-     * 默认日期格式
-     */
-    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-
-    /**
-     * 默认时间格式
-     */
-    public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
-
-    /**
      * LocalDatetime序列化
      *
      * @return LocalDateTimeSerializer
@@ -48,7 +37,7 @@ public class DefaultJackson2AutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public LocalDateTimeSerializer localDateTimeSerializer() {
-        return new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT));
+        return new TimeStampLocalDateTimeSerializer(Boolean.FALSE);
     }
 
     /**
@@ -59,7 +48,7 @@ public class DefaultJackson2AutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public LocalDateTimeDeserializer localDateTimeDeserializer() {
-        return new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT));
+        return new TimeStampLocalDateTimeDeserializer();
     }
 
     /**
