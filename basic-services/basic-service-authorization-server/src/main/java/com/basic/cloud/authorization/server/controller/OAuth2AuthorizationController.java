@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author vains
  */
 @RestController
-@RequestMapping("/oauth2/basic/authorization")
+@RequestMapping("/open/authorization")
 @Tag(name = "认证信息接口", description = "认证信息相关接口")
 public class OAuth2AuthorizationController {
 

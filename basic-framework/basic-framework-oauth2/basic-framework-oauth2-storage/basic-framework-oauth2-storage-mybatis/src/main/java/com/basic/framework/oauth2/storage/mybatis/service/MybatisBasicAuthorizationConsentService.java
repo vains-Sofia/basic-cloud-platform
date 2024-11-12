@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.basic.framework.oauth2.storage.core.domain.BasicAuthorizationConsent;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
-import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2AuthorizationConsent;
+import com.basic.framework.oauth2.storage.mybatis.domain.MybatisOAuth2AuthorizationConsent;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2AuthorizationConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;

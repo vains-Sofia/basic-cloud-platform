@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/oauth2/basic/application")
+@RequestMapping("/open/application")
 @Tag(name = "客户端接口", description = "客户端接口")
 public class OAuth2ApplicationController {
 

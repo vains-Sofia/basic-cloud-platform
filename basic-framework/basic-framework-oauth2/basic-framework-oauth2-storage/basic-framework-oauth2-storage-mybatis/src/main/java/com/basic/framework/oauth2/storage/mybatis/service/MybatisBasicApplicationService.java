@@ -13,7 +13,7 @@ import com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationR
 import com.basic.framework.oauth2.storage.core.exception.BasicApplicationStorageException;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.core.util.ClientUtils;
-import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Application;
+import com.basic.framework.oauth2.storage.mybatis.domain.MybatisOAuth2Application;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ApplicationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -100,7 +100,6 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
         this.validRedirectUris(request);
         MybatisOAuth2Application mybatisOAuth2Application = new MybatisOAuth2Application();
         BeanUtils.copyProperties(request, mybatisOAuth2Application);
-        mybatisOAuth2Application.setId(IdWorker.getId());
         // 如果没有token设置，则使用默认的
         if (mybatisOAuth2Application.getTokenSettings() == null) {
             mybatisOAuth2Application.setTokenSettings(ClientUtils.resolveTokenSettings(TokenSettings.builder().build()));

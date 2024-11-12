@@ -93,5 +93,22 @@ CREATE TABLE `oauth2_authorization_consent`
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
+-- ----------------------------
+-- Table structure for oauth2_scope
+-- ----------------------------
+DROP TABLE IF EXISTS `oauth2_scope`;
+CREATE TABLE `oauth2_scope`
+(
+    `id`          bigint                                                 NOT NULL COMMENT '主键id',
+    `name`        varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'scope 名称',
+    `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'scope 描述',
+    `enabled`     tinyint(1) NULL DEFAULT NULL COMMENT '是否启用',
+    `create_by`   bigint NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint NULL DEFAULT NULL COMMENT '修改人',
+    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = 'oauth2客户端的scope' ROW_FORMAT = DYNAMIC;
+
 SET
 FOREIGN_KEY_CHECKS = 1;

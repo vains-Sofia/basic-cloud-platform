@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.basic.framework.oauth2.storage.core.domain.request.FindAuthorizationPageRequest;
 import com.basic.framework.oauth2.storage.core.domain.response.FindAuthorizationPageResponse;
-import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2Authorization;
+import com.basic.framework.oauth2.storage.mybatis.domain.MybatisOAuth2Authorization;
 import org.apache.ibatis.annotations.Param;
 
 /**

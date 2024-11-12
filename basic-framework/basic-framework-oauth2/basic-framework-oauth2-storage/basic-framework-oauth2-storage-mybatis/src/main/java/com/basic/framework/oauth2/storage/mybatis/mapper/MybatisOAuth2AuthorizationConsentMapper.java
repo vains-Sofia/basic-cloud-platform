@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.storage.mybatis.mapper;
 
-import com.basic.framework.oauth2.storage.mybatis.entity.MybatisOAuth2AuthorizationConsent;
+import com.basic.framework.oauth2.storage.mybatis.domain.MybatisOAuth2AuthorizationConsent;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

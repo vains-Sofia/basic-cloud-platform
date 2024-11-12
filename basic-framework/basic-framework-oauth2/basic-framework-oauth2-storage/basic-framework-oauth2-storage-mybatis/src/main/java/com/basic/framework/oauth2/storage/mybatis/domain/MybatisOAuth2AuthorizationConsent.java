@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.storage.mybatis.entity;
+package com.basic.framework.oauth2.storage.mybatis.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
