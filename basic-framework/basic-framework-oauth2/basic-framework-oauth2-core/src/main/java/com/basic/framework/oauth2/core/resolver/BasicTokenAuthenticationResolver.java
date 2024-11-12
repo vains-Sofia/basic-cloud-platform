@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.core.manager;
+package com.basic.framework.oauth2.core.resolver;
 
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;

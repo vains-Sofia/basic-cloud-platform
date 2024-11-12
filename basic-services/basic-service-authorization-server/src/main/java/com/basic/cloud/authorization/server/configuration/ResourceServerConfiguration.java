@@ -1,9 +1,9 @@
 package com.basic.cloud.authorization.server.configuration;
 
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.handler.authentication.LoginFailureHandler;
 import com.basic.framework.oauth2.core.handler.authentication.LoginSuccessHandler;
-import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,13 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.List;
-import java.util.Set;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 
 /**
  * 资源服务器配置类
@@ -29,24 +28,13 @@ import java.util.Set;
 public class ResourceServerConfiguration {
 
     /**
-     * 默认忽略鉴权的地址
-     */
-    private final List<String> DEFAULT_IGNORE_PATHS = List.of(
-            "/login",
-            "/error",
-            "/assets/**",
-            "/favicon.ico",
-            "/login/email",
-            "/swagger-ui/**",
-            "/v3/api-docs/**"
-    );
-
-    /**
      * 认证服务配置类
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
 
     private final AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver;
+
+    private final AuthorizationManager<RequestAuthorizationContext> requestContextAuthorizationManager;
 
     /**
      * 认证与鉴权相关的过滤器链配置
@@ -63,13 +51,10 @@ public class ResourceServerConfiguration {
         http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
 
-        // 合并默认忽略鉴权的地址和配置文件中添加的忽略鉴权的地址
-        Set<String> ignoreUriPaths = oAuth2ServerProperties.getIgnoreUriPaths();
-        ignoreUriPaths.addAll(DEFAULT_IGNORE_PATHS);
-
+        // 设置忽略鉴权路径与自定义鉴权配置
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(ignoreUriPaths.toArray(new String[]{})).permitAll()
-                .anyRequest().access(new RequestContextAuthorizationManager())
+                .requestMatchers(AuthorizeConstants.DEFAULT_IGNORE_PATHS.toArray(new String[]{})).permitAll()
+                .anyRequest().access(requestContextAuthorizationManager)
         );
 
         // Form login handles the redirect to the login page from the

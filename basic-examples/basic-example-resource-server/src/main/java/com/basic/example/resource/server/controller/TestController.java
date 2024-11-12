@@ -23,7 +23,6 @@ public class TestController {
     }
 
     @GetMapping("/test02")
-    @PreAuthorize("hasAnyAuthority('test02')")
     public Mono<String> test02() {
         return Mono.just("test02");
     }

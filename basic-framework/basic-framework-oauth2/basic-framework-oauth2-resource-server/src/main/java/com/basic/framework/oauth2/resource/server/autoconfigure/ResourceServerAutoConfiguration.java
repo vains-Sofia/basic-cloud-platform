@@ -2,12 +2,17 @@ package com.basic.framework.oauth2.resource.server.autoconfigure;
 
 import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.manager.ReactiveContextAuthorizationManager;
+import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
+import com.basic.framework.oauth2.core.property.ResourceServerProperties;
 import com.basic.framework.oauth2.resource.server.configure.ReactiveResourceServerConfiguration;
 import com.basic.framework.oauth2.resource.server.configure.ResourceServerConfiguration;
 import com.basic.framework.redis.support.RedisOperator;
 import com.basic.framework.redis.util.RedisConfigUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -26,8 +31,24 @@ import org.springframework.security.jackson2.CoreJackson2Module;
         ResourceServerConfiguration.class,
         ReactiveResourceServerConfiguration.class
 })
+@RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties({ResourceServerProperties.class})
 public class ResourceServerAutoConfiguration {
+
+    private final ResourceServerProperties resourceServerProperties;
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RequestContextAuthorizationManager requestContextAuthorizationManager() {
+        return new RequestContextAuthorizationManager(resourceServerProperties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ReactiveContextAuthorizationManager reactiveContextAuthorizationManager() {
+        return new ReactiveContextAuthorizationManager(resourceServerProperties);
+    }
 
     @Bean
     @ConditionalOnMissingBean

@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.core.manager;
+package com.basic.framework.oauth2.core.resolver;
 
 import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
 import com.basic.framework.oauth2.core.converter.BasicReactiveOpaqueTokenConverter;

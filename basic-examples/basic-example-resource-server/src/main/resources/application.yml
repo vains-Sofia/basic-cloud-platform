@@ -11,3 +11,9 @@ spring:
           client-id: opaque-client
           client-secret: 123456
           introspection-uri: http://127.0.0.1:8080/oauth2/introspect
+
+basic:
+  cloud:
+    oauth2:
+      resource-server:
+          ignore-uri-paths: /test02

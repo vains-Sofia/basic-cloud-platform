@@ -12,8 +12,11 @@ import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
-import com.basic.framework.oauth2.core.manager.DelegatingTokenAuthenticationResolver;
+import com.basic.framework.oauth2.core.manager.ReactiveContextAuthorizationManager;
+import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
+import com.basic.framework.oauth2.core.property.ResourceServerProperties;
+import com.basic.framework.oauth2.core.resolver.DelegatingTokenAuthenticationResolver;
 import com.basic.framework.redis.support.RedisOperator;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -74,8 +77,8 @@ import java.util.UUID;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Import({RedisAutoConfiguration.class, RedisOperator.class})
-@EnableConfigurationProperties({OAuth2ServerProperties.class})
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableConfigurationProperties({OAuth2ServerProperties.class, ResourceServerProperties.class})
 public class AuthorizationServerAutoConfiguration {
 
     /**
@@ -84,6 +87,8 @@ public class AuthorizationServerAutoConfiguration {
     private final OAuth2ServerProperties oAuth2ServerProperties;
 
     private final RedisOperator<AuthenticatedUser> redisOperator;
+
+    private final ResourceServerProperties resourceServerProperties;
 
     /**
      * 将AuthenticationManager注入ioc中，其它需要使用地方可以直接从ioc中获取
@@ -359,6 +364,18 @@ public class AuthorizationServerAutoConfiguration {
     @ConditionalOnMissingBean
     public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer() {
         return new OpaqueIdTokenCustomizer();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RequestContextAuthorizationManager requestContextAuthorizationManager() {
+        return new RequestContextAuthorizationManager(resourceServerProperties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ReactiveContextAuthorizationManager reactiveContextAuthorizationManager() {
+        return new ReactiveContextAuthorizationManager(resourceServerProperties);
     }
 
 }

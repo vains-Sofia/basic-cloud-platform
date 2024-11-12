@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.resource.server.property;
+package com.basic.framework.oauth2.core.property;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,7 +18,7 @@ public class ResourceServerProperties {
     /**
      * 配置在yaml中的前缀
      */
-    static final String PREFIX = "basic.cloud.oauth2.resource.server";
+    static final String PREFIX = "basic.cloud.oauth2.resource-server";
 
     /**
      * 不需要鉴权的地址

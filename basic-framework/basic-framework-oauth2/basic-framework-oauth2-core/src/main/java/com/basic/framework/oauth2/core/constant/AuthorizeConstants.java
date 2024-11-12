@@ -1,6 +1,5 @@
 package com.basic.framework.oauth2.core.constant;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -43,7 +42,7 @@ public class AuthorizeConstants {
     /**
      * 默认忽略鉴权的地址
      */
-    public static final Set<String> DEFAULT_IGNORE_PATHS = new HashSet<>(Set.of(
+    public static final Set<String> DEFAULT_IGNORE_PATHS = Set.of(
             "/login",
             "/error",
             "/assets/**",
@@ -51,6 +50,6 @@ public class AuthorizeConstants {
             "/login/email",
             "/swagger-ui/**",
             "/v3/api-docs/**"
-    ));
+    );
 
 }
