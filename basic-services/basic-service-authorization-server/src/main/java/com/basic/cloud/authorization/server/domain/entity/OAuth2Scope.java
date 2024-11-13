@@ -27,7 +27,7 @@ public class OAuth2Scope extends BasicEntity implements Serializable {
     /**
      * scope 名称
      */
-    private String name;
+    private String scope;
 
     /**
      * scope 描述

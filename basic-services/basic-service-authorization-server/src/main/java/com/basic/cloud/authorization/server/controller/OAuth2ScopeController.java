@@ -1,17 +1,19 @@
 package com.basic.cloud.authorization.server.controller;
 
 import com.basic.cloud.authorization.server.domain.request.FindScopePageRequest;
-import com.basic.cloud.authorization.server.domain.request.FindScopeResult;
+import com.basic.cloud.authorization.server.domain.request.SaveScopeRequest;
+import com.basic.cloud.authorization.server.domain.response.FindScopeResponse;
 import com.basic.cloud.authorization.server.service.OAuth2ScopeService;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
+import com.basic.framework.data.validation.group.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * oauth2客户端的scope相关接口
@@ -29,9 +31,25 @@ public class OAuth2ScopeController {
     @GetMapping("/findByPage")
     @PreAuthorize("hasAnyAuthority('message.read')")
     @Operation(summary = "根据入参分页查询scope信息", description = "根据入参分页查询scope信息")
-    public Result<PageResult<FindScopeResult>> findScopePage(FindScopePageRequest request) {
+    public Result<PageResult<FindScopeResponse>> findScopePage(@Valid FindScopePageRequest request) {
 
         return Result.success(scopeService.findScopePage(request));
+    }
+
+    @PostMapping("/save")
+    @PreAuthorize("hasAnyAuthority('message.write')")
+    @Operation(summary = "保存scope信息", description = "保存scope信息")
+    public Result<String> saveScope(@RequestBody @Valid SaveScopeRequest request) {
+        scopeService.saveScope(request);
+        return Result.success();
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasAnyAuthority('message.write')")
+    @Operation(summary = "修改scope信息", description = "修改scope信息")
+    public Result<String> updateScope(@RequestBody @Validated(Update.class) SaveScopeRequest request) {
+        scopeService.updateScope(request);
+        return Result.success();
     }
 
 }

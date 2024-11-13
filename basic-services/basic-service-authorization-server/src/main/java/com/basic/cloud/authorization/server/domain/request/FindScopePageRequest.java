@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 public class FindScopePageRequest extends Pageable {
 
     @Schema(title = "scope名称/描述", description = "scope名称/描述")
-    private Boolean name;
+    private Boolean scope;
 
     @Schema(title = "是否启用", description = "是否启用")
     private Boolean enabled;

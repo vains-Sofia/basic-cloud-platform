@@ -2,6 +2,7 @@ package com.basic.framework.data.validation.advice;
 
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.data.validation.resolver.ValidationExceptionResolver;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSourceResolvable;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
@@ -29,10 +31,12 @@ public class ValidationExceptionAdvice {
      * @param e 具体地校验异常
      * @return 返回处理后的异常信息
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public Result<String> methodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public Result<String> methodArgumentNotValidException(HttpServletRequest request,
+                                                          MethodArgumentNotValidException e) {
         String errors = ValidationExceptionResolver.resolveFiledErrors(e.getBindingResult().getFieldErrors());
-        log.error("参数校验失败：{}", errors, e);
+        log.warn("请求[{}]异常，Json参数校验失败：{}", request.getRequestURI(), errors);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 
@@ -43,9 +47,11 @@ public class ValidationExceptionAdvice {
      * @return 返回处理后的异常信息
      */
     @ExceptionHandler(BindException.class)
-    public Result<String> bindException(BindException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<String> bindException(BindException e,
+                                        HttpServletRequest request) {
         String errors = ValidationExceptionResolver.resolveFiledErrors(e.getFieldErrors());
-        log.error("Form参数校验失败：{}", errors, e);
+        log.warn("请求[{}]异常，Form参数校验失败：{}", request.getRequestURI(), errors);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 
@@ -55,24 +61,32 @@ public class ValidationExceptionAdvice {
      * @param e 具体地校验异常
      * @return 返回处理后的异常信息
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    public Result<String> methodArgumentNotValidException(ConstraintViolationException e) {
+    public Result<String> methodArgumentNotValidException(HttpServletRequest request,
+                                                          ConstraintViolationException e) {
         String errors = ValidationExceptionResolver.resolveConstraintViolations(e);
-        log.error("参数校验失败：{}", errors, e);
+
+        log.warn("请求[{}]异常，PathVariable参数校验失败：{}", request.getRequestURI(), errors);
+
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 
     /**
      * 验证异常处理 - 在控制器中对参数进行校验
+     * e.g. 直接在接口参数前加 JSR 303相关的注解 @Null、@NotBlank
      *
      * @param e 具体地校验异常
      * @return 返回处理后的异常信息
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public Result<String> exception(HandlerMethodValidationException e) {
+    public Result<String> exception(HttpServletRequest request,
+                                    HandlerMethodValidationException e) {
         List<? extends MessageSourceResolvable> allErrors = e.getAllErrors();
         String errors = ValidationExceptionResolver.resolveMessageErrors(allErrors);
 
+        log.warn("请求[{}]异常，参数校验失败：{}", request.getRequestURI(), errors);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 

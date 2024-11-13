@@ -1,5 +1,7 @@
 package com.basic.cloud.authorization.server.controller;
 
+import com.basic.cloud.authorization.server.domain.ScopeWithDescription;
+import com.basic.cloud.authorization.server.service.OAuth2ScopeService;
 import com.basic.framework.core.exception.CloudServiceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,12 +19,16 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 认证服务页面渲染接口
@@ -34,11 +40,15 @@ import java.util.*;
 @Tag(name = "认证服务页面渲染", description = "渲染认证服务需要的页面")
 public class AuthorizationPageController {
 
+    private final OAuth2ScopeService scopeService;
+
     private final ServerProperties serverProperties;
 
     private final RegisteredClientRepository registeredClientRepository;
 
     private final OAuth2AuthorizationConsentService authorizationConsentService;
+
+    private static final String DEFAULT_DESCRIPTION = "UNKNOWN SCOPE - We cannot provide information about this permission, use caution when granting this.";
 
     @GetMapping("/login")
     @Operation(summary = "登录页面", description = "渲染登录页面")
@@ -124,49 +134,30 @@ public class AuthorizationPageController {
         return "consent";
     }
 
-    private static Set<ScopeWithDescription> withDescription(Set<String> scopes) {
-        Set<ScopeWithDescription> scopeWithDescriptions = new HashSet<>();
-        for (String scope : scopes) {
-            scopeWithDescriptions.add(new ScopeWithDescription(scope));
+    /**
+     * 查询scope描述并处理可能不存在于数据库中的scope，添加一个默认描述
+     *
+     * @param scopes scope
+     * @return 参数对应的scope列表，带描述
+     */
+    private List<ScopeWithDescription> withDescription(Set<String> scopes) {
+        // 数据库中的scope
+        List<ScopeWithDescription> toApproveScope = scopeService.findByScopes(scopes);
+        List<String> list = toApproveScope.stream().map(ScopeWithDescription::scope).toList();
 
-        }
-        return scopeWithDescriptions;
-    }
+        // 不存在于数据库中的scope
+        List<ScopeWithDescription> unknownScopes = scopes
+                .stream()
+                .filter(e -> !list.contains(e))
+                .map(e -> new ScopeWithDescription(e, DEFAULT_DESCRIPTION))
+                .toList();
 
-    public static class ScopeWithDescription {
-        private static final String DEFAULT_DESCRIPTION = "UNKNOWN SCOPE - We cannot provide information about this permission, use caution when granting this.";
-        private static final Map<String, String> scopeDescriptions = new HashMap<>();
-
-        static {
-            scopeDescriptions.put(
-                    OidcScopes.PROFILE,
-                    "This application will be able to read your profile information."
-            );
-            scopeDescriptions.put(
-                    "message.read",
-                    "This application will be able to read your message."
-            );
-            scopeDescriptions.put(
-                    "message.write",
-                    "This application will be able to add new messages. It will also be able to edit and delete existing messages."
-            );
-            scopeDescriptions.put(
-                    "user.read",
-                    "This application will be able to read your user information."
-            );
-            scopeDescriptions.put(
-                    "other.scope",
-                    "This is another scope example of a scope description."
-            );
+        if (!ObjectUtils.isEmpty(unknownScopes)) {
+            // 合并
+            toApproveScope.addAll(unknownScopes);
         }
 
-        public final String scope;
-        public final String description;
-
-        ScopeWithDescription(String scope) {
-            this.scope = scope;
-            this.description = scopeDescriptions.getOrDefault(scope, DEFAULT_DESCRIPTION);
-        }
+        return toApproveScope;
     }
 
 }

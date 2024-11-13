@@ -1,6 +1,7 @@
 package com.basic.framework.web.autoconfigure;
 
 import com.basic.framework.core.domain.Result;
+import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -64,7 +65,7 @@ public class DefaultExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public Result<String> handleNotSupportedHttpMethodException(HttpRequestMethodNotSupportedException e) {
-        log.warn("{}.", e.getMessage());
+        log.warn("Method not allowed, {}.", e.getMessage());
         return Result.error(HttpStatus.METHOD_NOT_ALLOWED.value(), e.getMessage());
     }
 
@@ -77,20 +78,34 @@ public class DefaultExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(value = HttpMediaTypeNotSupportedException.class)
     public Result<String> handleNotSupportedHttpMethodException(HttpMediaTypeNotSupportedException e) {
-        log.warn("{}.", e.getMessage());
+        log.warn("Unsupported Media Type, {}.", e.getMessage());
         return Result.error(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), e.getMessage());
     }
 
     /**
-     * Sql 异常：数据长度超过字段最大长度问题
+     * Sql 异常
      *
      * @param e 具体地校验异常
      * @return 返回处理后的异常信息
      */
     @ExceptionHandler(DataTruncation.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<String> dataTruncation(DataTruncation e) {
-        log.error("{}.", e.getMessage(), e);
+        log.error("Sql exception{}.", e.getMessage(), e);
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+    }
+
+    /**
+     * 非法或不适当的参数异常
+     *
+     * @param e 具体地校验异常
+     * @return 返回处理后的异常信息
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CloudIllegalArgumentException.class)
+    public Result<String> badRequestCloudException(CloudIllegalArgumentException e) {
+        log.warn("Cloud illegal or inappropriate argument, {}.", e.getMessage());
+        return Result.error(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
     /**
@@ -100,8 +115,9 @@ public class DefaultExceptionHandlerAdvice {
      * @return 返回处理后的异常信息
      */
     @ExceptionHandler(CloudServiceException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<String> cloudServiceException(CloudServiceException e) {
-        log.warn("{}.", e.getMessage());
+        log.warn("Cloud service exception, {}.", e.getMessage());
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
 
@@ -110,6 +126,7 @@ public class DefaultExceptionHandlerAdvice {
      *
      * @param e 具体地校验异常
      */
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public void accessDeniedException(AccessDeniedException e,
                                       HttpServletRequest request,
@@ -126,8 +143,9 @@ public class DefaultExceptionHandlerAdvice {
      * @return 返回处理后的异常信息
      */
     @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<String> exception(Exception e) {
-        log.warn(e.getMessage());
+        log.warn("Other exception, {}", e.getMessage());
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
 
