@@ -20,6 +20,4 @@ public class FindScopePageRequest extends Pageable {
     @Schema(title = "是否启用", description = "是否启用")
     private Boolean enabled;
 
-
-
 }
