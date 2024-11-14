@@ -5,17 +5,13 @@ import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
-
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCESS_TOKEN;
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
+import java.util.Map;
 
 /**
  * An {@link OAuth2TokenCustomizer} to map claims from a federated identity to
@@ -26,29 +22,26 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAU
  */
 @Slf4j
 @RequiredArgsConstructor
-public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
+public final class JwtIdTokenCustomizer implements
+        OAuth2TokenCustomizer<JwtEncodingContext>, BasicIdTokenCustomizer {
 
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
-    private static final Set<String> ID_TOKEN_CLAIMS = Set.of(
-            IdTokenClaimNames.ISS,
-            IdTokenClaimNames.SUB,
-            IdTokenClaimNames.AUD,
-            IdTokenClaimNames.EXP,
-            IdTokenClaimNames.IAT,
-            IdTokenClaimNames.AUTH_TIME,
-            IdTokenClaimNames.NONCE,
-            IdTokenClaimNames.ACR,
-            IdTokenClaimNames.AMR,
-            IdTokenClaimNames.AZP,
-            IdTokenClaimNames.AT_HASH,
-            IdTokenClaimNames.C_HASH,
-            OAUTH2_ACCESS_TOKEN,
-            OAUTH2_ACCOUNT_PLATFORM
-    );
-
     @Override
     public void customize(JwtEncodingContext context) {
+        if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
+            Map<String, Object> payloadClaims = extractClaims(context.getPrincipal());
+            context.getClaims().claims(existingClaims -> {
+                // Remove conflicting claims set by this authorization server
+                existingClaims.keySet().forEach(payloadClaims::remove);
+
+                // Remove standard id_token claims that could cause problems with clients
+                ID_TOKEN_CLAIMS.forEach(payloadClaims::remove);
+
+                // Add all other claims directly to id_token
+                existingClaims.putAll(payloadClaims);
+            });
+        }
 
         // 检查登录用户信息是不是OAuth2User，在token中添加loginType属性
         if (context.getPrincipal().getPrincipal() instanceof AuthenticatedUser user) {

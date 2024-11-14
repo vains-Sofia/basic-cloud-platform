@@ -2,7 +2,7 @@ package com.basic.framework.oauth2.core.converter;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.redis.support.RedisOperator;
 import jakarta.annotation.Nullable;
 import org.springframework.core.convert.converter.Converter;

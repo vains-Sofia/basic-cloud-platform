@@ -1,12 +1,15 @@
 package com.basic.framework.oauth2.federation.converter.impl;
 
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
-import com.basic.framework.oauth2.federation.domain.ThirdAuthenticatedUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
@@ -27,12 +30,27 @@ public class GiteeUserConverter implements OAuth2UserConverter {
                 oAuth2User.getName(), OAuth2AccountPlatformEnum.GITEE, oAuth2User.getAuthorities());
 
         // 转换至 统一用户信息类中
-        authenticatedUser.setThirdUsername(oAuth2User.getName());
-        // TODO 将id存入unionId字段中
         authenticatedUser.setNickname(oAuth2User.getName());
         authenticatedUser.setId(Long.parseLong(String.valueOf(attributes.get("id"))));
+        authenticatedUser.setSub(String.valueOf(attributes.get("login")));
         authenticatedUser.setBlog(attributes.get("blog") + "");
-        authenticatedUser.setAvatarUrl(String.valueOf(attributes.get("avatar_url")));
+        authenticatedUser.setProfile(attributes.get("html_url") + "");
+        authenticatedUser.setPicture(attributes.get("avatar_url") + "");
+        authenticatedUser.setEmail(attributes.get("email") + "");
+
+        // 解析修改时间
+        try {
+            // Step 1: 解析为 OffsetDateTime
+            OffsetDateTime offsetDateTime = OffsetDateTime.parse(attributes.get("updated_at") + "", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+            // Step 2: 转换为 Instant
+            Instant instant = offsetDateTime.toInstant();
+            // 获取秒级时间戳
+            long updateAt = instant.getEpochSecond();
+            authenticatedUser.setUpdatedAt(updateAt);
+        } catch (Exception e) {
+            log.debug("Gitee用户信息最后修改时间解析失败，{}", e.getMessage());
+        }
+
         authenticatedUser.setAttributes(attributes);
 
         // 设置三方access token信息

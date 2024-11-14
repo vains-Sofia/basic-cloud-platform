@@ -3,10 +3,11 @@ package com.basic.framework.oauth2.federation.converter.impl;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
-import com.basic.framework.oauth2.federation.domain.ThirdAuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 微信用户信息转换器
@@ -24,12 +25,25 @@ public class WechatUserConverter implements OAuth2UserConverter {
         ThirdAuthenticatedUser authenticatedUser = new ThirdAuthenticatedUser(
                 oAuth2User.getName(), OAuth2AccountPlatformEnum.WECHAT, oAuth2User.getAuthorities());
 
-        // TODO 将openid存入unionId字段中，attributes.get("openid")
         // 转换至 统一用户信息类中
-        authenticatedUser.setId(0L);
-        authenticatedUser.setThirdUsername(oAuth2User.getName());
-        authenticatedUser.setLocation(attributes.get("province") + " " + attributes.get("city"));
-        authenticatedUser.setAvatarUrl(String.valueOf(attributes.get("headimgurl")));
+        authenticatedUser.setSub(attributes.get("openid") + "");
+        authenticatedUser.setNickname(oAuth2User.getName());
+        // 地址
+        String address = attributes.get("country") + " " + attributes.get("province") + " " + attributes.get("city");
+        authenticatedUser.setAddress(address);
+        authenticatedUser.setPicture(String.valueOf(attributes.get("headimgurl")));
+
+        // 处理性别
+        String sex = String.valueOf(attributes.get("sex"));
+        String gender;
+        if (Objects.equals(sex, "1")) {
+            gender = "male";
+        } else if (Objects.equals(sex, "2")) {
+            gender = "female";
+        } else {
+            gender = "null";
+        }
+        authenticatedUser.setGender(gender);
         authenticatedUser.setAttributes(attributes);
 
         // 设置三方access token信息

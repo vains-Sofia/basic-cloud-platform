@@ -1,5 +1,6 @@
-package com.basic.framework.oauth2.core.domain;
+package com.basic.framework.oauth2.core.domain.oidc;
 
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimAccessor;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;

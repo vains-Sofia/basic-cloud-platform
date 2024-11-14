@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.federation.converter;
 
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.federation.domain.ThirdAuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;

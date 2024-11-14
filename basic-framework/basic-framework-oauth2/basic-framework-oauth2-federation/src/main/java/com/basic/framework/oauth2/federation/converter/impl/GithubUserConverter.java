@@ -1,11 +1,13 @@
 package com.basic.framework.oauth2.federation.converter.impl;
 
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
-import com.basic.framework.oauth2.federation.domain.ThirdAuthenticatedUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -13,6 +15,7 @@ import java.util.Map;
  *
  * @author vains
  */
+@Slf4j
 public class GithubUserConverter implements OAuth2UserConverter {
 
     @Override
@@ -25,14 +28,27 @@ public class GithubUserConverter implements OAuth2UserConverter {
                 oAuth2User.getName(), OAuth2AccountPlatformEnum.GITHUB, oAuth2User.getAuthorities());
 
         // 转换至 统一用户信息类中
-        authenticatedUser.setThirdUsername(oAuth2User.getName());
-        // 提取location
-        Object location = oAuth2User.getAttributes().get("location");
-        authenticatedUser.setLocation(String.valueOf(location));
-        // TODO 将id存入unionId字段中
+        // 转换至 统一用户信息类中
+        authenticatedUser.setNickname(oAuth2User.getName());
+        authenticatedUser.setEmail(attributes.get("email") + "");
+        authenticatedUser.setSub(String.valueOf(attributes.get("login")));
+        authenticatedUser.setBlog(attributes.get("blog") + "");
+        authenticatedUser.setProfile(attributes.get("html_url") + "");
+        authenticatedUser.setPicture(attributes.get("avatar_url") + "");
+        authenticatedUser.setAddress(attributes.get("location") + "");
         authenticatedUser.setId(Long.parseLong(String.valueOf(attributes.get("id"))));
-        authenticatedUser.setBlog(String.valueOf(attributes.get("blog")));
-        authenticatedUser.setAvatarUrl(String.valueOf(attributes.get("avatar_url")));
+
+        // 解析修改时间
+        try {
+            // 转换为 Instant
+            Instant instant = Instant.parse(attributes.get("updated_at") + "");
+            // 获取秒级时间戳
+            long updateAt = instant.getEpochSecond();
+            authenticatedUser.setUpdatedAt(updateAt);
+        } catch (Exception e) {
+            log.debug("Gitee用户信息最后修改时间解析失败，{}", e.getMessage());
+        }
+
         authenticatedUser.setAttributes(attributes);
 
         // 设置三方access token信息

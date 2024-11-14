@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.core.domain;
+package com.basic.framework.oauth2.core.domain.oidc;
 
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;

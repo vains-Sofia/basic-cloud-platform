@@ -1,12 +1,12 @@
 package com.basic.cloud.authorization.server.configuration;
 
+import com.basic.framework.oauth2.authorization.server.customizer.AuthorizationServerMetadataCustomizer;
+import com.basic.framework.oauth2.authorization.server.customizer.OidcConfigurerCustomizer;
+import com.basic.framework.oauth2.authorization.server.util.OAuth2ConfigurerUtils;
 import com.basic.framework.oauth2.core.handler.authentication.ConsentAuthenticationFailureHandler;
 import com.basic.framework.oauth2.core.handler.authentication.ConsentAuthorizationResponseHandler;
 import com.basic.framework.oauth2.core.handler.authentication.LoginTargetAuthenticationEntryPoint;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
-import com.basic.framework.oauth2.authorization.server.customizer.AuthorizationServerMetadataCustomizer;
-import com.basic.framework.oauth2.authorization.server.customizer.OidcConfigurerCustomizer;
-import com.basic.framework.oauth2.authorization.server.util.OAuth2ConfigurerUtils;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

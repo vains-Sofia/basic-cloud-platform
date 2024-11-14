@@ -10,7 +10,7 @@ import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
 import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.domain.DefaultAuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.core.manager.ReactiveContextAuthorizationManager;
 import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;

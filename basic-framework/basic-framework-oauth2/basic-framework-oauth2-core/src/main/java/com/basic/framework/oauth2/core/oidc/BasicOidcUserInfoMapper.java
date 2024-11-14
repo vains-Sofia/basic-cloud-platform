@@ -2,8 +2,9 @@ package com.basic.framework.oauth2.core.oidc;
 
 import com.basic.framework.core.util.JsonUtils;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.domain.OidcUserInfoResult;
+import com.basic.framework.oauth2.core.domain.oidc.OidcUserInfoResult;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.oidc.*;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
@@ -19,6 +20,7 @@ import java.util.function.Function;
  *
  * @author vains
  */
+@Slf4j
 public class BasicOidcUserInfoMapper implements Function<OidcUserInfoAuthenticationContext, OidcUserInfo> {
 
     @Override
@@ -70,9 +72,14 @@ public class BasicOidcUserInfoMapper implements Function<OidcUserInfoAuthenticat
             oidcUserInfoResult.setPicture(idToken.getPicture());
             oidcUserInfoResult.setGender(idToken.getGender());
             oidcUserInfoResult.setBirthdate(idToken.getBirthdate());
-            Instant updatedAt = idToken.getUpdatedAt();
-            if (updatedAt != null) {
-                oidcUserInfoResult.setUpdatedAt(updatedAt.getEpochSecond());
+            // 最后更新时间戳为null的情况下会有问题，添加额外处理
+            if (claims.get(StandardClaimNames.UPDATED_AT) != null) {
+                try {
+                    Instant updatedAt = idToken.getUpdatedAt();
+                    oidcUserInfoResult.setUpdatedAt(updatedAt.getEpochSecond());
+                } catch (Exception e) {
+                    log.debug("获取id token中用户信息最后更新时间戳失败，{}", e.getMessage());
+                }
             }
         }
 

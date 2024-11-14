@@ -23,9 +23,6 @@ public class WechatAuthorizationRequestConsumer implements Consumer<OAuth2Author
         Object registrationId = authorizationRequest.getAttribute(OAuth2ParameterNames.REGISTRATION_ID);
         if (Objects.equals(registrationId, OAuth2AccountPlatformEnum.WECHAT.getValue())) {
             // 判断是否微信登录，如果是微信登录则将appid添加至请求参数中
-            builder.additionalParameters((params) -> params.put(WECHAT_PARAMETER_FORCE_POPUP, true));
-            builder.additionalParameters((params) -> params.put(WECHAT_PARAMETER_APPID, authorizationRequest.getClientId()));
-
             builder.parameters(params -> {
                 params.clear();
 
@@ -35,7 +32,6 @@ public class WechatAuthorizationRequestConsumer implements Consumer<OAuth2Author
                 params.put(OAuth2ParameterNames.RESPONSE_TYPE, authorizationRequest.getResponseType().getValue());
                 params.put(OAuth2ParameterNames.SCOPE, String.join(" ", authorizationRequest.getScopes()));
                 params.put(OAuth2ParameterNames.STATE, authorizationRequest.getState());
-                params.put(OAuth2ParameterNames.CLIENT_ID, authorizationRequest.getClientId());
                 params.put(WECHAT_PARAMETER_FORCE_POPUP, true);
             });
         }

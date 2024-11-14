@@ -1,48 +1,26 @@
 package com.basic.framework.oauth2.core.customizer;
 
-import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.domain.OidcAuthenticatedUser;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames;
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsSet;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
+import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
+import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.TOKEN_UNIQUE_ID;
 
 /**
  * An {@link OAuth2TokenCustomizer} to map claims from a federated identity to
  * the {@code id_token} produced by this authorization server.
- *  opaque token.
+ * opaque token.
  *
  * @author vains
  */
-public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAuth2TokenClaimsContext> {
-
-    private static final Set<String> ID_TOKEN_CLAIMS = Set.of(
-            IdTokenClaimNames.ISS,
-            IdTokenClaimNames.SUB,
-            IdTokenClaimNames.AUD,
-            IdTokenClaimNames.EXP,
-            IdTokenClaimNames.IAT,
-            IdTokenClaimNames.AUTH_TIME,
-            IdTokenClaimNames.NONCE,
-            IdTokenClaimNames.ACR,
-            IdTokenClaimNames.AMR,
-            IdTokenClaimNames.AZP,
-            IdTokenClaimNames.AT_HASH,
-            IdTokenClaimNames.C_HASH,
-            OAUTH2_ACCESS_TOKEN,
-            OAUTH2_ACCOUNT_PLATFORM
-    );
+public final class OpaqueIdTokenCustomizer implements
+        OAuth2TokenCustomizer<OAuth2TokenClaimsContext>, BasicIdTokenCustomizer {
 
     @Override
     public void customize(OAuth2TokenClaimsContext context) {
@@ -68,54 +46,7 @@ public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAut
             claims.claim(TOKEN_UNIQUE_ID, user.getUsername());
             // 资源服务自省时需要该属性
             claims.claim(OAuth2TokenIntrospectionClaimNames.USERNAME, user.getUsername());
-
-            // 获取用户的权限
-            Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
-            transferToContext(authorities, context);
         }
-    }
-
-    /**
-     * 从认证信息中提取 Claims
-     *
-     * @param principal 当前登录用户认证信息
-     * @return 当前用户的信息
-     */
-    private Map<String, Object> extractClaims(Authentication principal) {
-        Map<String, Object> claims;
-        if (principal.getPrincipal() instanceof OidcAuthenticatedUser oidcUser) {
-            OidcIdToken idToken = oidcUser.getIdToken();
-            claims = idToken.getClaims();
-        } else if (principal.getPrincipal() instanceof AuthenticatedUser oAuth2User) {
-            claims = oAuth2User.getAttributes();
-        } else {
-            claims = Collections.emptyMap();
-        }
-
-        return new HashMap<>(claims);
-    }
-
-    public void transferToContext(Collection<? extends GrantedAuthority> authorities, OAuth2TokenClaimsContext context) {
-        // 获取申请的scopes
-        Set<String> scopes = context.getAuthorizedScopes();
-        // 提取权限并转为字符串
-        Set<String> authoritySet = Optional.ofNullable(authorities).orElse(Collections.emptyList()).stream()
-                // 获取权限字符串
-                .map(GrantedAuthority::getAuthority)
-                // 去重
-                .collect(Collectors.toSet());
-
-        // 合并scope与用户信息
-        authoritySet.addAll(scopes);
-
-        // 添加前缀，后续或许可以根据客户端针对性的做一些个性化配置(从客户端中获取前缀)
-        Set<String> hadPrefixAuthorities = authoritySet.stream().map(AuthorizeConstants.AUTHORITY_PREFIX::concat).collect(Collectors.toSet());
-
-        OAuth2TokenClaimsSet.Builder claims = context.getClaims();
-        // 将权限信息放入jwt的claims中（也可以生成一个以指定字符分割的字符串放入）
-        claims.claim(AuthorizeConstants.AUTHORITIES, hadPrefixAuthorities);
-        // 放入其它自定内容
-        // 角色、头像...
     }
 
 }
