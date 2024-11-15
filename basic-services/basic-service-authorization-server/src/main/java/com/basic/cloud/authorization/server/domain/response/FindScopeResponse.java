@@ -6,11 +6,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * oauth2客户端的scope
+ * 查询scope响应
  *
  * @author vains
  */
 @Data
+@Schema(name = "查询scope响应")
 public class FindScopeResponse implements Serializable {
 
     @Schema(title = "主键id", description = "主键id")

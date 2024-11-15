@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
  * @author vains
  */
 @Data
+@Schema(name = "分页查询scope入参")
 @EqualsAndHashCode(callSuper = true)
 public class FindScopePageRequest extends Pageable {
 
