@@ -15,5 +15,6 @@
         <module>basic-example-mybatis-plus</module>
         <module>basic-example-redis</module>
         <module>basic-example-resource-server</module>
+        <module>basic-example-data-jpa</module>
     </modules>
 </project>

@@ -170,20 +170,14 @@
                 <artifactId>basic-framework-redis</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!-- Spring Data Jpa 封装 -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-data-jpa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>cloudflow</id>
-            <url>https://packages.aliyun.com/64cde605132d10ed34af3c73/maven/cloudflow</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
 </project>
