@@ -1,9 +1,11 @@
 package com.basic.example.data.jpa.domain.entity;
 
+import com.basic.framework.data.jpa.domain.BasicAuditorEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
@@ -16,7 +18,8 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "oauth2_application")
-public class OAuth2Application {
+@EqualsAndHashCode(callSuper = true)
+public class OAuth2Application extends BasicAuditorEntity {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -81,17 +84,5 @@ public class OAuth2Application {
     @NotNull
     @Column(name = "token_settings", nullable = false, length = 2000)
     private String tokenSettings;
-
-    @Column(name = "create_by")
-    private Long createBy;
-
-    @Column(name = "update_by")
-    private Long updateBy;
-
-    @Column(name = "create_time")
-    private LocalDateTime createTime;
-
-    @Column(name = "update_time")
-    private LocalDateTime updateTime;
 
 }
