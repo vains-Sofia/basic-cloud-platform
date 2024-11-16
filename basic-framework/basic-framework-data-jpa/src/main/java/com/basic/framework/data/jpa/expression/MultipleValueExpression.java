@@ -23,6 +23,13 @@ public abstract class MultipleValueExpression extends SimpleExpression {
      */
     private Collection<Serializable> values;
 
+    /**
+     * 子类必须提供该构造器以初始化列名、值和SQL关键字
+     *
+     * @param property 列名
+     * @param keyword  SQL关键字
+     * @param values   值
+     */
     public MultipleValueExpression(String property, SqlKeywordEnum keyword, Collection<Serializable> values) {
         super(property, null, keyword);
         this.values = values;

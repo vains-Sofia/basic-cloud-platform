@@ -116,11 +116,22 @@ public enum SqlKeywordEnum implements BasicEnum<String, SqlKeywordEnum> {
     /**
      * 在...与...之间
      */
-    BETWEEN_AND("BETWEEN AND", "在...与...之间") {
+    BETWEEN("BETWEEN AND", "在...与...之间") {
         @Override
         @SuppressWarnings({"unchecked", "rawtypes"})
         public Predicate toPredicate(String property, Serializable value1, Serializable value2, Root<?> root, CriteriaBuilder cb) {
             return cb.between(root.get(property), (Comparable) value1, (Comparable) value2);
+        }
+    },
+
+    /**
+     * 不在...与...之间
+     */
+    NOT_BETWEEN("NOT BETWEEN AND", "在...与...之间") {
+        @Override
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        public Predicate toPredicate(String property, Serializable value1, Serializable value2, Root<?> root, CriteriaBuilder cb) {
+            return cb.not(cb.between(root.get(property), (Comparable) value1, (Comparable) value2));
         }
     },
 
@@ -131,6 +142,16 @@ public enum SqlKeywordEnum implements BasicEnum<String, SqlKeywordEnum> {
         @Override
         public Predicate toPredicate(String property, Collection<Serializable> values, Root<?> root) {
             return root.get(property).in(values);
+        }
+    },
+
+    /**
+     * 批量操作
+     */
+    NOT_IN("NOT IN", "批量操作") {
+        @Override
+        public Predicate toPredicate(String property, Collection<Serializable> values, Root<?> root) {
+            return root.get(property).in(values).not();
         }
     };
 
