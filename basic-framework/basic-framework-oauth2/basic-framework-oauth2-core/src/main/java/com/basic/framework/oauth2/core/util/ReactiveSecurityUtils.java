@@ -37,12 +37,11 @@ public class ReactiveSecurityUtils {
      */
     public static Mono<Void> accessDeniedHandler(ServerWebExchange exchange, AccessDeniedException e) {
         Map<String, String> parameters = new LinkedHashMap<>();
-        parameters.put("message", e.getMessage());
         return exchange.getPrincipal()
                 .filter(AbstractOAuth2TokenAuthenticationToken.class::isInstance)
                 .map((token) -> errorMessageParameters(parameters))
                 .switchIfEmpty(Mono.just(parameters))
-                .flatMap((params) -> respond(exchange, params));
+                .flatMap((params) -> respond(exchange, params, e));
     }
 
     /**
@@ -87,9 +86,11 @@ public class ReactiveSecurityUtils {
      *
      * @param exchange   请求、响应对象
      * @param parameters 异常信息
+     * @param e          具体的异常
      * @return Mono<Void>
      */
-    private static Mono<Void> respond(ServerWebExchange exchange, Map<String, String> parameters) {
+    private static Mono<Void> respond(ServerWebExchange exchange, Map<String, String> parameters, AccessDeniedException e) {
+        parameters.put("message", e.getMessage());
         ServerHttpResponse response = exchange.getResponse();
         String wwwAuthenticate = computeWwwAuthenticateHeaderValue(parameters);
         response.setStatusCode(HttpStatus.FORBIDDEN);
@@ -106,7 +107,6 @@ public class ReactiveSecurityUtils {
     private Map<String, String> createParameters(ServerWebExchange exchange, AuthenticationException authException) {
         Map<String, String> parameters = new LinkedHashMap<>();
         if (authException instanceof OAuth2AuthenticationException authenticationException) {
-            parameters.put("message", authException.getMessage());
             OAuth2Error error = authenticationException.getError();
             parameters.put("error", error.getErrorCode());
             if (StringUtils.hasText(error.getDescription())) {
@@ -122,13 +122,13 @@ public class ReactiveSecurityUtils {
             }
         }
         if (authException.getCause() instanceof InsufficientAuthenticationException insufficientAuthenticationException) {
-            parameters.put("message", authException.getMessage());
             // 没有携带jwt访问接口，没有客户端认证信息
             parameters.put("error", BearerTokenErrorCodes.INVALID_TOKEN);
             parameters.put("error_description", insufficientAuthenticationException.getMessage());
             parameters.put("error_uri", "https://tools.ietf.org/html/rfc6750#section-3.1");
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
         }
+        parameters.put("message", authException.getMessage());
         return parameters;
     }
 
