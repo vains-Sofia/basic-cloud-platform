@@ -23,12 +23,14 @@
         <dependency>
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-oauth2-core</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- OAuth2资源服务包 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>
             <artifactId>basic-framework-oauth2-resource-server</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

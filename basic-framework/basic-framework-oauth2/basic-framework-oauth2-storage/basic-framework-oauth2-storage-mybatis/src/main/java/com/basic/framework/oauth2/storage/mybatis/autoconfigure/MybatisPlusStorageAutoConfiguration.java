@@ -10,18 +10,12 @@ import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2Authorizat
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicApplicationService;
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicAuthorizationConsentService;
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicAuthorizationService;
-import com.basic.framework.oauth2.storage.mybatis.storage.MybatisOAuth2AuthorizationConsentService;
-import com.basic.framework.oauth2.storage.mybatis.storage.MybatisOAuth2AuthorizationService;
-import com.basic.framework.oauth2.storage.mybatis.storage.MybatisRegisteredClientRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 
 /**
  * 自动注入Mybatis Plus的存储实现
@@ -32,7 +26,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 @RequiredArgsConstructor
 @ConditionalOnMybatisPlusStorage
 @MapperScan("com.basic.framework.oauth2.storage.mybatis.mapper")
-public class StorageAutoConfiguration {
+public class MybatisPlusStorageAutoConfiguration {
 
     @PostConstruct
     public void postConstruct() {
@@ -57,23 +51,4 @@ public class StorageAutoConfiguration {
             MybatisOAuth2AuthorizationConsentMapper oAuth2AuthorizationConsentMapper) {
         return new MybatisBasicAuthorizationConsentService(oAuth2AuthorizationConsentMapper);
     }
-
-    @Bean
-    public RegisteredClientRepository registeredClientRepository(
-            BasicApplicationService applicationService) {
-        return new MybatisRegisteredClientRepository(applicationService);
-    }
-
-    @Bean
-    public OAuth2AuthorizationService authorizationService(
-            BasicAuthorizationService basicAuthorizationService, RegisteredClientRepository registeredClientRepository) {
-        return new MybatisOAuth2AuthorizationService(basicAuthorizationService, registeredClientRepository);
-    }
-
-    @Bean
-    public OAuth2AuthorizationConsentService authorizationConsentService(
-            BasicAuthorizationConsentService basicAuthorizationConsentService, RegisteredClientRepository registeredClientRepository) {
-        return new MybatisOAuth2AuthorizationConsentService(basicAuthorizationConsentService, registeredClientRepository);
-    }
-
 }

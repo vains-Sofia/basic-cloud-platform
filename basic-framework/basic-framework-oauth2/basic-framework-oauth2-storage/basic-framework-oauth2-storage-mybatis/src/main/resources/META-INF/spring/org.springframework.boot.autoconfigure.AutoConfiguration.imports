@@ -1,1 +1,1 @@
-com.basic.framework.oauth2.storage.mybatis.autoconfigure.StorageAutoConfiguration
+com.basic.framework.oauth2.storage.mybatis.autoconfigure.MybatisPlusStorageAutoConfiguration

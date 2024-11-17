@@ -23,7 +23,7 @@ public class InExpression extends MultipleValueExpression {
      * @param property 属性名
      * @param values   in的值
      */
-    public InExpression(String property, Collection<Serializable> values) {
+    public InExpression(String property, Collection<?> values) {
         super(property, SqlKeywordEnum.IN, values);
     }
 

@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.storage.mybatis.storage;
+package com.basic.framework.oauth2.storage.core.storage;
 
 import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
@@ -18,7 +18,7 @@ import org.springframework.util.Assert;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class MybatisRegisteredClientRepository implements RegisteredClientRepository {
+public class StorageRegisteredClientRepository implements RegisteredClientRepository {
 
     private final BasicApplicationService applicationService;
 

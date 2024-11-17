@@ -502,7 +502,7 @@ public class SpecificationBuilder<T> implements Specification<T> {
      * @param values 值
      * @return 当前对象，链式调用
      */
-    public SpecificationBuilder<T> in(SFunction<T, ?> column, Collection<Serializable> values) {
+    public SpecificationBuilder<T> in(SFunction<T, ?> column, Collection<?> values) {
         return this.in(LambdaUtils.extractMethodToProperty(column), values);
     }
 
@@ -513,7 +513,7 @@ public class SpecificationBuilder<T> implements Specification<T> {
      * @param values 值
      * @return 当前对象，链式调用
      */
-    public SpecificationBuilder<T> in(String column, Collection<Serializable> values) {
+    public SpecificationBuilder<T> in(String column, Collection<?> values) {
         return this.in(Boolean.TRUE, column, values);
     }
 
@@ -553,7 +553,7 @@ public class SpecificationBuilder<T> implements Specification<T> {
      * @param values    值
      * @return 当前对象，链式调用
      */
-    public SpecificationBuilder<T> in(Boolean condition, SFunction<T, ?> column, Collection<Serializable> values) {
+    public SpecificationBuilder<T> in(Boolean condition, SFunction<T, ?> column, Collection<?> values) {
         return this.in(condition, LambdaUtils.extractMethodToProperty(column), values);
     }
 
@@ -577,7 +577,7 @@ public class SpecificationBuilder<T> implements Specification<T> {
      * @param values    值
      * @return 当前对象，链式调用
      */
-    public SpecificationBuilder<T> in(Boolean condition, String column, Collection<Serializable> values) {
+    public SpecificationBuilder<T> in(Boolean condition, String column, Collection<?> values) {
         if (condition) {
             expressions.add(new InExpression(column, values));
         }

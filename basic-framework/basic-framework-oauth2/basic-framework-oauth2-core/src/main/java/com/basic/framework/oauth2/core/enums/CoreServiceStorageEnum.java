@@ -26,7 +26,12 @@ public enum CoreServiceStorageEnum implements BasicEnum<Integer, CoreServiceStor
     /**
      * 基于内存的实现
      */
-    IN_MEMORY(2, "InMemory");
+    IN_MEMORY(2, "InMemory"),
+
+    /**
+     * 基于DB的Jpa实现
+     */
+    JPA(3, "Jpa");
 
     /**
      * 存储类型值

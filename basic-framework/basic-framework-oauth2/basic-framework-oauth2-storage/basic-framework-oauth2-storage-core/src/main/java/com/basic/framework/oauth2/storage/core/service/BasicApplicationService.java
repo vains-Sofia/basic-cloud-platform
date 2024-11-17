@@ -5,6 +5,8 @@ import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
 import com.basic.framework.oauth2.storage.core.domain.request.FindApplicationPageRequest;
 import com.basic.framework.oauth2.storage.core.domain.request.SaveApplicationRequest;
 import com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationResponse;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.util.Assert;
 
 /**
  * oauth2客户端信息服务接口
@@ -64,4 +66,17 @@ public interface BasicApplicationService {
      * @param clientId 客户端id
      */
     void removeByClientId(String clientId);
+
+    /**
+     * 验证回调地址
+     *
+     * @param request 保存/更新客户端入参
+     */
+    default void validRedirectUris(SaveApplicationRequest request) {
+        if (request.getAuthorizationGrantTypes().contains(AuthorizationGrantType.AUTHORIZATION_CODE.getValue())) {
+            // 授权码/PKCE模式下回调地址不能为空
+            Assert.notEmpty(request.getRedirectUris(), "回调地址不能为空.");
+        }
+    }
+
 }

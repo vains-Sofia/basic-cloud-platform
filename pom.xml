@@ -157,7 +157,14 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- 认证服务存储实现 -->
+            <!-- 认证服务存储Jpa实现 -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-framework-oauth2-storage-jpa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- 认证服务存储Mybatis Plus实现 -->
             <dependency>
                 <groupId>com.basic.cloud</groupId>
                 <artifactId>basic-framework-oauth2-storage-mybatis</artifactId>

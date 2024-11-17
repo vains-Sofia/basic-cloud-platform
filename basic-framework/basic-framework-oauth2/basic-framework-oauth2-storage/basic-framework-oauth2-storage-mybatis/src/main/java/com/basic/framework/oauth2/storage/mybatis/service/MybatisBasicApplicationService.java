@@ -19,11 +19,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 客户端服务的MybatisPlus实现
@@ -116,12 +117,19 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
 
     @Override
     public void updateApplication(SaveApplicationRequest request) {
-        // 唯一校验
-        LambdaQueryWrapper<MybatisOAuth2Application> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Application.class)
-                .eq(MybatisOAuth2Application::getClientId, request.getClientId());
-        MybatisOAuth2Application application = oAuth2ApplicationMapper.selectOne(wrapper);
+        // 校验是否存在
+        MybatisOAuth2Application application = oAuth2ApplicationMapper.selectById(request.getId());
         if (application == null) {
             throw new BasicApplicationStorageException("客户端不存在.");
+        }
+
+        // 校验唯一性
+        LambdaQueryWrapper<MybatisOAuth2Application> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Application.class)
+                .eq(MybatisOAuth2Application::getClientId, request.getClientId())
+                .ne(MybatisOAuth2Application::getId, request.getId());
+        List<MybatisOAuth2Application> oAuth2Applications = oAuth2ApplicationMapper.selectList(wrapper);
+        if (!ObjectUtils.isEmpty(oAuth2Applications)) {
+            throw new BasicApplicationStorageException("客户端id不能重复.");
         }
 
         this.validRedirectUris(request);
@@ -135,17 +143,5 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
         LambdaQueryWrapper<MybatisOAuth2Application> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Application.class)
                 .eq(MybatisOAuth2Application::getClientId, clientId);
         this.oAuth2ApplicationMapper.delete(wrapper);
-    }
-
-    /**
-     * 验证回调地址
-     *
-     * @param request 保存/更新客户端入参
-     */
-    private void validRedirectUris(SaveApplicationRequest request) {
-        if (request.getAuthorizationGrantTypes().contains(AuthorizationGrantType.AUTHORIZATION_CODE.getValue())) {
-            // 授权码/PKCE模式下回调地址不能为空
-            Assert.notEmpty(request.getRedirectUris(), "回调地址不能为空.");
-        }
     }
 }

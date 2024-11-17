@@ -14,13 +14,13 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * @author vains
  */
 @Slf4j
-public class MybatisPlusStorageCondition implements Condition {
+public class JpaStorageCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, @Nullable AnnotatedTypeMetadata metadata) {
-        CoreServiceStorageEnum property = context.getEnvironment().getProperty(AuthorizeConstants.CORE_SERVICE_STORAGE, CoreServiceStorageEnum.class);
-        boolean result = property != null && CoreServiceStorageEnum.MYBATIS_PLUS.getValue().equals(property.getValue());
-        log.debug("Condition [MybatisPlus] value is {}", result);
+        CoreServiceStorageEnum property = context.getEnvironment().getProperty(AuthorizeConstants.CORE_SERVICE_STORAGE, CoreServiceStorageEnum.class, CoreServiceStorageEnum.JPA);
+        boolean result = CoreServiceStorageEnum.JPA.getValue().equals(property.getValue());
+        log.debug("Condition [Jpa] value is {}", result);
         return result;
     }
 }

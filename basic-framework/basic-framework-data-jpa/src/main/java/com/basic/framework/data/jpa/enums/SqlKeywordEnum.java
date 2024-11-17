@@ -140,7 +140,7 @@ public enum SqlKeywordEnum implements BasicEnum<String, SqlKeywordEnum> {
      */
     IN("IN", "批量操作") {
         @Override
-        public Predicate toPredicate(String property, Collection<Serializable> values, Root<?> root) {
+        public Predicate toPredicate(String property, Collection<?> values, Root<?> root) {
             return root.get(property).in(values);
         }
     },
@@ -150,7 +150,7 @@ public enum SqlKeywordEnum implements BasicEnum<String, SqlKeywordEnum> {
      */
     NOT_IN("NOT IN", "批量操作") {
         @Override
-        public Predicate toPredicate(String property, Collection<Serializable> values, Root<?> root) {
+        public Predicate toPredicate(String property, Collection<?> values, Root<?> root) {
             return root.get(property).in(values).not();
         }
     };
@@ -173,7 +173,7 @@ public enum SqlKeywordEnum implements BasicEnum<String, SqlKeywordEnum> {
         throw new UnsupportedOperationException("该关键字不支持该操作！");
     }
 
-    public Predicate toPredicate(String property, Collection<Serializable> values, Root<?> root) {
+    public Predicate toPredicate(String property, Collection<?> values, Root<?> root) {
         throw new UnsupportedOperationException("该关键字不支持该操作！");
     }
 

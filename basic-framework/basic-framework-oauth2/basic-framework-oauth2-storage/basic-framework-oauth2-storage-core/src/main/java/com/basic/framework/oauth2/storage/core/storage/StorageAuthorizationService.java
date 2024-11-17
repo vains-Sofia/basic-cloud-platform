@@ -1,4 +1,4 @@
-package com.basic.framework.oauth2.storage.mybatis.storage;
+package com.basic.framework.oauth2.storage.core.storage;
 
 import com.basic.framework.oauth2.storage.core.domain.BasicAuthorization;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
  * @author vains
  */
 @Slf4j
-public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationService {
+public class StorageAuthorizationService implements OAuth2AuthorizationService {
 
     private final BasicAuthorizationService basicAuthorizationService;
 
@@ -25,7 +25,7 @@ public class MybatisOAuth2AuthorizationService implements OAuth2AuthorizationSer
 
     private final OAuth2Authorization2AuthorizationConverter authorizationConverter = new OAuth2Authorization2AuthorizationConverter();
 
-    public MybatisOAuth2AuthorizationService(BasicAuthorizationService basicAuthorizationService, RegisteredClientRepository registeredClientRepository) {
+    public StorageAuthorizationService(BasicAuthorizationService basicAuthorizationService, RegisteredClientRepository registeredClientRepository) {
         this.basicAuthorizationService = basicAuthorizationService;
         this.oAuth2AuthorizationConverter = new Authorization2OAuth2AuthorizationConverter(registeredClientRepository);
     }

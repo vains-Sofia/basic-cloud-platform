@@ -1,10 +1,10 @@
-package com.basic.framework.oauth2.storage.mybatis.storage;
+package com.basic.framework.oauth2.storage.core.storage;
 
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.basic.framework.oauth2.storage.core.domain.BasicAuthorizationConsent;
-import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
 import com.basic.framework.oauth2.storage.core.converter.Entity2OAuth2AuthorizationConsentConverter;
 import com.basic.framework.oauth2.storage.core.converter.OAuth2AuthorizationConsent2EntityConverter;
+import com.basic.framework.oauth2.storage.core.domain.BasicAuthorizationConsent;
+import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
+import com.basic.framework.oauth2.storage.core.util.Sequence;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -14,7 +14,9 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
  *
  * @author vains
  */
-public class MybatisOAuth2AuthorizationConsentService implements OAuth2AuthorizationConsentService {
+public class StorageAuthorizationConsentService implements OAuth2AuthorizationConsentService {
+
+    private final Sequence sequence = new Sequence(null);
 
     private final BasicAuthorizationConsentService basicAuthorizationConsentService;
 
@@ -22,7 +24,7 @@ public class MybatisOAuth2AuthorizationConsentService implements OAuth2Authoriza
 
     private final OAuth2AuthorizationConsent2EntityConverter entityConverter = new OAuth2AuthorizationConsent2EntityConverter();
 
-    public MybatisOAuth2AuthorizationConsentService(BasicAuthorizationConsentService basicAuthorizationConsentService, RegisteredClientRepository registeredClientRepository) {
+    public StorageAuthorizationConsentService(BasicAuthorizationConsentService basicAuthorizationConsentService, RegisteredClientRepository registeredClientRepository) {
         this.basicAuthorizationConsentService = basicAuthorizationConsentService;
         this.authorizationConsentConverter = new Entity2OAuth2AuthorizationConsentConverter(registeredClientRepository);
     }
@@ -33,7 +35,7 @@ public class MybatisOAuth2AuthorizationConsentService implements OAuth2Authoriza
         if (consent == null) {
             return;
         }
-        consent.setId(IdWorker.getId());
+        consent.setId(sequence.nextId());
         this.basicAuthorizationConsentService.save(consent);
     }
 
