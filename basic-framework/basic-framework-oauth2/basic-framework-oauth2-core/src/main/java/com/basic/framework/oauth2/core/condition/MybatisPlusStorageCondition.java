@@ -18,8 +18,8 @@ public class MybatisPlusStorageCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, @Nullable AnnotatedTypeMetadata metadata) {
-        CoreServiceStorageEnum property = context.getEnvironment().getProperty(AuthorizeConstants.CORE_SERVICE_STORAGE, CoreServiceStorageEnum.class);
-        boolean result = property != null && CoreServiceStorageEnum.MYBATIS_PLUS.getValue().equals(property.getValue());
+        CoreServiceStorageEnum property = context.getEnvironment().getProperty(AuthorizeConstants.CORE_SERVICE_STORAGE, CoreServiceStorageEnum.class, CoreServiceStorageEnum.MYBATIS_PLUS);
+        boolean result = CoreServiceStorageEnum.MYBATIS_PLUS.getValue().equals(property.getValue());
         log.debug("Condition [MybatisPlus] value is {}", result);
         return result;
     }
