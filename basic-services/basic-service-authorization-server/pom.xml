@@ -53,13 +53,13 @@
         <!-- MybatisPlus依赖 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-data-jpa</artifactId>
+            <artifactId>basic-framework-mybatis-plus</artifactId>
         </dependency>
 
         <!-- 认证服务存储实现 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-oauth2-storage-jpa</artifactId>
+            <artifactId>basic-framework-oauth2-storage-mybatis</artifactId>
         </dependency>
 
         <!-- 发送邮件支持 -->
