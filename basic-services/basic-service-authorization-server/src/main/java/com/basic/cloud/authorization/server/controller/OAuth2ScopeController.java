@@ -1,9 +1,9 @@
 package com.basic.cloud.authorization.server.controller;
 
-import com.basic.cloud.authorization.server.domain.request.FindScopePageRequest;
-import com.basic.cloud.authorization.server.domain.request.SaveScopeRequest;
-import com.basic.cloud.authorization.server.domain.response.FindScopeResponse;
-import com.basic.cloud.authorization.server.service.OAuth2ScopeService;
+import com.basic.framework.oauth2.storage.core.domain.request.FindScopePageRequest;
+import com.basic.framework.oauth2.storage.core.domain.request.SaveScopeRequest;
+import com.basic.framework.oauth2.storage.core.domain.response.FindScopeResponse;
+import com.basic.framework.oauth2.storage.core.service.OAuth2ScopeService;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.data.validation.group.Update;

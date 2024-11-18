@@ -9,6 +9,8 @@ import com.basic.framework.oauth2.storage.core.storage.StorageRegisteredClientRe
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -20,6 +22,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
  */
 @Slf4j
 @RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class CoreStorageAutoConfiguration {
 
     @Bean

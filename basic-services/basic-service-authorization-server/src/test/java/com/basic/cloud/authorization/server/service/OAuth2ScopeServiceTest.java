@@ -1,10 +1,13 @@
 package com.basic.cloud.authorization.server.service;
 
-import com.basic.cloud.authorization.server.domain.ScopeWithDescription;
-import com.basic.cloud.authorization.server.domain.request.FindScopePageRequest;
-import com.basic.cloud.authorization.server.domain.request.SaveScopeRequest;
-import com.basic.cloud.authorization.server.domain.response.FindScopeResponse;
+import com.basic.framework.oauth2.storage.core.domain.model.ScopeWithDescription;
+import com.basic.framework.oauth2.storage.core.domain.request.FindScopePageRequest;
+import com.basic.framework.oauth2.storage.core.domain.request.SaveScopeRequest;
+import com.basic.framework.oauth2.storage.core.domain.response.FindScopeResponse;
 import com.basic.framework.core.domain.PageResult;
+import com.basic.framework.oauth2.storage.core.service.OAuth2ScopeService;
+import com.basic.framework.oauth2.storage.jpa.domain.JpaOAuth2AuthorizationConsent;
+import com.basic.framework.oauth2.storage.jpa.repository.OAuth2AuthorizationConsentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,9 @@ class OAuth2ScopeServiceTest {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private OAuth2AuthorizationConsentRepository authorizationConsentRepository;
 
     @BeforeEach
     void setUp() {
@@ -71,5 +77,13 @@ class OAuth2ScopeServiceTest {
         request.setScope(OidcScopes.EMAIL);
         request.setEnabled(Boolean.TRUE);
         scopeService.updateScope(request);
+    }
+
+    @Test
+    void findAll() {
+        List<JpaOAuth2AuthorizationConsent> authorizationConsents = authorizationConsentRepository.findAll();
+        for (JpaOAuth2AuthorizationConsent authorizationConsent : authorizationConsents) {
+            System.out.println(authorizationConsent);
+        }
     }
 }

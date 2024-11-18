@@ -1,6 +1,5 @@
-package com.basic.framework.oauth2.storage.core.util;
+package com.basic.framework.core.util;
 
-import jodd.util.StringPool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -107,7 +106,8 @@ public class Sequence {
             /*
              * GET jvmPid
              */
-            mpid.append(name.split(StringPool.AT)[0]);
+            String at = "@";
+            mpid.append(name.split(at)[0]);
         }
         /*
          * MAC + PID 的 hashcode 获取16个低位

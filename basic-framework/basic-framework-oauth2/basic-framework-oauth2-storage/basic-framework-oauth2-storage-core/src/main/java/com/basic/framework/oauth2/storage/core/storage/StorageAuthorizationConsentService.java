@@ -4,7 +4,7 @@ import com.basic.framework.oauth2.storage.core.converter.Entity2OAuth2Authorizat
 import com.basic.framework.oauth2.storage.core.converter.OAuth2AuthorizationConsent2EntityConverter;
 import com.basic.framework.oauth2.storage.core.domain.BasicAuthorizationConsent;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
-import com.basic.framework.oauth2.storage.core.util.Sequence;
+import com.basic.framework.core.util.Sequence;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;

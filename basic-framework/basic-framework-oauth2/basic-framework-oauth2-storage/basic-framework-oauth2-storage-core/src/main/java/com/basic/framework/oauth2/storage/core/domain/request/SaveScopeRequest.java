@@ -1,4 +1,4 @@
-package com.basic.cloud.authorization.server.domain.request;
+package com.basic.framework.oauth2.storage.core.domain.request;
 
 import com.basic.framework.data.validation.group.Update;
 import io.swagger.v3.oas.annotations.media.Schema;

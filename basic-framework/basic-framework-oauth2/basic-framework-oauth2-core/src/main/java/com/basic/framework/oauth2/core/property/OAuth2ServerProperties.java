@@ -65,7 +65,7 @@ public class OAuth2ServerProperties {
     /**
      * 核心服务实现类型，默认MybatisPlus的实现
      */
-    private CoreServiceStorageEnum coreServiceStorage = CoreServiceStorageEnum.MYBATIS_PLUS;
+    private CoreServiceStorageEnum coreServiceStorage = CoreServiceStorageEnum.JPA;
 
     /**
      * 邮件验证码配置

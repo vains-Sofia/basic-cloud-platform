@@ -1,4 +1,4 @@
-package com.basic.cloud.authorization.server.domain.entity;
+package com.basic.framework.oauth2.storage.mybatis.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -17,7 +17,8 @@ import java.io.Serializable;
 @Data
 @TableName(value = "oauth2_scope")
 @EqualsAndHashCode(callSuper = true)
-public class OAuth2Scope extends BasicEntity implements Serializable {
+public class MybatisOAuth2Scope extends BasicEntity implements Serializable {
+
     /**
      * 主键id
      */
@@ -38,4 +39,5 @@ public class OAuth2Scope extends BasicEntity implements Serializable {
      * 是否启用
      */
     private Boolean enabled;
+
 }

@@ -1,12 +1,10 @@
-package com.basic.cloud.authorization.server.service;
+package com.basic.framework.oauth2.storage.core.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.basic.cloud.authorization.server.domain.ScopeWithDescription;
-import com.basic.cloud.authorization.server.domain.entity.OAuth2Scope;
-import com.basic.cloud.authorization.server.domain.request.FindScopePageRequest;
-import com.basic.cloud.authorization.server.domain.request.SaveScopeRequest;
-import com.basic.cloud.authorization.server.domain.response.FindScopeResponse;
 import com.basic.framework.core.domain.PageResult;
+import com.basic.framework.oauth2.storage.core.domain.model.ScopeWithDescription;
+import com.basic.framework.oauth2.storage.core.domain.request.FindScopePageRequest;
+import com.basic.framework.oauth2.storage.core.domain.request.SaveScopeRequest;
+import com.basic.framework.oauth2.storage.core.domain.response.FindScopeResponse;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -17,7 +15,7 @@ import java.util.Set;
  *
  * @author vains
  */
-public interface OAuth2ScopeService extends IService<OAuth2Scope> {
+public interface OAuth2ScopeService {
 
     /**
      * 根据入参分页查询scope信息

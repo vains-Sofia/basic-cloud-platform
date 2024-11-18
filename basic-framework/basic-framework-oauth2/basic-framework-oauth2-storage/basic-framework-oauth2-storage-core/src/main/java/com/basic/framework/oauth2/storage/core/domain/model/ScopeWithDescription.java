@@ -1,4 +1,4 @@
-package com.basic.cloud.authorization.server.domain;
+package com.basic.framework.oauth2.storage.core.domain.model;
 
 /**
  * scope与对应描述类

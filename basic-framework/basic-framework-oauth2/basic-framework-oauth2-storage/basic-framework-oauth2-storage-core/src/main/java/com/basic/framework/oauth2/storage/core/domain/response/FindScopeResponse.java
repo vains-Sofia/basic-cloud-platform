@@ -1,4 +1,4 @@
-package com.basic.cloud.authorization.server.domain.response;
+package com.basic.framework.oauth2.storage.core.domain.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.basic.cloud.authorization.server;
 
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
+import com.basic.framework.core.util.Sequence;
 import lombok.experimental.UtilityClass;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -23,6 +23,8 @@ import java.util.List;
  */
 @UtilityClass
 public class Clients {
+    
+    private final Sequence SEQUENCE = new Sequence(null);
 
     /**
      * Junit测试默认客户端列表
@@ -51,7 +53,7 @@ public class Clients {
                 .idTokenSignatureAlgorithm(SignatureAlgorithm.RS256);
 
         List<RegisteredClient> clients = new ArrayList<>();
-        RegisteredClient oidcClient = RegisteredClient.withId(IdWorker.getIdStr())
+        RegisteredClient oidcClient = RegisteredClient.withId(String.valueOf(SEQUENCE.nextId()))
                 .clientId("oidc-client")
                 .clientSecret("{noop}secret")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -70,7 +72,7 @@ public class Clients {
                 .clientSettings(clientSettingsBuilder.build())
                 .build();
 
-        RegisteredClient swaggerClient = RegisteredClient.withId(IdWorker.getIdStr())
+        RegisteredClient swaggerClient = RegisteredClient.withId(String.valueOf(SEQUENCE.nextId()))
                 .clientId("swagger-client")
                 .clientSecret("{noop}123456")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
@@ -91,7 +93,7 @@ public class Clients {
                 .clientSettings(clientSettingsBuilder.build())
                 .build();
 
-        RegisteredClient deviceClient = RegisteredClient.withId(IdWorker.getIdStr())
+        RegisteredClient deviceClient = RegisteredClient.withId(String.valueOf(SEQUENCE.nextId()))
                 .clientId("device-messaging-client")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
                 .authorizationGrantType(AuthorizationGrantType.DEVICE_CODE)
@@ -102,7 +104,7 @@ public class Clients {
                 .clientSettings(clientSettingsBuilder.build())
                 .build();
 
-        RegisteredClient messagingClient = RegisteredClient.withId(IdWorker.getIdStr())
+        RegisteredClient messagingClient = RegisteredClient.withId(String.valueOf(SEQUENCE.nextId()))
                 .clientId("messaging-client")
                 .clientSecret("{noop}123456")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -123,7 +125,7 @@ public class Clients {
                 .clientSettings(clientSettingsBuilder.build())
                 .build();
 
-        RegisteredClient privateKeyJwtClient = RegisteredClient.withId(IdWorker.getIdStr())
+        RegisteredClient privateKeyJwtClient = RegisteredClient.withId(String.valueOf(SEQUENCE.nextId()))
                 .clientId("private-key-jwt-client")
                 .clientSecret("{noop}12345678")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -149,7 +151,7 @@ public class Clients {
                 .build();
 
         // PKCE客户端
-        RegisteredClient pkceClient = RegisteredClient.withId(IdWorker.getIdStr())
+        RegisteredClient pkceClient = RegisteredClient.withId(String.valueOf(SEQUENCE.nextId()))
                 .clientId("pkce-message-client")
                 .clientName("PKCE流程")
                 // 公共客户端
@@ -176,7 +178,7 @@ public class Clients {
         clientSettingsBuilder.requireProofKey(Boolean.FALSE);
 
         // 匿名令牌客户端
-        RegisteredClient opaqueClient = RegisteredClient.withId(IdWorker.getIdStr())
+        RegisteredClient opaqueClient = RegisteredClient.withId(String.valueOf(SEQUENCE.nextId()))
                 // 客户端id
                 .clientId("opaque-client")
                 // 客户端名称
