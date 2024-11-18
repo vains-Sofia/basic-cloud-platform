@@ -1,6 +1,5 @@
 package com.basic.framework.oauth2.storage.mybatis.autoconfigure;
 
-import com.basic.cloud.authorization.server.service.impl.MybatisOAuth2ScopeService;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
@@ -11,6 +10,7 @@ import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ScopeMappe
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicApplicationService;
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicAuthorizationConsentService;
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicAuthorizationService;
+import com.basic.framework.oauth2.storage.mybatis.service.MybatisOAuth2ScopeService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
