@@ -12,12 +12,6 @@
     <artifactId>basic-framework-oauth2-core</artifactId>
 
     <dependencies>
-        <!-- 框架核心包 -->
-        <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-core</artifactId>
-        </dependency>
-
         <!-- 认证服务包 -->
         <dependency>
             <groupId>org.springframework.security</groupId>

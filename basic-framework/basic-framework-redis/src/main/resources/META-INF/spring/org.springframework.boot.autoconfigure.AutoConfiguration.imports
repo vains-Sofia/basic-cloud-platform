@@ -1,2 +1,2 @@
 com.basic.framework.redis.support.RedisOperator
-com.basic.framework.redis.autoconfigure.RedisAutoConfiguration
+com.basic.framework.redis.autoconfigure.DataRedisAutoConfiguration

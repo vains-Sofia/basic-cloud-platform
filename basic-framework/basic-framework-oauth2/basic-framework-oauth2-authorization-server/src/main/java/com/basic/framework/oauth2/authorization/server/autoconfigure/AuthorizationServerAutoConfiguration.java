@@ -76,7 +76,7 @@ import java.util.UUID;
  */
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Import({RedisAutoConfiguration.class, RedisOperator.class})
+@Import({ServerRedisAutoConfiguration.class, RedisOperator.class})
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 @EnableConfigurationProperties({OAuth2ServerProperties.class, ResourceServerProperties.class})
 public class AuthorizationServerAutoConfiguration {

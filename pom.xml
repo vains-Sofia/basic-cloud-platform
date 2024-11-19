@@ -27,7 +27,7 @@
         <!-- 指定Java版本 -->
         <java.version>21</java.version>
         <!-- Redisson 版本号 -->
-        <redisson.version>3.36.0</redisson.version>
+        <redisson.version>3.39.0</redisson.version>
         <!-- Spring Doc 版本号 -->
         <spring-doc.version>2.6.0</spring-doc.version>
         <!-- Mybatis Plus 版本号 -->

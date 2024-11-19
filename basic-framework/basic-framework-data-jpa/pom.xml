@@ -19,13 +19,6 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- OAuth2核心包 -->
-        <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-oauth2-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
         <!-- OAuth2资源服务包 -->
         <dependency>
             <groupId>com.basic.cloud</groupId>

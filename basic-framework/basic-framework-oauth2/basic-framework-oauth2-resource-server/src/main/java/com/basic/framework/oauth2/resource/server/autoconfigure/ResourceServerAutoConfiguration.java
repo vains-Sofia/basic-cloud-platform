@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,7 +31,6 @@ import org.springframework.security.jackson2.CoreJackson2Module;
         ReactiveResourceServerConfiguration.class
 })
 @RequiredArgsConstructor
-@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({ResourceServerProperties.class})
 public class ResourceServerAutoConfiguration {
 
@@ -57,7 +55,7 @@ public class ResourceServerAutoConfiguration {
     }
 
     /**
-     * 默认情况下使用
+     * 资源服务器的RedisTemplate，与认证服务使用的配置基本一致
      *
      * @param connectionFactory redis链接工厂
      * @return RedisTemplate
