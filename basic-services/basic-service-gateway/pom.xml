@@ -19,12 +19,6 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
-        <!-- 资源服务依赖 -->
-        <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-oauth2-resource-server</artifactId>
-        </dependency>
-
         <!-- Spring Cloud Alibaba 服务发现 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

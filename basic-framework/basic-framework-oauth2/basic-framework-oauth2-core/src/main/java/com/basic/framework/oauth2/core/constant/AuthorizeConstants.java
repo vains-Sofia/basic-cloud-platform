@@ -49,9 +49,7 @@ public class AuthorizeConstants {
             "/favicon.ico",
             "/login/email",
             "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/webjars/swagger-ui/*",
-            "/*/v3/api-docs/**"
+            "/v3/api-docs/**"
     );
 
 }
