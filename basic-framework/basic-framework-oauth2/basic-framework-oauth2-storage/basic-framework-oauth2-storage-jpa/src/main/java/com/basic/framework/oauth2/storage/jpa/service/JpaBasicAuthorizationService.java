@@ -1,6 +1,8 @@
 package com.basic.framework.oauth2.storage.jpa.service;
 
+import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
+import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -130,9 +133,11 @@ public class JpaBasicAuthorizationService implements BasicAuthorizationService {
 
     @Override
     public PageResult<FindAuthorizationPageResponse> findAuthorizationPage(FindAuthorizationPageRequest request) {
+        // 排序
+        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(JpaOAuth2Authorization::getUpdateTime));
 
         // 分页
-        PageRequest pageQuery = PageRequest.of(request.getCurrent().intValue(), request.getSize().intValue());
+        PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
         // 条件构造器
         SpecificationBuilder<JpaOAuth2Authorization> builder = new SpecificationBuilder<>();
@@ -142,12 +147,13 @@ public class JpaBasicAuthorizationService implements BasicAuthorizationService {
                 JpaOAuth2Authorization::getAuthorizationGrantType, request.getAuthorizationGrantType());
         // access token签发时间是否为空
         boolean accessTokenIssuedTime = !ObjectUtils.isEmpty(request.getAccessTokenIssuedStart()) && !ObjectUtils.isEmpty(request.getAccessTokenIssuedEnd());
-        builder.between(accessTokenIssuedTime, JpaOAuth2Authorization::getAccessTokenIssuedAt,
-                request.getAccessTokenIssuedStart(), request.getAccessTokenIssuedEnd());
         // 授权码签发时间签发时间是否为空
         boolean authorizationCodeIssuedTime = !ObjectUtils.isEmpty(request.getAuthorizationCodeIssuedStart()) && !ObjectUtils.isEmpty(request.getAuthorizationCodeIssuedEnd());
-        builder.between(authorizationCodeIssuedTime, JpaOAuth2Authorization::getAuthorizationCodeIssuedAt,
-                request.getAuthorizationCodeIssuedStart(), request.getAuthorizationCodeIssuedEnd());
+
+        builder.between(accessTokenIssuedTime, JpaOAuth2Authorization::getAccessTokenIssuedAt,
+                        request.getAccessTokenIssuedStart(), request.getAccessTokenIssuedEnd())
+                .between(authorizationCodeIssuedTime, JpaOAuth2Authorization::getAuthorizationCodeIssuedAt,
+                        request.getAuthorizationCodeIssuedStart(), request.getAuthorizationCodeIssuedEnd());
 
         // 查询
         Page<JpaOAuth2Authorization> authorizationPage = authorizationRepository.findAll(builder, pageQuery);
@@ -158,6 +164,6 @@ public class JpaBasicAuthorizationService implements BasicAuthorizationService {
                 .map(jpa2AuthorizationResponseConverter::convert)
                 .toList();
 
-        return PageResult.of((long) authorizationPage.getNumber(), (long) authorizationPage.getSize(), authorizationPage.getTotalElements(), authorizationList);
+        return DataPageResult.of(authorizationPage.getNumber(), authorizationPage.getSize(), authorizationPage.getTotalElements(), authorizationList);
     }
 }

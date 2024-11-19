@@ -1,6 +1,8 @@
 package com.basic.framework.oauth2.storage.jpa.service;
 
+import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
+import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
 import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.util.AlternativeJdkIdGenerator;
@@ -92,8 +95,10 @@ public class JpaBasicApplicationService implements BasicApplicationService {
 
     @Override
     public PageResult<BasicApplicationResponse> findByPage(FindApplicationPageRequest request) {
+        // 排序
+        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(JpaOAuth2Application::getUpdateTime));
         // 分页
-        PageRequest pageQuery = PageRequest.of(request.getCurrent().intValue(), request.getSize().intValue());
+        PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
         // 条件构造器
         SpecificationBuilder<JpaOAuth2Application> builder = new SpecificationBuilder<>();
@@ -117,7 +122,7 @@ public class JpaBasicApplicationService implements BasicApplicationService {
                 .stream()
                 .map(jpa2ApplicationResponseConverter::convert)
                 .toList();
-        return PageResult.of((long) applicationPage.getNumber(), (long) applicationPage.getSize(), applicationPage.getTotalElements(), applicationList);
+        return DataPageResult.of(applicationPage.getNumber(), applicationPage.getSize(), applicationPage.getTotalElements(), applicationList);
     }
 
     @Override

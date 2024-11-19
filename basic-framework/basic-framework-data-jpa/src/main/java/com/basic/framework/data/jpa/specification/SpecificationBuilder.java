@@ -11,11 +11,15 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.config.Customizer;
 import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,24 +30,71 @@ import java.util.List;
  * @author vains
  * @see org.springframework.data.jpa.domain.Specification
  */
+@Getter
+@Setter
 public class SpecificationBuilder<T> implements Specification<T> {
 
     private final List<SimpleExpression> expressions = new ArrayList<>();
 
+    private final List<SpecificationBuilder<T>> orBuilders = new ArrayList<>();
+
     @Override
     public Predicate toPredicate(@Nullable Root<T> root, CriteriaQuery<?> query, @Nullable CriteriaBuilder criteriaBuilder) {
+        // 默认使用and
         if (criteriaBuilder == null) {
             return null;
         }
-        if (expressions.isEmpty()) {
+        if (expressions.isEmpty() && orBuilders.isEmpty()) {
             return criteriaBuilder.conjunction();
         }
-        List<Predicate> predicates = new ArrayList<>();
-        for (SimpleExpression c : expressions) {
-            predicates.add(c.toPredicate(root, query, criteriaBuilder));
+        Predicate andPredicate = null;
+        if (!expressions.isEmpty()) {
+            List<Predicate> predicates = new ArrayList<>();
+            for (SimpleExpression c : expressions) {
+                predicates.add(c.toPredicate(root, query, criteriaBuilder));
+            }
+            // 将所有条件用 and 联合起来
+            andPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         }
-        // 将所有条件用 and 联合起来
-        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        if (orBuilders.isEmpty()) {
+            if (andPredicate == null) {
+                return criteriaBuilder.conjunction();
+            } else {
+                return andPredicate;
+            }
+        }
+        // 如果or表达式不为空则生成or条件
+        // 生成的or表达式列表
+        List<List<Predicate>> orPredicatesList = new ArrayList<>();
+        // 获取所有的or表达式
+        List<List<SimpleExpression>> orExpressionsList = orBuilders
+                .stream()
+                .map(SpecificationBuilder::getExpressions)
+                .toList();
+        for (List<SimpleExpression> orExpressions : orExpressionsList) {
+            // 组装，转为框架内的表达式
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (SimpleExpression c : orExpressions) {
+                orPredicates.add(c.toPredicate(root, query, criteriaBuilder));
+            }
+            orPredicatesList.add(orPredicates);
+        }
+
+        // 所有的or表达式
+        Predicate[] orPredicateArray = orPredicatesList.stream()
+                .map(e -> criteriaBuilder.or(e.toArray(new Predicate[0])))
+                .toList().toArray(new Predicate[0]);
+
+        if (andPredicate == null) {
+            // 如果and表达式为空则只返回or表达式
+            return query.where(orPredicateArray).getRestriction();
+        }
+
+        // 将or和and表达式转到一个数组中
+        Predicate[] orAndPredicateArray = Arrays.copyOf(orPredicateArray, orPredicateArray.length + 1);
+        orAndPredicateArray[orPredicateArray.length] = andPredicate;
+        // 拼接and与or表达式
+        return query.where(orAndPredicateArray).getRestriction();
     }
 
     /**
@@ -744,6 +795,22 @@ public class SpecificationBuilder<T> implements Specification<T> {
      */
     public SpecificationBuilder<T> isNotNull(String column) {
         expressions.add(new SimpleExpression(column, null, SqlKeywordEnum.IS_NOT_NULL));
+        return this;
+    }
+
+    /**
+     * 添加or表达式
+     *
+     * @param builderCustomizer 自定义构建or表达式入口
+     * @return 当前builder
+     */
+    public SpecificationBuilder<T> or(Customizer<SpecificationBuilder<T>> builderCustomizer) {
+        SpecificationBuilder<T> orBuilder = new SpecificationBuilder<>();
+        builderCustomizer.customize(orBuilder);
+        if (ObjectUtils.isEmpty(orBuilder.getExpressions())) {
+            return this;
+        }
+        orBuilders.add(orBuilder);
         return this;
     }
 }

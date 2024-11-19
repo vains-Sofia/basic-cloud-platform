@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author vains
  */
 @Data
-@Schema(name = "保存/修改scope入参")
+@Schema(name = "插入或修改scope入参")
 public class SaveScopeRequest implements Serializable {
 
     @NotNull(groups = {Update.class})

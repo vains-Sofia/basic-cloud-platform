@@ -63,6 +63,7 @@ public class JpaStorageAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public JpaOAuth2ScopeService jpaOAuth2ScopeService() {
         return new JpaOAuth2ScopeService(scopeRepository);
     }

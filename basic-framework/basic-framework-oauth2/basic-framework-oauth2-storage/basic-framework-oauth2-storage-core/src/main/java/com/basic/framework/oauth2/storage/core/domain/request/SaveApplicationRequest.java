@@ -18,7 +18,7 @@ import java.util.Set;
  * @author vains
  */
 @Data
-@Schema(title = "保存/更新客户端信息入参")
+@Schema(title = "插入或更新客户端信息入参")
 public class SaveApplicationRequest {
 
     /**

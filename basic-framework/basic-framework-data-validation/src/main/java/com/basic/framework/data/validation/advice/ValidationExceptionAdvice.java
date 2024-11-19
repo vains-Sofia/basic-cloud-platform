@@ -36,7 +36,7 @@ public class ValidationExceptionAdvice {
     public Result<String> methodArgumentNotValidException(HttpServletRequest request,
                                                           MethodArgumentNotValidException e) {
         String errors = ValidationExceptionResolver.resolveFiledErrors(e.getBindingResult().getFieldErrors());
-        log.warn("请求[{}]异常，Json参数校验失败：{}", request.getRequestURI(), errors);
+        log.warn("请求[{}]异常，Bean入参校验失败：{}", request.getRequestURI(), errors);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 

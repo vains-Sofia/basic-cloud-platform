@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.storage.core.domain.request;
 
-import com.basic.framework.core.domain.Pageable;
+import com.basic.framework.core.domain.DataPageable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @Schema(name = "认证信息分页查询入参")
 @EqualsAndHashCode(callSuper = true)
-public class FindAuthorizationPageRequest extends Pageable {
+public class FindAuthorizationPageRequest extends DataPageable {
 
     @Schema(title = "认证时使用的客户端id", description = "认证时使用的客户端id")
     private String registeredClientId;

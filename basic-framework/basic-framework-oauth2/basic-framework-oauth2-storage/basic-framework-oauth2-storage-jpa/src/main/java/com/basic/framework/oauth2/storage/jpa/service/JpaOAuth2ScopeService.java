@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.storage.jpa.service;
 
+import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.util.Sequence;
@@ -37,14 +38,16 @@ public class JpaOAuth2ScopeService implements OAuth2ScopeService {
     public PageResult<FindScopeResponse> findScopePage(FindScopePageRequest request) {
         // 查询条件
         SpecificationBuilder<JpaOAuth2Scope> builder = new SpecificationBuilder<>();
-        builder.eq(request.getEnabled() != null, JpaOAuth2Scope::getEnabled, request.getEnabled())
-                .like(!ObjectUtils.isEmpty(request.getScope()), JpaOAuth2Scope::getScope, request.getScope())
-                .like(!ObjectUtils.isEmpty(request.getScope()), JpaOAuth2Scope::getDescription, request.getScope());
+        builder.or(or -> or
+                        .like(!ObjectUtils.isEmpty(request.getScope()), JpaOAuth2Scope::getScope, request.getScope())
+                        .like(!ObjectUtils.isEmpty(request.getScope()), JpaOAuth2Scope::getDescription, request.getScope())
+                )
+                .eq(request.getEnabled() != null, JpaOAuth2Scope::getEnabled, request.getEnabled());
 
         // 排序
         Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(JpaOAuth2Scope::getUpdateTime));
         // 分页
-        PageRequest pageQuery = PageRequest.of(request.getCurrent().intValue(), request.getSize().intValue(), sort);
+        PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
         // 分页查询
         Page<JpaOAuth2Scope> selectScopePage = this.scopeRepository.findAll(builder, pageQuery);
@@ -59,7 +62,7 @@ public class JpaOAuth2ScopeService implements OAuth2ScopeService {
                 }).toList();
 
         // 组装数据返回
-        return PageResult.of((long) selectScopePage.getNumber(), (long) selectScopePage.getSize(), selectScopePage.getTotalElements(), responseList);
+        return DataPageResult.of(selectScopePage.getNumber(), selectScopePage.getSize(), selectScopePage.getTotalElements(), responseList);
     }
 
     @Override
@@ -69,8 +72,8 @@ public class JpaOAuth2ScopeService implements OAuth2ScopeService {
         }
         // 构建查询条件
         SpecificationBuilder<JpaOAuth2Scope> builder = new SpecificationBuilder<>();
-        builder.eq(JpaOAuth2Scope::getEnabled, Boolean.TRUE)
-                .in(JpaOAuth2Scope::getScope, scopes);
+        builder.in(JpaOAuth2Scope::getScope, scopes)
+                .eq(JpaOAuth2Scope::getEnabled, Boolean.TRUE);
 
         // 查询
         List<JpaOAuth2Scope> selectScopeList = this.scopeRepository.findAll(builder);
