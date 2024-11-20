@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.basic.cloud</groupId>
+        <groupId>com.basic.framework</groupId>
         <artifactId>basic-framework</artifactId>
         <version>0.0.1</version>
     </parent>
@@ -20,13 +20,13 @@
 
         <!-- 核心包 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-core</artifactId>
         </dependency>
 
         <!-- 在线文档包 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-spring-doc</artifactId>
         </dependency>
 
@@ -38,13 +38,13 @@
 
         <!-- 入参校验 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-data-validation</artifactId>
         </dependency>
 
         <!-- 资源服务 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-resource-server</artifactId>
         </dependency>
 

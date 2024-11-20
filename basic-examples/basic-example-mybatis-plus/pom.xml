@@ -14,7 +14,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-mybatis-plus</artifactId>
         </dependency>
         <dependency>
@@ -41,7 +41,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-web</artifactId>
         </dependency>
     </dependencies>

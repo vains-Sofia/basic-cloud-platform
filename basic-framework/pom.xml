@@ -8,10 +8,11 @@
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>basic-framework</artifactId>
     <version>0.0.1</version>
     <packaging>pom</packaging>
     <name>basic-framework</name>
+    <groupId>com.basic.framework</groupId>
+    <artifactId>basic-framework</artifactId>
     <description>basic-cloud-platform frameworks</description>
     <modules>
         <module>basic-framework-core</module>
@@ -20,7 +21,7 @@
         <module>basic-framework-data-validation</module>
         <module>basic-framework-mybatis-plus</module>
         <module>basic-framework-web</module>
-        <module>basic-framework-redis</module>
+        <module>basic-framework-data-redis</module>
         <module>basic-framework-data-jpa</module>
     </modules>
 

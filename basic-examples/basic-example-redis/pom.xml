@@ -13,8 +13,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-redis</artifactId>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-data-redis</artifactId>
         </dependency>
 
         <dependency>
@@ -23,7 +23,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-resource-server</artifactId>
         </dependency>
     </dependencies>

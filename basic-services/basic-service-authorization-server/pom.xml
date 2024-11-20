@@ -15,11 +15,11 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-web</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>com.basic.cloud</groupId>
+                    <groupId>com.basic.framework</groupId>
                     <artifactId>basic-framework-oauth2-resource-server</artifactId>
                 </exclusion>
             </exclusions>
@@ -27,7 +27,7 @@
 
         <!-- 联合身份认证/社交登录 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-federation</artifactId>
         </dependency>
 
@@ -52,13 +52,13 @@
 
         <!-- Spring Data Jpa依赖 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-data-jpa</artifactId>
         </dependency>
 
         <!-- 认证服务存储Jpa实现 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-storage-jpa</artifactId>
         </dependency>
 

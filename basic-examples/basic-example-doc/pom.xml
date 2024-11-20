@@ -13,7 +13,7 @@
     <dependencies>
         <!-- 引入框架在线文档包 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-spring-doc</artifactId>
         </dependency>
         <dependency>

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.basic.cloud</groupId>
+        <groupId>com.basic.framework</groupId>
         <artifactId>basic-framework-oauth2</artifactId>
         <version>0.0.1</version>
     </parent>
@@ -29,14 +29,14 @@
 
         <!-- oauth2 core包 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-core</artifactId>
         </dependency>
 
         <!-- 封装的redis模块 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
-            <artifactId>basic-framework-redis</artifactId>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-data-redis</artifactId>
         </dependency>
     </dependencies>
 

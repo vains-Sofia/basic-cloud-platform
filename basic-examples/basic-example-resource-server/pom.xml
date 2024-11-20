@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>

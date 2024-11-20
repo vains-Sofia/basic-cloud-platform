@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.basic.cloud</groupId>
+        <groupId>com.basic.framework</groupId>
         <artifactId>basic-framework-oauth2-storage</artifactId>
         <version>0.0.1</version>
     </parent>
@@ -28,13 +28,13 @@
 
         <!-- 认证服务存储核心模块 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-storage-core</artifactId>
         </dependency>
 
         <!-- Spring data jpa -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-data-jpa</artifactId>
         </dependency>
     </dependencies>

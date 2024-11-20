@@ -14,7 +14,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-data-jpa</artifactId>
         </dependency>
 
@@ -25,7 +25,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-web</artifactId>
             <exclusions>
                 <exclusion>

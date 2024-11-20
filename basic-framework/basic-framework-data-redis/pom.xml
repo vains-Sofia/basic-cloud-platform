@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.basic.cloud</groupId>
+        <groupId>com.basic.framework</groupId>
         <artifactId>basic-framework</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>basic-framework-redis</artifactId>
-    <name>basic-framework-redis</name>
+    <artifactId>basic-framework-data-redis</artifactId>
+    <name>basic-framework-data-redis</name>
     <description>basic-cloud-platform redis module</description>
 
     <dependencies>
@@ -33,7 +33,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-core</artifactId>
         </dependency>
     </dependencies>

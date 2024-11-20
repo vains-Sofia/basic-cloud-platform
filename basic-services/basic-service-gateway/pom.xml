@@ -45,7 +45,7 @@
 
         <!-- 在线文档依赖 -->
         <dependency>
-            <groupId>com.basic.cloud</groupId>
+            <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-spring-doc</artifactId>
         </dependency>
 

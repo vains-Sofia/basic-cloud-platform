@@ -96,91 +96,91 @@
 
             <!-- 项目核心包版本管理 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 项目文档包版本管理 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-spring-doc</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 认证服务自动配置包版本管理 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-oauth2-authorization-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 认证核心模块 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-oauth2-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 联合身份认证模块 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-oauth2-federation</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 入参校验模块 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-data-validation</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 通用资源服务模块 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-oauth2-resource-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 通用资源服务模块 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-mybatis-plus</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 通用资源服务模块 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 认证服务存储Jpa实现 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-oauth2-storage-jpa</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 认证服务存储Mybatis Plus实现 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-oauth2-storage-mybatis</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- 分布式锁模块 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
-                <artifactId>basic-framework-redis</artifactId>
+                <groupId>com.basic.framework</groupId>
+                <artifactId>basic-framework-data-redis</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- Spring Data Jpa 封装 -->
             <dependency>
-                <groupId>com.basic.cloud</groupId>
+                <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-data-jpa</artifactId>
                 <version>${project.version}</version>
             </dependency>
