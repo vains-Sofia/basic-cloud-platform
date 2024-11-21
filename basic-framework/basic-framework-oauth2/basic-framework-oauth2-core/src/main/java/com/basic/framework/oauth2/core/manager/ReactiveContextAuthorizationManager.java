@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.core.manager;
 
+import com.basic.framework.core.constants.BasicConstants;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.security.web.server.authorization.AuthorizationContex
 import org.springframework.util.ObjectUtils;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,13 +30,25 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
 
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext context) {
+        // 内部调用忽略认证
+        // 取出当前路径和ContextPath，如果有ContextPath则替换为空
+        ServerHttpRequest request = context.getExchange().getRequest();
+        List<String> ignoreHeaders = request.getHeaders().get(BasicConstants.IGNORE_AUTH_HEADER_KEY);
+        if (!ObjectUtils.isEmpty(ignoreHeaders)) {
+            // 如果有忽略认证请求头则忽略认证
+            if (ignoreHeaders.contains(BasicConstants.IGNORE_AUTH_HEADER_VALUE)) {
+                return Mono.just(new AuthorizationDecision(Boolean.TRUE));
+            }
+        }
+
+        // 配置文件忽略认证
         Set<String> ignoreUriPaths = resourceServer.getIgnoreUriPaths();
         if (ObjectUtils.isEmpty(ignoreUriPaths)) {
             // 默认检查是否认证过
             return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
         }
+
         // 取出当前路径和ContextPath，如果有ContextPath则替换为空
-        ServerHttpRequest request = context.getExchange().getRequest();
         String path = request.getURI().getPath();
         String contextPath = request.getPath().contextPath().value();
 

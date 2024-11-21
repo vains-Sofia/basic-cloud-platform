@@ -23,6 +23,7 @@
         <module>basic-framework-web</module>
         <module>basic-framework-data-redis</module>
         <module>basic-framework-data-jpa</module>
+        <module>basic-framework-openfeign</module>
     </modules>
 
 </project>
