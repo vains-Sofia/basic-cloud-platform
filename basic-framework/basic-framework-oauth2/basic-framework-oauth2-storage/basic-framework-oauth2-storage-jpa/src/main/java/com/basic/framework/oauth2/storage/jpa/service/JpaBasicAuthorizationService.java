@@ -82,6 +82,8 @@ public class JpaBasicAuthorizationService implements BasicAuthorizationService {
                     if (authenticationToken.getPrincipal() instanceof AuthenticatedUser user) {
                         jpaOAuth2Authorization.setUpdateBy(user.getId());
                         jpaOAuth2Authorization.setCreateBy(user.getId());
+                        jpaOAuth2Authorization.setCreateName(user.getUsername());
+                        jpaOAuth2Authorization.setUpdateName(user.getUsername());
                     }
                 }
             }

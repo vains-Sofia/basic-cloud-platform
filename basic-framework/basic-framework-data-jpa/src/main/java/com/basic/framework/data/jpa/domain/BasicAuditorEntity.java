@@ -1,5 +1,6 @@
 package com.basic.framework.data.jpa.domain;
 
+import com.basic.framework.data.jpa.listener.AuditingEntityNameListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, AuditingEntityNameListener.class})
 public class BasicAuditorEntity {
 
     /**
@@ -35,6 +36,18 @@ public class BasicAuditorEntity {
     @LastModifiedBy
     @Column(name = "update_by")
     private Long updateBy;
+
+    /**
+     * 创建人名称
+     */
+    @Column(name = "create_name")
+    private String createName;
+
+    /**
+     * 修改人名称
+     */
+    @Column(name = "update_name")
+    private String updateName;
 
     /**
      * 创建时间

@@ -109,6 +109,18 @@ public class BasicApplicationResponse implements Serializable {
     private Long updateBy;
 
     /**
+     * 创建人名称
+     */
+    @Schema(title = "创建人名称")
+    private String createName;
+
+    /**
+     * 修改人名称
+     */
+    @Schema(title = "修改人名称")
+    private String updateName;
+
+    /**
      * 创建时间
      */
     @Schema(title = "创建时间")

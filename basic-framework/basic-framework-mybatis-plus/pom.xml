@@ -25,6 +25,13 @@
             <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-core</artifactId>
         </dependency>
+
+        <!-- 客户端包 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>

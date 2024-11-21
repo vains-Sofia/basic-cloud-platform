@@ -25,6 +25,8 @@ public class Jpa2ApplicationResponseConverter implements Converter<JpaOAuth2Appl
         BasicApplicationResponse application = new BasicApplicationResponse();
         application.setCreateBy(source.getCreateBy());
         application.setUpdateBy(source.getUpdateBy());
+        application.setCreateName(source.getCreateName());
+        application.setUpdateName(source.getUpdateName());
         application.setCreateTime(source.getCreateTime());
         application.setUpdateTime(source.getUpdateTime());
         application.setId(source.getId());

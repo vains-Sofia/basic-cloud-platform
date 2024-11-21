@@ -30,6 +30,18 @@ public class BasicEntity implements Serializable {
     private Long updateBy;
 
     /**
+     * 创建人名称
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private String createName;
+
+    /**
+     * 修改人名称
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private String updateName;
+
+    /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)

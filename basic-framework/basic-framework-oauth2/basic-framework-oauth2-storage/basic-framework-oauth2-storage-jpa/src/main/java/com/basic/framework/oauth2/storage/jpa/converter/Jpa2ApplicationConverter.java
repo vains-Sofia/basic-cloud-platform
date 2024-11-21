@@ -39,6 +39,8 @@ public class Jpa2ApplicationConverter implements Converter<JpaOAuth2Application,
         application.setTokenSettings(JsonUtils.toObject(source.getTokenSettings(), BasicTokenSettings.class));
         application.setCreateBy(source.getCreateBy());
         application.setUpdateBy(source.getUpdateBy());
+        application.setCreateName(source.getCreateName());
+        application.setUpdateName(source.getUpdateName());
         application.setCreateTime(source.getCreateTime());
         application.setUpdateTime(source.getUpdateTime());
         return application;
