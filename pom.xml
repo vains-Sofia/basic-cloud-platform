@@ -19,6 +19,7 @@
         <module>basic-framework</module>
         <module>basic-examples</module>
         <module>basic-services</module>
+        <module>basic-services-api</module>
     </modules>
 
     <properties>
@@ -182,6 +183,20 @@
             <dependency>
                 <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-data-jpa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- OpenFeign 封装 -->
+            <dependency>
+                <groupId>com.basic.framework</groupId>
+                <artifactId>basic-framework-openfeign</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- System模块api -->
+            <dependency>
+                <groupId>com.basic.cloud</groupId>
+                <artifactId>basic-service-system-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

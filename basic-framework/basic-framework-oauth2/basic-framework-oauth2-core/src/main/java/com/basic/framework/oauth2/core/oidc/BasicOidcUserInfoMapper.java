@@ -1,5 +1,7 @@
 package com.basic.framework.oauth2.core.oidc;
 
+import com.basic.framework.core.enums.BasicEnum;
+import com.basic.framework.core.enums.GenderEnum;
 import com.basic.framework.core.util.JsonUtils;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oidc.OidcUserInfoResult;
@@ -70,7 +72,7 @@ public class BasicOidcUserInfoMapper implements Function<OidcUserInfoAuthenticat
             oidcUserInfoResult.setNickname(idToken.getNickName());
             oidcUserInfoResult.setProfile(idToken.getProfile());
             oidcUserInfoResult.setPicture(idToken.getPicture());
-            oidcUserInfoResult.setGender(idToken.getGender());
+            oidcUserInfoResult.setGender(BasicEnum.fromValue(Integer.valueOf(idToken.getGender()), GenderEnum.class));
             oidcUserInfoResult.setBirthdate(idToken.getBirthdate());
             // 最后更新时间戳为null的情况下会有问题，添加额外处理
             if (claims.get(StandardClaimNames.UPDATED_AT) != null) {

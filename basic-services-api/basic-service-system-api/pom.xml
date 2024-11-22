@@ -5,17 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.basic.cloud</groupId>
-        <artifactId>basic-cloud-platform</artifactId>
+        <artifactId>basic-services-api</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>basic-services</artifactId>
-    <packaging>pom</packaging>
-    <description>basic-services provider api modules</description>
-    <modules>
-        <module>basic-service-authorization-server</module>
-        <module>basic-service-gateway</module>
-        <module>basic-service-system</module>
-    </modules>
+    <artifactId>basic-service-system-api</artifactId>
+    <description>basic-service provider system api modules</description>
 
 </project>

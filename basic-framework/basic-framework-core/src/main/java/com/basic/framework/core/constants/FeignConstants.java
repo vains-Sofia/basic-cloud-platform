@@ -25,6 +25,6 @@ public class FeignConstants {
     /**
      * system模块的ContextPath
      */
-    public static final String SYSTEM_CONTEXT_PATH = "${basic.cloud.api.system.path:}";
+    public static final String SYSTEM_CONTEXT_PATH = "${basic.cloud.api.system.path:/system}";
 
 }

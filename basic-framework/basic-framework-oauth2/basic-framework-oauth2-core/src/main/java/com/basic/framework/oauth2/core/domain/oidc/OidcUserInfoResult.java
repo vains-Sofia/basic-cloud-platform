@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.core.domain.oidc;
 
+import com.basic.framework.core.enums.GenderEnum;
 import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -45,9 +46,9 @@ public class OidcUserInfoResult {
     private Boolean emailVerified;
 
     /**
-     * 用户的性别。本规范定义的值为female和 male。当定义的值都不适用时，可以使用其他值。
+     * 用户的性别。来源《个人基本信息分类与代码 第1部分：人的性别代码》。
      */
-    private String gender;
+    private GenderEnum gender;
 
     /**
      * 出生日期，以 ISO 8601-1 [ISO8601‑1] YYYY-MM-DD 格式表示。

@@ -67,6 +67,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+
+        <!-- system模块api -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-service-system-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

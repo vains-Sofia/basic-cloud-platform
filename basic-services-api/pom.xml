@@ -9,13 +9,19 @@
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>basic-services</artifactId>
+    <artifactId>basic-services-api</artifactId>
     <packaging>pom</packaging>
-    <description>basic-services provider api modules</description>
+    <description>basic-services provider services api modules</description>
     <modules>
-        <module>basic-service-authorization-server</module>
-        <module>basic-service-gateway</module>
-        <module>basic-service-system</module>
+        <module>basic-service-system-api</module>
     </modules>
+
+    <dependencies>
+        <!-- OpenFeign服务内部调用 -->
+        <dependency>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-openfeign</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
