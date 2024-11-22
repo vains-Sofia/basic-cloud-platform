@@ -2,7 +2,7 @@ package com.basic.framework.oauth2.federation.converter.impl;
 
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
-import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.user.OAuth2User;

@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.federation.wechat;
 
-import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequestEntityConverter;
 import org.springframework.util.MultiValueMap;

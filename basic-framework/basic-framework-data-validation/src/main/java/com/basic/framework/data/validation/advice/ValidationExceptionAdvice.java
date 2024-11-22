@@ -67,7 +67,7 @@ public class ValidationExceptionAdvice {
                                                           ConstraintViolationException e) {
         String errors = ValidationExceptionResolver.resolveConstraintViolations(e);
 
-        log.warn("请求[{}]异常，PathVariable参数校验失败：{}", request.getRequestURI(), errors);
+        log.warn("请求[{}]异常，接口非Bean参数校验失败：{}", request.getRequestURI(), errors);
 
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }

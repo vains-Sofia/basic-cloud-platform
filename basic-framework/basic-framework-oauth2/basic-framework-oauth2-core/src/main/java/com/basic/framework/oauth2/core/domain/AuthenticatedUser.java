@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.core.domain;
 
-import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
