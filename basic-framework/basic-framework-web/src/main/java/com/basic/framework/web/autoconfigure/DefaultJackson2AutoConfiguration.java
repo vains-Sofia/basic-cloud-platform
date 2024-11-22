@@ -109,10 +109,10 @@ public class DefaultJackson2AutoConfiguration {
             builder.deserializerByType(LocalDateTime.class, localDateTimeDeserializer());
             builder.simpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
             builder.serializerByType(LocalDate.class, localDateSerializer());
-            builder.deserializerByType(LocalDateTime.class, localDateDeserializer());
+            builder.deserializerByType(LocalDate.class, localDateDeserializer());
             builder.simpleDateFormat(DEFAULT_DATE_FORMAT);
             builder.serializerByType(LocalTime.class, localTimeSerializer());
-            builder.deserializerByType(LocalDateTime.class, localTimeDeserializer());
+            builder.deserializerByType(LocalTime.class, localTimeDeserializer());
             builder.simpleDateFormat(DEFAULT_TIME_FORMAT);
         };
     }
