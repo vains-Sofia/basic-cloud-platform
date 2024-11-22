@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.core.manager;
 
-import com.basic.framework.core.constants.BasicConstants;
+import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +33,10 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
         // 内部调用忽略认证
         // 取出当前路径和ContextPath，如果有ContextPath则替换为空
         ServerHttpRequest request = context.getExchange().getRequest();
-        List<String> ignoreHeaders = request.getHeaders().get(BasicConstants.IGNORE_AUTH_HEADER_KEY);
+        List<String> ignoreHeaders = request.getHeaders().get(FeignConstants.IGNORE_AUTH_HEADER_KEY);
         if (!ObjectUtils.isEmpty(ignoreHeaders)) {
             // 如果有忽略认证请求头则忽略认证
-            if (ignoreHeaders.contains(BasicConstants.IGNORE_AUTH_HEADER_VALUE)) {
+            if (ignoreHeaders.contains(FeignConstants.IGNORE_AUTH_HEADER_VALUE)) {
                 return Mono.just(new AuthorizationDecision(Boolean.TRUE));
             }
         }

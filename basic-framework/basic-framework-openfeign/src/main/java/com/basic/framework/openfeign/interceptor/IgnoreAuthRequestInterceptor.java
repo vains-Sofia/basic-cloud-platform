@@ -1,6 +1,6 @@
 package com.basic.framework.openfeign.interceptor;
 
-import com.basic.framework.core.constants.BasicConstants;
+import com.basic.framework.core.constants.FeignConstants;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 
@@ -14,7 +14,7 @@ public class IgnoreAuthRequestInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate requestTemplate) {
         // 内部忽略鉴权请求头
-        requestTemplate.header(BasicConstants.IGNORE_AUTH_HEADER_KEY, BasicConstants.IGNORE_AUTH_HEADER_VALUE);
+        requestTemplate.header(FeignConstants.IGNORE_AUTH_HEADER_KEY, FeignConstants.IGNORE_AUTH_HEADER_VALUE);
     }
 
 }

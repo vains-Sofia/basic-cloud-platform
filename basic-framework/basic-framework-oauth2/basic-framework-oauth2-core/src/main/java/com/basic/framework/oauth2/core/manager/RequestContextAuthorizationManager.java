@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.core.manager;
 
-import com.basic.framework.core.constants.BasicConstants;
+import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +33,12 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext requestContext) {
         // 取出当前路径和ContextPath，如果有ContextPath则替换为空
         HttpServletRequest request = requestContext.getRequest();
-        Enumeration<String> ignoreHeaders = request.getHeaders(BasicConstants.IGNORE_AUTH_HEADER_KEY);
+        Enumeration<String> ignoreHeaders = request.getHeaders(FeignConstants.IGNORE_AUTH_HEADER_KEY);
         if (!ObjectUtils.isEmpty(ignoreHeaders)) {
             // 如果有忽略认证请求头则忽略认证
             while (ignoreHeaders.hasMoreElements()) {
                 String ignoreHeader = ignoreHeaders.nextElement();
-                if (Objects.equals(BasicConstants.IGNORE_AUTH_HEADER_VALUE, ignoreHeader)) {
+                if (Objects.equals(FeignConstants.IGNORE_AUTH_HEADER_VALUE, ignoreHeader)) {
                     // 忽略鉴权
                     return new AuthorizationDecision(Boolean.TRUE);
                 }
