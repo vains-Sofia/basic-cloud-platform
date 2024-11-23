@@ -144,8 +144,9 @@ public class DefaultExceptionHandlerAdvice {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Result<String> exception(Exception e) {
-        log.warn("Other exception, {}", e.getMessage());
+    public Result<String> exception(Exception e,
+                                    HttpServletRequest request) {
+        log.warn("Request [{}] error, Other exception, {}", request.getRequestURI(), e.getMessage());
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
 
