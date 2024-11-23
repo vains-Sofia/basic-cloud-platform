@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.oidc.*;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext;
+import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
 import java.util.Map;
@@ -72,7 +73,9 @@ public class BasicOidcUserInfoMapper implements Function<OidcUserInfoAuthenticat
             oidcUserInfoResult.setNickname(idToken.getNickName());
             oidcUserInfoResult.setProfile(idToken.getProfile());
             oidcUserInfoResult.setPicture(idToken.getPicture());
-            oidcUserInfoResult.setGender(BasicEnum.fromValue(Integer.valueOf(idToken.getGender()), GenderEnum.class));
+            if (!ObjectUtils.isEmpty(idToken.getGender())) {
+                oidcUserInfoResult.setGender(BasicEnum.fromValue(Integer.valueOf(idToken.getGender()), GenderEnum.class));
+            }
             oidcUserInfoResult.setBirthdate(idToken.getBirthdate());
             // 最后更新时间戳为null的情况下会有问题，添加额外处理
             if (claims.get(StandardClaimNames.UPDATED_AT) != null) {
