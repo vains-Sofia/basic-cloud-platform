@@ -129,4 +129,129 @@ CREATE TABLE `oauth2_scope`
   COLLATE = utf8mb4_bin COMMENT = 'oauth2客户端的scope'
   ROW_FORMAT = Dynamic;
 
+-- ----------------------------
+-- Table structure for sys_basic_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_basic_user`;
+CREATE TABLE `sys_basic_user`
+(
+    `id`                    bigint                                                 NOT NULL COMMENT '自增id',
+    `nickname`              varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户名、昵称',
+    `profile`               varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户个人资料页面的 URL。',
+    `picture`               varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户个人资料图片的 URL。此 URL 必须指向图像文件（例如，PNG、JPEG 或 GIF 图像文件），而不是指向包含图像的网页。',
+    `email`                 varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '用户的首选电子邮件地址。其值必须符合RFC 5322 [RFC5322] addr-spec 语法',
+    `email_verified`        tinyint(1)                                             NULL DEFAULT NULL COMMENT '邮箱是否验证过',
+    `gender`                tinyint(1)                                             NULL DEFAULT NULL COMMENT '用户性别',
+    `password`              varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '密码',
+    `birthdate`             date                                                   NULL DEFAULT NULL COMMENT '出生日期，以 ISO 8601-1 [ISO8601‑1] YYYY-MM-DD 格式表示。',
+    `phone_number`          varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '手机号',
+    `phone_number_verified` tinyint(1)                                             NULL DEFAULT NULL COMMENT '手机号是否已验证',
+    `address`               varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户的首选邮政地址',
+    `deleted`               tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否已删除',
+    `account_platform`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户来源',
+    `create_by`             bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`             bigint                                                 NULL DEFAULT NULL COMMENT '修改人',
+    `create_name`           varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name`           varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time`           datetime                                               NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`           datetime                                               NULL DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT = '基础用户信息表'
+  ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for sys_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role`;
+CREATE TABLE `sys_role`
+(
+    `id`          bigint                                                 NOT NULL COMMENT '主键id',
+    `code`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '角色代码',
+    `name`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '角色名称',
+    `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '角色描述',
+    `deleted`     tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否已删除',
+    `create_by`   bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint                                                 NULL DEFAULT NULL COMMENT '修改人',
+    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time` datetime                                               NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime                                               NULL DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT = 'RBAC角色表'
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for sys_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_permission`;
+CREATE TABLE `sys_permission`
+(
+    `id`              bigint                                                 NOT NULL COMMENT '主键id',
+    `name`            varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '权限名',
+    `permission`      varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '权限码',
+    `path`            varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '路径',
+    `request_method`  varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT 'HTTP请求方式',
+    `permission_type` tinyint                                                NOT NULL COMMENT '0:菜单,1:接口,2:其它',
+    `description`     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '描述',
+    `deleted`         tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否已删除',
+    `create_by`       bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`       bigint                                                 NULL DEFAULT NULL COMMENT '修改人',
+    `create_name`     varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name`     varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time`     datetime                                               NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`     datetime                                               NULL DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT = 'RBAC权限表'
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for sys_user_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_user_role`;
+CREATE TABLE `sys_user_role`
+(
+    `id`          bigint                                                NOT NULL AUTO_INCREMENT COMMENT '主键id',
+    `role_id`     bigint                                                NULL DEFAULT NULL COMMENT '角色ID',
+    `user_id`     bigint                                                NULL DEFAULT NULL COMMENT '用户ID',
+    `create_by`   bigint                                                NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint                                                NULL DEFAULT NULL COMMENT '修改人',
+    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time` datetime                                              NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime                                              NULL DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_bin
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for sys_role_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_permission`;
+CREATE TABLE `sys_role_permission`
+(
+    `id`            bigint                                                NOT NULL AUTO_INCREMENT COMMENT '角色菜单关联表ID',
+    `role_id`       bigint                                                NOT NULL COMMENT '角色ID',
+    `permission_id` bigint                                                NOT NULL COMMENT '权限菜单ID',
+    `create_by`     bigint                                                NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`     bigint                                                NULL DEFAULT NULL COMMENT '修改人',
+    `create_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time`   datetime                                              NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`   datetime                                              NULL DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_bin
+  ROW_FORMAT = Dynamic;
+
 SET FOREIGN_KEY_CHECKS = 1;

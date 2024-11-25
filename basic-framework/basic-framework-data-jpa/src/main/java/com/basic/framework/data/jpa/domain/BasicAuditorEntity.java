@@ -41,13 +41,13 @@ public class BasicAuditorEntity implements Serializable {
     /**
      * 创建人名称
      */
-    @Column(name = "create_name")
+    @Column(name = "create_name", length = 50)
     private String createName;
 
     /**
      * 修改人名称
      */
-    @Column(name = "update_name")
+    @Column(name = "update_name", length = 50)
     private String updateName;
 
     /**
