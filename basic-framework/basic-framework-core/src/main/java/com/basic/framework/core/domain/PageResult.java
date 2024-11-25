@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(title = "分页请求出参")
 @EqualsAndHashCode(callSuper = true)
-public class PageResult<T> extends Pageable {
+public class PageResult<T> extends BasicPageable {
 
     @Schema(title = "总条数")
     private Long total;

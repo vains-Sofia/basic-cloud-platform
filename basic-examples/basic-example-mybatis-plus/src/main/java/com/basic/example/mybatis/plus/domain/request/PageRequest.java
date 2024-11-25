@@ -1,6 +1,6 @@
 package com.basic.example.mybatis.plus.domain.request;
 
-import com.basic.framework.core.domain.Pageable;
+import com.basic.framework.core.domain.BasicPageable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PageRequest extends Pageable {
+public class PageRequest extends BasicPageable {
 
     @Schema(description = "用户id")
     private Long id;

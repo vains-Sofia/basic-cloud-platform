@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @Schema(title = "分页请求入参")
-public abstract class Pageable implements Serializable {
+public abstract class BasicPageable implements Serializable {
 
     /**
      * 当前页码

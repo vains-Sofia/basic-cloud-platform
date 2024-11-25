@@ -1,20 +1,18 @@
 package com.basic.framework.core.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 适用于Spring Data的分页入参bean
  *
  * @author vains
  */
+@Data
 @Schema(title = "分页请求入参")
-public abstract class DataPageable extends Pageable {
-
-    @Override
-    public Long getCurrent() {
-        // Spring data中分页默认是从0开始，与前端分页从1开始的习惯不符，适配一下
-        return super.getCurrent() - 1;
-    }
+@EqualsAndHashCode(callSuper = true)
+public abstract class DataPageable extends BasicPageable {
 
     /**
      * 获取当前页码(适配 Spring Data)
@@ -22,7 +20,7 @@ public abstract class DataPageable extends Pageable {
      * @return 当前页码
      */
     public int current() {
-        return this.getCurrent().intValue();
+        return this.getCurrent().intValue() - 1;
     }
 
     /**

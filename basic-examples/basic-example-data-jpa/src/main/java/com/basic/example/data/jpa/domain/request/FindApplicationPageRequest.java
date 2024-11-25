@@ -1,6 +1,6 @@
 package com.basic.example.data.jpa.domain.request;
 
-import com.basic.framework.core.domain.Pageable;
+import com.basic.framework.core.domain.BasicPageable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FindApplicationPageRequest extends Pageable {
+public class FindApplicationPageRequest extends BasicPageable {
 
     @Schema(title = "客户端id", description = "客户端id")
     private String clientId;

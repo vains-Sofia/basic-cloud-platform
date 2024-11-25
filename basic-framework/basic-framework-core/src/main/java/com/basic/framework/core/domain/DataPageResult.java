@@ -27,7 +27,7 @@ public class DataPageResult<T> extends PageResult<T> {
      * @return 公共分页响应bean
      */
     public static <T> DataPageResult<T> of(int current, int size, Long total, List<T> records) {
-            return new DataPageResult<>(current, size, total, records);
+        return new DataPageResult<>(current, size, total, records);
     }
 
 }
