@@ -3,7 +3,9 @@ package com.basic.cloud.system.service.impl;
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
+import com.basic.cloud.system.api.domain.security.PermissionAuthority;
 import com.basic.cloud.system.domain.SysBasicUser;
+import com.basic.cloud.system.domain.SysRole;
 import com.basic.cloud.system.repository.SysBasicUserRepository;
 import com.basic.cloud.system.service.SysBasicUserService;
 import com.basic.framework.core.domain.DataPageResult;
@@ -20,6 +22,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 基础用户信息Service实现
@@ -40,6 +44,24 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         return basicUserOptional.map(u -> {
             BasicUserResponse basicUserResponse = new BasicUserResponse();
             BeanUtils.copyProperties(u, basicUserResponse);
+            List<SysRole> roles = u.getRoles();
+            if (!ObjectUtils.isEmpty(roles)) {
+                // 提取用户权限
+                Set<PermissionAuthority> authorities = roles.stream()
+                        .filter(role -> !ObjectUtils.isEmpty(role.getPermissions()))
+                        .flatMap(role -> role
+                                .getPermissions()
+                                .stream()
+                                .map(e -> {
+                                    PermissionAuthority authority = new PermissionAuthority();
+                                    authority.setPath(e.getPath());
+                                    authority.setPermission(e.getPermission());
+                                    authority.setRequestMethod(e.getRequestMethod());
+                                    return authority;
+                                })
+                        ).collect(Collectors.toSet());
+                basicUserResponse.setAuthorities(authorities);
+            }
             return basicUserResponse;
         }).orElse(null);
     }

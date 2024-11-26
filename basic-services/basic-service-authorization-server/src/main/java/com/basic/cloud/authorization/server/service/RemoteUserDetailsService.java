@@ -1,5 +1,6 @@
 package com.basic.cloud.authorization.server.service;
 
+import com.basic.cloud.authorization.server.domain.security.PermissionGrantedAuthority;
 import com.basic.cloud.system.api.SysBasicUserClient;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.framework.core.constants.HttpCodeConstants;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,9 +56,15 @@ public class RemoteUserDetailsService implements UserDetailsService {
         authenticatedUser.setName(userResponse.getNickname());
         if (!ObjectUtils.isEmpty(userResponse.getAuthorities())) {
             // 权限信息特殊处理
-            Set<SimpleGrantedAuthority> authorities = userResponse.getAuthorities()
+            Set<PermissionGrantedAuthority> authorities = userResponse.getAuthorities()
                     .stream()
-                    .map(SimpleGrantedAuthority::new)
+                    .map(e -> {
+                        PermissionGrantedAuthority authority = new PermissionGrantedAuthority();
+                        authority.setPath(e.getPath());
+                        authority.setAuthority(e.getPermission());
+                        authority.setRequestMethod(e.getRequestMethod());
+                        return authority;
+                    })
                     .collect(Collectors.toSet());
             authenticatedUser.setAuthorities(authorities);
         }

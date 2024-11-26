@@ -10,8 +10,6 @@ import com.basic.framework.core.domain.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
-
 /**
  * 基础用户信息接口
  *
@@ -26,9 +24,6 @@ public class SysBasicUserController implements SysBasicUserClient {
     @Override
     public Result<BasicUserResponse> getByEmail(String email) {
         BasicUserResponse basicUser = basicUserService.getBasicUserByEmail(email);
-        if (basicUser != null) {
-            basicUser.setAuthorities(Set.of("USER"));
-        }
         return Result.success(basicUser);
     }
 

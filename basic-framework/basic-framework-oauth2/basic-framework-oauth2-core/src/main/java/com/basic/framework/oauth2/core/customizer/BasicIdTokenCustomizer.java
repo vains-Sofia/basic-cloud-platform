@@ -1,6 +1,8 @@
 package com.basic.framework.oauth2.core.customizer;
 
+import com.basic.framework.core.constants.DateFormatConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.oauth2.BasicAuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.DefaultAddressStandardClaim;
@@ -8,6 +10,8 @@ import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.util.ObjectUtils;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +25,8 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAU
  * @author vains
  */
 public interface BasicIdTokenCustomizer {
+
+    DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DateFormatConstants.DEFAULT_DATE_FORMAT);
 
     Set<String> ID_TOKEN_CLAIMS = Set.of(
             IdTokenClaimNames.ISS,
@@ -67,6 +73,25 @@ public interface BasicIdTokenCustomizer {
                     claims.put(StandardClaimNames.PHONE_NUMBER_VERIFIED, Boolean.TRUE);
                 }
             }
+            if (user instanceof BasicAuthenticatedUser basicAuthenticatedUser) {
+                claims.put(StandardClaimNames.NICKNAME, basicAuthenticatedUser.getNickname());
+                claims.put(StandardClaimNames.PROFILE, basicAuthenticatedUser.getProfile());
+                claims.put(StandardClaimNames.PICTURE, basicAuthenticatedUser.getPicture());
+                claims.put(StandardClaimNames.EMAIL, basicAuthenticatedUser.getEmail());
+                claims.put(StandardClaimNames.EMAIL_VERIFIED, basicAuthenticatedUser.getEmailVerified());
+                if (basicAuthenticatedUser.getGender() != null) {
+                    claims.put(StandardClaimNames.GENDER, basicAuthenticatedUser.getGender().getValue());
+                }
+                claims.put(StandardClaimNames.BIRTHDATE, FORMATTER.format(basicAuthenticatedUser.getBirthdate()));
+                claims.put(StandardClaimNames.PHONE_NUMBER, basicAuthenticatedUser.getPhoneNumber());
+                claims.put(StandardClaimNames.PHONE_NUMBER_VERIFIED, basicAuthenticatedUser.getPhoneNumberVerified());
+                DefaultAddressStandardClaim.Builder addressBuilder = new DefaultAddressStandardClaim.Builder();
+                addressBuilder.formatted(basicAuthenticatedUser.getAddress());
+                claims.put(StandardClaimNames.ADDRESS, addressBuilder.build());
+                // 获取修改时间戳
+                claims.put(StandardClaimNames.UPDATED_AT, basicAuthenticatedUser.getUpdateTime().atZone(ZoneId.systemDefault()).toEpochSecond());
+            }
+
         }
         // TODO 本地用户信息设置进id token中
 

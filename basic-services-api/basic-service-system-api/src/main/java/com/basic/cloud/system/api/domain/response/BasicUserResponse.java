@@ -1,5 +1,6 @@
 package com.basic.cloud.system.api.domain.response;
 
+import com.basic.cloud.system.api.domain.security.PermissionAuthority;
 import com.basic.framework.core.enums.GenderEnum;
 import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -61,7 +62,7 @@ public class BasicUserResponse implements Serializable {
     private OAuth2AccountPlatformEnum accountPlatform;
 
     @Schema(title = "用户拥有的权限信息")
-    private Set<String> authorities;
+    private Set<PermissionAuthority> authorities;
 
     @Schema(title = "创建人名称")
     private String createName;
