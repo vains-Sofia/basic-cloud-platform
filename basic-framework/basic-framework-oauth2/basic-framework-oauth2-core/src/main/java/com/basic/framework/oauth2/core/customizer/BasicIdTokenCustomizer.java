@@ -93,7 +93,6 @@ public interface BasicIdTokenCustomizer {
             }
 
         }
-        // TODO 本地用户信息设置进id token中
 
         return new HashMap<>(claims);
     }
