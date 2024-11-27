@@ -1,10 +1,16 @@
 package com.basic.framework.oauth2.core.manager;
 
 import com.basic.framework.core.constants.FeignConstants;
+import com.basic.framework.core.domain.PermissionModel;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.domain.security.PermissionGrantedAuthority;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
+import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -14,11 +20,12 @@ import org.springframework.util.ObjectUtils;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * 针对请求的自定义认证、鉴权处理(webflux)
- *  TODO 待完善鉴权
  *
  * @author vains
  */
@@ -27,6 +34,10 @@ import java.util.Set;
 public class ReactiveContextAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     private final ResourceServerProperties resourceServer;
+
+    private final RedisOperator<Map<String, List<PermissionModel>>> redisOperator;
+
+    private final AuthenticationTrustResolver authTrustResolver = new AuthenticationTrustResolverImpl();
 
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext context) {
@@ -41,13 +52,6 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
             }
         }
 
-        // 配置文件忽略认证
-        Set<String> ignoreUriPaths = resourceServer.getIgnoreUriPaths();
-        if (ObjectUtils.isEmpty(ignoreUriPaths)) {
-            // 默认检查是否认证过
-            return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
-        }
-
         // 取出当前路径和ContextPath，如果有ContextPath则替换为空
         String path = request.getURI().getPath();
         String contextPath = request.getPath().contextPath().value();
@@ -60,15 +64,55 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
             requestPath = path;
         }
 
-        // 比较是否需要忽略鉴权
-        boolean needIgnore = ignoreUriPaths.contains(requestPath);
-        if (needIgnore) {
-            log.debug("Ignoring authentication request URI: {}", requestPath);
-            // 忽略鉴权
-            return Mono.just(new AuthorizationDecision(Boolean.TRUE));
+        // 配置文件忽略认证
+        Set<String> ignoreUriPaths = resourceServer.getIgnoreUriPaths();
+        if (!ObjectUtils.isEmpty(ignoreUriPaths)) {
+            // 比较是否需要忽略鉴权
+            boolean needIgnore = ignoreUriPaths.contains(requestPath);
+            if (needIgnore) {
+                log.debug("Ignoring authentication request URI: {}", requestPath);
+                // 忽略鉴权
+                return Mono.just(new AuthorizationDecision(Boolean.TRUE));
+            }
         }
 
-        // 默认检查是否认证过
-        return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
+        // 获取缓存中管理的权限信息，判断当前路径是否需要鉴权
+        Map<String, List<PermissionModel>> permissionsMap = redisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
+        if (ObjectUtils.isEmpty(permissionsMap)) {
+            // 默认检查是否认证过
+            return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
+        }
+        // 获取当前路径对应的权限信息(可能路径相同但请求方式不同)
+        List<PermissionModel> models = permissionsMap.get(requestPath);
+        if (ObjectUtils.isEmpty(models)) {
+            // 当前请求没有被管理，只做认证
+            return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
+        }
+
+        // 判断是有符合当前路径的权限，如果有说明需要鉴权，否则不用
+        boolean pathNeedAuthorization = models.stream().anyMatch(e -> request.getMethod().name().equalsIgnoreCase(e.getRequestMethod()));
+        if (!pathNeedAuthorization) {
+            // 当前请求不需要鉴权，只做认证
+            return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
+        }
+
+        // 检查是否认证过(不为空、认证状态为true、不是匿名用户)
+        return authentication.filter(authTrustResolver::isAuthenticated)
+                .map(Authentication::getAuthorities)
+                .filter(PermissionGrantedAuthority.class::isInstance)
+                .cast(PermissionGrantedAuthority.class)
+                // 筛选出需要鉴权的
+                .filter(PermissionGrantedAuthority::getNeedAuthentication)
+                // 根据当前请求的请求方式和请求路径过滤
+                .filter(grantedAuthority ->
+                        Objects.equals(requestPath, grantedAuthority.getPath())
+                                && request.getMethod().name().equalsIgnoreCase(grantedAuthority.getRequestMethod()))
+                .map(grantedAuthority -> {
+                    // 过滤后有匹配请求方式和请求路径的权限时放行
+                    log.debug("WebFlux请求[{}]鉴权通过.", requestPath);
+                    return new AuthorizationDecision(Boolean.TRUE);
+                })
+                // 鉴权失败
+                .defaultIfEmpty(new AuthorizationDecision(Boolean.FALSE));
     }
 }

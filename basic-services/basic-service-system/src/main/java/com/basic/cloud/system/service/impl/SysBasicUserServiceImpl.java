@@ -57,6 +57,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
                                     authority.setPath(e.getPath());
                                     authority.setPermission(e.getPermission());
                                     authority.setRequestMethod(e.getRequestMethod());
+                                    authority.setNeedAuthentication(e.getNeedAuthentication());
                                     return authority;
                                 })
                         ).collect(Collectors.toSet());

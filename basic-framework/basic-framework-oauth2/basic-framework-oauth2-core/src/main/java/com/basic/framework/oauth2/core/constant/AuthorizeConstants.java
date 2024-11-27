@@ -25,6 +25,11 @@ public class AuthorizeConstants {
     public static final String USERINFO_PREFIX = "jti:userinfo:";
 
     /**
+     * 所有权限缓存信息
+     */
+    public static final String ALL_PERMISSIONS = "permission:need_authorization:all";
+
+    /**
      * 存储位置在yml中的key
      */
     public static final String CORE_SERVICE_STORAGE = "basic.cloud.oauth2.server.core-service-storage";

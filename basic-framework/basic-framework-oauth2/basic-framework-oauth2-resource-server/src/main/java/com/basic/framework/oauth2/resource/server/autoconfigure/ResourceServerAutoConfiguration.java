@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.resource.server.autoconfigure;
 
+import com.basic.framework.core.domain.PermissionModel;
 import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.manager.ReactiveContextAuthorizationManager;
@@ -21,6 +22,9 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.jackson2.CoreJackson2Module;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 资源服务自动配置类
  *
@@ -38,14 +42,18 @@ public class ResourceServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RequestContextAuthorizationManager requestContextAuthorizationManager() {
-        return new RequestContextAuthorizationManager(resourceServerProperties);
+    public RequestContextAuthorizationManager requestContextAuthorizationManager(
+            RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator
+    ) {
+        return new RequestContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public ReactiveContextAuthorizationManager reactiveContextAuthorizationManager() {
-        return new ReactiveContextAuthorizationManager(resourceServerProperties);
+    public ReactiveContextAuthorizationManager reactiveContextAuthorizationManager(
+            RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator
+    ) {
+        return new ReactiveContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
 
     @Bean

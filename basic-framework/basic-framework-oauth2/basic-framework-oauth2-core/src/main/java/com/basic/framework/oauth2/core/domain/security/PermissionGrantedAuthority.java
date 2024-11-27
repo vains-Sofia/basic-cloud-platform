@@ -1,4 +1,4 @@
-package com.basic.cloud.authorization.server.domain.security;
+package com.basic.framework.oauth2.core.domain.security;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -24,5 +24,8 @@ public class PermissionGrantedAuthority implements GrantedAuthority {
 
     @Schema(title = "请求方式")
     private String requestMethod;
+
+    @Schema(title = "是否需要鉴权")
+    private Boolean needAuthentication;
 
 }

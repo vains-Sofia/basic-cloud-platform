@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.autoconfigure;
 
+import com.basic.framework.core.domain.PermissionModel;
 import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.authorization.server.captcha.CaptchaService;
 import com.basic.framework.oauth2.authorization.server.captcha.impl.RedisCaptchaService;
@@ -66,6 +67,7 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -89,6 +91,8 @@ public class AuthorizationServerAutoConfiguration {
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final ResourceServerProperties resourceServerProperties;
+
+    private final RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator;
 
     /**
      * 将AuthenticationManager注入ioc中，其它需要使用地方可以直接从ioc中获取
@@ -369,13 +373,13 @@ public class AuthorizationServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public RequestContextAuthorizationManager requestContextAuthorizationManager() {
-        return new RequestContextAuthorizationManager(resourceServerProperties);
+        return new RequestContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public ReactiveContextAuthorizationManager reactiveContextAuthorizationManager() {
-        return new ReactiveContextAuthorizationManager(resourceServerProperties);
+        return new ReactiveContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
 
 }

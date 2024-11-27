@@ -82,6 +82,13 @@ public class SysPermission extends BasicAuditorEntity {
     private String description;
 
     /**
+     * 是否需要鉴权
+     */
+    @Comment(value = "是否需要鉴权")
+    @Column(name = "need_authentication")
+    private Boolean needAuthentication;
+
+    /**
      * 是否已删除
      */
     @Column(name = "deleted")

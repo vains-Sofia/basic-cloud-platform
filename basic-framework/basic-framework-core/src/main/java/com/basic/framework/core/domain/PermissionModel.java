@@ -1,21 +1,17 @@
-package com.basic.cloud.system.api.domain.security;
+package com.basic.framework.core.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 /**
- * HTTP请求权限控制
+ * 权限类
  *
  * @author vains
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class PermissionAuthority implements Serializable {
+public class PermissionModel implements Serializable {
 
     /**
      * 路径
