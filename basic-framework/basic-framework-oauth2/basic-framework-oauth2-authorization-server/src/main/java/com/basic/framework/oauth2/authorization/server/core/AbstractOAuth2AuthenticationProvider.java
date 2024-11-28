@@ -184,7 +184,7 @@ public abstract class AbstractOAuth2AuthenticationProvider implements Authentica
      */
     protected Set<String> getAuthorizedScopes(RegisteredClient registeredClient, Set<String> requestedScopes) {
         // Default to configured scopes
-        Set<String> authorizedScopes = registeredClient.getScopes();
+        Set<String> authorizedScopes;
         if (!ObjectUtils.isEmpty(requestedScopes)) {
             Set<String> unauthorizedScopes = requestedScopes.stream()
                     .filter(requestedScope -> !registeredClient.getScopes().contains(requestedScope))
@@ -222,6 +222,10 @@ public abstract class AbstractOAuth2AuthenticationProvider implements Authentica
             // 包装异常为OAuth2AuthenticationException，使OAuth2TokenEndpointFilter的异常处理可以正确捕获异常信息
             log.debug("Authentication failed", e);
             throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST, e.getMessage(), ERROR_URI), e);
+        } catch (Exception e) {
+            // 包装异常为OAuth2AuthenticationException，使OAuth2TokenEndpointFilter的异常处理可以正确捕获异常信息
+            log.debug("Authentication failed", e);
+            throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR, e.getMessage(), ERROR_URI), e);
         }
     }
 
