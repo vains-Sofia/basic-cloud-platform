@@ -8,7 +8,10 @@ import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.redis.support.RedisOperator;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -16,24 +19,28 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 初始化权限信息
- * TODO 待修改
- * system模块启动时初始化所有权限信息至redis，
- * 资源模块在请求时从redis获取所有权限判断当前请求是否需要鉴权，
- * 只针对在system模块中管理并且需要鉴权的请求
+ * bean注入配置
  *
  * @author vains
  */
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
-public class InitPermissionConfiguration {
+public class BeanConfiguration {
 
     private final SysPermissionRepository permissionRepository;
 
     private final RedisOperator<Map<String, List<PermissionModel>>> redisOperator;
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
     /**
      * 缓存所有权限信息
+     * system模块启动时初始化所有权限信息至redis，
+     * 资源模块在请求时从redis获取所有权限判断当前请求是否需要鉴权，
+     * 只针对在system模块中管理并且需要鉴权的请求
      */
     @PostConstruct
     public void cacheAllPermissions() {

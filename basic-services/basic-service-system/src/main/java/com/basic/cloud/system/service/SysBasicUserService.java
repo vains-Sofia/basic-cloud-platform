@@ -1,6 +1,7 @@
 package com.basic.cloud.system.service;
 
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
+import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.framework.core.domain.PageResult;
@@ -35,4 +36,19 @@ public interface SysBasicUserService {
      * @return 返回用户详情
      */
     BasicUserResponse getById(Long id);
+
+    /**
+     * 用户注册
+     *
+     * @param request 用户注册入参
+     */
+    void userRegister(UserRegisterRequest request);
+
+    /**
+     * 根据邮箱获取验证码
+     *
+     * @param email 邮箱
+     * @return 错误信息(如果有)
+     */
+    String getRegisterEmailCode(String email);
 }

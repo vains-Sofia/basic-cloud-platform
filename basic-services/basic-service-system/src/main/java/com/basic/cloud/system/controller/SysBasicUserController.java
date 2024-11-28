@@ -2,12 +2,15 @@ package com.basic.cloud.system.controller;
 
 import com.basic.cloud.system.api.SysBasicUserClient;
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
+import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.cloud.system.service.SysBasicUserService;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -37,6 +40,18 @@ public class SysBasicUserController implements SysBasicUserClient {
     public Result<BasicUserResponse> userDetails(Long id) {
         BasicUserResponse basicUser = basicUserService.getById(id);
         return Result.success(basicUser);
+    }
+
+    @Override
+    public Result<String> getRegisterEmailCode(String email) {
+        String errorMessage = basicUserService.getRegisterEmailCode(email);
+        return ObjectUtils.isEmpty(errorMessage) ? Result.success() : Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), errorMessage);
+    }
+
+    @Override
+    public Result<String> userRegister(UserRegisterRequest request) {
+        basicUserService.userRegister(request);
+        return Result.success();
     }
 
 }
