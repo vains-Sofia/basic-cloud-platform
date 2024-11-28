@@ -197,6 +197,8 @@ public abstract class AbstractOAuth2AuthenticationProvider implements Authentica
             }
 
             authorizedScopes = new LinkedHashSet<>(requestedScopes);
+        } else {
+            authorizedScopes = new LinkedHashSet<>();
         }
 
         if (log.isTraceEnabled()) {
