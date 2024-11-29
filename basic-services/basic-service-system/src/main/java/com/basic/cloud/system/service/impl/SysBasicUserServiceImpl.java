@@ -15,10 +15,13 @@ import com.basic.framework.core.constants.HttpCodeConstants;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
+import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.core.util.RandomUtils;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
+import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -130,12 +135,40 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
 
     @Override
     public void userRegister(UserRegisterRequest request) {
-        // TODO待完善
+        // 获取缓存的验证码
+        String emailCaptcha = redisOperator.get(EMAIL_CAPTCHA_KEY.concat(request.getEmail()));
+        if (ObjectUtils.isEmpty(emailCaptcha)) {
+            throw new CloudServiceException("验证码已过期，请重新获取。");
+        }
+        // 验证邮件验证码
+        if (!emailCaptcha.equalsIgnoreCase(request.getEmailCaptcha())) {
+            throw new CloudServiceException("验证码错误。");
+        }
+        // 检查邮箱是否已被绑定
+        SpecificationBuilder<SysBasicUser> builder = new SpecificationBuilder<>();
+        builder.eq(SysBasicUser::getEmail, request.getEmail());
+        boolean exists = basicUserRepository.exists(builder);
+        if (exists) {
+            throw new CloudServiceException("邮箱已被注册。");
+        }
+        // 组装用户信息
         SysBasicUser sysBasicUser = new SysBasicUser();
         sysBasicUser.setId(sequence.nextId());
         sysBasicUser.setNickname(request.getNickname());
         sysBasicUser.setEmail(request.getEmail());
-//        sysBasicUser.setPassword(request.getPassword());
+        sysBasicUser.setEmailVerified(Boolean.TRUE);
+        sysBasicUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        sysBasicUser.setDeleted(Boolean.FALSE);
+        sysBasicUser.setAccountPlatform(OAuth2AccountPlatformEnum.SYSTEM);
+
+        // 构建默认认证用户为当前注册用户
+        DefaultAuthenticatedUser authenticatedUser = new DefaultAuthenticatedUser(
+                sysBasicUser.getNickname(), sysBasicUser.getAccountPlatform(), null);
+        authenticatedUser.setId(sysBasicUser.getId());
+        // 填充SecurityContextHolder，让审计信息自动填充可以获取到需要的数据
+        UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
+                .authenticated(authenticatedUser, sysBasicUser.getPassword(), null);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         basicUserRepository.save(sysBasicUser);
     }
 
@@ -160,7 +193,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
 
         // 缓存验证码至redis，5分钟
         redisOperator.set(EMAIL_CAPTCHA_KEY.concat(email), captcha, (5 * 60));
-        log.warn("[{}]获取验证码成功，验证码：{}.", email, captcha);
+        log.debug("[{}]获取验证码成功，验证码：{}.", email, captcha);
         return null;
     }
 

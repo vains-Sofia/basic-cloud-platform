@@ -82,12 +82,16 @@ public interface BasicIdTokenCustomizer {
                 if (basicAuthenticatedUser.getGender() != null) {
                     claims.put(StandardClaimNames.GENDER, basicAuthenticatedUser.getGender().getValue());
                 }
-                claims.put(StandardClaimNames.BIRTHDATE, FORMATTER.format(basicAuthenticatedUser.getBirthdate()));
+                if (basicAuthenticatedUser.getBirthdate() != null) {
+                    claims.put(StandardClaimNames.BIRTHDATE, FORMATTER.format(basicAuthenticatedUser.getBirthdate()));
+                }
                 claims.put(StandardClaimNames.PHONE_NUMBER, basicAuthenticatedUser.getPhoneNumber());
                 claims.put(StandardClaimNames.PHONE_NUMBER_VERIFIED, basicAuthenticatedUser.getPhoneNumberVerified());
-                DefaultAddressStandardClaim.Builder addressBuilder = new DefaultAddressStandardClaim.Builder();
-                addressBuilder.formatted(basicAuthenticatedUser.getAddress());
-                claims.put(StandardClaimNames.ADDRESS, addressBuilder.build());
+                if (!ObjectUtils.isEmpty(basicAuthenticatedUser.getAddress())) {
+                    DefaultAddressStandardClaim.Builder addressBuilder = new DefaultAddressStandardClaim.Builder();
+                    addressBuilder.formatted(basicAuthenticatedUser.getAddress());
+                    claims.put(StandardClaimNames.ADDRESS, addressBuilder.build());
+                }
                 // 获取修改时间戳
                 claims.put(StandardClaimNames.UPDATED_AT, basicAuthenticatedUser.getUpdateTime().atZone(ZoneId.systemDefault()).toEpochSecond());
             }

@@ -130,7 +130,6 @@ public class SysBasicUser extends BasicAuditorEntity {
     /**
      * 用户来源
      */
-    @Size(max = 255)
     @Comment(value = "用户来源")
     @Column(name = "account_platform")
     private OAuth2AccountPlatformEnum accountPlatform;

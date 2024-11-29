@@ -16,6 +16,7 @@ import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ObjectUtils;
 import reactor.core.publisher.Mono;
 
@@ -34,6 +35,8 @@ import java.util.Set;
 public class ReactiveContextAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     private final ResourceServerProperties resourceServer;
+
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private final RedisOperator<Map<String, List<PermissionModel>>> redisOperator;
 
@@ -67,12 +70,13 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
         // 配置文件忽略认证
         Set<String> ignoreUriPaths = resourceServer.getIgnoreUriPaths();
         if (!ObjectUtils.isEmpty(ignoreUriPaths)) {
-            // 比较是否需要忽略鉴权
-            boolean needIgnore = ignoreUriPaths.contains(requestPath);
-            if (needIgnore) {
-                log.debug("Ignoring authentication request URI: {}", requestPath);
-                // 忽略鉴权
-                return Mono.just(new AuthorizationDecision(Boolean.TRUE));
+            for (String ignoreUriPath : ignoreUriPaths) {
+                // 比较是否需要忽略鉴权
+                if (pathMatcher.match(ignoreUriPath, requestPath)) {
+                    log.debug("Ignoring authentication request URI: {}", requestPath);
+                    // 忽略鉴权
+                    return Mono.just(new AuthorizationDecision(Boolean.TRUE));
+                }
             }
         }
 

@@ -19,6 +19,7 @@ public class UserRegisterRequest implements Serializable {
     @Schema(title = "昵称")
     private String nickname;
 
+    @NotBlank
     @Schema(title = "密码")
     private String password;
 

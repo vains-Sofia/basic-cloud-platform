@@ -5,9 +5,9 @@ import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.core.domain.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  * @author vains
  */
-@Validated
 @RequestMapping("/common")
 @Tag(name = "公共通用接口", description = "公共通用接口")
 @FeignClient(name = FeignConstants.SYSTEM_APPLICATION, path = FeignConstants.SYSTEM_CONTEXT_PATH, contextId = "CommonClient")
@@ -30,6 +29,6 @@ public interface CommonClient {
      */
     @PostMapping("/email/sender")
     @Operation(summary = "邮件发送", description = "邮件发送")
-    Result<String> mailSender(@SpringQueryMap MailSenderRequest request);
+    Result<String> mailSender(@Valid @SpringQueryMap MailSenderRequest request);
 
 }
