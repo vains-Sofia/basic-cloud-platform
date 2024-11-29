@@ -190,25 +190,25 @@ CREATE TABLE `sys_role`
 DROP TABLE IF EXISTS `sys_permission`;
 CREATE TABLE `sys_permission`
 (
-    `id`              bigint                                                 NOT NULL COMMENT '主键id',
-    `name`            varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '权限名',
-    `permission`      varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '权限码',
-    `path`            varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '路径',
-    `request_method`  varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT 'HTTP请求方式',
-    `permission_type` tinyint                                                NOT NULL COMMENT '0:菜单,1:接口,2:其它',
-    `description`     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '描述',
-    `deleted`         tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否已删除',
-    `create_by`       bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`       bigint                                                 NULL DEFAULT NULL COMMENT '修改人',
-    `create_name`     varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name`     varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '修改人名称',
-    `create_time`     datetime                                               NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`     datetime                                               NULL DEFAULT NULL COMMENT '修改时间',
-    PRIMARY KEY (`id`) USING BTREE
+    `id`                  bigint                          NOT NULL COMMENT '主键id',
+    `name`                varchar(50) COLLATE utf8mb4_bin NOT NULL COMMENT '权限名',
+    `permission`          varchar(50) COLLATE utf8mb4_bin NOT NULL COMMENT '权限码',
+    `path`                varchar(100) COLLATE utf8mb4_bin                       DEFAULT NULL COMMENT '路径',
+    `request_method`      varchar(10) COLLATE utf8mb4_bin                        DEFAULT NULL COMMENT 'HTTP请求方式',
+    `permission_type`     tinyint                         NOT NULL COMMENT '0:菜单,1:接口,2:其它',
+    `description`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '描述',
+    `need_authentication` tinyint(1)                                             DEFAULT '0' COMMENT '是否需要鉴权',
+    `deleted`             tinyint(1)                                             DEFAULT NULL COMMENT '是否已删除',
+    `create_by`           bigint                                                 DEFAULT NULL COMMENT '创建人',
+    `update_by`           bigint                                                 DEFAULT NULL COMMENT '修改人',
+    `create_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  DEFAULT NULL COMMENT '创建人名称',
+    `update_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  DEFAULT NULL COMMENT '修改人名称',
+    `create_time`         datetime                                               DEFAULT NULL COMMENT '创建时间',
+    `update_time`         datetime                                               DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_bin COMMENT = 'RBAC权限表'
-  ROW_FORMAT = Dynamic;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT ='RBAC权限表';
 
 -- ----------------------------
 -- Table structure for sys_user_role
