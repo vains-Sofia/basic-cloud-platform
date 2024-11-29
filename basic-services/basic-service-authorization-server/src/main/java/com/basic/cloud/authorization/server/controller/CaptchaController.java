@@ -66,8 +66,8 @@ public class CaptchaController {
     @Operation(summary = "获取邮件验证码", description = "获取邮件验证码")
     public Result<String> getEmailCaptcha(@Email String email) {
         // 随机字符串长度
-        int randomLength = 6;
-        String captcha = RandomUtils.randomString(randomLength);
+        int randomLength = 4;
+        String captcha = RandomUtils.randomNumber(randomLength);
 
         // 发送邮件
         SimpleMailMessage message = new SimpleMailMessage();

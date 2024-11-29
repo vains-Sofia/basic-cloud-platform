@@ -34,7 +34,7 @@ public class RandomUtils {
     }
 
     /**
-     * 根据给定长度生成一个随机字符串
+     * 根据给定长度生成一个随机字符串(纯数字)
      *
      * @param randomLength 字符串长度
      * @return 随机字符串
