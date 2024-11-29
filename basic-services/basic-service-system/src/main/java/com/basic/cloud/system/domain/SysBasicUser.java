@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,7 +25,9 @@ import java.util.List;
 @Entity
 @Table(name = "sys_basic_user")
 @Comment(value = "基础用户信息表")
+@SQLRestriction("deleted = false")
 @EqualsAndHashCode(callSuper = true)
+@SQLDelete(sql = "UPDATE sys_basic_user u SET u.deleted = true WHERE id = ?")
 public class SysBasicUser extends BasicAuditorEntity {
 
     /**

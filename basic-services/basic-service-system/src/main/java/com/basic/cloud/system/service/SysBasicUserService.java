@@ -1,6 +1,7 @@
 package com.basic.cloud.system.service;
 
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
+import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
 import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
@@ -51,4 +52,18 @@ public interface SysBasicUserService {
      * @return 错误信息(如果有)
      */
     String getRegisterEmailCode(String email);
+
+    /**
+     * 添加/修改用户信息(如果id不为空则是修改，否则是添加)
+     *
+     * @param request 用户信息
+     */
+    void saveBasicUser(SaveBasicUserRequest request);
+
+    /**
+     * 删除用户信息
+     *
+     * @param id 用户id
+     */
+    void removeById(Long id);
 }

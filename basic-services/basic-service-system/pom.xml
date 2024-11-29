@@ -26,12 +26,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- 数据验证Spring Data Validation -->
-        <dependency>
-            <groupId>com.basic.framework</groupId>
-            <artifactId>basic-framework-data-validation</artifactId>
-        </dependency>
-
         <!-- 资源服务 -->
         <dependency>
             <groupId>com.basic.framework</groupId>

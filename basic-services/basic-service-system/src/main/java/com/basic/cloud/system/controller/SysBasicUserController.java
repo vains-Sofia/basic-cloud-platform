@@ -2,6 +2,7 @@ package com.basic.cloud.system.controller;
 
 import com.basic.cloud.system.api.SysBasicUserClient;
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
+import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
 import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
@@ -51,6 +52,24 @@ public class SysBasicUserController implements SysBasicUserClient {
     @Override
     public Result<String> userRegister(UserRegisterRequest request) {
         basicUserService.userRegister(request);
+        return Result.success();
+    }
+
+    @Override
+    public Result<String> insertBasicUser(SaveBasicUserRequest request) {
+        basicUserService.saveBasicUser(request);
+        return Result.success();
+    }
+
+    @Override
+    public Result<String> updateBasicUser(SaveBasicUserRequest request) {
+        basicUserService.saveBasicUser(request);
+        return Result.success();
+    }
+
+    @Override
+    public Result<String> removeById(Long id) {
+        basicUserService.removeById(id);
         return Result.success();
     }
 

@@ -39,9 +39,6 @@ public class FindBasicUserResponse implements Serializable {
     @Schema(title = "用户性别")
     private GenderEnum gender;
 
-    @Schema(title = "密码")
-    private String password;
-
     @Schema(title = "出生日期", description = "以 ISO 8601-1 [ISO8601‑1] YYYY-MM-DD 格式表示。")
     private LocalDate birthdate;
 

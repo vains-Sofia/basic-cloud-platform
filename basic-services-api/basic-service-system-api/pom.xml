@@ -12,4 +12,12 @@
     <artifactId>basic-service-system-api</artifactId>
     <description>basic-service provider system api modules</description>
 
+    <dependencies>
+        <!-- 数据验证Spring Data Validation -->
+        <dependency>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-data-validation</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

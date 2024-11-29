@@ -3,6 +3,7 @@ package com.basic.cloud.system.service.impl;
 import com.basic.cloud.system.api.CommonClient;
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
 import com.basic.cloud.system.api.domain.request.MailSenderRequest;
+import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
 import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
@@ -16,7 +17,7 @@ import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
-import com.basic.framework.core.exception.CloudServiceException;
+import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.util.RandomUtils;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
@@ -138,18 +139,18 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         // 获取缓存的验证码
         String emailCaptcha = redisOperator.get(EMAIL_CAPTCHA_KEY.concat(request.getEmail()));
         if (ObjectUtils.isEmpty(emailCaptcha)) {
-            throw new CloudServiceException("验证码已过期，请重新获取。");
+            throw new CloudIllegalArgumentException("验证码已过期，请重新获取。");
         }
         // 验证邮件验证码
         if (!emailCaptcha.equalsIgnoreCase(request.getEmailCaptcha())) {
-            throw new CloudServiceException("验证码错误。");
+            throw new CloudIllegalArgumentException("验证码错误。");
         }
         // 检查邮箱是否已被绑定
         SpecificationBuilder<SysBasicUser> builder = new SpecificationBuilder<>();
         builder.eq(SysBasicUser::getEmail, request.getEmail());
         boolean exists = basicUserRepository.exists(builder);
         if (exists) {
-            throw new CloudServiceException("邮箱已被注册。");
+            throw new CloudIllegalArgumentException("邮箱已被注册。");
         }
         // 组装用户信息
         SysBasicUser sysBasicUser = new SysBasicUser();
@@ -195,6 +196,62 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         redisOperator.set(EMAIL_CAPTCHA_KEY.concat(email), captcha, (5 * 60));
         log.debug("[{}]获取验证码成功，验证码：{}.", email, captcha);
         return null;
+    }
+
+    @Override
+    public void saveBasicUser(SaveBasicUserRequest request) {
+        boolean hasId = request.getId() != null;
+        // 检查邮箱是否已被绑定
+        SpecificationBuilder<SysBasicUser> builder = new SpecificationBuilder<>();
+        builder.eq(SysBasicUser::getEmail, request.getEmail());
+        // 修改需排除当前数据
+        builder.ne(hasId, SysBasicUser::getId, request.getId());
+        boolean exists = basicUserRepository.exists(builder);
+        if (exists) {
+            throw new CloudIllegalArgumentException("邮箱已被注册。");
+        }
+        // 插入时初始化id与密码
+        if (!hasId) {
+            request.setId(sequence.nextId());
+            // 密码加密
+            if (ObjectUtils.isEmpty(request.getPassword())) {
+                // 无密码
+                request.setPassword("{noop}");
+            } else {
+                request.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+        } else {
+            // 置空，不修改
+            request.setPassword(null);
+        }
+
+        // 组装用户信息
+        SysBasicUser sysBasicUser = new SysBasicUser();
+        BeanUtils.copyProperties(request, sysBasicUser);
+        // 初始化默认信息
+        sysBasicUser.setDeleted(Boolean.FALSE);
+        sysBasicUser.setEmailVerified(Boolean.FALSE);
+        if (sysBasicUser.getAccountPlatform() == null) {
+            sysBasicUser.setAccountPlatform(OAuth2AccountPlatformEnum.SYSTEM);
+        }
+
+        // 构建默认认证用户为当前注册用户
+        DefaultAuthenticatedUser authenticatedUser = new DefaultAuthenticatedUser(
+                sysBasicUser.getNickname(), sysBasicUser.getAccountPlatform(), null);
+        authenticatedUser.setId(sysBasicUser.getId());
+        // 填充SecurityContextHolder，让审计信息自动填充可以获取到需要的数据
+        UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
+                .authenticated(authenticatedUser, sysBasicUser.getPassword(), null);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        basicUserRepository.save(sysBasicUser);
+    }
+
+    @Override
+    public void removeById(Long id) {
+        if (id == null) {
+            throw new CloudIllegalArgumentException("用户id不能为空.");
+        }
+        basicUserRepository.deleteById(id);
     }
 
 }
