@@ -22,6 +22,6 @@ public interface OAuth2ApplicationRepository extends
      *
      * @param clientId 客户端id
      */
-    void removeByClientId(String clientId);
+    void deleteByClientId(String clientId);
 
 }

@@ -9,7 +9,6 @@ import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.data.validation.group.Insert;
-import com.basic.framework.data.validation.group.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -103,7 +102,7 @@ public interface SysBasicUserClient {
      */
     @PostMapping("/updateBasicUser")
     @Operation(summary = "修改用户信息", description = "修改用户信息")
-    Result<String> updateBasicUser(@Validated(Update.class) @RequestBody SaveBasicUserRequest request);
+    Result<String> updateBasicUser(@Validated @RequestBody SaveBasicUserRequest request);
 
     /**
      * 删除用户信息

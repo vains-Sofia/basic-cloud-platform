@@ -1,6 +1,5 @@
 package com.basic.cloud.system.service.impl;
 
-import com.basic.cloud.system.api.CommonClient;
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
 import com.basic.cloud.system.api.domain.request.MailSenderRequest;
 import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
@@ -11,11 +10,10 @@ import com.basic.cloud.system.api.domain.security.PermissionAuthority;
 import com.basic.cloud.system.domain.SysBasicUser;
 import com.basic.cloud.system.domain.SysRole;
 import com.basic.cloud.system.repository.SysBasicUserRepository;
+import com.basic.cloud.system.service.CommonService;
 import com.basic.cloud.system.service.SysBasicUserService;
-import com.basic.framework.core.constants.HttpCodeConstants;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
-import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.util.RandomUtils;
@@ -51,7 +49,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysBasicUserServiceImpl implements SysBasicUserService {
 
-    private final CommonClient commonClient;
+    private final CommonService commonService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -182,14 +180,10 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         request.setSubject("注册验证码");
         request.setMailTo(Set.of(email));
         request.setContent("Your verification code is: " + captcha);
-        Result<String> mailSenderResult = commonClient.mailSender(request);
-        if (mailSenderResult == null) {
-            log.warn("给[{}]发送验证码失败，响应为空.", email);
-            return "邮件发送失败，请稍后重试！";
-        }
-        if (mailSenderResult.getCode() != HttpCodeConstants.HTTP_OK) {
-            log.warn("给[{}]发送验证码失败，原因：{}.", email, mailSenderResult.getMessage());
-            return mailSenderResult.getMessage();
+        String mailSenderResult = commonService.mailSender(request);
+        if (!ObjectUtils.isEmpty(mailSenderResult)) {
+            log.warn("给[{}]发送验证码失败，原因：{}.", email, mailSenderResult);
+            return mailSenderResult;
         }
 
         // 缓存验证码至redis，5分钟
@@ -235,14 +229,6 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
             sysBasicUser.setAccountPlatform(OAuth2AccountPlatformEnum.SYSTEM);
         }
 
-        // 构建默认认证用户为当前注册用户
-        DefaultAuthenticatedUser authenticatedUser = new DefaultAuthenticatedUser(
-                sysBasicUser.getNickname(), sysBasicUser.getAccountPlatform(), null);
-        authenticatedUser.setId(sysBasicUser.getId());
-        // 填充SecurityContextHolder，让审计信息自动填充可以获取到需要的数据
-        UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
-                .authenticated(authenticatedUser, sysBasicUser.getPassword(), null);
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         basicUserRepository.save(sysBasicUser);
     }
 

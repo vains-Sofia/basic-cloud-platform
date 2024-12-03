@@ -19,6 +19,7 @@ import java.time.LocalDate;
  * @author vains
  */
 @Data
+@Schema(name = "保存或修改用户入参")
 public class SaveBasicUserRequest implements Serializable {
 
     @NotNull(groups = Update.class)

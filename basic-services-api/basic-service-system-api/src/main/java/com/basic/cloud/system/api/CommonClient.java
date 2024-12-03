@@ -24,7 +24,7 @@ public interface CommonClient {
     /**
      * 邮件发送
      *
-     * @param request 用户注册入参
+     * @param request 发送邮件相关数据
      * @return 统一响应
      */
     @PostMapping("/email/sender")

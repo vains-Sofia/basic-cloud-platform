@@ -188,7 +188,7 @@ public class JpaBasicApplicationService implements BasicApplicationService {
 
     @Override
     public void removeByClientId(String clientId) {
-        applicationRepository.removeByClientId(clientId);
+        applicationRepository.deleteByClientId(clientId);
     }
 
 }

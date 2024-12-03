@@ -17,6 +17,7 @@ import java.util.Set;
  * @author vains
  */
 @Data
+@Schema(name = "基础用户信息响应")
 public class BasicUserResponse implements Serializable {
 
     @Schema(title = "主键id")
