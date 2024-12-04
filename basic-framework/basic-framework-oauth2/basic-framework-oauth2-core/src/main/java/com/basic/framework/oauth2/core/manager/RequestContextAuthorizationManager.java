@@ -101,7 +101,9 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
                         .filter(PermissionGrantedAuthority::getNeedAuthentication).toList();
                 for (PermissionGrantedAuthority grantedAuthority : grantedAuthorities) {
                     // 请求方式和请求路径匹配放行
-                    if (Objects.equals(requestPath, grantedAuthority.getPath()) && request.getMethod().equalsIgnoreCase(grantedAuthority.getRequestMethod())) {
+                    if (Objects.equals(requestPath, grantedAuthority.getPath())
+                            && (request.getMethod().equalsIgnoreCase(grantedAuthority.getRequestMethod())
+                            || ObjectUtils.isEmpty(grantedAuthority.getRequestMethod()))) {
                         log.debug("请求[{}]鉴权通过.", requestPath);
                         return new AuthorizationDecision(Boolean.TRUE);
                     }

@@ -110,7 +110,9 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
                 // 根据当前请求的请求方式和请求路径过滤
                 .filter(grantedAuthority ->
                         Objects.equals(requestPath, grantedAuthority.getPath())
-                                && request.getMethod().name().equalsIgnoreCase(grantedAuthority.getRequestMethod()))
+                                && (request.getMethod().name().equalsIgnoreCase(grantedAuthority.getRequestMethod())
+                                || ObjectUtils.isEmpty(grantedAuthority.getRequestMethod()))
+                )
                 .map(grantedAuthority -> {
                     // 过滤后有匹配请求方式和请求路径的权限时放行
                     log.debug("WebFlux请求[{}]鉴权通过.", requestPath);

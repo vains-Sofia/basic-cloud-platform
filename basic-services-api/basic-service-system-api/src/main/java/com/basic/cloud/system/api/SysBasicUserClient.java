@@ -8,7 +8,7 @@ import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
-import com.basic.framework.data.validation.group.Insert;
+import com.basic.framework.data.validation.group.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -92,7 +92,7 @@ public interface SysBasicUserClient {
      */
     @PostMapping("/insertBasicUser")
     @Operation(summary = "添加一条用户信息", description = "添加一条用户信息")
-    Result<String> insertBasicUser(@Validated(Insert.class) @RequestBody SaveBasicUserRequest request);
+    Result<String> insertBasicUser(@Validated @RequestBody SaveBasicUserRequest request);
 
     /**
      * 修改用户信息
@@ -100,9 +100,9 @@ public interface SysBasicUserClient {
      * @param request 用户信息
      * @return 统一响应
      */
-    @PostMapping("/updateBasicUser")
+    @PutMapping("/updateBasicUser")
     @Operation(summary = "修改用户信息", description = "修改用户信息")
-    Result<String> updateBasicUser(@Validated @RequestBody SaveBasicUserRequest request);
+    Result<String> updateBasicUser(@Validated(Update.class) @RequestBody SaveBasicUserRequest request);
 
     /**
      * 删除用户信息

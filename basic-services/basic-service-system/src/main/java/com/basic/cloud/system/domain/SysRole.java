@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.Set;
 
@@ -18,7 +20,9 @@ import java.util.Set;
 @Entity
 @Table(name = "sys_role")
 @Comment(value = "RBAC角色表")
+@SQLRestriction("deleted = false")
 @EqualsAndHashCode(callSuper = true)
+@SQLDelete(sql = "UPDATE sys_role r SET r.deleted = true WHERE id = ?")
 public class SysRole extends BasicAuditorEntity {
 
     /**

@@ -55,6 +55,8 @@ public class BeanConfiguration {
         // 根据path分组后缓存至redis
         if (!ObjectUtils.isEmpty(permissions)) {
             Map<String, List<PermissionModel>> permissionPathMap = permissions.stream()
+                    // 排除path为空的权限
+                    .filter(e -> !ObjectUtils.isEmpty(e.getPath()))
                     .map(e -> {
                         PermissionModel authority = new PermissionModel();
                         authority.setPath(e.getPath());

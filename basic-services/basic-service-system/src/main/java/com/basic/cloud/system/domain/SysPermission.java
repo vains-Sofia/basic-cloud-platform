@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 /**
  * RBAC权限表
@@ -20,7 +22,9 @@ import org.hibernate.annotations.Comment;
 @Entity
 @Comment(value = "RBAC权限表")
 @Table(name = "sys_permission")
+@SQLRestriction("deleted = false")
 @EqualsAndHashCode(callSuper = true)
+@SQLDelete(sql = "UPDATE sys_permission p SET p.deleted = true WHERE id = ?")
 public class SysPermission extends BasicAuditorEntity {
 
     /**
@@ -71,7 +75,7 @@ public class SysPermission extends BasicAuditorEntity {
     @NotNull
     @Comment(value = "0:菜单,1:接口,2:其它")
     @Column(name = "permission_type", nullable = false)
-    private Byte permissionType;
+    private Integer permissionType;
 
     /**
      * 描述

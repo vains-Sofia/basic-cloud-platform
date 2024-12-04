@@ -57,6 +57,8 @@ public class SysBasicUserController implements SysBasicUserClient {
 
     @Override
     public Result<String> insertBasicUser(SaveBasicUserRequest request) {
+        // 置空id，防止插入变修改
+        request.setId(null);
         basicUserService.saveBasicUser(request);
         return Result.success();
     }

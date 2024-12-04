@@ -204,24 +204,34 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         if (exists) {
             throw new CloudIllegalArgumentException("邮箱已被注册。");
         }
-        // 插入时初始化id与密码
-        if (!hasId) {
-            request.setId(sequence.nextId());
-            // 密码加密
-            if (ObjectUtils.isEmpty(request.getPassword())) {
-                // 无密码
-                request.setPassword("{noop}");
-            } else {
-                request.setPassword(passwordEncoder.encode(request.getPassword()));
-            }
-        } else {
-            // 置空，不修改
-            request.setPassword(null);
-        }
 
         // 组装用户信息
         SysBasicUser sysBasicUser = new SysBasicUser();
         BeanUtils.copyProperties(request, sysBasicUser);
+
+        // 插入时初始化id与密码
+        if (!hasId) {
+            sysBasicUser.setId(sequence.nextId());
+            // 密码加密
+            if (ObjectUtils.isEmpty(request.getPassword())) {
+                // 无密码
+                sysBasicUser.setPassword("{noop}");
+            } else {
+                sysBasicUser.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+        } else {
+            // 置空，不修改
+            sysBasicUser.setPassword(null);
+            // 设置插入相关的审计信息
+            Optional<SysBasicUser> basicUserOptional = basicUserRepository.findById(request.getId());
+            if (basicUserOptional.isPresent()) {
+                SysBasicUser existsBasicUser = basicUserOptional.get();
+                sysBasicUser.setCreateBy(existsBasicUser.getCreateBy());
+                sysBasicUser.setCreateName(existsBasicUser.getCreateName());
+                sysBasicUser.setCreateTime(existsBasicUser.getCreateTime());
+            }
+        }
+
         // 初始化默认信息
         sysBasicUser.setDeleted(Boolean.FALSE);
         sysBasicUser.setEmailVerified(Boolean.FALSE);
