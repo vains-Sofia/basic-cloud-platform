@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * 查询权限响应
@@ -62,10 +63,16 @@ public class FindPermissionResponse implements Serializable {
     @Schema(title = "是否需要鉴权")
     private Boolean needAuthentication;
 
-    /**
-     * 是否已删除
-     */
-    @Schema(title = "是否已删除")
-    private Boolean deleted;
+    @Schema(title = "创建人名称")
+    private String createName;
+
+    @Schema(title = "修改人名称")
+    private String updateName;
+
+    @Schema(title = "创建时间")
+    private LocalDateTime createTime;
+
+    @Schema(title = "修改时间")
+    private LocalDateTime updateTime;
     
 }
