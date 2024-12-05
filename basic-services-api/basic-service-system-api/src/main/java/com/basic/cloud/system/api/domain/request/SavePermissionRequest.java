@@ -4,6 +4,7 @@ import com.basic.framework.data.validation.group.Update;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,22 +28,22 @@ public class SavePermissionRequest implements Serializable {
     /**
      * 权限名
      */
-    @NotBlank
     @Schema(title = "权限名")
+    @NotBlank(groups = {Update.class, Default.class})
     private String name;
 
     /**
      * 权限码
      */
-    @NotBlank
     @Schema(title = "权限码")
+    @NotBlank(groups = {Update.class, Default.class})
     private String permission;
 
     /**
      * 路径
      */
-    @NotBlank
     @Schema(title = "路径")
+    @NotBlank(groups = {Update.class, Default.class})
     private String path;
 
     /**
@@ -54,8 +55,8 @@ public class SavePermissionRequest implements Serializable {
     /**
      * 0:菜单,1:接口,2:其它
      */
-    @NotNull
     @Schema(title = "0:菜单,1:接口,2:其它")
+    @NotNull(groups = {Update.class, Default.class})
     private Integer permissionType;
 
     /**

@@ -99,6 +99,8 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         // 插入时初始化id与密码
         if (!hasId) {
             permission.setId(sequence.nextId());
+            // 初始化默认信息
+            permission.setDeleted(Boolean.FALSE);
         } else {
             // 设置插入相关的审计信息
             Optional<SysPermission> permissionOptional = permissionRepository.findById(request.getId());
@@ -110,8 +112,6 @@ public class SysPermissionServiceImpl implements SysPermissionService {
             }
         }
 
-        // 初始化默认信息
-        permission.setDeleted(Boolean.FALSE);
         permissionRepository.save(permission);
     }
 

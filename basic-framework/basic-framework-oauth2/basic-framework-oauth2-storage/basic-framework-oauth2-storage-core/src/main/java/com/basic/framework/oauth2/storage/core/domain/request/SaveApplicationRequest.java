@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -32,7 +33,7 @@ public class SaveApplicationRequest {
      * 客户端id
      */
     @Schema(title = "客户端id")
-    @NotBlank(message = "{oauth2.application.clientId.notBlank}")
+    @NotBlank(message = "{oauth2.application.clientId.notBlank}", groups = {Update.class, Default.class})
     private String clientId;
 
     /**
@@ -45,7 +46,7 @@ public class SaveApplicationRequest {
      * 客户端名称
      */
     @Schema(title = "客户端名称")
-    @NotBlank(message = "{oauth2.application.clientName.notBlank}")
+    @NotBlank(message = "{oauth2.application.clientName.notBlank}", groups = {Update.class, Default.class})
     private String clientName;
 
     /**
@@ -58,16 +59,16 @@ public class SaveApplicationRequest {
      * 客户端认证方式
      */
     @Schema(title = "客户端认证方式")
-    @NotNull(message = "{oauth2.application.clientAuthenticationMethods.NotNull}")
-    @Size(min = 1, message = "{oauth2.application.clientAuthenticationMethods.Min}")
+    @NotNull(message = "{oauth2.application.clientAuthenticationMethods.NotNull}", groups = {Update.class, Default.class})
+    @Size(min = 1, message = "{oauth2.application.clientAuthenticationMethods.Min}", groups = {Update.class, Default.class})
     private Set<String> clientAuthenticationMethods;
 
     /**
      * 客户端支持的grant type
      */
     @Schema(title = "客户端支持的grant type")
-    @NotNull(message = "{oauth2.application.authorizationGrantTypes.NotNull}")
-    @Size(min = 1, message = "{oauth2.application.authorizationGrantTypes.Min}")
+    @NotNull(message = "{oauth2.application.authorizationGrantTypes.NotNull}", groups = {Update.class, Default.class})
+    @Size(min = 1, message = "{oauth2.application.authorizationGrantTypes.Min}", groups = {Update.class, Default.class})
     private Set<String> authorizationGrantTypes;
 
     /**

@@ -6,6 +6,7 @@ import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
 import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.Result;
+import com.basic.framework.data.validation.group.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,7 +66,7 @@ public interface SysPermissionClient {
      */
     @PutMapping("/updatePermission")
     @Operation(summary = "修改权限信息", description = "修改权限信息")
-    Result<String> updatePermission(@Validated @RequestBody SavePermissionRequest request);
+    Result<String> updatePermission(@Validated(Update.class) @RequestBody SavePermissionRequest request);
 
     /**
      * 删除权限信息

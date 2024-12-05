@@ -4,6 +4,7 @@ import com.basic.framework.data.validation.group.Update;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,7 +22,7 @@ public class SaveScopeRequest implements Serializable {
     @Schema(title = "主键id", description = "主键id")
     private Long id;
 
-    @NotBlank
+    @NotBlank(groups = {Update.class, Default.class})
     @Schema(title = "scope 名称", description = "scope 名称")
     private String scope;
 

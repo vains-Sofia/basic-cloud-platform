@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -32,9 +33,9 @@ public class SaveBasicUserRequest implements Serializable {
     @Schema(title = "密码(修改时无效)", description = "修改时无效")
     private String password;
 
-    @Email
-    @NotBlank
     @Schema(title = "邮箱地址")
+    @Email(groups = {Update.class, Default.class})
+    @NotBlank(groups = {Update.class, Default.class})
     private String email;
 
     @Schema(title = "用户个人资料图片的 URL。", description = "此 URL 必须指向图像文件（例如，PNG、JPEG 或 GIF 图像文件），而不是指向包含图像的网页。")
@@ -49,8 +50,8 @@ public class SaveBasicUserRequest implements Serializable {
     @Schema(title = "用户地址")
     private String address;
 
-    @Phone
     @Schema(title = "手机号")
+    @Phone(groups = {Update.class, Default.class})
     private String phoneNumber;
 
     @Schema(title = "用户来源", description = "默认为system")
