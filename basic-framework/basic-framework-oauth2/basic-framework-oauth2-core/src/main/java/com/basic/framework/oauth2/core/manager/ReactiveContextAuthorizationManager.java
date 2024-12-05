@@ -94,7 +94,7 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
         }
 
         // 判断是有符合当前路径的权限，如果有说明需要鉴权，否则不用
-        boolean pathNeedAuthorization = models.stream().anyMatch(e -> request.getMethod().name().equalsIgnoreCase(e.getRequestMethod()));
+        boolean pathNeedAuthorization = models.stream().anyMatch(e -> request.getMethod().name().equalsIgnoreCase(e.getRequestMethod()) || ObjectUtils.isEmpty(e.getRequestMethod()));
         if (!pathNeedAuthorization) {
             // 当前请求不需要鉴权，只做认证
             return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);

@@ -81,10 +81,14 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         boolean hasId = request.getId() != null;
         // 检查路径是否已存在
         SpecificationBuilder<SysPermission> builder = new SpecificationBuilder<>();
-        // 路径，请求方式
+        // 请求路径
         builder.eq(SysPermission::getPath, request.getPath());
-        builder.eq(!ObjectUtils.isEmpty(request.getRequestMethod()), SysPermission::getRequestMethod,
-                request.getRequestMethod());
+        // 请求方式
+        if (ObjectUtils.isEmpty(request.getRequestMethod())) {
+            builder.isNull(SysPermission::getRequestMethod);
+        } else {
+            builder.eq(SysPermission::getRequestMethod, request.getRequestMethod());
+        }
         // 修改需排除当前数据
         builder.ne(hasId, SysPermission::getId, request.getId());
         boolean exists = permissionRepository.exists(builder);

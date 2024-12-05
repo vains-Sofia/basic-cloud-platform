@@ -91,20 +91,24 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
         }
 
         // 判断是有符合当前路径的权限，如果有说明需要鉴权，否则不用
-        boolean pathNeedAuthorization = models.stream().anyMatch(e -> request.getMethod().equalsIgnoreCase(e.getRequestMethod()));
+        boolean pathNeedAuthorization = models.stream().anyMatch(e -> request.getMethod().equalsIgnoreCase(e.getRequestMethod()) || ObjectUtils.isEmpty(e.getRequestMethod()));
         if (pathNeedAuthorization) {
+            // 用户拥有的权限
             Collection<? extends GrantedAuthority> authorities = authentication.get().getAuthorities();
             if (!ObjectUtils.isEmpty(authorities)) {
                 // 提取用户拥有权限中的关于请求路径部分权限
-                List<PermissionGrantedAuthority> grantedAuthorities = authorities.stream().filter(PermissionGrantedAuthority.class::isInstance).map(PermissionGrantedAuthority.class::cast)
+                List<PermissionGrantedAuthority> grantedAuthorities = authorities.stream()
+                        .filter(PermissionGrantedAuthority.class::isInstance)
+                        .map(PermissionGrantedAuthority.class::cast)
                         // 筛选出需要鉴权的
                         .filter(PermissionGrantedAuthority::getNeedAuthentication).toList();
                 for (PermissionGrantedAuthority grantedAuthority : grantedAuthorities) {
                     // 请求方式和请求路径匹配放行
-                    if (Objects.equals(requestPath, grantedAuthority.getPath())
+                    boolean urlMatch = Objects.equals(requestPath, grantedAuthority.getPath())
                             && (request.getMethod().equalsIgnoreCase(grantedAuthority.getRequestMethod())
-                            || ObjectUtils.isEmpty(grantedAuthority.getRequestMethod()))) {
-                        log.debug("请求[{}]鉴权通过.", requestPath);
+                            || ObjectUtils.isEmpty(grantedAuthority.getRequestMethod()));
+                    if (urlMatch) {
+                        log.debug("请求[{}]根据url鉴权通过.", requestPath);
                         return new AuthorizationDecision(Boolean.TRUE);
                     }
                 }
