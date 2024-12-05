@@ -74,6 +74,9 @@ public class JpaBasicApplicationService implements BasicApplicationService {
             jpaOAuth2Application.setCreateBy(application.get().getCreateBy());
             jpaOAuth2Application.setCreateTime(application.get().getCreateTime());
         }
+        if (jpaOAuth2Application.getClientIdIssuedAt() == null) {
+            jpaOAuth2Application.setClientIdIssuedAt(LocalDateTime.now());
+        }
         // 添加或修改
         applicationRepository.save(jpaOAuth2Application);
     }

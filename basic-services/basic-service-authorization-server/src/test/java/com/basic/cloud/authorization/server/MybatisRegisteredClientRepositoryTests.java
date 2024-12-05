@@ -25,7 +25,7 @@ class MybatisRegisteredClientRepositoryTests {
 
     @BeforeEach
     void setUp() {
-        UserDetails user = userDetailsService.loadUserByUsername("user");
+        UserDetails user = userDetailsService.loadUserByUsername("17683906001@163.com");
         UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
                 .authenticated(user, user.getPassword(), user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
