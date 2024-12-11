@@ -7,7 +7,7 @@ spring:
         namespace: 122b6435-5eaf-4232-af57-7bf6e576870c
       config:
         namespace: 122b6435-5eaf-4232-af57-7bf6e576870c
-      server-addr: ${SERVER_URL}:8848
+      server-addr: ${SERVER_URL:127.0.0.1}:8848
   config:
     import:
       - nacos:spring-doc.yaml?refresh=true
