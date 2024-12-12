@@ -12,12 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.web.SecurityFilterChain;
@@ -49,6 +49,7 @@ public class AuthorizationServerConfiguration {
      * @throws Exception 配置错误时抛出
      */
     @Bean
+    @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
             throws Exception {
 
@@ -56,31 +57,45 @@ public class AuthorizationServerConfiguration {
         http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
 
-        // 认证服务默认配置
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-
-        // 获取认证服务配置
-        OAuth2AuthorizationServerConfigurer configurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
-
-        // 授权申请的/oauth2/authorize相关端点的自定义配置
-        configurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
-                // 设置自定义用户确认授权页
-                .consentPage(oAuth2ServerProperties.getConsentPageUri())
-                // 异常处理
-                .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri()))
-                // 授权申请成功响应处理
-                .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(oAuth2ServerProperties.getConsentPageUri()))
+        // 开启资源服务配置，将认证服务当做一个资源服务，这里的目的是为了在访问 User Info and/or Client Registration 解析access token
+        http.oauth2ResourceServer((resourceServer) -> resourceServer
+                .accessDeniedHandler(SecurityUtils::exceptionHandler)
+                .authenticationEntryPoint(SecurityUtils::exceptionHandler)
+                // 重点！authenticationManagerResolver配置必须在authorizationServerConfigurer的oidc配置之前！
+                // 否则oidc会默认添加一个jwt资源服务的配置，此时再加载当前配置就会提示错误(在有该配置时不能有jwt或者opaqueToken配置)
+                .authenticationManagerResolver(authenticationManagerResolver)
         );
 
-        // 获取access token的/oauth2/token端点的自定义配置
-        configurer.tokenEndpoint(tokenEndpoint -> {
-            // 请求access token端点异常处理
-            tokenEndpoint.errorResponseHandler(SecurityUtils::exceptionHandler);
-        });
+        // 认证服务默认配置
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
+                OAuth2AuthorizationServerConfigurer.authorizationServer();
 
-        // 开启oidc并在 /.well-known/openid-configuration 和 /.well-known/oauth-authorization-server 端点中添加自定义grant type
-        configurer.oidc(new OidcConfigurerCustomizer());
-        configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
+        http.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+                .with(authorizationServerConfigurer, configurer -> {
+                    // 授权申请的/oauth2/authorize相关端点的自定义配置
+                    configurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
+                            // 设置自定义用户确认授权页
+                            .consentPage(oAuth2ServerProperties.getConsentPageUri())
+                            // 异常处理
+                            .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri()))
+                            // 授权申请成功响应处理
+                            .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(oAuth2ServerProperties.getConsentPageUri()))
+                    );
+
+                    // 获取access token的/oauth2/token端点的自定义配置
+                    configurer.tokenEndpoint(tokenEndpoint -> {
+                        // 请求access token端点异常处理
+                        tokenEndpoint.errorResponseHandler(SecurityUtils::exceptionHandler);
+                    });
+
+                    // 开启oidc并在 /.well-known/openid-configuration 和 /.well-known/oauth-authorization-server 端点中添加自定义grant type
+                    configurer.oidc(new OidcConfigurerCustomizer());
+                    configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
+
+                });
+
+        // 设置认证服务所有端点都需要登录后才能访问
+        http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
 
         // 添加密码模式
         OAuth2ConfigurerUtils.configurePasswordGrantType(http, (null), (null));
@@ -95,13 +110,6 @@ public class AuthorizationServerConfiguration {
                                 oAuth2ServerProperties.getLoginPageUri(), oAuth2ServerProperties.getDeviceVerificationUri(), authorizationServerSettings.getDeviceVerificationEndpoint()),
                         new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                 )
-        );
-
-        // Accept access tokens for User Info and/or Client Registration
-        http.oauth2ResourceServer((resourceServer) -> resourceServer
-                .accessDeniedHandler(SecurityUtils::exceptionHandler)
-                .authenticationEntryPoint(SecurityUtils::exceptionHandler)
-                .authenticationManagerResolver(authenticationManagerResolver)
         );
         return http.build();
     }

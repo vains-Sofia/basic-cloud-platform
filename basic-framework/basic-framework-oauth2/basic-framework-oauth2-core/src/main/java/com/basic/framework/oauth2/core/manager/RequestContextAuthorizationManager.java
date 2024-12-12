@@ -36,6 +36,14 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
 
     private final RedisOperator<Map<String, List<PermissionModel>>> redisOperator;
 
+    /**
+     * check方法已被弃用，后续版本会被删除，新版本中请使用authorize
+     *
+     * @param authentication the {@link Supplier} of the {@link Authentication} to
+     *                       authorize
+     * @param requestContext the {@link RequestAuthorizationContext} object to authorize
+     * @return AuthorizationDecision，属性granted为true验证通过，否则验证失败
+     */
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext requestContext) {
         // 取出当前路径和ContextPath，如果有ContextPath则替换为空

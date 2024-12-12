@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * 针对请求的自定义认证、鉴权处理(webflux)
@@ -42,6 +43,14 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
 
     private final AuthenticationTrustResolver authTrustResolver = new AuthenticationTrustResolverImpl();
 
+    /**
+     * check方法已被弃用，后续版本会被删除，新版本中请使用authorize
+     *
+     * @param authentication the {@link Supplier} of the {@link Authentication} to
+     *                       authorize
+     * @param context        the {@link AuthorizationContext} object to authorize
+     * @return AuthorizationDecision，属性granted为true验证通过，否则验证失败
+     */
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext context) {
         // 内部调用忽略认证

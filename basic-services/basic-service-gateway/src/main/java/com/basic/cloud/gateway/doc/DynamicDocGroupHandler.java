@@ -3,7 +3,6 @@ package com.basic.cloud.gateway.doc;
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.properties.AbstractSwaggerUiConfigProperties;
-import org.springdoc.core.properties.SwaggerUiConfigParameters;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
@@ -43,19 +42,16 @@ public class DynamicDocGroupHandler implements ApplicationListener<RefreshRoutes
 
     private final RouteDefinitionLocator routeDefinitionLocator;
 
-    private final SwaggerUiConfigParameters swaggerUiConfigParameters;
 
     private final SwaggerUiConfigProperties swaggerUiConfigProperties;
 
     private final Set<AbstractSwaggerUiConfigProperties.SwaggerUrl> DEFAULT_SWAGGER_URLS;
 
     public DynamicDocGroupHandler(RouteDefinitionLocator routeDefinitionLocator,
-                                  SwaggerUiConfigParameters swaggerUiConfigParameters,
                                   SwaggerUiConfigProperties swaggerUiConfigProperties) {
         this.routeDefinitionLocator = routeDefinitionLocator;
-        this.swaggerUiConfigParameters = swaggerUiConfigParameters;
         this.swaggerUiConfigProperties = swaggerUiConfigProperties;
-        this.DEFAULT_SWAGGER_URLS = swaggerUiConfigParameters.getUrls();
+        this.DEFAULT_SWAGGER_URLS = swaggerUiConfigProperties.getUrls();
     }
 
     @Override
@@ -117,7 +113,6 @@ public class DynamicDocGroupHandler implements ApplicationListener<RefreshRoutes
             log.debug("刷新Spring Gateway Doc Group成功，获取到组：{}.", groups);
         }
         // 重置urls配置
-        swaggerUiConfigParameters.setUrls(urls);
         swaggerUiConfigProperties.setUrls(urls);
     }
 }

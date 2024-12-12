@@ -20,6 +20,12 @@
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
         </dependency>
 
+        <!-- Mybatis Plus 分页插件 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
+        </dependency>
+
         <!-- OAuth2核心包 -->
         <dependency>
             <groupId>com.basic.framework</groupId>

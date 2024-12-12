@@ -2,6 +2,7 @@ package com.basic.framework.openfeign.configuration;
 
 import feign.MethodMetadata;
 import org.springframework.cloud.openfeign.AnnotatedParameterProcessor;
+import org.springframework.cloud.openfeign.FeignClientProperties;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.ConversionService;
@@ -28,9 +29,9 @@ public class BasicSpringMvcContract extends SpringMvcContract {
 
     public BasicSpringMvcContract(List<AnnotatedParameterProcessor> annotatedParameterProcessors,
                                   ConversionService conversionService,
-                                  boolean decodeSlash) {
-        super(annotatedParameterProcessors, conversionService, decodeSlash);
-        this.decodeSlash = decodeSlash;
+                                  FeignClientProperties feignClientProperties) {
+        super(annotatedParameterProcessors, conversionService, feignClientProperties);
+        this.decodeSlash = feignClientProperties == null || feignClientProperties.isDecodeSlash();
     }
 
     @Override
@@ -45,7 +46,7 @@ public class BasicSpringMvcContract extends SpringMvcContract {
                     if (!pathValue.startsWith("/")) {
                         pathValue = "/" + pathValue;
                     }
-                    data.template().uri(pathValue);
+                    data.template().uri(pathValue, true);
                     if (data.template().decodeSlash() != decodeSlash) {
                         data.template().decodeSlash(decodeSlash);
                     }

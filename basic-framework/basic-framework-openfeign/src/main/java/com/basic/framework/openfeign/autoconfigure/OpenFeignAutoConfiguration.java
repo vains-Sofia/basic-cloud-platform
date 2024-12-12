@@ -64,8 +64,7 @@ public class OpenFeignAutoConfiguration {
      */
     @Bean
     public Contract feignContract(ConversionService feignConversionService) {
-        boolean decodeSlash = feignClientProperties == null || feignClientProperties.isDecodeSlash();
-        return new BasicSpringMvcContract(parameterProcessors, feignConversionService, decodeSlash);
+        return new BasicSpringMvcContract(parameterProcessors, feignConversionService, feignClientProperties);
     }
 
     /**

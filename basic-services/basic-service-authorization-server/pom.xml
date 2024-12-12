@@ -56,7 +56,7 @@
             <artifactId>basic-framework-data-jpa</artifactId>
         </dependency>
 
-        <!-- 认证服务存储Jpa实现 -->
+        <!-- 认证服务存储Jpa实现(包含认证服务依赖) -->
         <dependency>
             <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-storage-jpa</artifactId>
