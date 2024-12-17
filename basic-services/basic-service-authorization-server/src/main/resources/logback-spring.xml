@@ -148,10 +148,8 @@
         <!-- 2.5 发送日志到 Logstash -->
         <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
             <!-- Logstash 地址和端口 -->
-            <destination>127.0.0.1:15050</destination>
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-                <customFields>{"application":"${applicationName}"}</customFields>
-            </encoder>
+            <destination>${SERVER_URL}:15050</destination>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
         </appender>
 
         <!--
