@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 /**
  * 认证服务令牌自省
- *  TODO 待完善远程解析
  *
  * @author vains
  */
