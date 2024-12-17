@@ -162,7 +162,8 @@
 
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="LOGSTASH"/>
+            <!-- TODO 暂时移除LOGSTASH的日志推送 -->
+            <!--            <appender-ref ref="LOGSTASH"/>-->
             <appender-ref ref="warnLog"/>
             <appender-ref ref="debugLog"/>
             <appender-ref ref="infoLog"/>
