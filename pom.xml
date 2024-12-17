@@ -37,6 +37,8 @@
         <spring-cloud.version>2024.0.0</spring-cloud.version>
         <!-- Spring Cloud Alibaba 版本号 -->
         <spring-cloud-alibaba.version>2023.0.1.2</spring-cloud-alibaba.version>
+        <!-- 日志发送至logstash依赖版本 -->
+        <logstash-logback-encoder.version>8.0</logstash-logback-encoder.version>
     </properties>
 
     <dependencyManagement>
@@ -87,6 +89,13 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-common</artifactId>
                 <version>${spring-doc.version}</version>
+            </dependency>
+
+            <!-- 日志发送至logstash依赖 -->
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash-logback-encoder.version}</version>
             </dependency>
 
             <!-- 分布式锁Redisson实现 -->

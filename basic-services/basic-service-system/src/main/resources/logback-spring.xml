@@ -145,6 +145,15 @@
             </filter>
         </appender>
 
+        <!-- 2.5 发送日志到 Logstash -->
+        <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <!-- Logstash 地址和端口 -->
+            <destination>127.0.0.1:15050</destination>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"application":"${applicationName}"}</customFields>
+            </encoder>
+        </appender>
+
         <!--
         由于队列中还会有没有打印的日志内容，因此需要等待一段时间，等待队列处理完毕。
         单位是ms。如果队列较大，队列内容较多，可以将此值设置的较大。如果超过此时间队列中的日志还没有处理完毕，则队列中的日志将抛弃
@@ -155,6 +164,7 @@
 
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="LOGSTASH"/>
             <appender-ref ref="warnLog"/>
             <appender-ref ref="debugLog"/>
             <appender-ref ref="infoLog"/>
