@@ -52,6 +52,7 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
      * @return AuthorizationDecision，属性granted为true验证通过，否则验证失败
      */
     @Override
+    @Deprecated
     public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext context) {
         // 内部调用忽略认证
         // 取出当前路径和ContextPath，如果有ContextPath则替换为空

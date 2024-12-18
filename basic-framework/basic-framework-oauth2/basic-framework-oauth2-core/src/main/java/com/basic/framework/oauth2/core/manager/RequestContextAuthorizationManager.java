@@ -45,6 +45,7 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
      * @return AuthorizationDecision，属性granted为true验证通过，否则验证失败
      */
     @Override
+    @Deprecated
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext requestContext) {
         // 取出当前路径和ContextPath，如果有ContextPath则替换为空
         HttpServletRequest request = requestContext.getRequest();
