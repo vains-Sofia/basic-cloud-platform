@@ -1,6 +1,7 @@
 package com.basic.framework.oauth2.storage.mybatis.autoconfigure;
 
 import com.basic.framework.core.domain.ScopePermissionModel;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
@@ -14,10 +15,12 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,5 +68,25 @@ public class MybatisPlusStorageAutoConfiguration {
     @ConditionalOnMissingBean
     public MybatisOAuth2ScopeService jpaOAuth2ScopeService(MybatisOAuth2ScopeMapper scopeMapper) {
         return new MybatisOAuth2ScopeService(scopeMapper, redisOperator, scopePermissionMapper);
+    }
+
+    /**
+     * 初始化scope的权限至缓存中
+     */
+    @PostConstruct
+    public void initScopePermissionCache() {
+        // 查询所有数据并转换
+        List<ScopePermissionModel> permissionModelList = this.scopePermissionMapper.selectList(null)
+                .stream()
+                .map(e -> {
+                    ScopePermissionModel model = new ScopePermissionModel();
+                    BeanUtils.copyProperties(e, model);
+                    return model;
+                }).toList();
+
+        // 删除缓存
+        redisOperator.delete(AuthorizeConstants.SCOPE_PERMISSION_KEY);
+        // 刷新缓存
+        redisOperator.set(AuthorizeConstants.SCOPE_PERMISSION_KEY, new ArrayList<>(permissionModelList));
     }
 }

@@ -43,7 +43,7 @@ public class BeanConfiguration {
      * 只针对在system模块中管理并且需要鉴权的请求
      */
     @PostConstruct
-    public void cachePermissions() {
+    public void initPermissionsCache() {
         // 查询需要鉴权的接口
         SpecificationBuilder<SysPermission> specificationBuilder = new SpecificationBuilder<>();
         SpecificationBuilder<SysPermission> builder = specificationBuilder

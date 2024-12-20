@@ -1,6 +1,7 @@
 package com.basic.framework.oauth2.storage.jpa.autoconfigure;
 
 import com.basic.framework.core.domain.ScopePermissionModel;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
@@ -13,12 +14,14 @@ import com.basic.framework.redis.support.RedisOperator;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,5 +74,25 @@ public class JpaStorageAutoConfiguration {
     @ConditionalOnMissingBean
     public JpaOAuth2ScopeService jpaOAuth2ScopeService() {
         return new JpaOAuth2ScopeService(scopeRepository, redisOperator, scopePermissionRepository);
+    }
+
+    /**
+     * 初始化scope的权限至缓存中
+     */
+    @PostConstruct
+    public void initScopePermissionCache() {
+        // 查询所有数据并转换
+        List<ScopePermissionModel> permissionModelList = this.scopePermissionRepository.findAll()
+                .stream()
+                .map(e -> {
+                    ScopePermissionModel model = new ScopePermissionModel();
+                    BeanUtils.copyProperties(e, model);
+                    return model;
+                }).toList();
+
+        // 删除缓存
+        redisOperator.delete(AuthorizeConstants.SCOPE_PERMISSION_KEY);
+        // 刷新缓存
+        redisOperator.set(AuthorizeConstants.SCOPE_PERMISSION_KEY, new ArrayList<>(permissionModelList));
     }
 }
