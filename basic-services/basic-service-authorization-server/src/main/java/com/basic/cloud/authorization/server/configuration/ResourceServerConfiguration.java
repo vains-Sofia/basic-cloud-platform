@@ -1,14 +1,11 @@
 package com.basic.cloud.authorization.server.configuration;
 
-import com.basic.framework.core.domain.ScopePermissionModel;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.handler.authentication.LoginFailureHandler;
 import com.basic.framework.oauth2.core.handler.authentication.LoginSuccessHandler;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
-import com.basic.framework.oauth2.storage.jpa.repository.OAuth2ScopePermissionRepository;
-import com.basic.framework.redis.support.RedisOperator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,8 +21,6 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 
-import java.util.List;
-
 /**
  * 资源服务器配置类
  *
@@ -39,10 +34,6 @@ public class ResourceServerConfiguration {
      * 认证服务配置类
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
-
-    private final RedisOperator<List<ScopePermissionModel>> redisOperator;
-
-    private final OAuth2ScopePermissionRepository scopePermissionRepository;
 
     private final OAuth2AuthorizationRequestResolver authorizationRequestResolver;
 
