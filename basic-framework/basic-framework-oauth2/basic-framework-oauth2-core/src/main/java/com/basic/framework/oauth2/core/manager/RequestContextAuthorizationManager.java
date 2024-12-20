@@ -100,7 +100,12 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
         }
 
         // 判断是有符合当前路径的权限，如果有说明需要鉴权，否则不用
-        boolean pathNeedAuthorization = models.stream().anyMatch(e -> request.getMethod().equalsIgnoreCase(e.getRequestMethod()) || ObjectUtils.isEmpty(e.getRequestMethod()));
+        boolean pathNeedAuthorization = models.stream()
+                .anyMatch(e ->
+                        (request.getMethod().equalsIgnoreCase(e.getRequestMethod())
+                                || ObjectUtils.isEmpty(e.getRequestMethod()))
+                                && pathMatcher.match(e.getPath(), requestPath)
+                );
         if (pathNeedAuthorization) {
             // 用户拥有的权限
             Collection<? extends GrantedAuthority> authorities = authentication.get().getAuthorities();
@@ -113,7 +118,7 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
                         .filter(PermissionGrantedAuthority::getNeedAuthentication).toList();
                 for (PermissionGrantedAuthority grantedAuthority : grantedAuthorities) {
                     // 请求方式和请求路径匹配放行
-                    boolean urlMatch = Objects.equals(requestPath, grantedAuthority.getPath())
+                    boolean urlMatch = pathMatcher.match(grantedAuthority.getPath(), requestPath)
                             && (request.getMethod().equalsIgnoreCase(grantedAuthority.getRequestMethod())
                             || ObjectUtils.isEmpty(grantedAuthority.getRequestMethod()));
                     if (urlMatch) {

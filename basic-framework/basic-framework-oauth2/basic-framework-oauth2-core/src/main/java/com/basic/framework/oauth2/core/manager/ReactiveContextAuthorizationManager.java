@@ -22,7 +22,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -104,7 +103,12 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
         }
 
         // 判断是有符合当前路径的权限，如果有说明需要鉴权，否则不用
-        boolean pathNeedAuthorization = models.stream().anyMatch(e -> request.getMethod().name().equalsIgnoreCase(e.getRequestMethod()) || ObjectUtils.isEmpty(e.getRequestMethod()));
+        boolean pathNeedAuthorization = models.stream()
+                .anyMatch(e ->
+                        (request.getMethod().name().equalsIgnoreCase(e.getRequestMethod())
+                                || ObjectUtils.isEmpty(e.getRequestMethod()))
+                        && pathMatcher.match(e.getPath(), requestPath)
+                );
         if (!pathNeedAuthorization) {
             // 当前请求不需要鉴权，只做认证
             return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
@@ -119,7 +123,7 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
                 .filter(PermissionGrantedAuthority::getNeedAuthentication)
                 // 根据当前请求的请求方式和请求路径过滤
                 .filter(grantedAuthority ->
-                        Objects.equals(requestPath, grantedAuthority.getPath())
+                        pathMatcher.match(grantedAuthority.getPath(), requestPath)
                                 && (request.getMethod().name().equalsIgnoreCase(grantedAuthority.getRequestMethod())
                                 || ObjectUtils.isEmpty(grantedAuthority.getRequestMethod()))
                 )
