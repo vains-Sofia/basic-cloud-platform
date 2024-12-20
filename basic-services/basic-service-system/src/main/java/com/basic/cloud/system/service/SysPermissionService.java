@@ -42,4 +42,9 @@ public interface SysPermissionService {
      */
     void removeById(Long id);
 
+    /**
+     * 刷新权限缓存
+     */
+    void refreshPermissionCache();
+
 }

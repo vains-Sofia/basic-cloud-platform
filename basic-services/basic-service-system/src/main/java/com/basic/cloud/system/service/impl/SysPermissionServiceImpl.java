@@ -7,20 +7,26 @@ import com.basic.cloud.system.domain.SysPermission;
 import com.basic.cloud.system.repository.SysPermissionRepository;
 import com.basic.cloud.system.service.SysPermissionService;
 import com.basic.framework.core.domain.DataPageResult;
+import com.basic.framework.core.domain.PermissionModel;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * RBAC权限信息Service实现
@@ -34,6 +40,8 @@ public class SysPermissionServiceImpl implements SysPermissionService {
     private final Sequence sequence = new Sequence((null));
 
     private final SysPermissionRepository permissionRepository;
+
+    private final RedisOperator<Map<String, List<PermissionModel>>> redisOperator;
 
     @Override
     public DataPageResult<FindPermissionResponse> findByPage(FindPermissionPageRequest request) {
@@ -76,6 +84,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void savePermission(SavePermissionRequest request) {
         // id是否为空，不为空是修改
         boolean hasId = request.getId() != null;
@@ -115,16 +124,50 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 permission.setCreateTime(existsPermission.getCreateTime());
             }
         }
-
         permissionRepository.save(permission);
+
+        // 刷新权限缓存
+        this.refreshPermissionCache();
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeById(Long id) {
         if (id == null) {
             throw new CloudIllegalArgumentException("权限id不能为空.");
         }
         permissionRepository.deleteById(id);
+        // 刷新权限缓存
+        this.refreshPermissionCache();
+    }
+
+    @Override
+    public void refreshPermissionCache() {
+        // 查询需要鉴权的接口
+        SpecificationBuilder<SysPermission> specificationBuilder = new SpecificationBuilder<>();
+        SpecificationBuilder<SysPermission> builder = specificationBuilder
+                // 只查询接口权限
+                .eq(SysPermission::getPermissionType, 1)
+                .eq(SysPermission::getNeedAuthentication, Boolean.TRUE);
+        List<SysPermission> permissions = permissionRepository.findAll(builder);
+
+        // 根据path分组后缓存至redis
+        if (!ObjectUtils.isEmpty(permissions)) {
+            Map<String, List<PermissionModel>> permissionPathMap = permissions.stream()
+                    // 排除path为空的权限
+                    .filter(e -> !ObjectUtils.isEmpty(e.getPath()))
+                    .map(e -> {
+                        PermissionModel authority = new PermissionModel();
+                        authority.setId(e.getId());
+                        authority.setPath(e.getPath());
+                        authority.setPermission(e.getPermission());
+                        authority.setRequestMethod(e.getRequestMethod());
+                        authority.setNeedAuthentication(e.getNeedAuthentication());
+                        return authority;
+                    })
+                    .collect(Collectors.groupingBy(PermissionModel::getPath));
+            redisOperator.set(AuthorizeConstants.ALL_PERMISSIONS, permissionPathMap);
+        }
     }
 
 }
