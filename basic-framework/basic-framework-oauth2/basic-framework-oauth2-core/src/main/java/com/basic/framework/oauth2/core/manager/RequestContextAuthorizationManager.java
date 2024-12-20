@@ -92,15 +92,11 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
             // 默认检查是否认证过
             return AuthenticatedAuthorizationManager.authenticated().check(authentication, requestContext);
         }
-        // 获取当前路径对应的权限信息(可能路径相同但请求方式不同)
-        List<PermissionModel> models = permissionsMap.get(requestPath);
-        if (ObjectUtils.isEmpty(models)) {
-            // 当前请求没有管理只认证
-            return AuthenticatedAuthorizationManager.authenticated().check(authentication, requestContext);
-        }
 
         // 判断是有符合当前路径的权限，如果有说明需要鉴权，否则不用
-        boolean pathNeedAuthorization = models.stream()
+        boolean pathNeedAuthorization = permissionsMap.values()
+                .stream()
+                .flatMap(Collection::stream)
                 .anyMatch(e ->
                         (request.getMethod().equalsIgnoreCase(e.getRequestMethod())
                                 || ObjectUtils.isEmpty(e.getRequestMethod()))

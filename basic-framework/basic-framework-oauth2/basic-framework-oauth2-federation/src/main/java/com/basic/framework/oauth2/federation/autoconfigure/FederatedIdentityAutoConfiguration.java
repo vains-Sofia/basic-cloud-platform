@@ -1,8 +1,5 @@
 package com.basic.framework.oauth2.federation.autoconfigure;
 
-import com.basic.framework.core.domain.PermissionModel;
-import com.basic.framework.core.domain.ScopePermissionModel;
-import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
@@ -29,7 +26,6 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
-import java.util.List;
 import java.util.Map;
 
 import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
@@ -42,27 +38,17 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
 @RequiredArgsConstructor
 public class FederatedIdentityAutoConfiguration {
 
-    private final RedisOperator<List<ScopePermissionModel>> scopePermissionOperator;
-
-    private final RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator;
-
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer(BasicIdTokenCustomizer idTokenCustomizer,
-                                                                          RedisOperator<AuthenticatedUser> redisOperator) {
-        return new JwtIdTokenCustomizer(idTokenCustomizer, redisOperator);
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer(
+            RedisOperator<AuthenticatedUser> redisOperator) {
+        return new JwtIdTokenCustomizer(redisOperator);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer(BasicIdTokenCustomizer idTokenCustomizer) {
-        return new OpaqueIdTokenCustomizer(idTokenCustomizer);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public BasicIdTokenCustomizer basicIdTokenCustomizer() {
-        return new BasicIdTokenCustomizer(scopePermissionOperator, permissionRedisOperator);
+    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer() {
+        return new OpaqueIdTokenCustomizer();
     }
 
     @Bean

@@ -1,6 +1,7 @@
 package com.basic.framework.oauth2.core.converter;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.redis.support.RedisOperator;
@@ -20,6 +21,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 从redis中根据jwt获取认证信息的解析器
@@ -28,11 +30,14 @@ import java.util.Set;
  */
 public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
+    private final BasicIdTokenCustomizer idTokenCustomizer;
+
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
-    public BasicJwtRedisAuthenticationConverter(RedisOperator<AuthenticatedUser> redisOperator) {
+    public BasicJwtRedisAuthenticationConverter(BasicIdTokenCustomizer idTokenCustomizer, RedisOperator<AuthenticatedUser> redisOperator) {
+        this.idTokenCustomizer = idTokenCustomizer;
         this.redisOperator = redisOperator;
         this.jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
     }
@@ -60,6 +65,12 @@ public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, Abst
             Set<GrantedAuthority> authoritySet = new HashSet<>(authorities);
             authoritySet.addAll(grantedAuthorities);
             authenticatedUser.setAuthorities(authoritySet);
+        }
+
+        // 合并scope的权限至用户权限
+        if (!ObjectUtils.isEmpty(grantedAuthorities)) {
+            Set<String> authorizedScopes = grantedAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+            idTokenCustomizer.transferScopesAuthorities(authenticatedUser, authorizedScopes);
         }
 
         // 返回BearerTokenAuthentication的实例

@@ -1,11 +1,5 @@
 package com.basic.framework.oauth2.authorization.server.util;
 
-import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
-import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
-import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
-import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.handler.authentication.DeviceAuthorizationResponseHandler;
-import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationConverter;
 import com.basic.framework.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationProvider;
@@ -13,6 +7,11 @@ import com.basic.framework.oauth2.authorization.server.grant.email.OAuth2EmailCa
 import com.basic.framework.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationConverter;
 import com.basic.framework.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationProvider;
+import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
+import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.handler.authentication.DeviceAuthorizationResponseHandler;
+import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.redis.support.RedisOperator;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
@@ -102,8 +101,7 @@ public class OAuth2ConfigurerUtils {
                 JwtGenerator jwtGenerator = getJwtGenerator(httpSecurity);
                 OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
                 OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer = getAccessTokenCustomizer(httpSecurity);
-                BasicIdTokenCustomizer idTokenCustomizer = getOptionalBean(httpSecurity, BasicIdTokenCustomizer.class);
-                accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, () -> new OpaqueIdTokenCustomizer(idTokenCustomizer)));
+                accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, OpaqueIdTokenCustomizer::new));
                 OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
                 if (jwtGenerator != null) {
                     tokenGenerator = new DelegatingOAuth2TokenGenerator(
@@ -153,8 +151,7 @@ public class OAuth2ConfigurerUtils {
                 if (jwtCustomizer != null) {
                     ResolvableType type = ResolvableType.forClassWithGenerics(RedisOperator.class, AuthenticatedUser.class);
                     RedisOperator<AuthenticatedUser> redisOperator = getOptionalBean(httpSecurity, type);
-                    BasicIdTokenCustomizer idTokenCustomizer = getOptionalBean(httpSecurity, BasicIdTokenCustomizer.class);
-                    jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, () -> new JwtIdTokenCustomizer(idTokenCustomizer, redisOperator)));
+                    jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, () -> new JwtIdTokenCustomizer(redisOperator)));
                 }
                 httpSecurity.setSharedObject(JwtGenerator.class, jwtGenerator);
             }
@@ -338,9 +335,9 @@ public class OAuth2ConfigurerUtils {
                         deviceAuthorizationEndpoint.verificationUri(oAuth2ServerProperties.getDeviceVerificationUri()))
                 // 设置验证设备码用户确认页面
                 .deviceVerificationEndpoint(deviceVerificationEndpoint -> deviceVerificationEndpoint
-                        .consentPage(oAuth2ServerProperties.getConsentPageUri())
+                                .consentPage(oAuth2ServerProperties.getConsentPageUri())
 //                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
-                        .deviceVerificationResponseHandler(new DeviceAuthorizationResponseHandler(oAuth2ServerProperties.getDeviceActivatedPageUri()))
+                                .deviceVerificationResponseHandler(new DeviceAuthorizationResponseHandler(oAuth2ServerProperties.getDeviceActivatedPageUri()))
                 )
                 .clientAuthentication(clientAuthentication ->
                         // 客户端认证添加设备码的converter和provider

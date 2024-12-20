@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * An {@link OAuth2TokenCustomizer} to map claims from a federated identity to
@@ -26,14 +25,12 @@ import java.util.Set;
 @RequiredArgsConstructor
 public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
 
-    private final BasicIdTokenCustomizer idTokenCustomizer;
-
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     @Override
     public void customize(JwtEncodingContext context) {
         if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
-            Map<String, Object> payloadClaims = idTokenCustomizer.extractClaims(context.getPrincipal());
+            Map<String, Object> payloadClaims = BasicIdTokenCustomizer.extractClaims(context.getPrincipal());
             context.getClaims().claims(existingClaims -> {
                 // Remove conflicting claims set by this authorization server
                 existingClaims.keySet().forEach(payloadClaims::remove);
@@ -58,9 +55,6 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
                 // 计算token有效时长
                 long expire = ChronoUnit.SECONDS.between(claimsSet.getIssuedAt(), claimsSet.getExpiresAt());
                 log.debug("Jwt的id为：{}", jti);
-                // 授权确认的scope
-                Set<String> authorizedScopes = context.getAuthorizedScopes();
-                idTokenCustomizer.transferScopesAuthorities(user, authorizedScopes);
                 redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + jti), user, expire);
             }
         }

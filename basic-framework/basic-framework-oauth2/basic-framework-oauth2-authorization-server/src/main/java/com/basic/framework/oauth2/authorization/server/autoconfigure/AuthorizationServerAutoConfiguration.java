@@ -355,23 +355,24 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public JwtAuthenticationProvider authenticationConverter(JwtDecoder jwtDecoder) {
+    public JwtAuthenticationProvider authenticationConverter(JwtDecoder jwtDecoder,
+                                                             BasicIdTokenCustomizer idTokenCustomizer) {
         JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
 
-        authenticationProvider.setJwtAuthenticationConverter(new BasicJwtRedisAuthenticationConverter(redisOperator));
+        authenticationProvider.setJwtAuthenticationConverter(new BasicJwtRedisAuthenticationConverter(idTokenCustomizer, redisOperator));
         return authenticationProvider;
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer(BasicIdTokenCustomizer idTokenCustomizer) {
-        return new JwtIdTokenCustomizer(idTokenCustomizer, redisOperator);
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
+        return new JwtIdTokenCustomizer(redisOperator);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer(BasicIdTokenCustomizer idTokenCustomizer) {
-        return new OpaqueIdTokenCustomizer(idTokenCustomizer);
+    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer() {
+        return new OpaqueIdTokenCustomizer();
     }
 
     @Bean

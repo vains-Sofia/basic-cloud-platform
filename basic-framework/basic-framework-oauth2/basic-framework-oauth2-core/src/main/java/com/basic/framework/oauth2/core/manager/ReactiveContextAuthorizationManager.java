@@ -20,6 +20,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ObjectUtils;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -95,15 +96,11 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
             // 默认检查是否认证过
             return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
         }
-        // 获取当前路径对应的权限信息(可能路径相同但请求方式不同)
-        List<PermissionModel> models = permissionsMap.get(requestPath);
-        if (ObjectUtils.isEmpty(models)) {
-            // 当前请求没有被管理，只做认证
-            return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
-        }
 
         // 判断是有符合当前路径的权限，如果有说明需要鉴权，否则不用
-        boolean pathNeedAuthorization = models.stream()
+        boolean pathNeedAuthorization = permissionsMap.values()
+                .stream()
+                .flatMap(Collection::stream)
                 .anyMatch(e ->
                         (request.getMethod().name().equalsIgnoreCase(e.getRequestMethod())
                                 || ObjectUtils.isEmpty(e.getRequestMethod()))

@@ -62,7 +62,7 @@ public class BasicIdTokenCustomizer {
      * @param principal 当前登录用户认证信息
      * @return 当前用户的信息
      */
-    public Map<String, Object> extractClaims(Authentication principal) {
+    public static Map<String, Object> extractClaims(Authentication principal) {
         Map<String, Object> claims = new HashMap<>();
         if (principal.getPrincipal() instanceof AuthenticatedUser user) {
             if (user instanceof ThirdAuthenticatedUser oidcUser) {

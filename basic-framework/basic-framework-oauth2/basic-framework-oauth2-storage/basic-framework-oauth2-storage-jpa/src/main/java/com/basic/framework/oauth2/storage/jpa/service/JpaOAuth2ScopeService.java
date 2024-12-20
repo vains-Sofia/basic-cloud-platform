@@ -139,6 +139,8 @@ public class JpaOAuth2ScopeService implements OAuth2ScopeService {
         // 根据入参将数据转移至实体
         List<Long> permissionsId = request.getPermissionsId();
         if (ObjectUtils.isEmpty(permissionsId)) {
+            // 删除缓存
+            redisOperator.delete(AuthorizeConstants.SCOPE_PERMISSION_KEY);
             return;
         }
         List<JpaOAuth2ScopePermission> scopePermissions = new ArrayList<>();

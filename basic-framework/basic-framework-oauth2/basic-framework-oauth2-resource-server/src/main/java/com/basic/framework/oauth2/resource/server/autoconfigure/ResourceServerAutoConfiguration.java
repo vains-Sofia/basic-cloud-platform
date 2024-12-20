@@ -1,7 +1,9 @@
 package com.basic.framework.oauth2.resource.server.autoconfigure;
 
 import com.basic.framework.core.domain.PermissionModel;
+import com.basic.framework.core.domain.ScopePermissionModel;
 import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
+import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.manager.ReactiveContextAuthorizationManager;
 import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
@@ -58,8 +60,9 @@ public class ResourceServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BasicJwtRedisAuthenticationConverter authenticationConverter(RedisOperator<AuthenticatedUser> redisOperator) {
-        return new BasicJwtRedisAuthenticationConverter(redisOperator);
+    public BasicJwtRedisAuthenticationConverter authenticationConverter(BasicIdTokenCustomizer idTokenCustomizer,
+                                                                        RedisOperator<AuthenticatedUser> redisOperator) {
+        return new BasicJwtRedisAuthenticationConverter(idTokenCustomizer, redisOperator);
     }
 
     /**
@@ -82,6 +85,14 @@ public class ResourceServerAutoConfiguration {
                 new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
 
         return RedisConfigUtils.buildRedisTemplate(connectionFactory, valueSerializer);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public BasicIdTokenCustomizer basicIdTokenCustomizer(
+            RedisOperator<List<ScopePermissionModel>> scopePermissionOperator,
+            RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator) {
+        return new BasicIdTokenCustomizer(scopePermissionOperator, permissionRedisOperator);
     }
 
 }
