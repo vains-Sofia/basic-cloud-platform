@@ -16,6 +16,9 @@ import org.springframework.security.core.GrantedAuthority;
 @AllArgsConstructor
 public class PermissionGrantedAuthority implements GrantedAuthority {
 
+    @Schema(title = "主键id")
+    private Long id;
+
     @Schema(title = "权限码")
     private String authority;
 

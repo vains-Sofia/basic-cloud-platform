@@ -1,10 +1,17 @@
 package com.basic.framework.oauth2.core.customizer;
 
 import com.basic.framework.core.constants.DateFormatConstants;
+import com.basic.framework.core.domain.PermissionModel;
+import com.basic.framework.core.domain.ScopePermissionModel;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.BasicAuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.security.PermissionGrantedAuthority;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
+import com.basic.framework.redis.support.RedisOperator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.DefaultAddressStandardClaim;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
@@ -12,9 +19,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCESS_TOKEN;
 import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
@@ -24,11 +30,16 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAU
  *
  * @author vains
  */
-public interface BasicIdTokenCustomizer {
+@RequiredArgsConstructor
+public class BasicIdTokenCustomizer {
 
-    DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DateFormatConstants.DEFAULT_DATE_FORMAT);
+    private final RedisOperator<List<ScopePermissionModel>> scopePermissionOperator;
 
-    Set<String> ID_TOKEN_CLAIMS = Set.of(
+    private final RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator;
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DateFormatConstants.DEFAULT_DATE_FORMAT);
+
+    static final Set<String> ID_TOKEN_CLAIMS = Set.of(
             IdTokenClaimNames.ISS,
             IdTokenClaimNames.SUB,
             IdTokenClaimNames.AUD,
@@ -51,7 +62,7 @@ public interface BasicIdTokenCustomizer {
      * @param principal 当前登录用户认证信息
      * @return 当前用户的信息
      */
-    default Map<String, Object> extractClaims(Authentication principal) {
+    public Map<String, Object> extractClaims(Authentication principal) {
         Map<String, Object> claims = new HashMap<>();
         if (principal.getPrincipal() instanceof AuthenticatedUser user) {
             if (user instanceof ThirdAuthenticatedUser oidcUser) {
@@ -101,4 +112,46 @@ public interface BasicIdTokenCustomizer {
         return new HashMap<>(claims);
     }
 
+    /**
+     * 将scope中包含的权限信息和用户的权限信息合并，重置用户拥有的权限
+     *
+     * @param user             用户信息
+     * @param authorizedScopes 授权确认的scope
+     */
+    public void transferScopesAuthorities(AuthenticatedUser user, Set<String> authorizedScopes) {
+        // 查询scope关联的权限
+        List<ScopePermissionModel> scopePermissionList = scopePermissionOperator.get(AuthorizeConstants.SCOPE_PERMISSION_KEY);
+        if (ObjectUtils.isEmpty(scopePermissionList)) {
+            return;
+        }
+        // 提取权限id
+        Set<Long> permissionsId = scopePermissionList.stream()
+                .filter(permissionModel -> authorizedScopes.contains(permissionModel.getScope()))
+                .map(ScopePermissionModel::getPermissionId)
+                .collect(Collectors.toSet());
+
+        // 获取缓存中管理的权限信息
+        Map<String, List<PermissionModel>> permissionsMap = permissionRedisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
+        // scope对应的权限信息
+        List<PermissionGrantedAuthority> grantedAuthorities = permissionsMap.values().stream()
+                .flatMap(e -> e.stream()
+                        .map(p -> {
+                            PermissionGrantedAuthority authority = new PermissionGrantedAuthority();
+                            authority.setRequestMethod(p.getRequestMethod());
+                            authority.setId(p.getId());
+                            authority.setPath(p.getPath());
+                            authority.setAuthority(p.getPermission());
+                            authority.setNeedAuthentication(p.getNeedAuthentication());
+                            return authority;
+                        })
+                )
+                .filter(e -> permissionsId.contains(e.getId()))
+                .toList();
+        // 合并用户原有权限
+        Set<GrantedAuthority> newAuthorities = new HashSet<>(grantedAuthorities);
+        if (!ObjectUtils.isEmpty(user.getAuthorities())) {
+            newAuthorities.addAll(user.getAuthorities());
+        }
+        user.setAuthorities(newAuthorities);
+    }
 }

@@ -79,6 +79,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
                                 .stream()
                                 .map(e -> {
                                     PermissionAuthority authority = new PermissionAuthority();
+                                    authority.setId(e.getId());
                                     authority.setPath(e.getPath());
                                     authority.setPermission(e.getPermission());
                                     authority.setRequestMethod(e.getRequestMethod());

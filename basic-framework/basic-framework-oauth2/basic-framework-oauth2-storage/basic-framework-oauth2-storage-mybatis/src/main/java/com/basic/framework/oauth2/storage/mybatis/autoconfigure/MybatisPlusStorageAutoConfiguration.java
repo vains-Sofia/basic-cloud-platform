@@ -1,16 +1,15 @@
 package com.basic.framework.oauth2.storage.mybatis.autoconfigure;
 
+import com.basic.framework.core.domain.ScopePermissionModel;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
-import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ApplicationMapper;
-import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2AuthorizationConsentMapper;
-import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2AuthorizationMapper;
-import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ScopeMapper;
+import com.basic.framework.oauth2.storage.mybatis.mapper.*;
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicApplicationService;
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicAuthorizationConsentService;
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisBasicAuthorizationService;
 import com.basic.framework.oauth2.storage.mybatis.service.MybatisOAuth2ScopeService;
+import com.basic.framework.redis.support.RedisOperator;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +17,8 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
 
 /**
  * 自动注入Mybatis Plus的存储实现
@@ -28,6 +29,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 @MapperScan("com.basic.framework.oauth2.storage.mybatis.mapper")
 public class MybatisPlusStorageAutoConfiguration {
+
+    private final RedisOperator<List<ScopePermissionModel>> redisOperator;
+
+    private final MybatisOAuth2ScopePermissionMapper scopePermissionMapper;
 
     @PostConstruct
     public void postConstruct() {
@@ -59,6 +64,6 @@ public class MybatisPlusStorageAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public MybatisOAuth2ScopeService jpaOAuth2ScopeService(MybatisOAuth2ScopeMapper scopeMapper) {
-        return new MybatisOAuth2ScopeService(scopeMapper);
+        return new MybatisOAuth2ScopeService(scopeMapper, redisOperator, scopePermissionMapper);
     }
 }

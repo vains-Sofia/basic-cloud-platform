@@ -2,22 +2,29 @@ package com.basic.framework.oauth2.storage.jpa.service;
 
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
+import com.basic.framework.core.domain.ScopePermissionModel;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.storage.core.domain.model.ScopeWithDescription;
 import com.basic.framework.oauth2.storage.core.domain.request.FindScopePageRequest;
+import com.basic.framework.oauth2.storage.core.domain.request.ResetScopePermissionRequest;
 import com.basic.framework.oauth2.storage.core.domain.request.SaveScopeRequest;
 import com.basic.framework.oauth2.storage.core.domain.response.FindScopeResponse;
 import com.basic.framework.oauth2.storage.core.service.OAuth2ScopeService;
 import com.basic.framework.oauth2.storage.jpa.domain.JpaOAuth2Scope;
+import com.basic.framework.oauth2.storage.jpa.domain.JpaOAuth2ScopePermission;
+import com.basic.framework.oauth2.storage.jpa.repository.OAuth2ScopePermissionRepository;
 import com.basic.framework.oauth2.storage.jpa.repository.OAuth2ScopeRepository;
+import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.*;
@@ -33,6 +40,10 @@ public class JpaOAuth2ScopeService implements OAuth2ScopeService {
     private final OAuth2ScopeRepository scopeRepository;
 
     private final Sequence sequence = new Sequence(null);
+
+    private final RedisOperator<List<ScopePermissionModel>> redisOperator;
+
+    private final OAuth2ScopePermissionRepository scopePermissionRepository;
 
     @Override
     public PageResult<FindScopeResponse> findScopePage(FindScopePageRequest request) {
@@ -118,6 +129,42 @@ public class JpaOAuth2ScopeService implements OAuth2ScopeService {
         JpaOAuth2Scope scope = new JpaOAuth2Scope();
         BeanUtils.copyProperties(request, scope);
         this.scopeRepository.save(scope);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void resetScopePermission(ResetScopePermissionRequest request) {
+        // 先移除原有关联关系
+        this.scopePermissionRepository.deleteByScope(request.getScope());
+        // 根据入参将数据转移至实体
+        List<Long> permissionsId = request.getPermissionsId();
+        if (ObjectUtils.isEmpty(permissionsId)) {
+            return;
+        }
+        List<JpaOAuth2ScopePermission> scopePermissions = new ArrayList<>();
+        for (Long permissionId : permissionsId) {
+            JpaOAuth2ScopePermission permission = new JpaOAuth2ScopePermission();
+            permission.setId(sequence.nextId());
+            permission.setScope(request.getScope());
+            permission.setPermissionId(permissionId);
+            scopePermissions.add(permission);
+        }
+        // 保存关联关系
+        this.scopePermissionRepository.saveAll(scopePermissions);
+
+        // 查询所有数据
+        List<JpaOAuth2ScopePermission> scopePermissionList = this.scopePermissionRepository.findAll();
+        List<ScopePermissionModel> permissionModelList = scopePermissionList.stream()
+                .map(e -> {
+                    ScopePermissionModel model = new ScopePermissionModel();
+                    BeanUtils.copyProperties(e, model);
+                    return model;
+                }).toList();
+
+        // 删除缓存
+        redisOperator.delete(AuthorizeConstants.SCOPE_PERMISSION_KEY);
+        // 刷新缓存
+        redisOperator.set(AuthorizeConstants.SCOPE_PERMISSION_KEY, new ArrayList<>(permissionModelList));
     }
 }
 

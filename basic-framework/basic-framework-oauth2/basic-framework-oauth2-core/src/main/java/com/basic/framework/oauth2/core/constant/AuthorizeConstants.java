@@ -22,12 +22,12 @@ public class AuthorizeConstants {
     /**
      * 用户信息缓存前缀
      */
-    public static final String USERINFO_PREFIX = "jti:userinfo:";
+    public static final String USERINFO_PREFIX = "basic:jti:userinfo:";
 
     /**
      * 所有权限缓存信息
      */
-    public static final String ALL_PERMISSIONS = "permission:need_authorization:all";
+    public static final String ALL_PERMISSIONS = "basic:permission:need_authorization:all";
 
     /**
      * 存储位置在yml中的key
@@ -43,6 +43,11 @@ public class AuthorizeConstants {
      * 邮箱验证码在参数中的名字
      */
     public static final String EMAIL_CAPTCHA_PARAMETER = "captcha";
+
+    /**
+     * scope与权限关联缓存
+     */
+    public static final String SCOPE_PERMISSION_KEY = "basic:scope:permission:all";
 
     /**
      * 默认忽略鉴权的地址

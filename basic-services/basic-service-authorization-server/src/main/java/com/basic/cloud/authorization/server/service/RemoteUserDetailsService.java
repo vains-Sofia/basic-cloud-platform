@@ -60,6 +60,7 @@ public class RemoteUserDetailsService implements UserDetailsService {
                     .stream()
                     .map(e -> {
                         PermissionGrantedAuthority authority = new PermissionGrantedAuthority();
+                        authority.setId(e.getId());
                         authority.setPath(e.getPath());
                         authority.setAuthority(e.getPermission());
                         authority.setRequestMethod(e.getRequestMethod());

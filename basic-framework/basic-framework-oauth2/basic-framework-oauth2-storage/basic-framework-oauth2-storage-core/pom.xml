@@ -24,7 +24,7 @@
             <artifactId>basic-framework-data-validation</artifactId>
         </dependency>
 
-        <!-- 封装的认证服务模块 -->
+        <!-- 认证服务依赖 -->
         <dependency>
             <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-authorization-server</artifactId>

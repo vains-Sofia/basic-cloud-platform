@@ -5,16 +5,23 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.basic.framework.core.domain.PageResult;
+import com.basic.framework.core.domain.ScopePermissionModel;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.storage.core.domain.model.ScopeWithDescription;
 import com.basic.framework.oauth2.storage.core.domain.request.FindScopePageRequest;
+import com.basic.framework.oauth2.storage.core.domain.request.ResetScopePermissionRequest;
 import com.basic.framework.oauth2.storage.core.domain.request.SaveScopeRequest;
 import com.basic.framework.oauth2.storage.core.domain.response.FindScopeResponse;
 import com.basic.framework.oauth2.storage.core.service.OAuth2ScopeService;
 import com.basic.framework.oauth2.storage.mybatis.domain.MybatisOAuth2Scope;
+import com.basic.framework.oauth2.storage.mybatis.domain.MybatisOAuth2ScopePermission;
 import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ScopeMapper;
+import com.basic.framework.oauth2.storage.mybatis.mapper.MybatisOAuth2ScopePermissionMapper;
+import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
@@ -31,6 +38,10 @@ import java.util.Set;
 public class MybatisOAuth2ScopeService implements OAuth2ScopeService {
 
     private final MybatisOAuth2ScopeMapper baseMapper;
+
+    private final RedisOperator<List<ScopePermissionModel>> redisOperator;
+
+    private final MybatisOAuth2ScopePermissionMapper scopePermissionMapper;
 
     @Override
     public PageResult<FindScopeResponse> findScopePage(FindScopePageRequest request) {
@@ -112,6 +123,43 @@ public class MybatisOAuth2ScopeService implements OAuth2ScopeService {
         MybatisOAuth2Scope scope = new MybatisOAuth2Scope();
         BeanUtils.copyProperties(request, scope);
         this.baseMapper.updateById(scope);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void resetScopePermission(ResetScopePermissionRequest request) {
+        LambdaQueryWrapper<MybatisOAuth2ScopePermission> wrapper = Wrappers.lambdaQuery(MybatisOAuth2ScopePermission.class)
+                .eq(MybatisOAuth2ScopePermission::getScope, request.getScope());
+        // 先移除原有关联关系
+        this.scopePermissionMapper.delete(wrapper);
+        // 根据入参将数据转移至实体
+        List<Long> permissionsId = request.getPermissionsId();
+        if (ObjectUtils.isEmpty(permissionsId)) {
+            return;
+        }
+        List<MybatisOAuth2ScopePermission> scopePermissions = new ArrayList<>();
+        for (Long permissionId : permissionsId) {
+            MybatisOAuth2ScopePermission permission = new MybatisOAuth2ScopePermission();
+            permission.setScope(request.getScope());
+            permission.setPermissionId(permissionId);
+            scopePermissions.add(permission);
+        }
+        // 保存关联关系
+        this.scopePermissionMapper.insert(scopePermissions);
+
+        // 查询所有数据
+        List<MybatisOAuth2ScopePermission> scopePermissionList = this.scopePermissionMapper.selectList(null);
+        List<ScopePermissionModel> permissionModelList = scopePermissionList.stream()
+                .map(e -> {
+                    ScopePermissionModel model = new ScopePermissionModel();
+                    BeanUtils.copyProperties(e, model);
+                    return model;
+                }).toList();
+
+        // 删除缓存
+        redisOperator.delete(AuthorizeConstants.SCOPE_PERMISSION_KEY);
+        // 刷新缓存
+        redisOperator.set(AuthorizeConstants.SCOPE_PERMISSION_KEY, new ArrayList<>(permissionModelList));
     }
 }
 

@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.util;
 
+import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
@@ -101,7 +102,8 @@ public class OAuth2ConfigurerUtils {
                 JwtGenerator jwtGenerator = getJwtGenerator(httpSecurity);
                 OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
                 OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer = getAccessTokenCustomizer(httpSecurity);
-                accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, OpaqueIdTokenCustomizer::new));
+                BasicIdTokenCustomizer idTokenCustomizer = getOptionalBean(httpSecurity, BasicIdTokenCustomizer.class);
+                accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, () -> new OpaqueIdTokenCustomizer(idTokenCustomizer)));
                 OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
                 if (jwtGenerator != null) {
                     tokenGenerator = new DelegatingOAuth2TokenGenerator(
@@ -151,7 +153,8 @@ public class OAuth2ConfigurerUtils {
                 if (jwtCustomizer != null) {
                     ResolvableType type = ResolvableType.forClassWithGenerics(RedisOperator.class, AuthenticatedUser.class);
                     RedisOperator<AuthenticatedUser> redisOperator = getOptionalBean(httpSecurity, type);
-                    jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, () -> new JwtIdTokenCustomizer(redisOperator)));
+                    BasicIdTokenCustomizer idTokenCustomizer = getOptionalBean(httpSecurity, BasicIdTokenCustomizer.class);
+                    jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, () -> new JwtIdTokenCustomizer(idTokenCustomizer, redisOperator)));
                 }
                 httpSecurity.setSharedObject(JwtGenerator.class, jwtGenerator);
             }

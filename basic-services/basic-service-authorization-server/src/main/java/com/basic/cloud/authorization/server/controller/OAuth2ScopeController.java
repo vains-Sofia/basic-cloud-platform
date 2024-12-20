@@ -1,6 +1,7 @@
 package com.basic.cloud.authorization.server.controller;
 
 import com.basic.framework.oauth2.storage.core.domain.request.FindScopePageRequest;
+import com.basic.framework.oauth2.storage.core.domain.request.ResetScopePermissionRequest;
 import com.basic.framework.oauth2.storage.core.domain.request.SaveScopeRequest;
 import com.basic.framework.oauth2.storage.core.domain.response.FindScopeResponse;
 import com.basic.framework.oauth2.storage.core.service.OAuth2ScopeService;
@@ -49,6 +50,14 @@ public class OAuth2ScopeController {
     @Operation(summary = "修改scope信息", description = "修改scope信息")
     public Result<String> updateScope(@RequestBody @Validated(Update.class) SaveScopeRequest request) {
         scopeService.updateScope(request);
+        return Result.success();
+    }
+
+    @PutMapping("/resetScopePermission")
+    @PreAuthorize("hasAnyAuthority('message.write')")
+    @Operation(summary = "重置scope对应的权限", description = "重置scope对应的权限")
+    public Result<String> resetScopePermission(@RequestBody @Validated ResetScopePermissionRequest request) {
+        scopeService.resetScopePermission(request);
         return Result.success();
     }
 

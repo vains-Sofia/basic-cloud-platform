@@ -3,6 +3,7 @@ package com.basic.framework.oauth2.storage.core.service;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.oauth2.storage.core.domain.model.ScopeWithDescription;
 import com.basic.framework.oauth2.storage.core.domain.request.FindScopePageRequest;
+import com.basic.framework.oauth2.storage.core.domain.request.ResetScopePermissionRequest;
 import com.basic.framework.oauth2.storage.core.domain.request.SaveScopeRequest;
 import com.basic.framework.oauth2.storage.core.domain.response.FindScopeResponse;
 import jakarta.validation.Valid;
@@ -46,5 +47,12 @@ public interface OAuth2ScopeService {
      * @param request scope数据
      */
     void updateScope(SaveScopeRequest request);
+
+    /**
+     * 重置scope的权限
+     *
+     * @param request 重置scope权限入参
+     */
+    void resetScopePermission(ResetScopePermissionRequest request);
 
 }

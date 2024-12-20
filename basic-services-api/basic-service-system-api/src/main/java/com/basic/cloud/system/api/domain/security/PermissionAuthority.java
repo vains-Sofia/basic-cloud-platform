@@ -17,6 +17,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class PermissionAuthority implements Serializable {
 
+    @Schema(title = "主键id")
+    private Long id;
+
     /**
      * 路径
      */

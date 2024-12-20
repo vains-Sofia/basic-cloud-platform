@@ -254,4 +254,24 @@ CREATE TABLE `sys_role_permission`
   COLLATE = utf8mb4_bin
   ROW_FORMAT = Dynamic;
 
+-- ----------------------------
+-- Table structure for oauth2_scope_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `oauth2_scope_permission`;
+CREATE TABLE `oauth2_scope_permission`
+(
+    `id`            bigint NOT NULL COMMENT '主键id',
+    `scope`         varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'oauth2 scope名',
+    `permission_id` bigint                                                 DEFAULT NULL COMMENT '权限id',
+    `create_by`     bigint                                                 DEFAULT NULL COMMENT '创建人',
+    `update_by`     bigint                                                 DEFAULT NULL COMMENT '修改人',
+    `create_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  DEFAULT NULL COMMENT '创建人名称',
+    `update_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  DEFAULT NULL COMMENT '修改人名称',
+    `create_time`   datetime                                               DEFAULT NULL COMMENT '创建时间',
+    `update_time`   datetime                                               DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT ='oauth2 scope与权限关联表';
+
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,6 +1,7 @@
 package com.basic.framework.oauth2.authorization.server.autoconfigure;
 
 import com.basic.framework.core.domain.PermissionModel;
+import com.basic.framework.core.domain.ScopePermissionModel;
 import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.authorization.server.captcha.CaptchaService;
 import com.basic.framework.oauth2.authorization.server.captcha.impl.RedisCaptchaService;
@@ -9,6 +10,7 @@ import com.basic.framework.oauth2.authorization.server.introspector.BasicOpaqueT
 import com.basic.framework.oauth2.core.annotation.ConditionalOnInMemoryStorage;
 import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
 import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
+import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
@@ -91,6 +93,8 @@ public class AuthorizationServerAutoConfiguration {
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final ResourceServerProperties resourceServerProperties;
+
+    private final RedisOperator<List<ScopePermissionModel>> scopePermissionOperator;
 
     private final RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator;
 
@@ -360,14 +364,14 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
-        return new JwtIdTokenCustomizer(redisOperator);
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer(BasicIdTokenCustomizer idTokenCustomizer) {
+        return new JwtIdTokenCustomizer(idTokenCustomizer, redisOperator);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer() {
-        return new OpaqueIdTokenCustomizer();
+    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer(BasicIdTokenCustomizer idTokenCustomizer) {
+        return new OpaqueIdTokenCustomizer(idTokenCustomizer);
     }
 
     @Bean
@@ -380,6 +384,12 @@ public class AuthorizationServerAutoConfiguration {
     @ConditionalOnMissingBean
     public ReactiveContextAuthorizationManager reactiveContextAuthorizationManager() {
         return new ReactiveContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public BasicIdTokenCustomizer basicIdTokenCustomizer() {
+        return new BasicIdTokenCustomizer(scopePermissionOperator, permissionRedisOperator);
     }
 
 }

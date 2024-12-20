@@ -13,6 +13,9 @@ import java.io.Serializable;
 @Data
 public class PermissionModel implements Serializable {
 
+    @Schema(title = "主键id")
+    private Long id;
+
     /**
      * 路径
      */
