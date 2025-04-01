@@ -5,29 +5,37 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.basic.framework</groupId>
-        <artifactId>basic-framework-oauth2-storage</artifactId>
+        <artifactId>basic-framework-oauth2-storage-old</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>basic-framework-oauth2-storage-core</artifactId>
+    <artifactId>basic-framework-oauth2-storage-jpa</artifactId>
 
     <dependencies>
-        <!-- 框架核心包 -->
+        <!-- MySQL 驱动 -->
         <dependency>
-            <groupId>com.basic.framework</groupId>
-            <artifactId>basic-framework-core</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
 
-        <!-- 框架核心包 -->
+        <!-- 认证服务存储核心模块 -->
         <dependency>
             <groupId>com.basic.framework</groupId>
-            <artifactId>basic-framework-data-validation</artifactId>
+            <artifactId>basic-framework-oauth2-storage-core</artifactId>
         </dependency>
 
-        <!-- 认证服务依赖 -->
+        <!-- Spring data jpa -->
         <dependency>
             <groupId>com.basic.framework</groupId>
-            <artifactId>basic-framework-oauth2-authorization-server</artifactId>
+            <artifactId>basic-framework-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Spring data redis -->
+        <dependency>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-data-redis</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,13 +1,13 @@
 package com.basic.cloud.authorization.server.controller;
 
-import com.basic.framework.data.validation.group.Update;
-import com.basic.framework.oauth2.storage.core.domain.request.FindApplicationPageRequest;
-import com.basic.framework.oauth2.storage.core.domain.request.SaveApplicationRequest;
-import com.basic.framework.oauth2.storage.core.domain.response.BasicApplicationResponse;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
-import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
-import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
+import com.basic.framework.data.validation.group.Update;
+import com.basic.framework.oauth2.storage.domain.request.FindApplicationPageRequest;
+import com.basic.framework.oauth2.storage.domain.request.SaveApplicationRequest;
+import com.basic.framework.oauth2.storage.domain.response.BasicApplicationResponse;
+import com.basic.framework.oauth2.storage.domain.security.BasicApplication;
+import com.basic.framework.oauth2.storage.service.BasicApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

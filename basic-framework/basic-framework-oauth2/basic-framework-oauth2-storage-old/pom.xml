@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.basic.framework</groupId>
+        <artifactId>basic-framework-oauth2</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>basic-framework-oauth2-storage-old</artifactId>
+    <name>basic-framework-oauth2-storage-old</name>
+    <modules>
+        <module>basic-framework-oauth2-storage-mybatis</module>
+        <module>basic-framework-oauth2-storage-core</module>
+        <module>basic-framework-oauth2-storage-jpa</module>
+    </modules>
+    <packaging>pom</packaging>
+    <description>oauth2 server storage module</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 认证服务存储核心模块 -->
+            <dependency>
+                <groupId>com.basic.framework</groupId>
+                <artifactId>basic-framework-oauth2-storage-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

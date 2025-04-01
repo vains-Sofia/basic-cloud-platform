@@ -2,11 +2,11 @@ package com.basic.cloud.authorization.server.controller;
 
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
-import com.basic.framework.oauth2.storage.core.converter.Authorization2OAuth2AuthorizationConverter;
-import com.basic.framework.oauth2.storage.core.domain.BasicAuthorization;
-import com.basic.framework.oauth2.storage.core.domain.request.FindAuthorizationPageRequest;
-import com.basic.framework.oauth2.storage.core.domain.response.FindAuthorizationPageResponse;
-import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationService;
+import com.basic.framework.oauth2.storage.converter.Basic2AuthorizationConverter;
+import com.basic.framework.oauth2.storage.domain.request.FindAuthorizationPageRequest;
+import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationPageResponse;
+import com.basic.framework.oauth2.storage.domain.security.BasicAuthorization;
+import com.basic.framework.oauth2.storage.service.BasicAuthorizationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,11 +30,11 @@ public class OAuth2AuthorizationController {
 
     private final BasicAuthorizationService basicAuthorizationService;
 
-    private final Authorization2OAuth2AuthorizationConverter authorizationConverter;
+    private final Basic2AuthorizationConverter authorizationConverter;
 
     public OAuth2AuthorizationController(BasicAuthorizationService basicAuthorizationService, RegisteredClientRepository registeredClientRepository) {
         this.basicAuthorizationService = basicAuthorizationService;
-        this.authorizationConverter = new Authorization2OAuth2AuthorizationConverter(registeredClientRepository);
+        this.authorizationConverter = new Basic2AuthorizationConverter(registeredClientRepository);
     }
 
     @GetMapping("/findByPage")

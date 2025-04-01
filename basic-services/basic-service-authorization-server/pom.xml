@@ -59,7 +59,7 @@
         <!-- 认证服务存储Jpa实现(包含认证服务依赖) -->
         <dependency>
             <groupId>com.basic.framework</groupId>
-            <artifactId>basic-framework-oauth2-storage-jpa</artifactId>
+            <artifactId>basic-framework-oauth2-storage</artifactId>
         </dependency>
 
         <!-- 发送邮件支持 -->
@@ -78,6 +78,12 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+
+        <!-- 认证服务依赖 -->
+        <dependency>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-oauth2-authorization-server</artifactId>
         </dependency>
     </dependencies>
 

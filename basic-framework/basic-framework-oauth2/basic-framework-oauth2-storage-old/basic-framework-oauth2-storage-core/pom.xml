@@ -5,37 +5,29 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.basic.framework</groupId>
-        <artifactId>basic-framework-oauth2-storage</artifactId>
+        <artifactId>basic-framework-oauth2-storage-old</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>basic-framework-oauth2-storage-jpa</artifactId>
+    <artifactId>basic-framework-oauth2-storage-core</artifactId>
 
     <dependencies>
-        <!-- MySQL 驱动 -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <optional>true</optional>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- 认证服务存储核心模块 -->
+        <!-- 框架核心包 -->
         <dependency>
             <groupId>com.basic.framework</groupId>
-            <artifactId>basic-framework-oauth2-storage-core</artifactId>
+            <artifactId>basic-framework-core</artifactId>
         </dependency>
 
-        <!-- Spring data jpa -->
+        <!-- 框架核心包 -->
         <dependency>
             <groupId>com.basic.framework</groupId>
-            <artifactId>basic-framework-data-jpa</artifactId>
+            <artifactId>basic-framework-data-validation</artifactId>
         </dependency>
 
-        <!-- Spring data redis -->
+        <!-- 认证服务依赖 -->
         <dependency>
             <groupId>com.basic.framework</groupId>
-            <artifactId>basic-framework-data-redis</artifactId>
+            <artifactId>basic-framework-oauth2-authorization-server</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,13 +1,13 @@
 package com.basic.cloud.authorization.server.controller;
 
-import com.basic.framework.oauth2.storage.core.domain.request.FindScopePageRequest;
-import com.basic.framework.oauth2.storage.core.domain.request.ResetScopePermissionRequest;
-import com.basic.framework.oauth2.storage.core.domain.request.SaveScopeRequest;
-import com.basic.framework.oauth2.storage.core.domain.response.FindScopeResponse;
-import com.basic.framework.oauth2.storage.core.service.OAuth2ScopeService;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.data.validation.group.Update;
+import com.basic.framework.oauth2.storage.domain.request.FindScopePageRequest;
+import com.basic.framework.oauth2.storage.domain.request.ResetScopePermissionRequest;
+import com.basic.framework.oauth2.storage.domain.request.SaveScopeRequest;
+import com.basic.framework.oauth2.storage.domain.response.FindScopeResponse;
+import com.basic.framework.oauth2.storage.service.OAuth2ScopeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.basic.framework</groupId>
-        <artifactId>basic-framework-oauth2-storage</artifactId>
+        <artifactId>basic-framework-oauth2-storage-old</artifactId>
         <version>0.0.1</version>
     </parent>
 

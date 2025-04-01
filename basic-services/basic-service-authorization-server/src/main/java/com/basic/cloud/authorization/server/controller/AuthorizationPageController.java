@@ -1,8 +1,8 @@
 package com.basic.cloud.authorization.server.controller;
 
-import com.basic.framework.oauth2.storage.core.domain.model.ScopeWithDescription;
-import com.basic.framework.oauth2.storage.core.service.OAuth2ScopeService;
 import com.basic.framework.core.exception.CloudServiceException;
+import com.basic.framework.oauth2.storage.domain.model.ScopeWithDescription;
+import com.basic.framework.oauth2.storage.service.OAuth2ScopeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
