@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -28,15 +28,15 @@
         <!-- 指定Java版本 -->
         <java.version>21</java.version>
         <!-- Redisson 版本号 -->
-        <redisson.version>3.40.1</redisson.version>
+        <redisson.version>3.45.1</redisson.version>
         <!-- Spring Doc 版本号 -->
-        <spring-doc.version>2.7.0</spring-doc.version>
+        <spring-doc.version>2.8.6</spring-doc.version>
         <!-- Mybatis Plus 版本号 -->
-        <mybatis-plus.version>3.5.9</mybatis-plus.version>
+        <mybatis-plus.version>3.5.11</mybatis-plus.version>
         <!-- Spring Cloud 版本号 -->
-        <spring-cloud.version>2024.0.0</spring-cloud.version>
+        <spring-cloud.version>2024.0.1</spring-cloud.version>
         <!-- Spring Cloud Alibaba 版本号 -->
-        <spring-cloud-alibaba.version>2023.0.1.2</spring-cloud-alibaba.version>
+        <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
         <!-- 日志发送至logstash依赖版本 -->
         <logstash-logback-encoder.version>8.0</logstash-logback-encoder.version>
     </properties>
@@ -166,6 +166,13 @@
             <dependency>
                 <groupId>com.basic.framework</groupId>
                 <artifactId>basic-framework-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- 认证服务存储Jpa实现 -->
+            <dependency>
+                <groupId>com.basic.framework</groupId>
+                <artifactId>basic-framework-oauth2-storage</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
