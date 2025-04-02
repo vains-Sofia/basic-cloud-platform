@@ -42,7 +42,7 @@ public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAut
 
         // 检查登录用户信息是不是OAuth2User，在token中添加loginType属性
         if (context.getPrincipal().getPrincipal() instanceof AuthenticatedUser user) {
-            // 同时检验是否为String和是否不为空
+            // 存储用户所属平台与用户唯一id
             claims.claim(OAUTH2_ACCOUNT_PLATFORM, user.getAccountPlatform());
             claims.claim(TOKEN_UNIQUE_ID, user.getUsername());
             // 资源服务自省时需要该属性

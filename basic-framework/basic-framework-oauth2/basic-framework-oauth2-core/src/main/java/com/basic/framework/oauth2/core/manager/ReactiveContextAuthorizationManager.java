@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
@@ -54,6 +55,11 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
     @Override
     @Deprecated
     public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext context) {
+        return this.authorize(authentication, context)
+                .map(e -> new AuthorizationDecision(e.isGranted()));
+    }
+
+    public Mono<AuthorizationResult> authorize(Mono<Authentication> authentication, AuthorizationContext context) {
         // 内部调用忽略认证
         // 取出当前路径和ContextPath，如果有ContextPath则替换为空
         ServerHttpRequest request = context.getExchange().getRequest();
@@ -94,7 +100,9 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
         Map<String, List<PermissionModel>> permissionsMap = redisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
         if (ObjectUtils.isEmpty(permissionsMap)) {
             // 默认检查是否认证过
-            return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
+            return AuthenticatedReactiveAuthorizationManager.authenticated()
+                    .check(authentication, context)
+                    .cast(AuthorizationResult.class);
         }
 
         // 判断是有符合当前路径的权限，如果有说明需要鉴权，否则不用
@@ -104,11 +112,13 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
                 .anyMatch(e ->
                         (request.getMethod().name().equalsIgnoreCase(e.getRequestMethod())
                                 || ObjectUtils.isEmpty(e.getRequestMethod()))
-                        && pathMatcher.match(e.getPath(), requestPath)
+                                && pathMatcher.match(e.getPath(), requestPath)
                 );
         if (!pathNeedAuthorization) {
             // 当前请求不需要鉴权，只做认证
-            return AuthenticatedReactiveAuthorizationManager.authenticated().check(authentication, context);
+            return AuthenticatedReactiveAuthorizationManager.authenticated()
+                    .check(authentication, context)
+                    .cast(AuthorizationResult.class);
         }
 
         // 检查是否认证过(不为空、认证状态为true、不是匿名用户)
@@ -130,6 +140,7 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
                     return new AuthorizationDecision(Boolean.TRUE);
                 })
                 // 鉴权失败
-                .defaultIfEmpty(new AuthorizationDecision(Boolean.FALSE));
+                .defaultIfEmpty(new AuthorizationDecision(Boolean.FALSE))
+                .cast(AuthorizationResult.class);
     }
 }

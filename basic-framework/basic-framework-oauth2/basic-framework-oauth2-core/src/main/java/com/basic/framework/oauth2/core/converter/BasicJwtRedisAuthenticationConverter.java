@@ -67,9 +67,9 @@ public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, Abst
             authenticatedUser.setAuthorities(authoritySet);
         }
 
-        // 合并scope的权限至用户权限
         if (!ObjectUtils.isEmpty(grantedAuthorities)) {
             Set<String> authorizedScopes = grantedAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+            // 动态从redis获取SCOPE对应的权限给用户
             idTokenCustomizer.transferScopesAuthorities(authenticatedUser, authorizedScopes);
         }
 

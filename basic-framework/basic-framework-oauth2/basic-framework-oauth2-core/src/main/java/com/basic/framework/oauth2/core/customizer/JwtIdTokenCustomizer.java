@@ -43,7 +43,7 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
             });
         }
 
-        // 检查登录用户信息是不是OAuth2User，在token中添加loginType属性
+        // 检查登录用户信息是不是统一用户信息，缓存用户信息至redis
         if (context.getPrincipal().getPrincipal() instanceof AuthenticatedUser user) {
             // 只在生成access token时操作
             if (OAuth2ParameterNames.ACCESS_TOKEN.equals(context.getTokenType().getValue())) {

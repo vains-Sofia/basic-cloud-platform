@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authorization.AuthenticatedAuthorizationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
@@ -47,6 +48,12 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
     @Override
     @Deprecated
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext requestContext) {
+        AuthorizationResult authorize = this.authorize(authentication, requestContext);
+        return new AuthorizationDecision(authorize == null ? Boolean.FALSE : authorize.isGranted());
+    }
+
+    @Override
+    public AuthorizationResult authorize(Supplier<Authentication> authentication, RequestAuthorizationContext requestContext) {
         // 取出当前路径和ContextPath，如果有ContextPath则替换为空
         HttpServletRequest request = requestContext.getRequest();
         Enumeration<String> ignoreHeaders = request.getHeaders(FeignConstants.IGNORE_AUTH_HEADER_KEY);

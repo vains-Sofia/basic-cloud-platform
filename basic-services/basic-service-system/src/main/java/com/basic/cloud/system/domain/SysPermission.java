@@ -70,12 +70,19 @@ public class SysPermission extends BasicAuditorEntity {
     private String requestMethod;
 
     /**
-     * 0:菜单,1:接口,2:其它
+     * 权限类型 0:菜单,1:接口,2:其它
      */
     @NotNull
-    @Comment(value = "0:菜单,1:接口,2:其它")
+    @Comment(value = "权限类型 0:菜单,1:接口,2:其它")
     @Column(name = "permission_type", nullable = false)
     private Integer permissionType;
+
+    /**
+     * 所属模块名字
+     */
+    @Comment(value = "所属模块名字")
+    @Column(name = "module_name")
+    private String moduleName;
 
     /**
      * 描述
