@@ -25,9 +25,11 @@ import java.text.ParseException;
  */
 public class DelegatingTokenAuthenticationResolver implements AuthenticationManagerResolver<HttpServletRequest>, BasicTokenAuthenticationResolver {
 
-    private final OpaqueTokenIntrospector opaqueTokenIntrospector;
+    private final AuthenticationManager jwt;
 
-    private final JwtAuthenticationProvider jwtAuthenticationProvider;
+    private final AuthenticationManager opaqueToken;
+
+    private final OpaqueTokenIntrospector opaqueTokenIntrospector;
 
     /**
      * 从请求中获取bearer token的处理器
@@ -44,38 +46,39 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
         this.opaqueTokenIntrospector = this.getOptionalBean(applicationContext, OpaqueTokenIntrospector.class);
         // 从ioc中获取jwt token解析manager
         JwtAuthenticationProvider authenticationProvider = this.getOptionalBean(applicationContext, JwtAuthenticationProvider.class);
+        JwtAuthenticationProvider jwtAuthenticationProvider;
         if (ObjectUtils.isEmpty(authenticationProvider)) {
             // 从ioc中获取jwt解析器(需配置spring.security.oauth2.resourceserver.jwt.issuer-uri配置项)
             JwtDecoder jwtDecoder = this.getOptionalBean(applicationContext, JwtDecoder.class);
             Assert.notNull(jwtDecoder, "jwtDecoder cannot be null");
             // 获取不到默认初始化一个
-            this.jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
+            jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
         } else {
             // 获取到直接初始化
-            this.jwtAuthenticationProvider = authenticationProvider;
+            jwtAuthenticationProvider = authenticationProvider;
         }
 
         // 获取jwt转换器，获取到直接给转换器使用
         BasicJwtRedisAuthenticationConverter authenticationConverter = this.getOptionalBean(applicationContext, BasicJwtRedisAuthenticationConverter.class);
         if (authenticationConverter != null) {
-            this.jwtAuthenticationProvider.setJwtAuthenticationConverter(authenticationConverter);
+            jwtAuthenticationProvider.setJwtAuthenticationConverter(authenticationConverter);
         }
+        // 初始化jwt解析器
+        this.jwt = new ProviderManager(jwtAuthenticationProvider);
+        this.opaqueToken = new ProviderManager(new OpaqueTokenAuthenticationProvider(opaqueTokenIntrospector));
     }
 
     @Override
     public AuthenticationManager resolve(HttpServletRequest context) {
         // 如果没有匿名token自省类默认使用jwt解析器
-        AuthenticationManager jwt = new ProviderManager(jwtAuthenticationProvider);
         if (this.opaqueTokenIntrospector == null) {
-            return jwt;
+            return this.jwt;
         }
-        // 根据access token类型决定使用哪一种解析器
-        AuthenticationManager opaqueToken = new ProviderManager(
-                new OpaqueTokenAuthenticationProvider(opaqueTokenIntrospector));
 
         // 到这里肯定会有access token
         String token = bearerTokenResolver.resolve(context);
         String[] split = token.split("\\.");
+        // 根据access token类型决定使用哪一种解析器
         if (split.length == 3) {
             try {
                 // 可以正确解析jwt则使用jwt解析器
@@ -83,11 +86,11 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
                 return jwt;
             } catch (ParseException e) {
                 // 解析失败尝试自省 access token
-                return opaqueToken;
+                return this.opaqueToken;
             }
         } else {
             // 如果不符合jwt格式使用匿名token自省
-            return opaqueToken;
+            return this.opaqueToken;
         }
     }
 
