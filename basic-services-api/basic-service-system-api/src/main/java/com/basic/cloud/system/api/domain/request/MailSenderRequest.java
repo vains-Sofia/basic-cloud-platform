@@ -34,6 +34,7 @@ public class MailSenderRequest implements Serializable {
     /**
      * 邮件主题
      */
+    @NotBlank
     @Schema(title = "邮件主题")
     private String subject;
 

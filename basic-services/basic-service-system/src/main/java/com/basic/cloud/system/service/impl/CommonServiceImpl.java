@@ -37,7 +37,8 @@ public class CommonServiceImpl implements CommonService {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, hasMultipart, StandardCharsets.UTF_8.name());
 
             // 发送人
-            mimeMessageHelper.setFrom(request.getFrom() + "<" + mailProperties.getUsername() + ">");
+            String from = ObjectUtils.isEmpty(request.getFrom()) ? "Basic Cloud Platform" : request.getFrom();
+            mimeMessageHelper.setFrom(from + "<" + mailProperties.getUsername() + ">");
             // 收件人
             mimeMessageHelper.setTo(request.getMailTo().toArray(new String[0]));
             // 主题
