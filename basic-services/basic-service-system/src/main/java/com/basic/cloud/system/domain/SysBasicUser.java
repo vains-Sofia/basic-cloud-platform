@@ -1,7 +1,7 @@
 package com.basic.cloud.system.domain;
 
-import com.basic.framework.core.enums.GenderEnum;
-import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.oauth2.core.enums.GenderEnum;
+import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.data.jpa.domain.BasicAuditorEntity;
 import com.basic.framework.data.validation.annotation.Phone;
 import jakarta.persistence.*;

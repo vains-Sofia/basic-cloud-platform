@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.federation.wechat;
 
-import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import jakarta.annotation.Nullable;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.oauth2.client.endpoint.DefaultOAuth2TokenRequestParametersConverter;

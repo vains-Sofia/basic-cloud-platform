@@ -1,7 +1,7 @@
 package com.basic.cloud.system.api.domain.response;
 
-import com.basic.framework.core.enums.GenderEnum;
-import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.oauth2.core.enums.GenderEnum;
+import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

@@ -1,13 +1,18 @@
 package com.basic.cloud.authorization.server.configuration;
 
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.handler.authentication.LoginFailureHandler;
 import com.basic.framework.oauth2.core.handler.authentication.LoginSuccessHandler;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
+import com.basic.framework.oauth2.storage.repository.OAuth2ScopePermissionRepository;
+import com.basic.framework.redis.support.RedisOperator;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
@@ -20,6 +25,9 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCo
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 资源服务器配置类
@@ -34,6 +42,10 @@ public class ResourceServerConfiguration {
      * 认证服务配置类
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
+
+    private final RedisOperator<List<ScopePermissionModel>> redisOperator;
+
+    private final OAuth2ScopePermissionRepository scopePermissionRepository;
 
     private final OAuth2AuthorizationRequestResolver authorizationRequestResolver;
 
@@ -102,6 +114,26 @@ public class ResourceServerConfiguration {
         );
 
         return http.build();
+    }
+
+    /**
+     * 初始化scope的权限至缓存中
+     */
+    @PostConstruct
+    public void initScopePermissionCache() {
+        // 查询所有数据并转换
+        List<ScopePermissionModel> permissionModelList = this.scopePermissionRepository.findAll()
+                .stream()
+                .map(e -> {
+                    ScopePermissionModel model = new ScopePermissionModel();
+                    BeanUtils.copyProperties(e, model);
+                    return model;
+                }).toList();
+
+        // 删除缓存
+        redisOperator.delete(AuthorizeConstants.SCOPE_PERMISSION_KEY);
+        // 刷新缓存
+        redisOperator.set(AuthorizeConstants.SCOPE_PERMISSION_KEY, new ArrayList<>(permissionModelList));
     }
 
 }

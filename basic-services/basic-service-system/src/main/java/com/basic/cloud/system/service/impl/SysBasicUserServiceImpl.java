@@ -6,7 +6,6 @@ import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
 import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
-import com.basic.cloud.system.api.domain.security.PermissionAuthority;
 import com.basic.cloud.system.domain.SysBasicUser;
 import com.basic.cloud.system.domain.SysRole;
 import com.basic.cloud.system.repository.SysBasicUserRepository;
@@ -14,13 +13,14 @@ import com.basic.cloud.system.service.CommonService;
 import com.basic.cloud.system.service.SysBasicUserService;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
-import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.util.RandomUtils;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
+import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,13 +72,13 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
             List<SysRole> roles = u.getRoles();
             if (!ObjectUtils.isEmpty(roles)) {
                 // 提取用户权限
-                Set<PermissionAuthority> authorities = roles.stream()
+                Set<BasicGrantedAuthority> authorities = roles.stream()
                         .filter(role -> !ObjectUtils.isEmpty(role.getPermissions()))
                         .flatMap(role -> role
                                 .getPermissions()
                                 .stream()
                                 .map(e -> {
-                                    PermissionAuthority authority = new PermissionAuthority();
+                                    BasicGrantedAuthority authority = new BasicGrantedAuthority();
                                     authority.setId(e.getId());
                                     authority.setPath(e.getPath());
                                     authority.setPermission(e.getPermission());

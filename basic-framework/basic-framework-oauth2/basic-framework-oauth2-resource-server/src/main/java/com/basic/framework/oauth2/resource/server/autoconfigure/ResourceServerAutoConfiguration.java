@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.resource.server.autoconfigure;
 
-import com.basic.framework.core.domain.PermissionModel;
-import com.basic.framework.core.domain.ScopePermissionModel;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
 import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
@@ -45,7 +45,7 @@ public class ResourceServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public RequestContextAuthorizationManager requestContextAuthorizationManager(
-            RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator
+            RedisOperator<Map<String, List<BasicGrantedAuthority>>> permissionRedisOperator
     ) {
         return new RequestContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
@@ -53,7 +53,7 @@ public class ResourceServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ReactiveContextAuthorizationManager reactiveContextAuthorizationManager(
-            RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator
+            RedisOperator<Map<String, List<BasicGrantedAuthority>>> permissionRedisOperator
     ) {
         return new ReactiveContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
@@ -91,7 +91,7 @@ public class ResourceServerAutoConfiguration {
     @ConditionalOnMissingBean
     public BasicIdTokenCustomizer basicIdTokenCustomizer(
             RedisOperator<List<ScopePermissionModel>> scopePermissionOperator,
-            RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator) {
+            RedisOperator<Map<String, List<BasicGrantedAuthority>>> permissionRedisOperator) {
         return new BasicIdTokenCustomizer(scopePermissionOperator, permissionRedisOperator);
     }
 

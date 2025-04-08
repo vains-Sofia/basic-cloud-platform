@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.core.domain.oauth2;
 
-import com.basic.framework.core.enums.GenderEnum;
+import com.basic.framework.oauth2.core.enums.GenderEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

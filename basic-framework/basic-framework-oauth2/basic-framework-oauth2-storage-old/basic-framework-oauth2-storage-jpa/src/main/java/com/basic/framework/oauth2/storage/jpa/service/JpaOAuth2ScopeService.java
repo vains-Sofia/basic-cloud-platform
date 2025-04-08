@@ -2,7 +2,7 @@ package com.basic.framework.oauth2.storage.jpa.service;
 
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
-import com.basic.framework.core.domain.ScopePermissionModel;
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;

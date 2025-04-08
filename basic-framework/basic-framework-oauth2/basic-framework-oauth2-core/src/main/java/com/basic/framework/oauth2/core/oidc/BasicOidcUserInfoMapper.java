@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.core.oidc;
 
 import com.basic.framework.core.enums.BasicEnum;
-import com.basic.framework.core.enums.GenderEnum;
+import com.basic.framework.oauth2.core.enums.GenderEnum;
 import com.basic.framework.core.util.JsonUtils;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oidc.OidcUserInfoResult;

@@ -1,7 +1,6 @@
 package com.basic.framework.oauth2.storage.autoconfigure;
 
-import com.basic.framework.core.domain.ScopePermissionModel;
-import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.storage.repository.*;
 import com.basic.framework.oauth2.storage.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.service.BasicAuthorizationConsentService;
@@ -18,7 +17,6 @@ import com.basic.framework.redis.support.RedisOperator;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +28,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -102,26 +99,6 @@ public class StorageAutoConfiguration {
     public OAuth2AuthorizationConsentService authorizationConsentService(
             BasicAuthorizationConsentService basicAuthorizationConsentService, RegisteredClientRepository registeredClientRepository) {
         return new StorageAuthorizationConsentService(basicAuthorizationConsentService, registeredClientRepository);
-    }
-
-    /**
-     * 初始化scope的权限至缓存中
-     */
-    @PostConstruct
-    public void initScopePermissionCache() {
-        // 查询所有数据并转换
-        List<ScopePermissionModel> permissionModelList = this.scopePermissionRepository.findAll()
-                .stream()
-                .map(e -> {
-                    ScopePermissionModel model = new ScopePermissionModel();
-                    BeanUtils.copyProperties(e, model);
-                    return model;
-                }).toList();
-
-        // 删除缓存
-        redisOperator.delete(AuthorizeConstants.SCOPE_PERMISSION_KEY);
-        // 刷新缓存
-        redisOperator.set(AuthorizeConstants.SCOPE_PERMISSION_KEY, new ArrayList<>(permissionModelList));
     }
 
 }

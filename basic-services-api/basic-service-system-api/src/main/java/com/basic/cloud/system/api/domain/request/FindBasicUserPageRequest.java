@@ -1,7 +1,7 @@
 package com.basic.cloud.system.api.domain.request;
 
 import com.basic.framework.core.domain.DataPageable;
-import com.basic.framework.core.enums.GenderEnum;
+import com.basic.framework.oauth2.core.enums.GenderEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

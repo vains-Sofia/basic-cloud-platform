@@ -1,9 +1,8 @@
 package com.basic.framework.oauth2.core.manager;
 
 import com.basic.framework.core.constants.FeignConstants;
-import com.basic.framework.core.domain.PermissionModel;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
-import com.basic.framework.oauth2.core.domain.security.PermissionGrantedAuthority;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
 import com.basic.framework.redis.support.RedisOperator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +34,7 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    private final RedisOperator<Map<String, List<PermissionModel>>> redisOperator;
+    private final RedisOperator<Map<String, List<BasicGrantedAuthority>>> redisOperator;
 
     /**
      * check方法已被弃用，后续版本会被删除，新版本中请使用authorize
@@ -94,7 +93,7 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
         }
 
         // 获取缓存中管理的权限信息，判断当前路径是否需要鉴权
-        Map<String, List<PermissionModel>> permissionsMap = redisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
+        Map<String, List<BasicGrantedAuthority>> permissionsMap = redisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
         if (ObjectUtils.isEmpty(permissionsMap)) {
             // 默认检查是否认证过
             return AuthenticatedAuthorizationManager.authenticated().check(authentication, requestContext);
@@ -114,12 +113,12 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
             Collection<? extends GrantedAuthority> authorities = authentication.get().getAuthorities();
             if (!ObjectUtils.isEmpty(authorities)) {
                 // 提取用户拥有权限中的关于请求路径部分权限
-                List<PermissionGrantedAuthority> grantedAuthorities = authorities.stream()
-                        .filter(PermissionGrantedAuthority.class::isInstance)
-                        .map(PermissionGrantedAuthority.class::cast)
+                List<BasicGrantedAuthority> grantedAuthorities = authorities.stream()
+                        .filter(BasicGrantedAuthority.class::isInstance)
+                        .map(BasicGrantedAuthority.class::cast)
                         // 筛选出需要鉴权的
-                        .filter(PermissionGrantedAuthority::getNeedAuthentication).toList();
-                for (PermissionGrantedAuthority grantedAuthority : grantedAuthorities) {
+                        .filter(BasicGrantedAuthority::getNeedAuthentication).toList();
+                for (BasicGrantedAuthority grantedAuthority : grantedAuthorities) {
                     // 请求方式和请求路径匹配放行
                     boolean urlMatch = pathMatcher.match(grantedAuthority.getPath(), requestPath)
                             && (request.getMethod().equalsIgnoreCase(grantedAuthority.getRequestMethod())

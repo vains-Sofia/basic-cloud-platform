@@ -1,9 +1,8 @@
 package com.basic.framework.oauth2.core.manager;
 
 import com.basic.framework.core.constants.FeignConstants;
-import com.basic.framework.core.domain.PermissionModel;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
-import com.basic.framework.oauth2.core.domain.security.PermissionGrantedAuthority;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +39,7 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    private final RedisOperator<Map<String, List<PermissionModel>>> redisOperator;
+    private final RedisOperator<Map<String, List<BasicGrantedAuthority>>> redisOperator;
 
     private final AuthenticationTrustResolver authTrustResolver = new AuthenticationTrustResolverImpl();
 
@@ -97,7 +96,7 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
         }
 
         // 获取缓存中管理的权限信息，判断当前路径是否需要鉴权
-        Map<String, List<PermissionModel>> permissionsMap = redisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
+        Map<String, List<BasicGrantedAuthority>> permissionsMap = redisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
         if (ObjectUtils.isEmpty(permissionsMap)) {
             // 默认检查是否认证过
             return AuthenticatedReactiveAuthorizationManager.authenticated()
@@ -124,10 +123,10 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
         // 检查是否认证过(不为空、认证状态为true、不是匿名用户)
         return authentication.filter(authTrustResolver::isAuthenticated)
                 .map(Authentication::getAuthorities)
-                .filter(PermissionGrantedAuthority.class::isInstance)
-                .cast(PermissionGrantedAuthority.class)
+                .filter(BasicGrantedAuthority.class::isInstance)
+                .cast(BasicGrantedAuthority.class)
                 // 筛选出需要鉴权的
-                .filter(PermissionGrantedAuthority::getNeedAuthentication)
+                .filter(BasicGrantedAuthority::getNeedAuthentication)
                 // 根据当前请求的请求方式和请求路径过滤
                 .filter(grantedAuthority ->
                         pathMatcher.match(grantedAuthority.getPath(), requestPath)

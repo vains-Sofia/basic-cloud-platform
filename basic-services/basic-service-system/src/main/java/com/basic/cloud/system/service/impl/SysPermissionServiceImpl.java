@@ -7,7 +7,7 @@ import com.basic.cloud.system.domain.SysPermission;
 import com.basic.cloud.system.repository.SysPermissionRepository;
 import com.basic.cloud.system.service.SysPermissionService;
 import com.basic.framework.core.domain.DataPageResult;
-import com.basic.framework.core.domain.PermissionModel;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
@@ -41,7 +41,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 
     private final SysPermissionRepository permissionRepository;
 
-    private final RedisOperator<Map<String, List<PermissionModel>>> redisOperator;
+    private final RedisOperator<Map<String, List<BasicGrantedAuthority>>> redisOperator;
 
     @Override
     public DataPageResult<FindPermissionResponse> findByPage(FindPermissionPageRequest request) {
@@ -153,11 +153,11 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 
         // 根据path分组后缓存至redis
         if (!ObjectUtils.isEmpty(permissions)) {
-            Map<String, List<PermissionModel>> permissionPathMap = permissions.stream()
+            Map<String, List<BasicGrantedAuthority>> permissionPathMap = permissions.stream()
                     // 排除path为空的权限
                     .filter(e -> !ObjectUtils.isEmpty(e.getPath()))
                     .map(e -> {
-                        PermissionModel authority = new PermissionModel();
+                        BasicGrantedAuthority authority = new BasicGrantedAuthority();
                         authority.setId(e.getId());
                         authority.setPath(e.getPath());
                         authority.setPermission(e.getPermission());
@@ -165,7 +165,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                         authority.setNeedAuthentication(e.getNeedAuthentication());
                         return authority;
                     })
-                    .collect(Collectors.groupingBy(PermissionModel::getPath));
+                    .collect(Collectors.groupingBy(BasicGrantedAuthority::getPath));
             redisOperator.set(AuthorizeConstants.ALL_PERMISSIONS, permissionPathMap);
         }
     }

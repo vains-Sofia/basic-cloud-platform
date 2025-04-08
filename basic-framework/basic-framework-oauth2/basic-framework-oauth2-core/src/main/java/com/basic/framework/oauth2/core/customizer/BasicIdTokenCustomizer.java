@@ -1,12 +1,11 @@
 package com.basic.framework.oauth2.core.customizer;
 
 import com.basic.framework.core.constants.DateFormatConstants;
-import com.basic.framework.core.domain.PermissionModel;
-import com.basic.framework.core.domain.ScopePermissionModel;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.BasicAuthenticatedUser;
-import com.basic.framework.oauth2.core.domain.security.PermissionGrantedAuthority;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class BasicIdTokenCustomizer {
 
     private final RedisOperator<List<ScopePermissionModel>> scopePermissionOperator;
 
-    private final RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator;
+    private final RedisOperator<Map<String, List<BasicGrantedAuthority>>> permissionRedisOperator;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DateFormatConstants.DEFAULT_DATE_FORMAT);
 
@@ -131,12 +130,12 @@ public class BasicIdTokenCustomizer {
                 .collect(Collectors.toSet());
 
         // 获取缓存中管理的权限信息
-        Map<String, List<PermissionModel>> permissionsMap = permissionRedisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
+        Map<String, List<BasicGrantedAuthority>> permissionsMap = permissionRedisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
         // scope对应的权限信息
-        List<PermissionGrantedAuthority> grantedAuthorities = permissionsMap.values().stream()
+        List<BasicGrantedAuthority> grantedAuthorities = permissionsMap.values().stream()
                 .flatMap(e -> e.stream()
                         .map(p -> {
-                            PermissionGrantedAuthority authority = new PermissionGrantedAuthority();
+                            BasicGrantedAuthority authority = new BasicGrantedAuthority();
                             authority.setRequestMethod(p.getRequestMethod());
                             authority.setId(p.getId());
                             authority.setPath(p.getPath());

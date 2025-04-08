@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.storage.mybatis.autoconfigure;
 
-import com.basic.framework.core.domain.ScopePermissionModel;
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.storage.core.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.core.service.BasicAuthorizationConsentService;

@@ -1,4 +1,4 @@
-package com.basic.framework.core.domain;
+package com.basic.framework.oauth2.core.domain.security;
 
 import lombok.Data;
 

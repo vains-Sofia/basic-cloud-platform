@@ -18,6 +18,12 @@
             <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-data-validation</artifactId>
         </dependency>
+
+        <!-- 认证core包 -->
+        <dependency>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-oauth2-core</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -1,8 +1,8 @@
 package com.basic.framework.oauth2.authorization.server.autoconfigure;
 
-import com.basic.framework.core.domain.PermissionModel;
-import com.basic.framework.core.domain.ScopePermissionModel;
-import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
+import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.authorization.server.captcha.CaptchaService;
 import com.basic.framework.oauth2.authorization.server.captcha.impl.RedisCaptchaService;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
@@ -96,7 +96,7 @@ public class AuthorizationServerAutoConfiguration {
 
     private final RedisOperator<List<ScopePermissionModel>> scopePermissionOperator;
 
-    private final RedisOperator<Map<String, List<PermissionModel>>> permissionRedisOperator;
+    private final RedisOperator<Map<String, List<BasicGrantedAuthority>>> permissionRedisOperator;
 
     /**
      * 将AuthenticationManager注入ioc中，其它需要使用地方可以直接从ioc中获取

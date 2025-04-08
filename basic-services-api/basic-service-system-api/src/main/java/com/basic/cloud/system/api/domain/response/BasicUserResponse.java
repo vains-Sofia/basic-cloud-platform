@@ -1,8 +1,8 @@
 package com.basic.cloud.system.api.domain.response;
 
-import com.basic.cloud.system.api.domain.security.PermissionAuthority;
-import com.basic.framework.core.enums.GenderEnum;
-import com.basic.framework.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.oauth2.core.enums.GenderEnum;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
+import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -63,7 +63,7 @@ public class BasicUserResponse implements Serializable {
     private OAuth2AccountPlatformEnum accountPlatform;
 
     @Schema(title = "用户拥有的权限信息")
-    private Set<PermissionAuthority> authorities;
+    private Set<BasicGrantedAuthority> authorities;
 
     @Schema(title = "创建人名称")
     private String createName;

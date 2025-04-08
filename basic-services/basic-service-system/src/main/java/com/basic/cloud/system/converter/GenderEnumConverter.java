@@ -1,6 +1,6 @@
 package com.basic.cloud.system.converter;
 
-import com.basic.framework.core.enums.GenderEnum;
+import com.basic.framework.oauth2.core.enums.GenderEnum;
 import com.basic.framework.data.jpa.converter.BasicEnumConverter;
 import jakarta.persistence.Converter;
 

@@ -29,8 +29,6 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
 
     private final AuthenticationManager opaqueToken;
 
-    private final OpaqueTokenIntrospector opaqueTokenIntrospector;
-
     /**
      * 从请求中获取bearer token的处理器
      */
@@ -43,7 +41,7 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
      */
     public DelegatingTokenAuthenticationResolver(ApplicationContext applicationContext) {
         // 获取spring提供的匿名token自省实现
-        this.opaqueTokenIntrospector = this.getOptionalBean(applicationContext, OpaqueTokenIntrospector.class);
+        OpaqueTokenIntrospector opaqueTokenIntrospector = this.getOptionalBean(applicationContext, OpaqueTokenIntrospector.class);
         // 从ioc中获取jwt token解析manager
         JwtAuthenticationProvider authenticationProvider = this.getOptionalBean(applicationContext, JwtAuthenticationProvider.class);
         JwtAuthenticationProvider jwtAuthenticationProvider;
@@ -65,13 +63,17 @@ public class DelegatingTokenAuthenticationResolver implements AuthenticationMana
         }
         // 初始化jwt解析器
         this.jwt = new ProviderManager(jwtAuthenticationProvider);
-        this.opaqueToken = new ProviderManager(new OpaqueTokenAuthenticationProvider(opaqueTokenIntrospector));
+        if (opaqueTokenIntrospector != null) {
+            this.opaqueToken = new ProviderManager(new OpaqueTokenAuthenticationProvider(opaqueTokenIntrospector));
+        } else {
+            this.opaqueToken = null;
+        }
     }
 
     @Override
     public AuthenticationManager resolve(HttpServletRequest context) {
         // 如果没有匿名token自省类默认使用jwt解析器
-        if (this.opaqueTokenIntrospector == null) {
+        if (this.opaqueToken == null) {
             return this.jwt;
         }
 

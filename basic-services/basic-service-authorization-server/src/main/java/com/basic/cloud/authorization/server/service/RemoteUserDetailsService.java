@@ -1,6 +1,6 @@
 package com.basic.cloud.authorization.server.service;
 
-import com.basic.framework.oauth2.core.domain.security.PermissionGrantedAuthority;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.cloud.system.api.SysBasicUserClient;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.framework.core.constants.HttpCodeConstants;
@@ -56,10 +56,10 @@ public class RemoteUserDetailsService implements UserDetailsService {
         authenticatedUser.setName(userResponse.getNickname());
         if (!ObjectUtils.isEmpty(userResponse.getAuthorities())) {
             // 权限信息特殊处理
-            Set<PermissionGrantedAuthority> authorities = userResponse.getAuthorities()
+            Set<BasicGrantedAuthority> authorities = userResponse.getAuthorities()
                     .stream()
                     .map(e -> {
-                        PermissionGrantedAuthority authority = new PermissionGrantedAuthority();
+                        BasicGrantedAuthority authority = new BasicGrantedAuthority();
                         authority.setId(e.getId());
                         authority.setPath(e.getPath());
                         authority.setAuthority(e.getPermission());
