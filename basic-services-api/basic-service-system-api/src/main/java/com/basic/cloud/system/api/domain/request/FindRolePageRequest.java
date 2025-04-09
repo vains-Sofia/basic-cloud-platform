@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 /**
  * 分页查询角色入参
  *
- * @author YuJx
+ * @author vains
  */
 @Data
 @Schema(name = "分页查询角色信息入参")

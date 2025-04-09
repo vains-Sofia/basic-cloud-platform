@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * RBAC权限信息Service实现
  *
- * @author YuJx
+ * @author vains
  */
 @Service
 @RequiredArgsConstructor

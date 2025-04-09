@@ -8,7 +8,7 @@ import com.basic.framework.core.domain.DataPageResult;
 /**
  * RBAC权限信息Service
  *
- * @author YuJx
+ * @author vains
  */
 public interface SysPermissionService {
 

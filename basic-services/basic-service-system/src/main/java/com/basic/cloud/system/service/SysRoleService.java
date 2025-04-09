@@ -8,7 +8,7 @@ import com.basic.framework.core.domain.DataPageResult;
 /**
  * RBAC角色 Service 接口
  *
- * @author YuJx
+ * @author vains
  */
 public interface SysRoleService {
 

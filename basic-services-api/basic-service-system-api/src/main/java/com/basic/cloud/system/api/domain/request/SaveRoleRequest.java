@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * 保存或修改角色信息入参
  *
- * @author YuJx
+ * @author vains
  */
 @Data
 @Schema(name = "保存或修改角色信息入参")
