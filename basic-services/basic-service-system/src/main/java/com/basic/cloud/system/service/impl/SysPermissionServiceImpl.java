@@ -4,6 +4,7 @@ import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
 import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
 import com.basic.cloud.system.domain.SysPermission;
+import com.basic.cloud.system.enums.PermissionTypeEnum;
 import com.basic.cloud.system.repository.SysPermissionRepository;
 import com.basic.cloud.system.service.SysPermissionService;
 import com.basic.framework.core.domain.DataPageResult;
@@ -109,7 +110,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         SysPermission permission = new SysPermission();
         BeanUtils.copyProperties(request, permission);
 
-        // 插入时初始化id与密码
+        // 插入时初始化id
         if (!hasId) {
             permission.setId(sequence.nextId());
             // 初始化默认信息
@@ -147,7 +148,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         SpecificationBuilder<SysPermission> specificationBuilder = new SpecificationBuilder<>();
         SpecificationBuilder<SysPermission> builder = specificationBuilder
                 // 只查询接口权限
-                .eq(SysPermission::getPermissionType, 1)
+                .eq(SysPermission::getPermissionType, PermissionTypeEnum.REST.getValue())
                 .eq(SysPermission::getNeedAuthentication, Boolean.TRUE);
         List<SysPermission> permissions = permissionRepository.findAll(builder);
 

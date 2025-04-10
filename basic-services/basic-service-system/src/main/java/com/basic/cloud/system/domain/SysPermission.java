@@ -1,5 +1,6 @@
 package com.basic.cloud.system.domain;
 
+import com.basic.cloud.system.enums.PermissionTypeEnum;
 import com.basic.framework.data.jpa.domain.BasicAuditorEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -75,7 +76,7 @@ public class SysPermission extends BasicAuditorEntity {
     @NotNull
     @Comment(value = "权限类型 0:菜单,1:接口,2:其它")
     @Column(name = "permission_type", nullable = false)
-    private Integer permissionType;
+    private PermissionTypeEnum permissionType;
 
     /**
      * 所属模块名字
