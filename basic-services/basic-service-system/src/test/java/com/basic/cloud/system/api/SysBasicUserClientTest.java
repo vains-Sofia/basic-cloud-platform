@@ -39,7 +39,7 @@ class SysBasicUserClientTest {
 
     @Test
     public void userDetails() {
-        Result<BasicUserResponse> userResponseResult = basicUserClient.userDetails(1L);
+        Result<FindBasicUserResponse> userResponseResult = basicUserClient.userDetails(1L);
         System.out.println(userResponseResult);
     }
 

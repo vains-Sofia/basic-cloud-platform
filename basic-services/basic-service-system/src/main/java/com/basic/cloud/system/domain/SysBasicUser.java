@@ -42,6 +42,14 @@ public class SysBasicUser extends BasicAuditorEntity {
      * 用户名、昵称
      */
     @Size(max = 255)
+    @Comment(value = "账号")
+    @Column(name = "username")
+    private String username;
+
+    /**
+     * 用户名、昵称
+     */
+    @Size(max = 255)
     @Column(name = "nickname")
     @Comment(value = "用户名、昵称")
     private String nickname;

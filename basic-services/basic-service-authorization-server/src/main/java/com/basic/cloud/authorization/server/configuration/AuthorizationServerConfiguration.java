@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
@@ -54,7 +53,7 @@ public class AuthorizationServerConfiguration {
             throws Exception {
 
         // 禁用 csrf 与 cors
-        http.cors(Customizer.withDefaults());
+        http.cors(AbstractHttpConfigurer::disable);
         http.csrf(AbstractHttpConfigurer::disable);
 
         // 开启资源服务配置，将认证服务当做一个资源服务，这里的目的是为了在访问 User Info and/or Client Registration 解析access token

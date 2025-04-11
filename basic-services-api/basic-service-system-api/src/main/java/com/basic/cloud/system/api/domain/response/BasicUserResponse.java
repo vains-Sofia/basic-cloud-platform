@@ -1,7 +1,7 @@
 package com.basic.cloud.system.api.domain.response;
 
-import com.basic.framework.oauth2.core.enums.GenderEnum;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
+import com.basic.framework.oauth2.core.enums.GenderEnum;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -22,6 +22,9 @@ public class BasicUserResponse implements Serializable {
 
     @Schema(title = "主键id")
     private Long id;
+
+    @Schema(title = "账号")
+    private String username;
 
     @Schema(title = "用户名、昵称")
     private String nickname;

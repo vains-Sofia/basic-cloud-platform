@@ -161,6 +161,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                         BasicGrantedAuthority authority = new BasicGrantedAuthority();
                         authority.setId(e.getId());
                         authority.setPath(e.getPath());
+                        authority.setAuthority(e.getPermission());
                         authority.setPermission(e.getPermission());
                         authority.setRequestMethod(e.getRequestMethod());
                         authority.setNeedAuthentication(e.getNeedAuthentication());

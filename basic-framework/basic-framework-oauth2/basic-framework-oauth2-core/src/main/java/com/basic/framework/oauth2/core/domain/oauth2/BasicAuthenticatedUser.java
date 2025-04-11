@@ -17,7 +17,12 @@ import java.time.LocalDateTime;
 public class BasicAuthenticatedUser extends DefaultAuthenticatedUser {
 
     /**
-     * 用户id
+     * 账号
+     */
+    private String username;
+
+    /**
+     * 用户昵称
      */
     private String nickname;
 

@@ -24,6 +24,12 @@
             <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-oauth2-core</artifactId>
         </dependency>
+        <!-- 认证服务包 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-core</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>

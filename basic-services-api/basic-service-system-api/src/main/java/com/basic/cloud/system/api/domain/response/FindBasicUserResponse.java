@@ -21,6 +21,9 @@ public class FindBasicUserResponse implements Serializable {
     @Schema(title = "主键id")
     private Long id;
 
+    @Schema(title = "账号")
+    private String username;
+
     @Schema(title = "用户名、昵称")
     private String nickname;
 

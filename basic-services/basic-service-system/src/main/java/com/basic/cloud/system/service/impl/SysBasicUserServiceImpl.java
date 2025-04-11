@@ -4,6 +4,7 @@ import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
 import com.basic.cloud.system.api.domain.request.MailSenderRequest;
 import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
 import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
+import com.basic.cloud.system.api.domain.response.AuthenticatedUserResponse;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.cloud.system.domain.SysBasicUser;
@@ -18,9 +19,11 @@ import com.basic.framework.core.util.RandomUtils;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,31 +69,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         // 查询用户信息
         Optional<SysBasicUser> basicUserOptional = basicUserRepository.findByEmail(email);
         // 转为响应bean
-        return basicUserOptional.map(u -> {
-            BasicUserResponse basicUserResponse = new BasicUserResponse();
-            BeanUtils.copyProperties(u, basicUserResponse);
-            List<SysRole> roles = u.getRoles();
-            if (!ObjectUtils.isEmpty(roles)) {
-                // 提取用户权限
-                Set<BasicGrantedAuthority> authorities = roles.stream()
-                        .filter(role -> !ObjectUtils.isEmpty(role.getPermissions()))
-                        .flatMap(role -> role
-                                .getPermissions()
-                                .stream()
-                                .map(e -> {
-                                    BasicGrantedAuthority authority = new BasicGrantedAuthority();
-                                    authority.setId(e.getId());
-                                    authority.setPath(e.getPath());
-                                    authority.setPermission(e.getPermission());
-                                    authority.setRequestMethod(e.getRequestMethod());
-                                    authority.setNeedAuthentication(e.getNeedAuthentication());
-                                    return authority;
-                                })
-                        ).collect(Collectors.toSet());
-                basicUserResponse.setAuthorities(authorities);
-            }
-            return basicUserResponse;
-        }).orElse(null);
+        return userEntity2Response(basicUserOptional);
     }
 
     @Override
@@ -125,9 +104,9 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
     }
 
     @Override
-    public BasicUserResponse getById(Long id) {
+    public FindBasicUserResponse getById(Long id) {
         return basicUserRepository.findById(id).map(u -> {
-            BasicUserResponse basicUserResponse = new BasicUserResponse();
+            FindBasicUserResponse basicUserResponse = new FindBasicUserResponse();
             BeanUtils.copyProperties(u, basicUserResponse);
             return basicUserResponse;
         }).orElse(null);
@@ -249,6 +228,71 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
             throw new CloudIllegalArgumentException("用户id不能为空.");
         }
         basicUserRepository.deleteById(id);
+    }
+
+    @Override
+    public AuthenticatedUserResponse getLoginUserinfo() {
+        AuthenticatedUserResponse userResponse = new AuthenticatedUserResponse();
+        AuthenticatedUser authenticatedUser = SecurityUtils.getAuthenticatedUser();
+        if (authenticatedUser != null) {
+            log.debug("当前登录用户信息为：{}", authenticatedUser);
+            BeanUtils.copyProperties(authenticatedUser, userResponse);
+            // 获取用户角色
+            Optional<SysBasicUser> basicUser = basicUserRepository.findById(authenticatedUser.getId());
+            if (basicUser.isPresent()) {
+                SysBasicUser sysBasicUser = basicUser.get();
+                userResponse.setUsername(sysBasicUser.getUsername());
+                List<SysRole> roles = sysBasicUser.getRoles();
+                if (!ObjectUtils.isEmpty(roles)) {
+                    List<String> list = roles.stream().map(SysRole::getCode).toList();
+                    userResponse.setRoles(list);
+                }
+            }
+        }
+        return userResponse;
+    }
+
+    @Override
+    public BasicUserResponse getBasicUserByUsername(String username) {
+        // 查询用户信息
+        Optional<SysBasicUser> basicUserOptional = basicUserRepository.findByUsername(username);
+        // 转为响应bean
+        return userEntity2Response(basicUserOptional);
+    }
+
+    /**
+     * 实体转换为响应bean
+     *
+     * @param basicUserOptional 查询实体
+     * @return 响应bean
+     */
+    private BasicUserResponse userEntity2Response(Optional<SysBasicUser> basicUserOptional) {
+        return basicUserOptional.map(u -> {
+            BasicUserResponse basicUserResponse = new BasicUserResponse();
+            BeanUtils.copyProperties(u, basicUserResponse);
+            List<SysRole> roles = u.getRoles();
+            if (!ObjectUtils.isEmpty(roles)) {
+                // 提取用户权限
+                Set<BasicGrantedAuthority> authorities = roles.stream()
+                        .filter(role -> !ObjectUtils.isEmpty(role.getPermissions()))
+                        .flatMap(role -> role
+                                .getPermissions()
+                                .stream()
+                                .map(e -> {
+                                    BasicGrantedAuthority authority = new BasicGrantedAuthority();
+                                    authority.setId(e.getId());
+                                    authority.setPath(e.getPath());
+                                    authority.setAuthority(e.getPermission());
+                                    authority.setPermission(e.getPermission());
+                                    authority.setRequestMethod(e.getRequestMethod());
+                                    authority.setNeedAuthentication(e.getNeedAuthentication());
+                                    return authority;
+                                })
+                        ).collect(Collectors.toSet());
+                basicUserResponse.setAuthorities(authorities);
+            }
+            return basicUserResponse;
+        }).orElse(null);
     }
 
 }

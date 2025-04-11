@@ -93,7 +93,7 @@ public class BasicOidcUserInfoMapper implements Function<OidcUserInfoAuthenticat
         if (authenticatedUser != null) {
             // 设置系统相关的用户属性
             oidcUserInfoResult.setId(authenticatedUser.getId());
-            oidcUserInfoResult.setAccount(authenticatedUser.getUsername());
+            oidcUserInfoResult.setUsername(authenticatedUser.getUsername());
             oidcUserInfoResult.setAccountPlatform(authenticatedUser.getAccountPlatform());
         }
 

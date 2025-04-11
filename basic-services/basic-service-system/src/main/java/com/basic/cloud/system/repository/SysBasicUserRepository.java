@@ -22,4 +22,12 @@ public interface SysBasicUserRepository extends JpaRepository<SysBasicUser, Long
      * @return 用户信息
      */
     Optional<SysBasicUser> findByEmail(@Email @Size(max = 50) String email);
+
+    /**
+     * 根据用户账号获取用户基础信息
+     *
+     * @param username 用户账号
+     * @return 用户信息
+     */
+    Optional<SysBasicUser> findByUsername(@Size(max = 255) String username);
 }

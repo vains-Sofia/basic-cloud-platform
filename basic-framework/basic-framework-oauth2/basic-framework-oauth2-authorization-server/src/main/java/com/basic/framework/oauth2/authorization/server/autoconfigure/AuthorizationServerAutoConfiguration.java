@@ -324,7 +324,7 @@ public class AuthorizationServerAutoConfiguration {
      *
      * @return CorsConfigurationSource 实例
      */
-    @Bean
+//    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();

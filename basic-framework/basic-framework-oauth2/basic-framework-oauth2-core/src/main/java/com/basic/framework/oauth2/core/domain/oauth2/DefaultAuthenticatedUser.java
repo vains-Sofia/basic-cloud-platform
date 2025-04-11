@@ -27,7 +27,7 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
     private Long id;
 
     /**
-     * 账号
+     * 名称
      */
     private String name;
 

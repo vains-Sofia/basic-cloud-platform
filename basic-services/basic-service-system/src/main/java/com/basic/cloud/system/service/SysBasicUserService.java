@@ -3,6 +3,7 @@ package com.basic.cloud.system.service;
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
 import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
 import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
+import com.basic.cloud.system.api.domain.response.AuthenticatedUserResponse;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.framework.core.domain.PageResult;
@@ -36,7 +37,7 @@ public interface SysBasicUserService {
      * @param id 用户id
      * @return 返回用户详情
      */
-    BasicUserResponse getById(Long id);
+    FindBasicUserResponse getById(Long id);
 
     /**
      * 用户注册
@@ -66,4 +67,20 @@ public interface SysBasicUserService {
      * @param id 用户id
      */
     void removeById(Long id);
+
+    /**
+     * 获取登录用户信息
+     *
+     * @return 登录用户信息
+     */
+    AuthenticatedUserResponse getLoginUserinfo();
+
+    /**
+     * 根据用户账号获取用户基础信息
+     *
+     * @param username 用户账号
+     * @return 用户信息
+     */
+    BasicUserResponse getBasicUserByUsername(String username);
+
 }

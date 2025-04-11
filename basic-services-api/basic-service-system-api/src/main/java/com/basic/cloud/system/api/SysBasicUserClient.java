@@ -3,6 +3,7 @@ package com.basic.cloud.system.api;
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
 import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
 import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
+import com.basic.cloud.system.api.domain.response.AuthenticatedUserResponse;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.framework.core.constants.FeignConstants;
@@ -18,6 +19,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +32,17 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "基础用户信息接口", description = "基础用户信息接口")
 @FeignClient(name = FeignConstants.SYSTEM_APPLICATION, path = FeignConstants.SYSTEM_CONTEXT_PATH, contextId = "SysBasicUserClient")
 public interface SysBasicUserClient {
+
+    /**
+     * 根据用户邮件地址获取用户基础信息
+     *
+     * @param username 用户账号
+     * @return 用户信息
+     */
+    @GetMapping("/getByUsername/{username}")
+    @Parameter(name = "username", description = "用户账号")
+    @Operation(summary = "根据用户账号获取用户信息", description = "根据用户账号获取用户信息", hidden = true)
+    Result<BasicUserResponse> getByUsername(@Valid @NotBlank @PathVariable String username);
 
     /**
      * 根据用户邮件地址获取用户基础信息
@@ -61,7 +74,7 @@ public interface SysBasicUserClient {
     @GetMapping("/userDetails/{id}")
     @Parameter(name = "id", description = "用户id")
     @Operation(summary = "查询用户详情", description = "根据用户id查询用户详情")
-    Result<BasicUserResponse> userDetails(@Valid @NotNull @PathVariable Long id);
+    Result<FindBasicUserResponse> userDetails(@Valid @NotNull @PathVariable Long id);
 
     /**
      * 根据邮箱获取验证码
@@ -71,7 +84,7 @@ public interface SysBasicUserClient {
      */
     @GetMapping("/getRegisterEmailCode/{email}")
     @Parameter(name = "email", description = "邮箱地址")
-    @Operation(summary = "根据邮箱获取验证码", description = "获取注册时使用的邮箱验证码")
+    @Operation(summary = "获取注册时使用的邮箱验证码", description = "给传入邮箱发送验证码")
     Result<String> getRegisterEmailCode(@Valid @NotBlank @Email @PathVariable String email);
 
     /**
@@ -114,5 +127,15 @@ public interface SysBasicUserClient {
     @Parameter(name = "id", description = "用户id")
     @Operation(summary = "删除用户信息", description = "删除用户信息")
     Result<String> removeById(@Valid @NotNull @PathVariable Long id);
+
+    /**
+     * 获取登录用户信息
+     *
+     * @return 统一响应
+     */
+    @GetMapping("/loginUserinfo")
+    @PreAuthorize("hasAnyAuthority('profile')")
+    @Operation(summary = "获取登录用户信息", description = "获取登录用户信息")
+    Result<AuthenticatedUserResponse> loginUserinfo();
 
 }

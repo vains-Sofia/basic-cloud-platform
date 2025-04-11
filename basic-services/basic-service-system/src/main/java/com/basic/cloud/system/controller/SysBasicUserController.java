@@ -4,6 +4,7 @@ import com.basic.cloud.system.api.SysBasicUserClient;
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
 import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
 import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
+import com.basic.cloud.system.api.domain.response.AuthenticatedUserResponse;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.cloud.system.service.SysBasicUserService;
@@ -26,6 +27,12 @@ public class SysBasicUserController implements SysBasicUserClient {
     private final SysBasicUserService basicUserService;
 
     @Override
+    public Result<BasicUserResponse> getByUsername(String username) {
+        BasicUserResponse basicUser = basicUserService.getBasicUserByUsername(username);
+        return Result.success(basicUser);
+    }
+
+    @Override
     public Result<BasicUserResponse> getByEmail(String email) {
         BasicUserResponse basicUser = basicUserService.getBasicUserByEmail(email);
         return Result.success(basicUser);
@@ -38,8 +45,8 @@ public class SysBasicUserController implements SysBasicUserClient {
     }
 
     @Override
-    public Result<BasicUserResponse> userDetails(Long id) {
-        BasicUserResponse basicUser = basicUserService.getById(id);
+    public Result<FindBasicUserResponse> userDetails(Long id) {
+        FindBasicUserResponse basicUser = basicUserService.getById(id);
         return Result.success(basicUser);
     }
 
@@ -73,6 +80,12 @@ public class SysBasicUserController implements SysBasicUserClient {
     public Result<String> removeById(Long id) {
         basicUserService.removeById(id);
         return Result.success();
+    }
+
+    @Override
+    public Result<AuthenticatedUserResponse> loginUserinfo() {
+        AuthenticatedUserResponse userInfoResponse = basicUserService.getLoginUserinfo();
+        return Result.success(userInfoResponse);
     }
 
 }

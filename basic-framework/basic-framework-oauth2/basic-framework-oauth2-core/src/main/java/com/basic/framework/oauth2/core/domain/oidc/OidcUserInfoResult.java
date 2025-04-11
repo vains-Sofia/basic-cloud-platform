@@ -85,7 +85,7 @@ public class OidcUserInfoResult {
     /**
      * 账号
      */
-    private String account;
+    private String username;
 
     /**
      * 账号来源类型

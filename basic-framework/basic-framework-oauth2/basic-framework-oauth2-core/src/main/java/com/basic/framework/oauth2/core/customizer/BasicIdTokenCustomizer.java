@@ -133,17 +133,7 @@ public class BasicIdTokenCustomizer {
         Map<String, List<BasicGrantedAuthority>> permissionsMap = permissionRedisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
         // scope对应的权限信息
         List<BasicGrantedAuthority> grantedAuthorities = permissionsMap.values().stream()
-                .flatMap(e -> e.stream()
-                        .map(p -> {
-                            BasicGrantedAuthority authority = new BasicGrantedAuthority();
-                            authority.setRequestMethod(p.getRequestMethod());
-                            authority.setId(p.getId());
-                            authority.setPath(p.getPath());
-                            authority.setAuthority(p.getPermission());
-                            authority.setNeedAuthentication(p.getNeedAuthentication());
-                            return authority;
-                        })
-                )
+                .flatMap(Collection::stream)
                 .filter(e -> permissionsId.contains(e.getId()))
                 .toList();
         // 合并用户原有权限
