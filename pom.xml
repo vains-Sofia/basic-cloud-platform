@@ -35,6 +35,8 @@
         <mybatis-plus.version>3.5.11</mybatis-plus.version>
         <!-- Spring Cloud 版本号 -->
         <spring-cloud.version>2024.0.1</spring-cloud.version>
+        <!-- Spring Boot Admin 版本号 -->
+        <spring-boot-admin.version>3.4.5</spring-boot-admin.version>
         <!-- Spring Cloud Alibaba 版本号 -->
         <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
         <!-- 日志发送至logstash依赖版本 -->
@@ -216,6 +218,13 @@
                 <groupId>com.basic.cloud</groupId>
                 <artifactId>basic-service-system-api</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <!-- Spring Boot Admin 监控 -->
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${spring-boot-admin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
@@ -57,6 +58,12 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
                 log.debug("Jwt的id为：{}", jti);
                 redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + jti), user, expire);
             }
+        }
+
+        if (context.getPrincipal() instanceof OAuth2ClientAuthenticationToken) {
+            // 在access token中标明是客户端模式
+            JwtClaimsSet.Builder claims = context.getClaims();
+            claims.claim(AuthorizeConstants.IS_CLIENT_CREDENTIALS, Boolean.TRUE);
         }
     }
 

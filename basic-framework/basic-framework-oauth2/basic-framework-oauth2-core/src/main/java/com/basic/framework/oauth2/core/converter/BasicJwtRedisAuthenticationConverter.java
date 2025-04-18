@@ -12,9 +12,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.util.ObjectUtils;
 
@@ -52,6 +54,11 @@ public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, Abst
         String jti = jwt.getId();
         AuthenticatedUser authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + jti);
         if (authenticatedUser == null) {
+            // 客户端模式
+            if (jwt.getClaimAsBoolean(AuthorizeConstants.IS_CLIENT_CREDENTIALS)) {
+                String principalClaimValue = jwt.getClaimAsString(JwtClaimNames.SUB);
+                return new JwtAuthenticationToken(jwt, grantedAuthorities, principalClaimValue);
+            }
             // Jwt被正常解析但是无法获取到Redis的用户信息，这种情况一般是登出、管理平台下线后出现的问题
             // RFC6750规定字符只能是 %x21 / %x23-5B/ %x5D-7E，以%x20分割(https://datatracker.ietf.org/doc/rfc6750/)
             // %x21 表示 !   %x23-5B 表示 # 到 [, 包括：# $ % & ' ( ) * + , - . / 0-9 : ; < = > ? @ A-Z 和 [

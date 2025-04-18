@@ -1,18 +1,19 @@
 spring:
   application:
-    name: auth
+    name: monitor
   cloud:
     nacos:
       username: nacos
       password: nacos
       discovery:
         namespace: a29400b0-9f79-47a0-80df-6ceab61d3029
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
       config:
         namespace: a29400b0-9f79-47a0-80df-6ceab61d3029
 
   config:
     import:
       - nacos:actuator.yaml?refresh=true
-      - nacos:spring-doc.yaml?refresh=true
-      - nacos:federation-client.yaml?refresh=true
       - nacos:${spring.application.name}.yaml?refresh=true

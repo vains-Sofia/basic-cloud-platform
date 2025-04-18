@@ -16,6 +16,14 @@
         <module>basic-service-authorization-server</module>
         <module>basic-service-gateway</module>
         <module>basic-service-system</module>
+        <module>basic-service-monitor</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

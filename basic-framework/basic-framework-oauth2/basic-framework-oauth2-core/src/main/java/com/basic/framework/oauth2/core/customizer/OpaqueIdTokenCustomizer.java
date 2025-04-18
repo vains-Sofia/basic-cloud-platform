@@ -1,9 +1,11 @@
 package com.basic.framework.oauth2.core.customizer;
 
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsSet;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -47,6 +49,11 @@ public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAut
             claims.claim(TOKEN_UNIQUE_ID, user.getUsername());
             // 资源服务自省时需要该属性
             claims.claim(OAuth2TokenIntrospectionClaimNames.USERNAME, user.getUsername());
+        }
+
+        if (context.getPrincipal() instanceof OAuth2ClientAuthenticationToken) {
+            // 在access token中标明是客户端模式
+            claims.claim(AuthorizeConstants.IS_CLIENT_CREDENTIALS, Boolean.TRUE);
         }
     }
 

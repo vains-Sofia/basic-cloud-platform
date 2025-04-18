@@ -10,4 +10,5 @@ spring:
       server-addr: ${SERVER_URL:127.0.0.1}:8848
   config:
     import:
+      - nacos:actuator.yaml?refresh=true
       - nacos:${spring.application.name}.yaml?refresh=true

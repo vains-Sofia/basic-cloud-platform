@@ -25,6 +25,11 @@ public class AuthorizeConstants {
     public static final String USERINFO_PREFIX = "basic:jti:userinfo:";
 
     /**
+     * 用户信息缓存前缀
+     */
+    public static final String IS_CLIENT_CREDENTIALS = "client_credentials";
+
+    /**
      * 所有权限缓存信息
      */
     public static final String ALL_PERMISSIONS = "basic:permission:need_authorization:all";
