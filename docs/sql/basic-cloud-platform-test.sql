@@ -1,6 +1,21 @@
+/*
+ Navicat Premium Dump SQL
+
+ Source Server         : home_local
+ Source Server Type    : MySQL
+ Source Server Version : 80042 (8.0.42)
+ Source Host           : cloudflow.top:3306
+ Source Schema         : basic-cloud-platform
+
+ Target Server Type    : MySQL
+ Target Server Version : 80042 (8.0.42)
+ File Encoding         : 65001
+
+ Date: 20/04/2025 16:19:32
+*/
+
 SET NAMES utf8mb4;
-SET
-    FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
 -- Table structure for oauth2_application
@@ -32,7 +47,7 @@ CREATE TABLE `oauth2_application`
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin
-  ROW_FORMAT = Dynamic;
+  ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oauth2_application
@@ -65,7 +80,7 @@ INSERT INTO `oauth2_application`
 VALUES (1850087647291408388, 'messaging-client', '2024-10-26 16:10:44',
         '{bcrypt}$2a$10$YZTLFvdes7jG9wFqrEUoJ.7hnIy5ElXTzwO3QMLqbjANvzIZr2qw2', NULL, '1850229112386650117', NULL,
         '[\"client_secret_basic\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
-        '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"http://127.0.0.1:8000/login/oauth2/code/client-oidc\",\"https://www.baidu.com\"]',
+        '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"http://127.0.0.1:8000/login/oauth2/code/client-oidc\",\"https://www.baidu.com\",\"https://api.cloudflow.top/monitor/login/oauth2/code/messaging-client-oidc\"]',
         '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
         '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
         '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
@@ -156,7 +171,7 @@ CREATE TABLE `oauth2_authorization`
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin
-  ROW_FORMAT = Dynamic;
+  ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for oauth2_authorization_consent
@@ -178,7 +193,15 @@ CREATE TABLE `oauth2_authorization_consent`
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin
-  ROW_FORMAT = Dynamic;
+  ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of oauth2_authorization_consent
+-- ----------------------------
+INSERT INTO `oauth2_authorization_consent`
+VALUES (1913867302081761282, '1850087647291408388', '云逸',
+        '[\"SCOPE_openid\",\"SCOPE_message.read\",\"SCOPE_message.write\"]', 1, 1, '2025-04-20 16:08:17',
+        '2025-04-20 16:08:17', '云逸', '云逸');
 
 -- ----------------------------
 -- Table structure for oauth2_scope
@@ -200,7 +223,7 @@ CREATE TABLE `oauth2_scope`
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT = 'oauth2客户端的scope'
-  ROW_FORMAT = Dynamic;
+  ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oauth2_scope
@@ -238,7 +261,7 @@ CREATE TABLE `oauth2_scope_permission`
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT = 'oauth2 scope与权限关联表'
-  ROW_FORMAT = Dynamic;
+  ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oauth2_scope_permission
@@ -291,6 +314,7 @@ INSERT INTO `sys_basic_user`
 VALUES (1862332106783637506, 'test01', '注册01', NULL, NULL, '17683906001@163.com', 1, NULL,
         '{bcrypt}$2a$10$XH7KjVib/Hwt/k.9qhp.luQEfRgwTEor7Ni1qlqsFpntPTKAU2i5y', NULL, NULL, NULL, NULL, 1, 'system',
         1862332106783637506, 1862332106783637506, '注册01', '注册01', '2024-11-29 11:05:49', '2024-11-29 11:05:49');
+
 -- ----------------------------
 -- Table structure for sys_permission
 -- ----------------------------
@@ -317,7 +341,7 @@ CREATE TABLE `sys_permission`
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT = 'RBAC权限表'
-  ROW_FORMAT = Dynamic;
+  ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_permission
@@ -351,7 +375,7 @@ CREATE TABLE `sys_role`
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT = 'RBAC角色表'
-  ROW_FORMAT = Dynamic;
+  ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_role
@@ -379,7 +403,7 @@ CREATE TABLE `sys_role_permission`
   AUTO_INCREMENT = 2
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin
-  ROW_FORMAT = Dynamic;
+  ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_role_permission
@@ -407,7 +431,7 @@ CREATE TABLE `sys_user_role`
   AUTO_INCREMENT = 2
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin
-  ROW_FORMAT = Dynamic;
+  ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_user_role
@@ -415,5 +439,4 @@ CREATE TABLE `sys_user_role`
 INSERT INTO `sys_user_role`
 VALUES (1, 1, 1, 1, 1, '云逸', '云逸', '2024-11-25 17:39:25', '2024-11-25 17:39:25');
 
-SET
-    FOREIGN_KEY_CHECKS = 1;
+SET FOREIGN_KEY_CHECKS = 1;
