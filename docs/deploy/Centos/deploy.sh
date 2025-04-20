@@ -29,9 +29,10 @@ start(){
   if [ $? -eq "0" ]; then
     echo "${APP_NAME} is already running. pid=${pid} ."
   else
-    mv /home/admin/app/logs/"$PROJECT_NAME"/nohup.out /home/admin/app/logs/"$PROJECT_NAME"/nohup.out-"$(date "+%Y-%m-%d-%H:%M:%S")"
+    # mv /home/admin/app/logs/"$PROJECT_NAME"/nohup.out /home/admin/app/logs/"$PROJECT_NAME"/nohup.out-"$(date "+%Y-%m-%d-%H:%M:%S")"
 	  # 启动
-    nohup java -jar /home/admin/app/"$APP_NAME" --spring.profiles.active=test > /home/admin/app/logs/"$PROJECT_NAME"/nohup.out 2>&1 &
+    # nohup java -jar /home/admin/app/"$APP_NAME" --spring.profiles.active=test > /home/admin/app/logs/"$PROJECT_NAME"/nohup.out 2>&1 &
+    nohup java -jar /home/admin/app/"$APP_NAME" --spring.profiles.active=test > /dev/null 2>&1 &
     echo "${APP_NAME} start success"
   fi
 }
