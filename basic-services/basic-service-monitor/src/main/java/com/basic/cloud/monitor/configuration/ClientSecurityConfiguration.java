@@ -93,7 +93,7 @@ public class ClientSecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(Customizer.withDefaults());
+                .oauth2Login(login -> login.loginPage("/oauth2/authorization/messaging-client-oidc"));
         // 添加BearerTokenAuthenticationFilter，解析请求头中的token
         http.oauth2ResourceServer(resourceServer -> resourceServer.jwt(Customizer.withDefaults()));
 
