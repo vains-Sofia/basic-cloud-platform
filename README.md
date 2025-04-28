@@ -35,52 +35,52 @@
 ### 项目结构
 ```shell
 |-- basic-cloud-platform
-    |-- pom.xml -- 根pom.xml
-    |-- basic-examples -- 示例项目
-    |   |-- basic-example-data-jpa -- Jpa封装使用示例
-    |   |-- basic-example-doc -- SpringDoc封装使用示例
-    |   |-- basic-example-mybatis-plus -- Mybatis-Plus封装使用示例
-    |   |-- basic-example-redis -- Redis封装使用示例
-    |   |-- basic-example-resource-server -- 资源服务器使用示例
+    |-- pom.xml                                                 -- 根pom.xml
+    |-- basic-examples                                          -- 示例项目
+    |   |-- basic-example-data-jpa                              -- Jpa封装使用示例
+    |   |-- basic-example-doc                                   -- SpringDoc封装使用示例
+    |   |-- basic-example-mybatis-plus                          -- Mybatis-Plus封装使用示例
+    |   |-- basic-example-redis                                 -- Redis封装使用示例
+    |   |-- basic-example-resource-server                       -- 资源服务器使用示例
     |-- basic-framework
-    |   |-- basic-framework-core -- framework核心包
-    |   |-- basic-framework-data-jpa -- Spring Data Jpa封装，实体统一父类，自动设置审计信息，统一枚举转换
-    |   |-- basic-framework-data-redis -- Spring Data Redis封装，RedisTemplate封装，Redis分布式锁封装
-    |   |-- basic-framework-data-validation -- Spring Data Validation封装，统一参数校验
-    |   |-- basic-framework-mybatis-plus -- Mybatis-Plus封装，统一分页查询，统一枚举转换
-    |   |-- basic-framework-oauth2 -- 认证相关framework
-    |   |   |-- basic-framework-oauth2-authorization-server -- 认证服务封装，扩展登录、Grant Type、Token、Client等
-    |   |   |-- basic-framework-oauth2-core -- 认证核心模块封装
-    |   |   |-- basic-framework-oauth2-federation -- 联合身份认证封装，支持三方登录
-    |   |   |-- basic-framework-oauth2-resource-server -- 资源服务器封装，同时支持JWT、Opaque Token
-    |   |   |-- basic-framework-oauth2-storage -- 认证中心存储实现，目前基于db存储
-    |   |   |-- basic-framework-oauth2-storage-old -- 认证中心存储实现，支持多种存储，弃用
-    |   |-- basic-framework-openfeign -- 远程调用封装，FeignClient支持RequestMapping注解
-    |   |-- basic-framework-spring-doc -- Spring Doc封装，支持展示枚举、使用认证中心登录等
-    |   |-- basic-framework-web -- Spring Web封装，支持统一异常处理、统一返回结果、统一参数校验
-    |-- basic-services -- 项目微服务模块
-    |   |-- basic-service-authorization-server -- Spring OAuth2 Authorization Server认证中心服务
-    |   |-- basic-service-gateway -- Spring Cloud Gateway网关服务
-    |   |-- basic-service-monitor -- Spring Boot Admin监控服务
-    |   |-- basic-service-system -- 系统服务，包含用户、角色、权限等
-    |-- basic-services-api -- FeignClient远程调用api模块
-    |   |-- basic-service-system-api -- 系统服务相关 API
-    |-- docs -- 文档相关
-        |-- deploy -- 部署相关
+    |   |-- basic-framework-core                                -- framework核心包
+    |   |-- basic-framework-data-jpa                            -- Spring Data Jpa封装，实体统一父类，自动设置审计信息，统一枚举转换
+    |   |-- basic-framework-data-redis                          -- Spring Data Redis封装，RedisTemplate封装，Redis分布式锁封装
+    |   |-- basic-framework-data-validation                     -- Spring Data Validation封装，统一参数校验
+    |   |-- basic-framework-mybatis-plus                        -- Mybatis-Plus封装，统一分页查询，统一枚举转换
+    |   |-- basic-framework-oauth2                              -- 认证相关framework
+    |   |   |-- basic-framework-oauth2-authorization-server     -- 认证服务封装，扩展登录、Grant Type、Token、Client等
+    |   |   |-- basic-framework-oauth2-core                     -- 认证核心模块封装
+    |   |   |-- basic-framework-oauth2-federation               -- 联合身份认证封装，支持三方登录
+    |   |   |-- basic-framework-oauth2-resource-server          -- 资源服务器封装，同时支持JWT、Opaque Token
+    |   |   |-- basic-framework-oauth2-storage                  -- 认证中心存储实现，目前基于db存储
+    |   |   |-- basic-framework-oauth2-storage-old              -- 认证中心存储实现，支持多种存储，弃用
+    |   |-- basic-framework-openfeign                           -- 远程调用封装，FeignClient支持RequestMapping注解
+    |   |-- basic-framework-spring-doc                          -- Spring Doc封装，支持展示枚举、使用认证中心登录等
+    |   |-- basic-framework-web                                 -- Spring Web封装，支持统一异常处理、统一返回结果、统一参数校验
+    |-- basic-services                                          -- 项目微服务模块
+    |   |-- basic-service-authorization-server                  -- Spring OAuth2 Authorization Server认证中心服务
+    |   |-- basic-service-gateway                               -- Spring Cloud Gateway网关服务
+    |   |-- basic-service-monitor                               -- Spring Boot Admin监控服务
+    |   |-- basic-service-system                                -- 系统服务，包含用户、角色、权限等
+    |-- basic-services-api                                      -- FeignClient远程调用api模块
+    |   |-- basic-service-system-api                            -- 系统服务相关 API
+    |-- docs                                                    -- 文档相关
+        |-- deploy                                              -- 部署相关
         |   |-- Centos
-        |   |   |-- deploy.sh -- 服务器部署脚本
+        |   |   |-- deploy.sh                                   -- 服务器部署脚本
         |   |-- docker
-        |   |   |-- Dockerfile -- 服务部署至docker时打包使用的Dockerfile
+        |   |   |-- Dockerfile                                  -- 服务部署至docker时打包使用的Dockerfile
         |   |   |-- infra
-        |   |       |-- infra-compose.yml -- 服务依赖的组件，如数据库、Nacos等
-        |   |-- yaml-backup -- 备份的yaml文件
+        |   |       |-- infra-compose.yml                       -- 服务依赖的组件，如数据库、Nacos等
+        |   |-- yaml-backup                                     -- 备份的yaml文件
         |       |-- application-authorization-server.yml
         |-- nacos
-        |   |-- nacos_config_dev.zip -- nacos配置中心dev环境配置
-        |   |-- nacos_config_test.zip -- nacos配置中心test环境配置
+        |   |-- nacos_config_dev.zip                            -- nacos配置中心dev环境配置
+        |   |-- nacos_config_test.zip                           -- nacos配置中心test环境配置
         |-- sql -- 项目数据库相关
-            |-- basic-cloud-platform-dev.sql -- 项目数据库脚本
-            |-- basic-cloud-platform-test.sql -- 项目测试数据库脚本
+            |-- basic-cloud-platform-dev.sql                    -- 项目数据库脚本
+            |-- basic-cloud-platform-test.sql                   -- 项目测试数据库脚本
 ```
 
 ### 本地启动说明
