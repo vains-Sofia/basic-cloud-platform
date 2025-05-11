@@ -2,11 +2,14 @@ package com.basic.cloud.system.service;
 
 import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
 import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
+import com.basic.cloud.system.api.domain.request.UpdateUserRolesRequest;
 import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
 import com.basic.cloud.system.api.domain.response.AuthenticatedUserResponse;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.framework.core.domain.PageResult;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 
 /**
  * 基础用户信息Service接口
@@ -21,7 +24,7 @@ public interface SysBasicUserService {
      * @param email 邮箱
      * @return 用户信息
      */
-    BasicUserResponse getBasicUserByEmail(String email);
+    BasicUserResponse getBasicUserByEmail(@Email String email);
 
     /**
      * 分页查询基础用户信息列表
@@ -29,7 +32,7 @@ public interface SysBasicUserService {
      * @param request 分页查询基础用户信息列表入参
      * @return 用户信息
      */
-    PageResult<FindBasicUserResponse> findByPage(FindBasicUserPageRequest request);
+    PageResult<FindBasicUserResponse> findByPage(@Valid FindBasicUserPageRequest request);
 
     /**
      * 根据用户id查询用户信息
@@ -44,7 +47,7 @@ public interface SysBasicUserService {
      *
      * @param request 用户注册入参
      */
-    void userRegister(UserRegisterRequest request);
+    void userRegister(@Valid UserRegisterRequest request);
 
     /**
      * 根据邮箱获取验证码
@@ -52,7 +55,7 @@ public interface SysBasicUserService {
      * @param email 邮箱
      * @return 错误信息(如果有)
      */
-    String getRegisterEmailCode(String email);
+    String getRegisterEmailCode(@Email String email);
 
     /**
      * 添加/修改用户信息(如果id不为空则是修改，否则是添加)
@@ -81,6 +84,12 @@ public interface SysBasicUserService {
      * @param username 用户账号
      * @return 用户信息
      */
-    BasicUserResponse getBasicUserByUsername(String username);
+    BasicUserResponse getBasicUserByUsername(@Valid String username);
 
+    /**
+     * 更新用户角色
+     *
+     * @param request 更新用户角色入参
+     */
+    void updateUserRoles(@Valid UpdateUserRolesRequest request);
 }

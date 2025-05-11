@@ -10,7 +10,9 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.*;
 import io.swagger.v3.oas.models.servers.Server;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,6 +28,7 @@ import java.util.List;
  *
  * @author vains
  */
+@Slf4j
 @RequiredArgsConstructor
 @EnableConfigurationProperties({DocProperties.class})
 @ConditionalOnProperty(name = "springdoc.api-docs.enabled", matchIfMissing = true)
@@ -129,6 +132,13 @@ public class OpenApiAutoConfiguration {
                 .components(components)
                 // 添加请求时携带OAuth2规范的请求头(通过OAuth2流程获取token后发请求时会自动携带Authorization请求头)
                 .addSecurityItem(securityRequirement);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing SpringDoc Auto Configuration.");
+        }
     }
 
 }

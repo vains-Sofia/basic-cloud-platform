@@ -1,4 +1,4 @@
-package com.basic.cloud.system.enums;
+package com.basic.cloud.system.api.enums;
 
 import com.basic.framework.core.enums.BasicEnum;
 import lombok.Getter;
@@ -13,20 +13,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum PermissionTypeEnum implements BasicEnum<Integer, PermissionTypeEnum> {
 
-    /**;
+    /**
      * 菜单
      */
     MENU(0, "菜单"),
 
     /**
-     * 接口
+     * iframe
      */
-    REST(1, "接口"),
+    IFRAME(1, "iframe"),
 
     /**
-     * 其它
+     * 外链
      */
-    OTHER(2, "其它");
+    EXTERNAL_LINK(2, "外链"),
+
+    /**
+     * 接口
+     */
+    REST(3, "接口");
 
     /**
      * 权限类型值

@@ -1,9 +1,12 @@
 package com.basic.cloud.system.service;
 
 import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
+import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
 import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
 import com.basic.framework.core.domain.DataPageResult;
+
+import java.util.List;
 
 /**
  * RBAC权限信息Service
@@ -47,4 +50,11 @@ public interface SysPermissionService {
      */
     void refreshPermissionCache();
 
+    /**
+     * 查询权限信息列表
+     *
+     * @param request 查询权限信息列表入参
+     * @return 权限信息
+     */
+    List<FindPermissionResponse> findPermissions(FindPermissionRequest request);
 }

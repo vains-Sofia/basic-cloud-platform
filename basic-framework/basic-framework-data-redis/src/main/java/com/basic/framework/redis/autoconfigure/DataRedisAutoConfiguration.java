@@ -3,7 +3,9 @@ package com.basic.framework.redis.autoconfigure;
 import com.basic.framework.redis.aop.RedisLockAspect;
 import com.basic.framework.redis.util.RedisConfigUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  *
  * @author vains
  */
+@Slf4j
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP, keyspaceNotificationsConfigParameter = "")
@@ -54,6 +57,13 @@ public class DataRedisAutoConfiguration {
                 new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
 
         return RedisConfigUtils.buildRedisTemplate(connectionFactory, valueSerializer);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing Data Redis Auto Configuration.");
+        }
     }
 
 }

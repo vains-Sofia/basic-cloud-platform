@@ -6,7 +6,9 @@ import com.basic.framework.openfeign.interceptor.IgnoreAuthRequestInterceptor;
 import feign.Contract;
 import feign.RequestInterceptor;
 import feign.codec.ErrorDecoder;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.cloud.openfeign.AnnotatedParameterProcessor;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
@@ -27,6 +29,7 @@ import java.util.List;
  *
  * @author vains
  */
+@Slf4j
 @RequiredArgsConstructor
 @AutoConfigureBefore(FeignAutoConfiguration.class)
 public class OpenFeignAutoConfiguration {
@@ -79,6 +82,13 @@ public class OpenFeignAutoConfiguration {
             feignFormatterRegistrar.registerFormatters(conversionService);
         }
         return conversionService;
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing OpenFeign Auto Configuration.");
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.basic.cloud.system.api;
 
 import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
+import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
 import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
 import com.basic.framework.core.constants.FeignConstants;
@@ -16,6 +17,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * RBAC权限相关api
@@ -34,8 +37,18 @@ public interface SysPermissionClient {
      * @return 权限信息
      */
     @GetMapping("/findByPage")
-    @Operation(summary = "分页查询基础用户信息列表", description = "分页查询基础用户信息列表")
+    @Operation(summary = "分页查询权限信息列表", description = "分页查询权限信息列表")
     Result<DataPageResult<FindPermissionResponse>> findByPage(@Valid @SpringQueryMap FindPermissionPageRequest request);
+
+    /**
+     * 查询权限信息列表
+     *
+     * @param request 查询权限信息列表入参
+     * @return 权限信息
+     */
+    @GetMapping("/findPermissions")
+    @Operation(summary = "查询权限信息列表", description = "查询权限信息列表")
+    Result<List<FindPermissionResponse>> findPermissions(@Valid @SpringQueryMap FindPermissionRequest request);
 
     /**
      * 查询权限详情
@@ -78,5 +91,15 @@ public interface SysPermissionClient {
     @Parameter(name = "id", description = "权限id")
     @Operation(summary = "删除权限信息", description = "删除权限信息")
     Result<String> removeById(@Valid @NotNull @PathVariable Long id);
+
+    /**
+     * 根据角色id查询权限id列表
+     *
+     * @param roleId 角色id
+     * @return 权限id列表
+     */
+    @GetMapping("/findPermissionIdsByRoleId/{roleId}")
+    @Operation(summary = "根据角色id查询权限id列表", description = "根据角色id查询权限id列表")
+    Result<List<Long>> findPermissionIdsByRoleId(@Valid @NotNull @PathVariable Long roleId);
 
 }

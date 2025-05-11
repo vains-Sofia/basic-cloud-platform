@@ -9,7 +9,9 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +28,7 @@ import static com.basic.framework.core.constants.DateFormatConstants.*;
  *
  * @author vains
  */
+@Slf4j
 @RequiredArgsConstructor
 public class DefaultJackson2AutoConfiguration {
 
@@ -115,6 +118,13 @@ public class DefaultJackson2AutoConfiguration {
             builder.deserializerByType(LocalTime.class, localTimeDeserializer());
             builder.simpleDateFormat(DEFAULT_TIME_FORMAT);
         };
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing Custom Jackson formatting handler.");
+        }
     }
 
 }

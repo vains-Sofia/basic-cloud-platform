@@ -13,7 +13,9 @@ import com.basic.framework.oauth2.resource.server.configure.ResourceServerConfig
 import com.basic.framework.redis.support.RedisOperator;
 import com.basic.framework.redis.util.RedisConfigUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +34,8 @@ import java.util.Map;
  *
  * @author vains
  */
+@Slf4j
+
 @Import({
         ResourceServerConfiguration.class,
         ReactiveResourceServerConfiguration.class
@@ -47,6 +51,9 @@ public class ResourceServerAutoConfiguration {
     public RequestContextAuthorizationManager requestContextAuthorizationManager(
             RedisOperator<Map<String, List<BasicGrantedAuthority>>> permissionRedisOperator
     ) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 基于Webmvc的自定义鉴权配置类 RequestContextAuthorizationManager.");
+        }
         return new RequestContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
 
@@ -55,6 +62,9 @@ public class ResourceServerAutoConfiguration {
     public ReactiveContextAuthorizationManager reactiveContextAuthorizationManager(
             RedisOperator<Map<String, List<BasicGrantedAuthority>>> permissionRedisOperator
     ) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 基于Webflux的自定义鉴权配置类 ReactiveContextAuthorizationManager.");
+        }
         return new ReactiveContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
 
@@ -62,6 +72,9 @@ public class ResourceServerAutoConfiguration {
     @ConditionalOnMissingBean
     public BasicJwtRedisAuthenticationConverter authenticationConverter(BasicIdTokenCustomizer idTokenCustomizer,
                                                                         RedisOperator<AuthenticatedUser> redisOperator) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 从redis中根据jwt获取认证信息的Jwt token解析器.");
+        }
         return new BasicJwtRedisAuthenticationConverter(idTokenCustomizer, redisOperator);
     }
 
@@ -92,7 +105,17 @@ public class ResourceServerAutoConfiguration {
     public BasicIdTokenCustomizer basicIdTokenCustomizer(
             RedisOperator<List<ScopePermissionModel>> scopePermissionOperator,
             RedisOperator<Map<String, List<BasicGrantedAuthority>>> permissionRedisOperator) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 自定义token内容帮助类 BasicIdTokenCustomizer.");
+        }
         return new BasicIdTokenCustomizer(scopePermissionOperator, permissionRedisOperator);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing Resource Server Auto Configuration.");
+        }
     }
 
 }

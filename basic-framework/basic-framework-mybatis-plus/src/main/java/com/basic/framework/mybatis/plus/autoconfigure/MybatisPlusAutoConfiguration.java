@@ -11,6 +11,8 @@ import com.basic.framework.mybatis.plus.handler.BasicMetaObjectHandler;
 import com.basic.framework.mybatis.plus.handler.MybatisBasicEnumTypeHandler;
 import com.basic.framework.mybatis.plus.handler.type.BasicCollectionTypeHandler;
 import com.basic.framework.mybatis.plus.handler.type.BasicMapTypeHandler;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -19,8 +21,16 @@ import org.springframework.context.annotation.Import;
  *
  * @author vains
  */
+@Slf4j
 @Import({BasicMetaObjectHandler.class})
 public class MybatisPlusAutoConfiguration {
+
+    @PostConstruct
+    public void postConstruct() {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing MybatisPlus Auto Configuration.");
+        }
+    }
 
     /**
      * 添加分页插件

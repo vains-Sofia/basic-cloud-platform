@@ -1,20 +1,17 @@
 package com.basic.cloud.system.api.domain.request;
 
 import com.basic.cloud.system.api.enums.PermissionTypeEnum;
-import com.basic.framework.core.domain.DataPageable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
- * 分页查询权限信息入参
+ * 查询权限信息入参
  *
  * @author vains
  */
 @Data
-@Schema(name = "分页查询权限信息入参")
-@EqualsAndHashCode(callSuper = true)
-public class FindPermissionPageRequest extends DataPageable {
+@Schema(name = "查询权限信息入参")
+public class FindPermissionRequest {
 
     /**
      * 权限名

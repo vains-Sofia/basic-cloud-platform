@@ -3,6 +3,8 @@ package com.basic.framework.data.jpa.autoconfigure;
 import com.basic.framework.data.jpa.configuration.AuditorAwareConfiguration;
 import com.basic.framework.data.jpa.configuration.ReactiveAuditorAwareConfiguration;
 import com.basic.framework.data.jpa.listener.AuditingEntityNameListener;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
@@ -11,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
  *
  * @author vains
  */
+@Slf4j
 @Import({
         AuditorAwareConfiguration.class,
         AuditingEntityNameListener.class,
@@ -18,4 +21,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 })
 @EnableJpaAuditing
 public class JpaAutoConfiguration {
+
+    @PostConstruct
+    public void postConstruct() {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing Jpa Auto Configuration.");
+        }
+    }
+
 }

@@ -28,7 +28,12 @@ public class SaveBasicUserRequest implements Serializable {
     private Long id;
 
     @Schema(title = "昵称")
+    @NotBlank(groups = {Default.class, Update.class})
     private String nickname;
+
+    @Schema(title = "账号")
+    @NotBlank(groups = {Default.class, Update.class})
+    private String username;
 
     @Schema(title = "密码(修改时无效)", description = "修改时无效")
     private String password;

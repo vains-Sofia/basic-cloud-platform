@@ -1,15 +1,14 @@
 package com.basic.cloud.system.service.impl;
 
-import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
-import com.basic.cloud.system.api.domain.request.MailSenderRequest;
-import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
-import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
+import com.basic.cloud.system.api.domain.request.*;
 import com.basic.cloud.system.api.domain.response.AuthenticatedUserResponse;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.cloud.system.domain.SysBasicUser;
 import com.basic.cloud.system.domain.SysRole;
+import com.basic.cloud.system.domain.SysUserRole;
 import com.basic.cloud.system.repository.SysBasicUserRepository;
+import com.basic.cloud.system.repository.SysUserRoleRepository;
 import com.basic.cloud.system.service.CommonService;
 import com.basic.cloud.system.service.SysBasicUserService;
 import com.basic.framework.core.domain.DataPageResult;
@@ -35,6 +34,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -58,6 +58,8 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
 
     private final RedisOperator<String> redisOperator;
 
+    private final SysUserRoleRepository userRoleRepository;
+
     private final Sequence sequence = new Sequence((null));
 
     private final SysBasicUserRepository basicUserRepository;
@@ -75,7 +77,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
     @Override
     public PageResult<FindBasicUserResponse> findByPage(FindBasicUserPageRequest request) {
         // 排序
-        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(SysBasicUser::getUpdateTime));
+        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(SysBasicUser::getCreateTime));
         // 分页
         PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
@@ -200,15 +202,23 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
                 sysBasicUser.setPassword(passwordEncoder.encode(request.getPassword()));
             }
         } else {
-            // 置空，不修改
-            sysBasicUser.setPassword(null);
             // 设置插入相关的审计信息
             Optional<SysBasicUser> basicUserOptional = basicUserRepository.findById(request.getId());
             if (basicUserOptional.isPresent()) {
                 SysBasicUser existsBasicUser = basicUserOptional.get();
+                // 不修改
+                sysBasicUser.setRoles(existsBasicUser.getRoles());
+                sysBasicUser.setPicture(existsBasicUser.getPicture());
+                sysBasicUser.setDeleted(existsBasicUser.getDeleted());
+                sysBasicUser.setPassword(existsBasicUser.getPassword());
                 sysBasicUser.setCreateBy(existsBasicUser.getCreateBy());
                 sysBasicUser.setCreateName(existsBasicUser.getCreateName());
                 sysBasicUser.setCreateTime(existsBasicUser.getCreateTime());
+                sysBasicUser.setAccountPlatform(existsBasicUser.getAccountPlatform());
+                // 默认邮箱正确
+                sysBasicUser.setEmailVerified(!ObjectUtils.isEmpty(existsBasicUser.getEmail()));
+                // 默认手机号码正确
+                sysBasicUser.setPhoneNumberVerified(!ObjectUtils.isEmpty(existsBasicUser.getPhoneNumber()));
             }
         }
 
@@ -258,6 +268,29 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         Optional<SysBasicUser> basicUserOptional = basicUserRepository.findByUsername(username);
         // 转为响应bean
         return userEntity2Response(basicUserOptional);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUserRoles(UpdateUserRolesRequest request) {
+        boolean exists = basicUserRepository.existsById(request.getUserId());
+        if (!exists) {
+            throw new CloudIllegalArgumentException("用户不存在.");
+        }
+        // 删除用户原有的角色
+        userRoleRepository.deleteByUserId(request.getUserId());
+        // 转为用户角色关联实体
+        List<SysUserRole> userRoles = request.getRoleIds().stream().map(id -> {
+            SysUserRole userRole = new SysUserRole();
+            userRole.setId(sequence.nextId());
+            userRole.setUserId(request.getUserId());
+            userRole.setRoleId(id);
+            return userRole;
+        }).toList();
+        if (ObjectUtils.isEmpty(userRoles)) {
+            return;
+        }
+        userRoleRepository.saveAll(userRoles);
     }
 
     /**

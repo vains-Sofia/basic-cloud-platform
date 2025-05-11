@@ -1,9 +1,13 @@
 package com.basic.cloud.system.service.impl;
 
 import com.basic.cloud.system.api.domain.request.FindRolePageRequest;
+import com.basic.cloud.system.api.domain.request.FindRoleRequest;
 import com.basic.cloud.system.api.domain.request.SaveRoleRequest;
+import com.basic.cloud.system.api.domain.request.UpdateRolePermissionsRequest;
 import com.basic.cloud.system.api.domain.response.FindRoleResponse;
 import com.basic.cloud.system.domain.SysRole;
+import com.basic.cloud.system.domain.SysRolePermission;
+import com.basic.cloud.system.repository.SysRolePermissionRepository;
 import com.basic.cloud.system.repository.SysRoleRepository;
 import com.basic.cloud.system.service.SysRoleService;
 import com.basic.framework.core.domain.DataPageResult;
@@ -17,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -35,10 +40,12 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     private final Sequence sequence = new Sequence((null));
 
+    private final SysRolePermissionRepository rolePermissionRepository;
+
     @Override
     public DataPageResult<FindRoleResponse> findByPage(FindRolePageRequest request) {
         // 排序
-        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(SysRole::getUpdateTime));
+        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(SysRole::getCreateTime));
         // 分页
         PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
@@ -51,7 +58,7 @@ public class SysRoleServiceImpl implements SysRoleService {
         // 执行查询
         Page<SysRole> findPageResult = roleRepository.findAll(builder, pageQuery);
         // 转为响应bean
-        List<FindRoleResponse> authorizationList = findPageResult.getContent()
+        List<FindRoleResponse> rolesList = findPageResult.getContent()
                 .stream()
                 .map(e -> {
                     FindRoleResponse roleResponse = new FindRoleResponse();
@@ -60,7 +67,7 @@ public class SysRoleServiceImpl implements SysRoleService {
                 })
                 .toList();
 
-        return DataPageResult.of(findPageResult.getNumber(), findPageResult.getSize(), findPageResult.getTotalElements(), authorizationList);
+        return DataPageResult.of(findPageResult.getNumber(), findPageResult.getSize(), findPageResult.getTotalElements(), rolesList);
     }
 
     @Override
@@ -121,6 +128,50 @@ public class SysRoleServiceImpl implements SysRoleService {
             throw new CloudIllegalArgumentException("角色id不能为空.");
         }
         roleRepository.deleteById(id);
+    }
+
+    @Override
+    public List<FindRoleResponse> findRoles(FindRoleRequest request) {
+        // 条件构造器
+        SpecificationBuilder<SysRole> builder = new SpecificationBuilder<>();
+        builder.like(!ObjectUtils.isEmpty(request.getName()), SysRole::getName, request.getName());
+        builder.like(!ObjectUtils.isEmpty(request.getCode()), SysRole::getCode, request.getCode());
+        builder.like(!ObjectUtils.isEmpty(request.getDescription()), SysRole::getDescription, request.getDescription());
+
+        // 执行查询
+        List<SysRole> findResult = roleRepository.findAll(builder);
+        // 转为响应bean
+        return findResult.stream()
+                .map(e -> {
+                    FindRoleResponse roleResponse = new FindRoleResponse();
+                    BeanUtils.copyProperties(e, roleResponse);
+                    return roleResponse;
+                })
+                .toList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateRolePermissions(UpdateRolePermissionsRequest request) {
+        boolean exists = roleRepository.existsById(request.getRoleId());
+        if (!exists) {
+            throw new CloudIllegalArgumentException("角色不存在.");
+        }
+        // 删除原有权限
+        rolePermissionRepository.deleteByRoleId(request.getRoleId());
+
+        // 插入新权限
+        List<SysRolePermission> rolePermissions = request.getPermissionIds().stream().map(id -> {
+            SysRolePermission rolePermission = new SysRolePermission();
+            rolePermission.setId(sequence.nextId());
+            rolePermission.setRoleId(request.getRoleId());
+            rolePermission.setPermissionId(id);
+            return rolePermission;
+        }).toList();
+        if (ObjectUtils.isEmpty(rolePermissions)) {
+            return;
+        }
+        rolePermissionRepository.saveAll(rolePermissions);
     }
 
 }

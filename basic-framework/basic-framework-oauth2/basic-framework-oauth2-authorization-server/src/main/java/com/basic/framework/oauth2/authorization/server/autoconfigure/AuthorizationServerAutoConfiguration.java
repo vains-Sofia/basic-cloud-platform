@@ -26,8 +26,10 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -78,6 +80,7 @@ import java.util.UUID;
  *
  * @author vains
  */
+@Slf4j
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Import({ServerRedisAutoConfiguration.class, RedisOperator.class})
@@ -138,6 +141,10 @@ public class AuthorizationServerAutoConfiguration {
     @ConditionalOnMissingBean
     public EmailCaptchaLoginAuthenticationProvider emailCaptchaLoginAuthenticationProvider(
             UserDetailsService userDetailsService, CaptchaService captchaService) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 邮件验证码登录Provider EmailCaptchaLoginAuthenticationProvider.");
+        }
+        // 这里使用了自定义的验证码登录认证提供者
         return new EmailCaptchaLoginAuthenticationProvider(userDetailsService, captchaService);
     }
 
@@ -150,6 +157,9 @@ public class AuthorizationServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public CaptchaService captchaService(RedisOperator<String> redisOperator) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 验证码Service RedisCaptchaService.");
+        }
         return new RedisCaptchaService(oAuth2ServerProperties, redisOperator);
     }
 
@@ -344,12 +354,18 @@ public class AuthorizationServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public BasicOpaqueTokenIntrospector opaqueTokenIntrospector(OAuth2AuthorizationService authorizationService) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 自定义认证服务令牌自省 BasicOpaqueTokenIntrospector.");
+        }
         return new BasicOpaqueTokenIntrospector(authorizationService);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public DelegatingTokenAuthenticationResolver delegatingTokenAuthenticationResolver(ApplicationContext applicationContext) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 同时支持匿名token与jwt token的解析配置类 DelegatingTokenAuthenticationResolver.");
+        }
         return new DelegatingTokenAuthenticationResolver(applicationContext);
     }
 
@@ -360,37 +376,62 @@ public class AuthorizationServerAutoConfiguration {
         JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
 
         authenticationProvider.setJwtAuthenticationConverter(new BasicJwtRedisAuthenticationConverter(idTokenCustomizer, redisOperator));
+        if (log.isDebugEnabled()) {
+            log.debug("注入 从redis中根据jwt获取认证信息的Jwt token解析器.");
+        }
         return authenticationProvider;
     }
 
     @Bean
     @ConditionalOnMissingBean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 自定义Jwt token内容配置类 JwtIdTokenCustomizer.");
+        }
         return new JwtIdTokenCustomizer(redisOperator);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 自定义Opaque token内容配置类 OpaqueIdTokenCustomizer.");
+        }
         return new OpaqueIdTokenCustomizer();
     }
 
     @Bean
     @ConditionalOnMissingBean
     public RequestContextAuthorizationManager requestContextAuthorizationManager() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 基于Webmvc的自定义鉴权配置类 RequestContextAuthorizationManager.");
+        }
         return new RequestContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public ReactiveContextAuthorizationManager reactiveContextAuthorizationManager() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 基于Webflux的自定义鉴权配置类 ReactiveContextAuthorizationManager.");
+        }
         return new ReactiveContextAuthorizationManager(resourceServerProperties, permissionRedisOperator);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public BasicIdTokenCustomizer basicIdTokenCustomizer() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 自定义token内容帮助类 BasicIdTokenCustomizer.");
+        }
         return new BasicIdTokenCustomizer(scopePermissionOperator, permissionRedisOperator);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing OAuth2 AuthorizationServer Configuration.");
+        }
     }
 
 }

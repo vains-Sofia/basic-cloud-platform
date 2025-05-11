@@ -12,7 +12,9 @@ import com.basic.framework.oauth2.federation.service.BasicOAuth2UserService;
 import com.basic.framework.oauth2.federation.wechat.BasicAccessTokenResponseClient;
 import com.basic.framework.oauth2.federation.wechat.BasicAuthorizationRequestResolver;
 import com.basic.framework.redis.support.RedisOperator;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
@@ -35,6 +37,7 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
  *
  * @author vains
  */
+@Slf4j
 @RequiredArgsConstructor
 public class FederatedIdentityAutoConfiguration {
 
@@ -42,18 +45,27 @@ public class FederatedIdentityAutoConfiguration {
     @ConditionalOnMissingBean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer(
             RedisOperator<AuthenticatedUser> redisOperator) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 自定义Jwt token内容配置类 JwtIdTokenCustomizer.");
+        }
         return new JwtIdTokenCustomizer(redisOperator);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 自定义Opaque token内容配置类 OpaqueIdTokenCustomizer.");
+        }
         return new OpaqueIdTokenCustomizer();
     }
 
     @Bean
     @ConditionalOnMissingBean
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 自定义AccessToken响应处理器 BasicAccessTokenResponseClient，添加“text/plain”类型数据响应处理支持.");
+        }
         return new BasicAccessTokenResponseClient();
     }
 
@@ -61,6 +73,9 @@ public class FederatedIdentityAutoConfiguration {
     @ConditionalOnMissingBean
     public OAuth2AuthorizationRequestResolver authorizationRequestResolver(
             ClientRegistrationRepository clientRegistrationRepository) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 微信登录-授权申请请求发起适配处理 OAuth2AuthorizationRequestResolver.");
+        }
         return new BasicAuthorizationRequestResolver(clientRegistrationRepository);
     }
 
@@ -68,6 +83,9 @@ public class FederatedIdentityAutoConfiguration {
     @ConditionalOnMissingBean
     public OAuth2UserConverterContext userConverterContext(
             Map<String, OAuth2UserConverter> userConverterMap) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 三方登录用户信息转换器 OAuth2UserConverterContext，OAuth2UserConverter集合：{}", userConverterMap);
+        }
         return new OAuth2UserConverterContext(userConverterMap);
     }
 
@@ -75,25 +93,44 @@ public class FederatedIdentityAutoConfiguration {
     @ConditionalOnMissingBean
     public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService(
             OAuth2UserConverterContext userConverterContext) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 自定义三方登录用户信息获取Service OAuth2UserService.");
+        }
         return new BasicOAuth2UserService(userConverterContext);
     }
 
     @Bean(THIRD_LOGIN_GITEE)
     @ConditionalOnMissingBean(name = THIRD_LOGIN_GITEE)
     public OAuth2UserConverter giteeUserConverter() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 Gitee登录用户信息转换器 GiteeUserConverter.");
+        }
         return new GiteeUserConverter();
     }
 
     @Bean(THIRD_LOGIN_GITHUB)
     @ConditionalOnMissingBean(name = THIRD_LOGIN_GITHUB)
     public OAuth2UserConverter githubUserConverter() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 Github登录用户信息转换器 GithubUserConverter.");
+        }
         return new GithubUserConverter();
     }
 
     @Bean(THIRD_LOGIN_WECHAT)
     @ConditionalOnMissingBean(name = THIRD_LOGIN_WECHAT)
     public OAuth2UserConverter wechatUserConverter() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入 微信登录用户信息转换器 WechatUserConverter.");
+        }
         return new WechatUserConverter();
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing OAuth2 Federated Identity Auto Configuration.");
+        }
     }
 
 }

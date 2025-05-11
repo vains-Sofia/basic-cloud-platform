@@ -1,6 +1,6 @@
 package com.basic.cloud.system.converter;
 
-import com.basic.cloud.system.enums.PermissionTypeEnum;
+import com.basic.cloud.system.api.enums.PermissionTypeEnum;
 import com.basic.framework.data.jpa.converter.BasicEnumConverter;
 import jakarta.persistence.Converter;
 

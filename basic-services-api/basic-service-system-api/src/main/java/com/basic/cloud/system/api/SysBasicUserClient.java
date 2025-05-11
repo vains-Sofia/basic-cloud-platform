@@ -1,8 +1,6 @@
 package com.basic.cloud.system.api;
 
-import com.basic.cloud.system.api.domain.request.FindBasicUserPageRequest;
-import com.basic.cloud.system.api.domain.request.SaveBasicUserRequest;
-import com.basic.cloud.system.api.domain.request.UserRegisterRequest;
+import com.basic.cloud.system.api.domain.request.*;
 import com.basic.cloud.system.api.domain.response.AuthenticatedUserResponse;
 import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
@@ -19,7 +17,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,6 +95,16 @@ public interface SysBasicUserClient {
     Result<String> userRegister(@Valid @RequestBody UserRegisterRequest request);
 
     /**
+     * 重置密码
+     *
+     * @param request 重置密码入参
+     * @return 统一响应
+     */
+    @PutMapping("/resetPassword")
+    @Operation(summary = "重置密码", description = "重置密码")
+    Result<String> resetPassword(@Valid @RequestBody ResetPasswordRequest request);
+
+    /**
      * 添加一条用户信息
      *
      * @param request 用户信息
@@ -134,8 +141,17 @@ public interface SysBasicUserClient {
      * @return 统一响应
      */
     @GetMapping("/loginUserinfo")
-    @PreAuthorize("hasAnyAuthority('profile')")
     @Operation(summary = "获取登录用户信息", description = "获取登录用户信息")
     Result<AuthenticatedUserResponse> loginUserinfo();
+
+    /**
+     * 更新用户角色
+     *
+     * @param request 更新用户角色入参
+     * @return 统一响应
+     */
+    @PutMapping("/updateUserRoles")
+    @Operation(summary = "更新用户角色", description = "更新用户角色")
+    Result<String> updateUserRoles(@Valid @RequestBody UpdateUserRolesRequest request);
 
 }

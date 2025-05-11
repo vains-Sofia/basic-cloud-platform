@@ -56,7 +56,9 @@ public class StorageAutoConfiguration {
 
     @PostConstruct
     public void postConstruct() {
-        log.debug("Initializing the storage module for OAuth2 Server using Jpa implementation.");
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing the storage module for OAuth2 Server using Jpa implementation.");
+        }
     }
 
     @Bean

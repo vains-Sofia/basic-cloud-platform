@@ -79,7 +79,7 @@ public class CaptchaController {
         mailSender.send(message);
 
         this.captchaService.save(captcha);
-        return Result.success("获取验证码成功.", captcha);
+        return Result.success("获取验证码成功.");
     }
 
 }

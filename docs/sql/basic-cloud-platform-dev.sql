@@ -36,13 +36,67 @@ CREATE TABLE `oauth2_application`
 -- ----------------------------
 -- Records of oauth2_application
 -- ----------------------------
-INSERT INTO `oauth2_application` VALUES (1849006457251749895, 'pkce-message-client', '2024-10-23 16:34:27', NULL, NULL, 'PKCE流程', NULL, '[\"none\"]', '[\"refresh_token\",\"authorization_code\"]', '[\"http://127.0.0.1:5173/base/PkceRedirect\",\"https://authorization-example.vercel.app/PkceRedirect\",\"https://j1zr8ren8w.51xd.pub/PkceRedirect\",\"https://flow-cloud.love/PkceRedirect\"]', '[\"http://127.0.0.1:8080/getCaptcha\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]', '{\"requireProofKey\":true,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}', '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}', 123, 123, NULL, NULL, '2024-10-23 16:34:27', '2024-10-23 16:38:37');
-INSERT INTO `oauth2_application` VALUES (1849006886790406145, 'oidc-client', '2024-10-23 16:36:09', '{bcrypt}$2a$10$ueQ4/qoUpY/lScQLWnQDhe6057YrAFGPiNy/Fs1Xz6vR0Cx5YH8Gu', NULL, '1849007505819344898', NULL, '[\"client_secret_basic\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]', '[\"http://127.0.0.1:8080/login/oauth2/code/oidc-client\",\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]', '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\"]', '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}', '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}', 123, NULL, NULL, NULL, '2024-10-23 16:36:10', '2024-10-23 16:42:55');
-INSERT INTO `oauth2_application` VALUES (1849006886790406146, 'swagger-client', '2024-10-23 16:36:09', '{bcrypt}$2a$10$wHHrjvNBDsye/hLuRGOzrODni1b8VzgKmMPpfZQQqrFoscGlUgeI6', NULL, '1849007505819344899', NULL, '[\"client_secret_post\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]', '[\"http://127.0.0.1:8080/login/oauth2/code/oidc-client\",\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8080/auth/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"http://127.0.0.1:9000/webjars/swagger-ui/oauth2-redirect.html\"]', '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]', '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}', '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}', 123, 123, NULL, NULL, '2024-10-23 16:36:10', '2024-10-29 16:11:16');
-INSERT INTO `oauth2_application` VALUES (1849006886790406147, 'device-messaging-client', '2024-10-23 16:36:09', NULL, NULL, '1849007505819344900', NULL, '[\"none\"]', '[\"refresh_token\",\"urn:ietf:params:oauth:grant-type:device_code\"]', '[]', '[]', '[\"message.read\",\"message.write\"]', '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}', '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}', 123, 123, NULL, NULL, '2024-10-23 16:36:10', '2024-10-23 16:38:37');
-INSERT INTO `oauth2_application` VALUES (1849006886790406148, 'messaging-client', '2024-10-23 16:36:09', '{bcrypt}$2a$10$2V.a.YAI1UIbyO1OGxjXoehW98xK5kig9L7CidXOorhyuEdSfigAq', NULL, '1849007505819344901', NULL, '[\"client_secret_basic\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\",\"client_credentials\"]', '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"http://172.20.10.3:8000/login/oauth2/code/client-oidc\",\"https://www.baidu.com\",\"http://127.0.0.1:9000/monitor/login/oauth2/code/messaging-client-oidc\",\"http://172.20.10.3:9000/monitor/login/oauth2/code/messaging-client-oidc\",\"http://172.20.10.4:9000/monitor/login/oauth2/code/messaging-client-oidc\",\"http://127.0.0.1:9000/monitor/login/oauth2/code/messaging-client-oidc\"]', '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]', '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}', '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}', 123, NULL, NULL, NULL, '2024-10-23 16:36:10', '2024-11-07 15:37:58');
-INSERT INTO `oauth2_application` VALUES (1849006886790406149, 'private-key-jwt-client', '2024-10-23 16:36:09', '{noop}12345678', NULL, '1849007505819344902', 'logo', '[\"private_key_jwt\",\"client_secret_basic\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]', '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]', '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\"]', '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}', '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}', 123, 123, NULL, NULL, '2024-10-23 16:36:10', '2024-11-01 17:25:41');
-INSERT INTO `oauth2_application` VALUES (1849006886790406151, 'opaque-client', '2024-10-23 16:36:09', '{bcrypt}$2a$10$mSLgt/W4rLvMpQuxbagp7erwLQ83lKQf9AhibyllqijiaJ5kNl0RS', NULL, '匿名token', NULL, '[\"client_secret_basic\"]', '[\"refresh_token\",\"client_credentials\",\"authorization_code\"]', '[\"https://flow-cloud.love/OAuth2Redirect\",\"https://authorization-example.vercel.app/OAuth2Redirect\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://j1zr8ren8w.51xd.pub/OAuth2Redirect\"]', '[]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]', '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}', '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"reference\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}', 123, NULL, NULL, NULL, '2024-10-23 16:36:10', '2024-11-22 09:40:29');
+INSERT INTO `oauth2_application`
+VALUES (1849006457251749895, 'pkce-message-client', '2024-10-23 16:34:27', NULL, NULL, 'PKCE流程', NULL, '[\"none\"]',
+        '[\"refresh_token\",\"authorization_code\"]',
+        '[\"http://127.0.0.1:5173/base/PkceRedirect\",\"https://authorization-example.vercel.app/PkceRedirect\",\"https://j1zr8ren8w.51xd.pub/PkceRedirect\",\"https://flow-cloud.love/PkceRedirect\"]',
+        '[\"http://127.0.0.1:8080/getCaptcha\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
+        '{\"requireProofKey\":true,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}',
+        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
+        123, 123, NULL, NULL, '2024-10-23 16:34:27', '2024-10-23 16:38:37');
+INSERT INTO `oauth2_application`
+VALUES (1849006886790406145, 'oidc-client', '2024-10-23 16:36:09',
+        '{bcrypt}$2a$10$ueQ4/qoUpY/lScQLWnQDhe6057YrAFGPiNy/Fs1Xz6vR0Cx5YH8Gu', NULL, '1849007505819344898', NULL,
+        '[\"client_secret_basic\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
+        '[\"http://127.0.0.1:8080/login/oauth2/code/oidc-client\",\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]',
+        '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\"]',
+        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
+        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
+        123, NULL, NULL, NULL, '2024-10-23 16:36:10', '2024-10-23 16:42:55');
+INSERT INTO `oauth2_application`
+VALUES (1849006886790406146, 'swagger-client', '2024-10-23 16:36:09',
+        '{bcrypt}$2a$10$wHHrjvNBDsye/hLuRGOzrODni1b8VzgKmMPpfZQQqrFoscGlUgeI6', NULL, '1849007505819344899', NULL,
+        '[\"client_secret_post\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
+        '[\"http://127.0.0.1:8080/login/oauth2/code/oidc-client\",\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8080/auth/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"http://127.0.0.1:9000/webjars/swagger-ui/oauth2-redirect.html\"]',
+        '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
+        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
+        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
+        123, 123, NULL, NULL, '2024-10-23 16:36:10', '2024-10-29 16:11:16');
+INSERT INTO `oauth2_application`
+VALUES (1849006886790406147, 'device-messaging-client', '2024-10-23 16:36:09', NULL, NULL, '1849007505819344900', NULL,
+        '[\"none\"]', '[\"refresh_token\",\"urn:ietf:params:oauth:grant-type:device_code\"]', '[]', '[]',
+        '[\"message.read\",\"message.write\"]',
+        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
+        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
+        123, 123, NULL, NULL, '2024-10-23 16:36:10', '2024-10-23 16:38:37');
+INSERT INTO `oauth2_application`
+VALUES (1849006886790406148, 'messaging-client', '2024-10-23 16:36:09',
+        '{bcrypt}$2a$10$2V.a.YAI1UIbyO1OGxjXoehW98xK5kig9L7CidXOorhyuEdSfigAq', NULL, '1849007505819344901', NULL,
+        '[\"client_secret_basic\"]',
+        '[\"refresh_token\",\"password\",\"authorization_code\",\"email\",\"client_credentials\"]',
+        '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"http://172.20.10.3:8000/login/oauth2/code/client-oidc\",\"https://www.baidu.com\",\"http://127.0.0.1:9000/monitor/login/oauth2/code/messaging-client-oidc\",\"http://172.20.10.3:9000/monitor/login/oauth2/code/messaging-client-oidc\",\"http://172.20.10.4:9000/monitor/login/oauth2/code/messaging-client-oidc\",\"http://127.0.0.1:9000/monitor/login/oauth2/code/messaging-client-oidc\"]',
+        '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
+        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
+        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
+        123, NULL, NULL, NULL, '2024-10-23 16:36:10', '2024-11-07 15:37:58');
+INSERT INTO `oauth2_application`
+VALUES (1849006886790406149, 'private-key-jwt-client', '2024-10-23 16:36:09', '{noop}12345678', NULL,
+        '1849007505819344902', 'logo', '[\"private_key_jwt\",\"client_secret_basic\"]',
+        '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
+        '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]',
+        '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\"]',
+        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}',
+        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
+        123, 123, NULL, NULL, '2024-10-23 16:36:10', '2024-11-01 17:25:41');
+INSERT INTO `oauth2_application`
+VALUES (1849006886790406151, 'opaque-client', '2024-10-23 16:36:09',
+        '{bcrypt}$2a$10$mSLgt/W4rLvMpQuxbagp7erwLQ83lKQf9AhibyllqijiaJ5kNl0RS', NULL, '匿名token', NULL,
+        '[\"client_secret_basic\"]', '[\"refresh_token\",\"client_credentials\",\"authorization_code\"]',
+        '[\"https://flow-cloud.love/OAuth2Redirect\",\"https://authorization-example.vercel.app/OAuth2Redirect\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://j1zr8ren8w.51xd.pub/OAuth2Redirect\"]',
+        '[]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
+        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
+        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"reference\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
+        123, NULL, NULL, NULL, '2024-10-23 16:36:10', '2024-11-22 09:40:29');
 
 -- ----------------------------
 -- Table structure for oauth2_authorization
@@ -266,28 +320,45 @@ VALUES (1862332106783637506, 'test01', '注册01', NULL, NULL, '17683906001@163.
         '{bcrypt}$2a$10$XH7KjVib/Hwt/k.9qhp.luQEfRgwTEor7Ni1qlqsFpntPTKAU2i5y', NULL, NULL, NULL, NULL, 1, 'system',
         1862332106783637506, 1862332106783637506, '注册01', '注册01', '2024-11-29 11:05:49', '2024-11-29 11:05:49');
 
+
 -- ----------------------------
 -- Table structure for sys_permission
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_permission`;
 CREATE TABLE `sys_permission`
 (
-    `id`                  bigint                                                 NOT NULL COMMENT '主键id',
-    `name`                varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '权限名',
-    `permission`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '权限码',
-    `path`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '路径',
-    `request_method`      varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT 'HTTP请求方式',
-    `permission_type`     tinyint                                                NOT NULL COMMENT '0:菜单,1:接口,2:其它',
-    `module_name`         varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '所属模块名字',
-    `description`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '描述',
-    `need_authentication` tinyint(1)                                             NULL DEFAULT 0 COMMENT '是否需要鉴权',
-    `deleted`             tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否已删除',
-    `create_by`           bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`           bigint                                                 NULL DEFAULT NULL COMMENT '修改人',
-    `create_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '修改人名称',
-    `create_time`         datetime                                               NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`         datetime                                               NULL DEFAULT NULL COMMENT '修改时间',
+    `id`                  bigint                                                  NOT NULL COMMENT '主键id',
+    `title`               varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '菜单名称（兼容国际化、非国际化，如果用国际化的写法就必须在根目录的locales文件夹下对应添加）',
+    `name`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '权限名',
+    `permission`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '权限码',
+    `path`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '路径',
+    `request_method`      varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT 'HTTP请求方式',
+    `permission_type`     tinyint(1)                                              NOT NULL COMMENT '0:菜单,1:接口,2:其它',
+    `module_name`         varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '所属模块名字',
+    `description`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '描述',
+    `need_authentication` tinyint(1)                                              NULL DEFAULT 0 COMMENT '是否需要鉴权',
+    `parent_id`           bigint                                                  NULL DEFAULT 0 COMMENT '父节点id',
+    `component`           varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '组件路径',
+    `redirect`            varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '路由重定向',
+    `deleted`             tinyint(1)                                              NULL DEFAULT NULL COMMENT '是否已删除',
+    `icon`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '菜单图标',
+    `extra_icon`          varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '右侧图标',
+    `enter_transition`    varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '进场动画（页面加载动画）',
+    `leave_transition`    varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '离场动画（页面加载动画）',
+    `frame_src`           varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '链接地址（需要内嵌的iframe链接地址）',
+    `frame_loading`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '加载动画（内嵌的iframe页面是否开启首次加载动画）',
+    `keep_alive`          tinyint(1)                                              NULL DEFAULT NULL COMMENT '缓存页面（是否缓存该路由页面，开启后会保存该页面的整体状态，刷新后会清空状态）',
+    `show_link`           tinyint(1)                                              NULL DEFAULT NULL COMMENT '是否显示该菜单',
+    `hidden_tag`          tinyint(1)                                              NULL DEFAULT NULL COMMENT '隐藏标签页（当前菜单名称或自定义信息禁止添加到标签页）',
+    `fixed_tag`           tinyint(1)                                              NULL DEFAULT NULL COMMENT '固定标签页（当前菜单名称是否固定显示在标签页且不可关闭）',
+    `show_parent`         tinyint(1)                                              NULL DEFAULT NULL COMMENT '是否显示父级菜单',
+    `rank`                decimal(10, 0)                                          NULL DEFAULT NULL COMMENT '菜单排序',
+    `create_by`           bigint                                                  NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`           bigint                                                  NULL DEFAULT NULL COMMENT '修改人',
+    `create_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time`         datetime                                                NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`         datetime                                                NULL DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -298,15 +369,39 @@ CREATE TABLE `sys_permission`
 -- Records of sys_permission
 -- ----------------------------
 INSERT INTO `sys_permission`
-VALUES (1, '测试接口', 'test:test01', '/test/test01', 'GET', 1, NULL, '测试接口', 1, 0, 1, 1, '云逸', '云逸',
-        '2024-11-25 17:38:48', '2024-11-25 17:38:48');
+VALUES (1, '测试接口', '测试接口', 'test:test01', '/test/test01', NULL, 3, NULL, NULL, NULL, 0, '', '', 0, 'ep:bell',
+        'ep:bell', '', '', '', '', 0, 1, 0, 0, 0, 99, 1, 1, '云逸', '云逸', '2024-11-25 17:38:48',
+        '2025-05-06 15:20:05');
 INSERT INTO `sys_permission`
-VALUES (1864241504623833089, '修改权限信息', 'permission:updatePermission', '/permission/updatePermission', 'PUT', 1,
-        NULL, '修改权限信息接口', 1, 1, 1, 1, '云逸', '云逸', '2024-12-04 17:35:50', '2024-12-04 17:43:11');
+VALUES (1864241504623833089, '修改权限信息', '修改权限信息', 'permission:updatePermission',
+        '/permission/updatePermission', 'PUT', 3, NULL, NULL, NULL, 1919661224031989762, '', '', 0, 'ep:bell',
+        'ep:bell', '', '', '', '', 0, 1, 0, 0, 0, 99, 1, 1, '云逸', '云逸', '2024-12-04 17:35:50',
+        '2025-05-06 16:11:21');
 INSERT INTO `sys_permission`
-VALUES (1870104848520814594, '查询权限详情', 'permission:permissionDetails', '/permission/permissionDetails/{id}',
-        'GET', 1, NULL, '根据权限id查询权限详情', 1, 0, 1, 1, '云逸', '云逸', '2024-12-20 21:51:55',
-        '2024-12-20 21:51:55');
+VALUES (1870104848520814594, '查询权限详情', '查询权限详情', 'permission:permissionDetails',
+        '/permission/permissionDetails/{id}', '', 3, NULL, NULL, NULL, 1919661224031989762, '', '', 0, 'ep:bell',
+        'ep:bell', '', '', '', 'true', 0, 1, 0, 0, 0, 99, 1, 1, '云逸', '云逸', '2024-12-20 21:51:55',
+        '2025-05-06 16:11:29');
+INSERT INTO `sys_permission`
+VALUES (1919658873598554113, 'menus.pureSysManagement', 'System', 'menu:system', '/system', NULL, 0, NULL, NULL, NULL,
+        0, '', '', 0, 'ri:settings-3-line', '', '', '', '', '', 0, 1, 0, 0, 1, 3, 1, 1, '云逸', '云逸',
+        '2025-05-06 15:41:56', '2025-05-06 15:58:44');
+INSERT INTO `sys_permission`
+VALUES (1919660730064613377, 'menus.pureUser', 'SystemUser', 'menu:system:user', '/system/user/index', NULL, 0, NULL,
+        NULL, NULL, 1919658873598554113, '/system/user/index', '', 0, 'ri:admin-line', '', 'pulse', 'flash', '', '', 0,
+        1, 0, 0, 1, 1, 1, 1, '云逸', '云逸', '2025-05-06 15:49:18', '2025-05-06 15:58:55');
+INSERT INTO `sys_permission`
+VALUES (1919660995832492033, 'menus.pureRole', 'SystemRole', 'menu:system:role', '/system/role/index', NULL, 0, NULL,
+        NULL, NULL, 1919658873598554113, '/system/role/index', '', 0, 'ri:admin-fill', '', 'pulse', 'flash', '', '', 0,
+        1, 0, 0, 1, 2, 1, 1, '云逸', '云逸', '2025-05-06 15:50:22', '2025-05-06 15:59:02');
+INSERT INTO `sys_permission`
+VALUES (1919661224031989762, 'menus.pureSystemMenu', 'SystemMenu', 'menu:system:menu', '/system/menu/index', NULL, 0,
+        NULL, NULL, NULL, 1919658873598554113, '/system/menu/index', '', 0, 'ep:menu', '', 'pulse', 'flash', '', '', 0,
+        1, 0, 0, 1, 3, 1, 1, '云逸', '云逸', '2025-05-06 15:51:16', '2025-05-06 15:59:10');
+INSERT INTO `sys_permission`
+VALUES (1919661595269836801, 'menus.pureDept', 'SystemDept', 'menu:system:dept', '/system/dept/index', NULL, 0, NULL,
+        NULL, NULL, 1919658873598554113, '/system/dept/index', '', 1, 'ri:git-branch-line', '', 'pulse', 'flash', '',
+        '', 0, 1, 0, 0, 1, 4, 1, 1, '云逸', '云逸', '2025-05-06 15:52:45', '2025-05-06 15:59:16');
 
 -- ----------------------------
 -- Table structure for sys_role

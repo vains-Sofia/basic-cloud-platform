@@ -1,19 +1,20 @@
 package com.basic.cloud.system.service.impl;
 
 import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
+import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
 import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
+import com.basic.cloud.system.api.enums.PermissionTypeEnum;
 import com.basic.cloud.system.domain.SysPermission;
-import com.basic.cloud.system.enums.PermissionTypeEnum;
 import com.basic.cloud.system.repository.SysPermissionRepository;
 import com.basic.cloud.system.service.SysPermissionService;
 import com.basic.framework.core.domain.DataPageResult;
-import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -63,7 +64,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         // 执行查询
         Page<SysPermission> findPageResult = permissionRepository.findAll(builder, pageQuery);
         // 转为响应bean
-        List<FindPermissionResponse> authorizationList = findPageResult.getContent()
+        List<FindPermissionResponse> permissionResponseList = findPageResult.getContent()
                 .stream()
                 .map(e -> {
                     FindPermissionResponse permissionResponse = new FindPermissionResponse();
@@ -72,7 +73,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 })
                 .toList();
 
-        return DataPageResult.of(findPageResult.getNumber(), findPageResult.getSize(), findPageResult.getTotalElements(), authorizationList);
+        return DataPageResult.of(findPageResult.getNumber(), findPageResult.getSize(), findPageResult.getTotalElements(), permissionResponseList);
     }
 
     @Override
@@ -119,11 +120,16 @@ public class SysPermissionServiceImpl implements SysPermissionService {
             // 设置插入相关的审计信息
             Optional<SysPermission> permissionOptional = permissionRepository.findById(request.getId());
             if (permissionOptional.isPresent()) {
-                SysPermission  existsPermission = permissionOptional.get();
+                SysPermission existsPermission = permissionOptional.get();
                 permission.setCreateBy(existsPermission.getCreateBy());
                 permission.setCreateName(existsPermission.getCreateName());
                 permission.setCreateTime(existsPermission.getCreateTime());
             }
+        }
+
+        // 默认设置不删除
+        if (permission.getDeleted() == null) {
+            permission.setDeleted(Boolean.FALSE);
         }
         permissionRepository.save(permission);
 
@@ -170,6 +176,30 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                     .collect(Collectors.groupingBy(BasicGrantedAuthority::getPath));
             redisOperator.set(AuthorizeConstants.ALL_PERMISSIONS, permissionPathMap);
         }
+    }
+
+    @Override
+    public List<FindPermissionResponse> findPermissions(FindPermissionRequest request) {
+        // 条件构造器
+        SpecificationBuilder<SysPermission> builder = new SpecificationBuilder<>();
+        builder.like(!ObjectUtils.isEmpty(request.getPath()), SysPermission::getPath, request.getPath());
+        builder.like(!ObjectUtils.isEmpty(request.getName()), SysPermission::getName, request.getName());
+        builder.like(!ObjectUtils.isEmpty(request.getPermission()), SysPermission::getPermission,
+                request.getPermission());
+        builder.eq(!ObjectUtils.isEmpty(request.getPermissionType()), SysPermission::getPermissionType,
+                request.getPermissionType());
+
+        // 执行查询
+        List<SysPermission> findPageResult = permissionRepository.findAll(builder);
+        // 转为响应bean并返回
+        return findPageResult
+                .stream()
+                .map(e -> {
+                    FindPermissionResponse permissionResponse = new FindPermissionResponse();
+                    BeanUtils.copyProperties(e, permissionResponse);
+                    return permissionResponse;
+                })
+                .toList();
     }
 
 }
