@@ -149,6 +149,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void refreshPermissionCache() {
         // 查询需要鉴权的接口
         SpecificationBuilder<SysPermission> specificationBuilder = new SpecificationBuilder<>();
@@ -157,6 +158,9 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 .eq(SysPermission::getPermissionType, PermissionTypeEnum.REST.getValue())
                 .eq(SysPermission::getNeedAuthentication, Boolean.TRUE);
         List<SysPermission> permissions = permissionRepository.findAll(builder);
+
+        // 先删除redis中所有权限
+        redisOperator.delete(AuthorizeConstants.ALL_PERMISSIONS);
 
         // 根据path分组后缓存至redis
         if (!ObjectUtils.isEmpty(permissions)) {
