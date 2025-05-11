@@ -131,6 +131,9 @@ public class BasicIdTokenCustomizer {
 
         // 获取缓存中管理的权限信息
         Map<String, List<BasicGrantedAuthority>> permissionsMap = permissionRedisOperator.get(AuthorizeConstants.ALL_PERMISSIONS);
+        if (ObjectUtils.isEmpty(permissionsMap)) {
+            return;
+        }
         // scope对应的权限信息
         List<BasicGrantedAuthority> grantedAuthorities = permissionsMap.values().stream()
                 .flatMap(Collection::stream)
