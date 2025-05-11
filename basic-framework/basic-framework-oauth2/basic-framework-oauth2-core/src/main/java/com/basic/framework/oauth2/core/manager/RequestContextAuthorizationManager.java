@@ -116,6 +116,7 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
                 List<BasicGrantedAuthority> grantedAuthorities = authorities.stream()
                         .filter(BasicGrantedAuthority.class::isInstance)
                         .map(BasicGrantedAuthority.class::cast)
+                        .filter(e -> e.getNeedAuthentication() != null)
                         // 筛选出需要鉴权的
                         .filter(BasicGrantedAuthority::getNeedAuthentication).toList();
                 for (BasicGrantedAuthority grantedAuthority : grantedAuthorities) {

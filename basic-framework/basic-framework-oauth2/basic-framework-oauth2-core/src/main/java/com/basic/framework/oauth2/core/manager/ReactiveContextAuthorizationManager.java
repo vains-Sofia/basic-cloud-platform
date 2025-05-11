@@ -125,6 +125,7 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
                 .map(Authentication::getAuthorities)
                 .filter(BasicGrantedAuthority.class::isInstance)
                 .cast(BasicGrantedAuthority.class)
+                .filter(e -> e.getNeedAuthentication() != null)
                 // 筛选出需要鉴权的
                 .filter(BasicGrantedAuthority::getNeedAuthentication)
                 // 根据当前请求的请求方式和请求路径过滤
