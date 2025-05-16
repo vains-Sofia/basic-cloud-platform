@@ -2,6 +2,7 @@ package com.basic.cloud.system.service.impl;
 
 import com.basic.cloud.system.api.domain.request.MailSenderRequest;
 import com.basic.cloud.system.service.CommonService;
+import com.basic.framework.core.exception.CloudServiceException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class CommonServiceImpl implements CommonService {
     private final MailProperties mailProperties;
 
     @Override
-    public String mailSender(MailSenderRequest request) {
+    public void mailSender(MailSenderRequest request) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
             // 是否包含附件
@@ -58,9 +59,8 @@ public class CommonServiceImpl implements CommonService {
             log.info("{} Send email to {}, Subject {}", request.getFrom(), String.join(",", request.getMailTo()), request.getSubject());
         } catch (Exception e) {
             log.error("邮件发送失败，原因：{}", e.getMessage(), e);
-            return e.getMessage();
+            throw new CloudServiceException(e.getMessage());
         }
-        return null;
     }
 
 }

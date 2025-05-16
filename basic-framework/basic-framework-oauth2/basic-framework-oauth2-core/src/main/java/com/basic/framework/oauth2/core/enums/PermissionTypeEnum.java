@@ -1,4 +1,4 @@
-package com.basic.cloud.system.api.enums;
+package com.basic.framework.oauth2.core.enums;
 
 import com.basic.framework.core.enums.BasicEnum;
 import lombok.Getter;

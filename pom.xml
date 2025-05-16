@@ -27,6 +27,8 @@
         <skipTests>true</skipTests>
         <!-- 指定Java版本 -->
         <java.version>21</java.version>
+        <!-- 指定Java版本 -->
+        <minio.version>8.5.17</minio.version>
         <!-- Redisson 版本号 -->
         <redisson.version>3.45.1</redisson.version>
         <!-- Spring Doc 版本号 -->
@@ -225,6 +227,13 @@
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-starter-server</artifactId>
                 <version>${spring-boot-admin.version}</version>
+            </dependency>
+
+            <!-- minio Java SDK -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

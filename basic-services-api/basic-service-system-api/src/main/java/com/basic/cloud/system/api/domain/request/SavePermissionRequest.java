@@ -1,6 +1,6 @@
 package com.basic.cloud.system.api.domain.request;
 
-import com.basic.cloud.system.api.enums.PermissionTypeEnum;
+import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
 import com.basic.framework.data.validation.group.Update;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

@@ -1,6 +1,6 @@
 package com.basic.cloud.system.domain;
 
-import com.basic.cloud.system.api.enums.PermissionTypeEnum;
+import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
 import com.basic.framework.data.jpa.domain.BasicAuditorEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.core.manager;
 
+import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
 import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
@@ -20,10 +21,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ObjectUtils;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -125,9 +123,8 @@ public class ReactiveContextAuthorizationManager implements ReactiveAuthorizatio
                 .map(Authentication::getAuthorities)
                 .filter(BasicGrantedAuthority.class::isInstance)
                 .cast(BasicGrantedAuthority.class)
-                .filter(e -> e.getNeedAuthentication() != null)
-                // 筛选出需要鉴权的
-                .filter(BasicGrantedAuthority::getNeedAuthentication)
+                // 过滤出接口权限
+                .filter(e -> Objects.equals(e.getPermissionType(), PermissionTypeEnum.REST))
                 // 根据当前请求的请求方式和请求路径过滤
                 .filter(grantedAuthority ->
                         pathMatcher.match(grantedAuthority.getPath(), requestPath)

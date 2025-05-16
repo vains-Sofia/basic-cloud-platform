@@ -15,3 +15,10 @@ spring:
       - nacos:actuator.yaml?refresh=true
       - nacos:spring-doc.yaml?refresh=true
       - nacos:${spring.application.name}.yaml?refresh=true
+
+
+
+basic:
+  cloud:
+    minio:
+      proxy-endpoint:

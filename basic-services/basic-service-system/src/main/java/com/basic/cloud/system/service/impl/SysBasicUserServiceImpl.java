@@ -162,11 +162,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         request.setSubject("注册验证码");
         request.setMailTo(Set.of(email));
         request.setContent("Your verification code is: " + captcha);
-        String mailSenderResult = commonService.mailSender(request);
-        if (!ObjectUtils.isEmpty(mailSenderResult)) {
-            log.warn("给[{}]发送验证码失败，原因：{}.", email, mailSenderResult);
-            return mailSenderResult;
-        }
+        commonService.mailSender(request);
 
         // 缓存验证码至redis，5分钟
         redisOperator.set(EMAIL_CAPTCHA_KEY.concat(email), captcha, (5 * 60));
@@ -208,7 +204,9 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
                 SysBasicUser existsBasicUser = basicUserOptional.get();
                 // 不修改
                 sysBasicUser.setRoles(existsBasicUser.getRoles());
-                sysBasicUser.setPicture(existsBasicUser.getPicture());
+                if (ObjectUtils.isEmpty(request.getPicture())) {
+                    sysBasicUser.setPicture(existsBasicUser.getPicture());
+                }
                 sysBasicUser.setDeleted(existsBasicUser.getDeleted());
                 sysBasicUser.setPassword(existsBasicUser.getPassword());
                 sysBasicUser.setCreateBy(existsBasicUser.getCreateBy());
@@ -317,6 +315,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
                                     authority.setPath(e.getPath());
                                     authority.setAuthority(e.getPermission());
                                     authority.setPermission(e.getPermission());
+                                    authority.setPermissionType(e.getPermissionType());
                                     authority.setRequestMethod(e.getRequestMethod());
                                     authority.setNeedAuthentication(e.getNeedAuthentication());
                                     return authority;

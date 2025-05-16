@@ -4,7 +4,7 @@ import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
 import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
 import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
-import com.basic.cloud.system.api.enums.PermissionTypeEnum;
+import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
 import com.basic.cloud.system.domain.SysPermission;
 import com.basic.cloud.system.repository.SysPermissionRepository;
 import com.basic.cloud.system.service.SysPermissionService;
@@ -174,6 +174,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                         authority.setAuthority(e.getPermission());
                         authority.setPermission(e.getPermission());
                         authority.setRequestMethod(e.getRequestMethod());
+                        authority.setPermissionType(e.getPermissionType());
                         authority.setNeedAuthentication(e.getNeedAuthentication());
                         return authority;
                     })

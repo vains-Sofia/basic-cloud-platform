@@ -130,18 +130,18 @@ public class JsonUtils {
     /**
      * json字符串转为复杂类型List/Map
      *
-     * @param json            json
-     * @param collectionClazz 集合的class
-     * @param elementsClazz   集合中泛型的class
-     * @param <T>             泛型, 代表返回参数的类型
+     * @param json         json
+     * @param clazz        主要类的class
+     * @param genericClazz 泛型类的class
+     * @param <T>          泛型, 代表返回参数的类型
      * @return 返回T的实例
      */
-    public static <T> T toObject(String json, Class<?> collectionClazz, Class<?>... elementsClazz) {
-        if (json == null || collectionClazz == null || elementsClazz == null) {
+    public static <T> T toObject(String json, Class<?> clazz, Class<?>... genericClazz) {
+        if (json == null || clazz == null || genericClazz == null) {
             return null;
         }
         try {
-            JavaType javaType = MAPPER.getTypeFactory().constructParametricType(collectionClazz, elementsClazz);
+            JavaType javaType = MAPPER.getTypeFactory().constructParametricType(clazz, genericClazz);
             return MAPPER.readValue(json, javaType);
         } catch (IOException e) {
             log.error("json转换失败,原因:", e);
@@ -172,15 +172,35 @@ public class JsonUtils {
      * 切记,两个对象结构要一致
      * 多用于Object转为具体的对象
      *
-     * @param o               将要转化的对象
-     * @param collectionClazz 集合的class
-     * @param elementsClazz   集合中泛型的class
-     * @param <T>             泛型, 代表返回参数的类型
+     * @param o            将要转化的对象
+     * @param clazz        主体类的class
+     * @param genericClazz 泛型类的class
+     * @param <T>          泛型, 代表返回参数的类型
      * @return 返回T的实例
      */
-    public static <T> T objectToObject(Object o, Class<?> collectionClazz, Class<?>... elementsClazz) {
-        String json = toJson(o);
-        return toObject(json, collectionClazz, elementsClazz);
+    public static <T> T objectToObject(Object o, Class<?> clazz, Class<?>... genericClazz) {
+        if (o == null || clazz == null || genericClazz == null) {
+            return null;
+        }
+        JavaType javaType = MAPPER.getTypeFactory().constructParametricType(clazz, genericClazz);
+        return MAPPER.convertValue(o, javaType);
+    }
+
+    /**
+     * 将对象转为另一个对象
+     * 切记,两个对象结构要一致
+     * 多用于Object转为具体的对象
+     *
+     * @param o     将要转化的对象
+     * @param clazz 要转化的对象的class
+     * @param <T>   泛型, 代表返回参数的类型
+     * @return 返回T的实例
+     */
+    public static <T> T objectToObject(Object o, Class<T> clazz) {
+        if (o == null || clazz == null) {
+            return null;
+        }
+        return MAPPER.convertValue(o, clazz);
     }
 
     /**

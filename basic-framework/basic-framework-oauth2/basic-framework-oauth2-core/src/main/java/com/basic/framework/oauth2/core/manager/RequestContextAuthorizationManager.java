@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.core.manager;
 
+import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
 import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
@@ -116,9 +117,9 @@ public class RequestContextAuthorizationManager implements AuthorizationManager<
                 List<BasicGrantedAuthority> grantedAuthorities = authorities.stream()
                         .filter(BasicGrantedAuthority.class::isInstance)
                         .map(BasicGrantedAuthority.class::cast)
-                        .filter(e -> e.getNeedAuthentication() != null)
-                        // 筛选出需要鉴权的
-                        .filter(BasicGrantedAuthority::getNeedAuthentication).toList();
+                        // 过滤出接口权限
+                        .filter(e -> Objects.equals(e.getPermissionType(), PermissionTypeEnum.REST))
+                        .toList();
                 for (BasicGrantedAuthority grantedAuthority : grantedAuthorities) {
                     // 请求方式和请求路径匹配放行
                     boolean urlMatch = pathMatcher.match(grantedAuthority.getPath(), requestPath)

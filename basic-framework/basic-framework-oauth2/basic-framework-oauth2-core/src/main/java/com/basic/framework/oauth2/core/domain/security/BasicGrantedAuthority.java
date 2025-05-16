@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.core.domain.security;
 
+import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,5 +34,8 @@ public class BasicGrantedAuthority implements GrantedAuthority {
 
     @Schema(title = "是否需要鉴权")
     private Boolean needAuthentication;
+
+    @Schema(title = "权限类型")
+    private PermissionTypeEnum permissionType;
 
 }

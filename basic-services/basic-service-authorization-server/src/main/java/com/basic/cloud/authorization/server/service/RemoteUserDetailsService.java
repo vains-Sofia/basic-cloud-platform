@@ -52,13 +52,13 @@ public class RemoteUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
         if (responseResult.getCode() != HttpCodeConstants.HTTP_OK) {
-            log.debug("调用api根据邮箱{}查询用户信息失败，状态码：{}，原因：{}.", username, responseResult.getCode(), responseResult.getMessage());
+            log.debug("调用api根据{}查询用户信息失败，状态码：{}，原因：{}.", username, responseResult.getCode(), responseResult.getMessage());
             throw new AuthenticationServiceException(responseResult.getMessage());
         }
         // 用户信息
         BasicUserResponse userResponse = responseResult.getData();
         if (userResponse == null) {
-            log.debug("调用api根据邮箱{}查询用户信息失败，用户不存在.", username);
+            log.debug("调用api根据{}查询用户信息失败，用户不存在.", username);
             throw new UsernameNotFoundException(username);
         }
         // 转移数据至统一认证用户信息类
