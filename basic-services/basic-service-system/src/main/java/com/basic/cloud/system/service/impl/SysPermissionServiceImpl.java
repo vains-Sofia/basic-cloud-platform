@@ -4,9 +4,10 @@ import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
 import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
 import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
-import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
 import com.basic.cloud.system.domain.SysPermission;
+import com.basic.cloud.system.domain.SysRolePermission;
 import com.basic.cloud.system.repository.SysPermissionRepository;
+import com.basic.cloud.system.repository.SysRolePermissionRepository;
 import com.basic.cloud.system.service.SysPermissionService;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
@@ -15,6 +16,7 @@ import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
+import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -25,9 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +42,8 @@ public class SysPermissionServiceImpl implements SysPermissionService {
     private final Sequence sequence = new Sequence((null));
 
     private final SysPermissionRepository permissionRepository;
+
+    private final SysRolePermissionRepository rolePermissionRepository;
 
     private final RedisOperator<Map<String, List<BasicGrantedAuthority>>> redisOperator;
 
@@ -204,6 +206,33 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                     BeanUtils.copyProperties(e, permissionResponse);
                     return permissionResponse;
                 })
+                .toList();
+    }
+
+    @Override
+    public List<Long> findPermissionIdsByRoleId(Long roleId) {
+        List<SysRolePermission> rolePermissions = rolePermissionRepository.findByRoleId(roleId);
+        if (rolePermissions == null || rolePermissions.isEmpty()) {
+            return null;
+        }
+        // 提取所有权限id
+        List<Long> permissionIds = rolePermissions.stream()
+                .map(SysRolePermission::getPermissionId)
+                .toList();
+
+        // 过滤掉有子节点的权限id(ElementPlus Tree组件如果有设置父节点选中，则不管所有子节点是否选中，父节点都选中，这时会让子节点默认全部选中)
+        List<SysPermission> permissions = permissionRepository.findAllById(permissionIds);
+        // 提取所有父节点id
+        Set<Long> parentPermissionIds = permissions.stream()
+                .map(SysPermission::getParentId)
+                .filter(Objects::nonNull)
+                // 去掉根节点标识
+                .filter(parentId -> parentId != 0)
+                .collect(Collectors.toSet());
+
+        // 过滤掉 parentIds 中的节点（也就是有子节点的父节点）
+        return permissionIds.stream()
+                .filter(parentId -> !parentPermissionIds.contains(parentId))
                 .toList();
     }
 

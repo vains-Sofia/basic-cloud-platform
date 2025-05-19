@@ -57,4 +57,12 @@ public interface SysPermissionService {
      * @return 权限信息
      */
     List<FindPermissionResponse> findPermissions(FindPermissionRequest request);
+
+    /**
+     * 根据角色id查询权限id列表
+     *
+     * @param roleId 角色id
+     * @return 权限id列表
+     */
+    List<Long> findPermissionIdsByRoleId(Long roleId);
 }

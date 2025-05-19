@@ -5,8 +5,6 @@ import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
 import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
 import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
-import com.basic.cloud.system.domain.SysRolePermission;
-import com.basic.cloud.system.repository.SysRolePermissionRepository;
 import com.basic.cloud.system.service.SysPermissionService;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.Result;
@@ -25,8 +23,6 @@ import java.util.List;
 public class SysPermissionController implements SysPermissionClient {
 
     private final SysPermissionService sysPermissionService;
-
-    private final SysRolePermissionRepository rolePermissionRepository;
 
     @Override
     public Result<DataPageResult<FindPermissionResponse>> findByPage(FindPermissionPageRequest request) {
@@ -68,13 +64,7 @@ public class SysPermissionController implements SysPermissionClient {
 
     @Override
     public Result<List<Long>> findPermissionIdsByRoleId(Long roleId) {
-        List<SysRolePermission> rolePermissions = rolePermissionRepository.findByRoleId(roleId);
-        if (rolePermissions == null || rolePermissions.isEmpty()) {
-            return Result.success(null);
-        }
-        List<Long> permissionIds = rolePermissions.stream()
-                .map(SysRolePermission::getPermissionId)
-                .toList();
+        List<Long> permissionIds = sysPermissionService.findPermissionIdsByRoleId(roleId);
         return Result.success(permissionIds);
     }
 }
