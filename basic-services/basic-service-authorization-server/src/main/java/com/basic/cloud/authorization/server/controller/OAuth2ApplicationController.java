@@ -47,7 +47,7 @@ public class OAuth2ApplicationController {
     }
 
     @GetMapping("/findById/{id}")
-    @Parameter(name = "clientId", description = "客户端的主键id")
+    @Parameter(name = "id", description = "客户端的主键id")
     @Operation(summary = "根据id查询客户端信息", description = "根据id查询客户端信息")
     public Result<BasicApplicationResponse> findById(@PathVariable String id) {
         BasicApplication application = applicationService.findById(id);
