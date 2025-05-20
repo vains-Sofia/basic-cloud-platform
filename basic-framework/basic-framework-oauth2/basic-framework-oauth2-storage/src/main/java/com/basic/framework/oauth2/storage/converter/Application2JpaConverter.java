@@ -26,6 +26,7 @@ public class Application2JpaConverter implements Converter<BasicApplication, Jpa
         application.setClientSecretExpiresAt(source.getClientSecretExpiresAt());
         application.setClientName(source.getClientName());
         application.setClientLogo(source.getClientLogo());
+        application.setDescription(source.getDescription());
         application.setClientAuthenticationMethods(JsonUtils.toJson(source.getClientAuthenticationMethods()));
         application.setAuthorizationGrantTypes(JsonUtils.toJson(source.getAuthorizationGrantTypes()));
         application.setRedirectUris(JsonUtils.toJson(source.getRedirectUris()));

@@ -31,6 +31,7 @@ CREATE TABLE `oauth2_application`
     `client_name`                   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '客户端名称',
     `client_logo`                   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '客户端logo',
     `client_authentication_methods` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端支持的认证方式',
+    `description`                   varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '客户端描述',
     `authorization_grant_types`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端支持的授权模式',
     `redirect_uris`                 varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '回调地址',
     `post_logout_redirect_uris`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT 'Open Connection登出后跳转地址',
@@ -54,7 +55,7 @@ CREATE TABLE `oauth2_application`
 -- ----------------------------
 INSERT INTO `oauth2_application`
 VALUES (1850087647291408385, 'oidc-client', '2024-10-26 16:10:44', '{noop}secret', NULL, '1850229112386650114', NULL,
-        '[\"client_secret_basic\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
+        '[\"client_secret_basic\"]', NULL, '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
         '[\"http://127.0.0.1:8080/login/oauth2/code/oidc-client\",\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]',
         '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\"]',
         '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
@@ -63,7 +64,7 @@ VALUES (1850087647291408385, 'oidc-client', '2024-10-26 16:10:44', '{noop}secret
 INSERT INTO `oauth2_application`
 VALUES (1850087647291408386, 'swagger-client', '2024-10-26 16:10:44',
         '{bcrypt}$2a$10$OUB5yvIJuRCxBHPxuF9LF.ynmkjaywREB63gFpL48UiPBGu6lz8Au', NULL, '1850229112386650115', NULL,
-        '[\"client_secret_post\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
+        '[\"client_secret_post\"]', NULL, '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
         '[\"http://127.0.0.1:8080/login/oauth2/code/oidc-client\",\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8080/auth/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\",\"https://api.cloudflow.top/webjars/swagger-ui/oauth2-redirect.html\",\"https://api.cloudflow.top/swagger-ui/oauth2-redirect.html\"]',
         '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
         '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
@@ -71,7 +72,7 @@ VALUES (1850087647291408386, 'swagger-client', '2024-10-26 16:10:44',
         123, 123, '2024-10-26 16:10:44', '2024-10-26 17:33:23', NULL, NULL);
 INSERT INTO `oauth2_application`
 VALUES (1850087647291408387, 'device-messaging-client', '2024-10-26 16:10:44', NULL, NULL, '1850229112386650116', NULL,
-        '[\"none\"]', '[\"refresh_token\",\"urn:ietf:params:oauth:grant-type:device_code\"]', '[]', '[]',
+        '[\"none\"]', NULL, '[\"refresh_token\",\"urn:ietf:params:oauth:grant-type:device_code\"]', '[]', '[]',
         '[\"message.read\",\"message.write\"]',
         '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
         '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
@@ -79,7 +80,8 @@ VALUES (1850087647291408387, 'device-messaging-client', '2024-10-26 16:10:44', N
 INSERT INTO `oauth2_application`
 VALUES (1850087647291408388, 'messaging-client', '2024-10-26 16:10:44',
         '{bcrypt}$2a$10$YZTLFvdes7jG9wFqrEUoJ.7hnIy5ElXTzwO3QMLqbjANvzIZr2qw2', NULL, '1850229112386650117', NULL,
-        '[\"client_secret_basic\"]', '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
+        '[\"client_secret_basic\"]', NULL,
+        '[\"refresh_token\",\"password\",\"authorization_code\",\"email\",\"client_credentials\"]',
         '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"http://127.0.0.1:8000/login/oauth2/code/client-oidc\",\"https://www.baidu.com\",\"https://api.cloudflow.top/monitor/login/oauth2/code/messaging-client-oidc\"]',
         '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
         '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
@@ -87,7 +89,7 @@ VALUES (1850087647291408388, 'messaging-client', '2024-10-26 16:10:44',
         123, NULL, '2024-10-26 16:10:44', '2024-11-06 17:43:50', NULL, NULL);
 INSERT INTO `oauth2_application`
 VALUES (1850087647291408389, 'private-key-jwt-client', '2024-10-26 16:10:44', '{noop}12345678', NULL,
-        '1850229112386650118', NULL, '[\"private_key_jwt\",\"client_secret_basic\"]',
+        '1850229112386650118', NULL, '[\"private_key_jwt\",\"client_secret_basic\"]', NULL,
         '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
         '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]',
         '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\"]',
@@ -96,15 +98,15 @@ VALUES (1850087647291408389, 'private-key-jwt-client', '2024-10-26 16:10:44', '{
         123, 123, '2024-10-26 16:10:44', '2024-10-27 01:32:51', NULL, NULL);
 INSERT INTO `oauth2_application`
 VALUES (1850087647291408390, 'pkce-message-client', '2024-10-26 16:10:43', NULL, NULL, 'PKCE流程', NULL, '[\"none\"]',
-        '[\"refresh_token\",\"authorization_code\"]',
-        '[\"http://127.0.0.1:5173/PkceRedirect\",\"https://authorization-example.vercel.app/PkceRedirect\",\"https://j1zr8ren8w.51xd.pub/PkceRedirect\",\"https://flow-cloud.love/PkceRedirect\"]',
+        NULL, '[\"refresh_token\",\"authorization_code\"]',
+        '[\"http://127.0.0.1:5173/PkceRedirect\",\"https://authorization-example.vercel.app/PkceRedirect\",\"https://j1zr8ren8w.51xd.pub/PkceRedirect\",\"https://flow-cloud.love/PkceRedirect\",\"https://admin.cloudflow.top/PkceRedirect\"]',
         '[\"http://127.0.0.1:8080/getCaptcha\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
         '{\"requireProofKey\":true,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}',
         '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
         123, 123, '2024-10-26 16:10:43', '2024-10-27 01:32:51', NULL, NULL);
 INSERT INTO `oauth2_application`
 VALUES (1850087647291408391, 'opaque-client', '2024-10-26 16:10:44', '{noop}123456', NULL, '匿名token', NULL,
-        '[\"client_secret_basic\"]', '[\"refresh_token\",\"client_credentials\",\"authorization_code\"]',
+        '[\"client_secret_basic\"]', NULL, '[\"refresh_token\",\"client_credentials\",\"authorization_code\"]',
         '[\"https://flow-cloud.love/OAuth2Redirect\",\"https://authorization-example.vercel.app/OAuth2Redirect\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://j1zr8ren8w.51xd.pub/OAuth2Redirect\"]',
         '[]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
         '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}',
@@ -113,7 +115,7 @@ VALUES (1850087647291408391, 'opaque-client', '2024-10-26 16:10:44', '{noop}1234
 INSERT INTO `oauth2_application`
 VALUES (1851513255444410369, 'private-key-jwt-client-update', '2024-10-30 06:35:34',
         '{bcrypt}$2a$10$21/A7X6Wff11AXghTCq4febKZgIsI0Q0jIr1lZ8r0iL4WwiclGx22', NULL, 'private-key-jwt测试客户端',
-        'logo1', '[\"private_key_jwt\",\"client_secret_basic\"]',
+        'logo1', '[\"private_key_jwt\",\"client_secret_basic\"]', NULL,
         '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
         '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]',
         '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',

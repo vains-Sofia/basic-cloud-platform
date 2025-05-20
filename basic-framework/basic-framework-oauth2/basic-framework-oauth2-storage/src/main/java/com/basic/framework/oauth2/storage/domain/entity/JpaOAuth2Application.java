@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
 
@@ -69,6 +70,14 @@ public class JpaOAuth2Application extends BasicAuditorEntity {
     @Size(max = 255)
     @Column(name = "client_logo")
     private String clientLogo;
+
+    /**
+     * 客户端描述
+     */
+    @Size(max = 1000)
+    @Comment("客户端描述")
+    @Column(name = "description")
+    private String description;
 
     /**
      * 客户端认证方式

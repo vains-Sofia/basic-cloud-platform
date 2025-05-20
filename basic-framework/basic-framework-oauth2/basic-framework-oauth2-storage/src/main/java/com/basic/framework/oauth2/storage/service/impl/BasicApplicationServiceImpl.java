@@ -11,6 +11,7 @@ import com.basic.framework.oauth2.storage.converter.Jpa2ApplicationResponseConve
 import com.basic.framework.oauth2.storage.domain.entity.JpaOAuth2Application;
 import com.basic.framework.oauth2.storage.domain.request.FindApplicationPageRequest;
 import com.basic.framework.oauth2.storage.domain.request.SaveApplicationRequest;
+import com.basic.framework.oauth2.storage.domain.response.ApplicationCardResponse;
 import com.basic.framework.oauth2.storage.domain.response.BasicApplicationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicApplication;
 import com.basic.framework.oauth2.storage.exception.ApplicationStorageException;
@@ -99,7 +100,7 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
     @Override
     public PageResult<BasicApplicationResponse> findByPage(FindApplicationPageRequest request) {
         // 排序
-        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(JpaOAuth2Application::getUpdateTime));
+        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(JpaOAuth2Application::getCreateTime));
         // 分页
         PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
@@ -192,6 +193,47 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
     @Override
     public void removeByClientId(String clientId) {
         applicationRepository.deleteByClientId(clientId);
+    }
+
+    @Override
+    public PageResult<ApplicationCardResponse> cardListPage(FindApplicationPageRequest request) {
+        // 条件构造器
+        SpecificationBuilder<JpaOAuth2Application> builder = new SpecificationBuilder<>();
+        builder.eq(!ObjectUtils.isEmpty(request.getClientId()),
+                JpaOAuth2Application::getClientId, request.getClientId());
+
+        builder.like(!ObjectUtils.isEmpty(request.getApplicationName()),
+                JpaOAuth2Application::getClientName, request.getApplicationName());
+
+        builder.like(!ObjectUtils.isEmpty(request.getAuthorizationGrantType()),
+                JpaOAuth2Application::getAuthorizationGrantTypes, request.getAuthorizationGrantType());
+
+        builder.like(!ObjectUtils.isEmpty(request.getClientAuthenticationMethod()),
+                JpaOAuth2Application::getClientAuthenticationMethods, request.getClientAuthenticationMethod());
+
+        // 排序
+        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(JpaOAuth2Application::getCreateTime));
+        // 分页
+        PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
+
+        // 查询
+        Page<JpaOAuth2Application> applicationPage = applicationRepository.findAll(builder, pageQuery);
+
+        // 转为响应bean
+        List<ApplicationCardResponse> applicationList = applicationPage.getContent()
+                .stream()
+                .map(e -> {
+                    ApplicationCardResponse applicationCardResponse = new ApplicationCardResponse();
+                    applicationCardResponse.setId(e.getId());
+                    applicationCardResponse.setClientId(e.getClientId());
+                    applicationCardResponse.setClientLogo(e.getClientLogo());
+                    applicationCardResponse.setClientName(e.getClientName());
+                    applicationCardResponse.setCreateTime(e.getCreateTime());
+                    applicationCardResponse.setDescription(e.getDescription());
+                    return applicationCardResponse;
+                })
+                .toList();
+        return DataPageResult.of(applicationPage.getNumber(), applicationPage.getSize(), applicationPage.getTotalElements(), applicationList);
     }
 
 }

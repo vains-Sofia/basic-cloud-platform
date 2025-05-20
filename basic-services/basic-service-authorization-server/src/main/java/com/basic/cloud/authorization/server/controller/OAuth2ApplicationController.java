@@ -5,6 +5,7 @@ import com.basic.framework.core.domain.Result;
 import com.basic.framework.data.validation.group.Update;
 import com.basic.framework.oauth2.storage.domain.request.FindApplicationPageRequest;
 import com.basic.framework.oauth2.storage.domain.request.SaveApplicationRequest;
+import com.basic.framework.oauth2.storage.domain.response.ApplicationCardResponse;
 import com.basic.framework.oauth2.storage.domain.response.BasicApplicationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicApplication;
 import com.basic.framework.oauth2.storage.service.BasicApplicationService;
@@ -37,6 +38,22 @@ public class OAuth2ApplicationController {
     @Operation(summary = "根据客户端id查询客户端信息", description = "根据客户端id查询客户端信息")
     public Result<BasicApplicationResponse> findByClientId(@PathVariable String clientId) {
         BasicApplication application = applicationService.findByClientId(clientId);
+        if (application == null) {
+            return Result.success(null);
+        }
+        BasicApplicationResponse response = new BasicApplicationResponse();
+        BeanUtils.copyProperties(application, response);
+        return Result.success(response);
+    }
+
+    @GetMapping("/findById/{id}")
+    @Parameter(name = "clientId", description = "客户端的主键id")
+    @Operation(summary = "根据id查询客户端信息", description = "根据id查询客户端信息")
+    public Result<BasicApplicationResponse> findById(@PathVariable String id) {
+        BasicApplication application = applicationService.findById(id);
+        if (application == null) {
+            return Result.success(null);
+        }
         BasicApplicationResponse response = new BasicApplicationResponse();
         BeanUtils.copyProperties(application, response);
         return Result.success(response);
@@ -47,6 +64,13 @@ public class OAuth2ApplicationController {
     @Operation(summary = "根据入参分页查询客户端信息", description = "根据入参分页查询客户端信息")
     public Result<PageResult<BasicApplicationResponse>> findByPage(@Validated FindApplicationPageRequest request) {
         PageResult<BasicApplicationResponse> result = applicationService.findByPage(request);
+        return Result.success(result);
+    }
+
+    @GetMapping("/cardListPage")
+    @Operation(summary = "根据入参分页查询客户端信息-卡片列表", description = "获取卡片展示需要的分页数据")
+    public Result<PageResult<ApplicationCardResponse>> cardListPage(@Validated FindApplicationPageRequest request) {
+        PageResult<ApplicationCardResponse> result = applicationService.cardListPage(request);
         return Result.success(result);
     }
 

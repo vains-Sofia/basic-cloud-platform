@@ -3,6 +3,7 @@ package com.basic.framework.oauth2.storage.service;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.oauth2.storage.domain.request.FindApplicationPageRequest;
 import com.basic.framework.oauth2.storage.domain.request.SaveApplicationRequest;
+import com.basic.framework.oauth2.storage.domain.response.ApplicationCardResponse;
 import com.basic.framework.oauth2.storage.domain.response.BasicApplicationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicApplication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -79,4 +80,11 @@ public interface BasicApplicationService {
         }
     }
 
+    /**
+     * 根据条件分页查询客户端信息
+     *
+     * @param request 分页参数
+     * @return 分页的客户端信息
+     */
+    PageResult<ApplicationCardResponse> cardListPage(FindApplicationPageRequest request);
 }

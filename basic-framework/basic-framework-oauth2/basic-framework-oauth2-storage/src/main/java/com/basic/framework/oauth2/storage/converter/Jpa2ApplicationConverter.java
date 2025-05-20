@@ -29,6 +29,7 @@ public class Jpa2ApplicationConverter implements Converter<JpaOAuth2Application,
         application.setClientSecret(source.getClientSecret());
         application.setClientName(source.getClientName());
         application.setClientLogo(source.getClientLogo());
+        application.setDescription(source.getDescription());
         application.setClientSecretExpiresAt(source.getClientSecretExpiresAt());
         application.setClientAuthenticationMethods(JsonUtils.toObject(source.getClientAuthenticationMethods(), Set.class, String.class));
         application.setAuthorizationGrantTypes(JsonUtils.toObject(source.getAuthorizationGrantTypes(), Set.class, String.class));

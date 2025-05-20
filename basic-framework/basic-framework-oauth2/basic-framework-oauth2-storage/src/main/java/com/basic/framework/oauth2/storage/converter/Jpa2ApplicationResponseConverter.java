@@ -33,6 +33,7 @@ public class Jpa2ApplicationResponseConverter implements Converter<JpaOAuth2Appl
         application.setClientId(source.getClientId());
         application.setClientName(source.getClientName());
         application.setClientLogo(source.getClientLogo());
+        application.setDescription(source.getDescription());
         application.setClientIdIssuedAt(source.getClientIdIssuedAt());
         application.setClientSecretExpiresAt(source.getClientSecretExpiresAt());
         application.setScopes(JsonUtils.toObject(source.getScopes(), Set.class, String.class));

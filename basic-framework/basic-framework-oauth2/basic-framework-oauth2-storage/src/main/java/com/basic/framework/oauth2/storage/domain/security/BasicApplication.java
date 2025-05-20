@@ -61,6 +61,12 @@ public class BasicApplication {
     private String clientLogo;
 
     /**
+     * 客户端描述
+     */
+    @Schema(title = "客户端描述")
+    private String description;
+
+    /**
      * 客户端认证方式
      */
     @Schema(title = "客户端认证方式")
