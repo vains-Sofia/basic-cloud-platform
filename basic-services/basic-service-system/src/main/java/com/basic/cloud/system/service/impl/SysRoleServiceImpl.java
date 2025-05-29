@@ -127,6 +127,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeById(Long id) {
         if (id == null) {
             throw new CloudIllegalArgumentException("角色id不能为空.");

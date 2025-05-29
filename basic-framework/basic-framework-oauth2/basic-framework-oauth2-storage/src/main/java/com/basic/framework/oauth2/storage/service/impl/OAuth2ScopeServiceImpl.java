@@ -207,6 +207,7 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeScopeById(Long id) {
         if (id == null) {
             throw new CloudIllegalArgumentException("scope id不能为空.");
