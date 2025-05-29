@@ -62,4 +62,18 @@ public interface OAuth2ScopeService {
      */
     void resetScopePermission(ResetScopePermissionRequest request);
 
+    /**
+     * 根据ID删除scope信息
+     *
+     * @param id scope ID
+     */
+    void removeScopeById(Long id);
+
+    /**
+     * 根据scope查询权限ID
+     *
+     * @param scope scope名称
+     * @return 权限ID列表
+     */
+    List<Long> findPermissionIdsByScope(String scope);
 }

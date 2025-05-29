@@ -1,5 +1,6 @@
 package com.basic.framework.oauth2.storage.autoconfigure;
 
+import com.basic.cloud.system.api.SysPermissionClient;
 import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.storage.repository.*;
 import com.basic.framework.oauth2.storage.service.BasicApplicationService;
@@ -44,6 +45,8 @@ public class StorageAutoConfiguration {
 
     private final OAuth2ScopeRepository scopeRepository;
 
+    private final SysPermissionClient sysPermissionClient;
+
     private final OAuth2ApplicationRepository applicationRepository;
 
     private final OAuth2AuthorizationRepository authorizationRepository;
@@ -82,7 +85,7 @@ public class StorageAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public OAuth2ScopeService jpaOAuth2ScopeService() {
-        return new OAuth2ScopeServiceImpl(scopeRepository, redisOperator, scopePermissionRepository);
+        return new OAuth2ScopeServiceImpl(scopeRepository, sysPermissionClient, redisOperator, scopePermissionRepository);
     }
 
     @Bean

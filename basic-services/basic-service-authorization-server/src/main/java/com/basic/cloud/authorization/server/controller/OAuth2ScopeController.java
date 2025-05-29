@@ -70,4 +70,20 @@ public class OAuth2ScopeController {
         return Result.success();
     }
 
+    @DeleteMapping("/removeById/{id}")
+    @PreAuthorize("hasAnyAuthority('message.write')")
+    @Operation(summary = "重置scope对应的权限", description = "重置scope对应的权限")
+    public Result<String> removeScopeById(@PathVariable Long id) {
+        scopeService.removeScopeById(id);
+        return Result.success();
+    }
+
+    @GetMapping("/findPermissionIdsByScope/{scope}")
+    @PreAuthorize("hasAnyAuthority('message.write')")
+    @Operation(summary = "查询scope对应的权限", description = "查询scope对应的权限")
+    public Result<List<Long>> findPermissionIdsByScope(@PathVariable String scope) {
+        List<Long> menuIds = scopeService.findPermissionIdsByScope(scope);
+        return Result.success(menuIds);
+    }
+
 }

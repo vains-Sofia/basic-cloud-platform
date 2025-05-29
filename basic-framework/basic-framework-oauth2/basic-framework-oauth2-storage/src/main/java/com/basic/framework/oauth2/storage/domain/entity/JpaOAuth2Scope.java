@@ -28,6 +28,11 @@ public class JpaOAuth2Scope extends BasicAuditorEntity implements Serializable {
     /**
      * scope 名称
      */
+    private String name;
+
+    /**
+     * scope 编码
+     */
     private String scope;
 
     /**

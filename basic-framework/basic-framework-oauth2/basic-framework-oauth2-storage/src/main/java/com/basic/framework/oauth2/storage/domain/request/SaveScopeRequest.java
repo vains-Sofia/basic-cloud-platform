@@ -24,6 +24,10 @@ public class SaveScopeRequest implements Serializable {
 
     @NotBlank(groups = {Update.class, Default.class})
     @Schema(title = "scope 名称", description = "scope 名称")
+    private String name;
+
+    @NotBlank(groups = {Update.class, Default.class})
+    @Schema(title = "scope 编码", description = "scope 编码")
     private String scope;
 
     @Schema(title = "scope 描述", description = "scope 描述")

@@ -1,13 +1,16 @@
 package com.basic.framework.oauth2.storage.service.impl;
 
+import com.basic.cloud.system.api.SysPermissionClient;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
-import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
+import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
+import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.storage.domain.entity.JpaOAuth2Scope;
 import com.basic.framework.oauth2.storage.domain.entity.JpaOAuth2ScopePermission;
 import com.basic.framework.oauth2.storage.domain.model.ScopeWithDescription;
@@ -24,6 +27,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
@@ -39,6 +43,8 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
 
     private final OAuth2ScopeRepository scopeRepository;
 
+    private final SysPermissionClient sysPermissionClient;
+
     private final Sequence sequence = new Sequence(null);
 
     private final RedisOperator<List<ScopePermissionModel>> redisOperator;
@@ -50,13 +56,14 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
         // 查询条件
         SpecificationBuilder<JpaOAuth2Scope> builder = new SpecificationBuilder<>();
         builder.or(or -> or
-                        .like(!ObjectUtils.isEmpty(request.getScope()), JpaOAuth2Scope::getScope, request.getScope())
-                        .like(!ObjectUtils.isEmpty(request.getScope()), JpaOAuth2Scope::getDescription, request.getScope())
+                        .like(!ObjectUtils.isEmpty(request.getName()), JpaOAuth2Scope::getName, request.getName())
+                        .like(!ObjectUtils.isEmpty(request.getName()), JpaOAuth2Scope::getDescription, request.getName())
                 )
+                .like(!ObjectUtils.isEmpty(request.getScope()), JpaOAuth2Scope::getScope, request.getScope())
                 .eq(request.getEnabled() != null, JpaOAuth2Scope::getEnabled, request.getEnabled());
 
         // 排序
-        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(JpaOAuth2Scope::getUpdateTime));
+        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(JpaOAuth2Scope::getCreateTime));
         // 分页
         PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
@@ -126,6 +133,7 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
         // 组装数据并持久化
         JpaOAuth2Scope scope = new JpaOAuth2Scope();
         scope.setId(sequence.nextId());
+        scope.setName(request.getName());
         scope.setScope(request.getScope());
         scope.setDescription(request.getDescription());
         scope.setEnabled(Boolean.TRUE);
@@ -134,6 +142,10 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
 
     @Override
     public void updateScope(SaveScopeRequest request) {
+        Optional<JpaOAuth2Scope> existsScopeOptional = this.scopeRepository.findById(request.getId());
+        if (existsScopeOptional.isEmpty()) {
+            throw new CloudIllegalArgumentException("scope [" + request.getId() + "] 不存在.");
+        }
         // 检查scope是否已存在
         SpecificationBuilder<JpaOAuth2Scope> builder = new SpecificationBuilder<>();
         builder.eq(JpaOAuth2Scope::getEnabled, Boolean.TRUE)
@@ -147,6 +159,12 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
         // 组装数据并持久化
         JpaOAuth2Scope scope = new JpaOAuth2Scope();
         BeanUtils.copyProperties(request, scope);
+
+        // 不修改内容
+        JpaOAuth2Scope existsScope = existsScopeOptional.get();
+        scope.setCreateBy(existsScope.getCreateBy());
+        scope.setCreateName(existsScope.getCreateName());
+        scope.setCreateTime(existsScope.getCreateTime());
         this.scopeRepository.save(scope);
     }
 
@@ -186,6 +204,43 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
         redisOperator.delete(AuthorizeConstants.SCOPE_PERMISSION_KEY);
         // 刷新缓存
         redisOperator.set(AuthorizeConstants.SCOPE_PERMISSION_KEY, new ArrayList<>(permissionModelList));
+    }
+
+    @Override
+    public void removeScopeById(Long id) {
+        if (id == null) {
+            throw new CloudIllegalArgumentException("scope id不能为空.");
+        }
+        Optional<JpaOAuth2Scope> existsOptional = this.scopeRepository.findById(id);
+        if (existsOptional.isPresent()) {
+            // 删除scope数据
+            this.scopeRepository.deleteById(id);
+            // 删除scope关联的权限数据
+            JpaOAuth2Scope exists = existsOptional.get();
+            this.scopePermissionRepository.deleteByScope(exists.getScope());
+        }
+    }
+
+    @Override
+    public List<Long> findPermissionIdsByScope(String scope) {
+        List<JpaOAuth2ScopePermission> scopePermissions = this.scopePermissionRepository.findByScope(scope);
+        if (scopePermissions == null || scopePermissions.isEmpty()) {
+            return null;
+        }
+        // 提取所有权限id
+        List<Long> permissionIds = scopePermissions.stream()
+                .map(JpaOAuth2ScopePermission::getPermissionId)
+                .toList();
+
+        // 过滤掉有子节点的权限id(ElementPlus Tree组件如果有设置父节点选中，则不管所有子节点是否选中，父节点都选中，这时会让子节点默认全部选中)
+        Result<List<Long>> result = sysPermissionClient.findNonParentPermissions(permissionIds);
+        if (result == null) {
+            throw new CloudServiceException("查询权限失败，服务不可用");
+        }
+        if (!Objects.equals(result.getCode(), HttpStatus.OK.value())) {
+            throw new CloudServiceException(result.getMessage());
+        }
+        return result.getData();
     }
 }
 

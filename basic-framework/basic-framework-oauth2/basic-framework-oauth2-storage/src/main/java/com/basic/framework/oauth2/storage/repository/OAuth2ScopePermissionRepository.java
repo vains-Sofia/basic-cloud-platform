@@ -29,4 +29,12 @@ public interface OAuth2ScopePermissionRepository extends
      * @return scope与权限关联数据
      */
     List<JpaOAuth2ScopePermission> findByScopeIn(Collection<String> scopes);
+
+    /**
+     * 根据scope查询权限关联数据
+     *
+     * @param scope scope名称
+     * @return scope与权限关联数据
+     */
+    List<JpaOAuth2ScopePermission> findByScope(String scope);
 }

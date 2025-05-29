@@ -65,4 +65,12 @@ public interface SysPermissionService {
      * @return 权限id列表
      */
     List<Long> findPermissionIdsByRoleId(Long roleId);
+
+    /**
+     * 根据权限id列表查询非父权限的权限id列表
+     *
+     * @param permissionIds 权限id列表
+     * @return 非子权限的权限id列表
+     */
+    List<Long> findNonParentPermissions(List<Long> permissionIds);
 }

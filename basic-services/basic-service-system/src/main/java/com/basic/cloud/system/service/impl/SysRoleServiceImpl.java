@@ -7,8 +7,10 @@ import com.basic.cloud.system.api.domain.request.UpdateRolePermissionsRequest;
 import com.basic.cloud.system.api.domain.response.FindRoleResponse;
 import com.basic.cloud.system.domain.SysRole;
 import com.basic.cloud.system.domain.SysRolePermission;
+import com.basic.cloud.system.domain.SysUserRole;
 import com.basic.cloud.system.repository.SysRolePermissionRepository;
 import com.basic.cloud.system.repository.SysRoleRepository;
+import com.basic.cloud.system.repository.SysUserRoleRepository;
 import com.basic.cloud.system.service.SysRoleService;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
@@ -37,6 +39,8 @@ import java.util.Optional;
 public class SysRoleServiceImpl implements SysRoleService {
 
     private final SysRoleRepository roleRepository;
+
+    private final SysUserRoleRepository userRoleRepository;
 
     private final Sequence sequence = new Sequence((null));
 
@@ -127,7 +131,18 @@ public class SysRoleServiceImpl implements SysRoleService {
         if (id == null) {
             throw new CloudIllegalArgumentException("角色id不能为空.");
         }
-        roleRepository.deleteById(id);
+        roleRepository.findById(id).ifPresent(u -> {
+            // 如果角色存在，检查是否有用户使用
+            List<SysUserRole> userRoles = userRoleRepository.findByRoleId(id);
+            if (!ObjectUtils.isEmpty(userRoles)) {
+                throw new CloudIllegalArgumentException("角色已被用户使用，不能删除.");
+            }
+            // 如果角色存在，删除角色
+            roleRepository.deleteById(id);
+            // 删除角色权限
+            rolePermissionRepository.deleteByRoleId(id);
+        });
+
     }
 
     @Override

@@ -16,6 +16,9 @@ import lombok.EqualsAndHashCode;
 public class FindScopePageRequest extends DataPageable {
 
     @Schema(title = "scope名称/描述", description = "scope名称/描述")
+    private String name;
+
+    @Schema(title = "scope编码", description = "scope编码")
     private String scope;
 
     @Schema(title = "是否启用", description = "是否启用")

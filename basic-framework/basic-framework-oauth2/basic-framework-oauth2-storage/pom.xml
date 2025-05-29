@@ -38,6 +38,12 @@
             <artifactId>basic-framework-data-validation</artifactId>
         </dependency>
 
+        <!-- 引入system api依赖 -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-service-system-api</artifactId>
+        </dependency>
+
         <!-- Spring data redis -->
         <!--<dependency>
             <groupId>com.basic.framework</groupId>

@@ -27,4 +27,12 @@ public interface SysUserRoleRepository extends JpaRepository<SysUserRole, Long> 
      * @return 用户角色列表
      */
     List<SysUserRole> findByUserId(Long userId);
+
+    /**
+     * 根据角色id查询
+     *
+     * @param roleId 角色id
+     * @return 用户角色列表
+     */
+    List<SysUserRole> findByRoleId(Long roleId);
 }
