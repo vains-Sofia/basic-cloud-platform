@@ -27,6 +27,13 @@ public interface OAuth2ScopeService {
     PageResult<FindScopeResponse> findScopePage(@Valid FindScopePageRequest request);
 
     /**
+     * 查询所有scope信息
+     *
+     * @return scope信息
+     */
+    List<FindScopeResponse> findScopeAll();
+
+    /**
      * 根据scope 名查询列表
      *
      * @param scopes scope 名

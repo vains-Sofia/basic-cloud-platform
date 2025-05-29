@@ -77,6 +77,25 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
     }
 
     @Override
+    public List<FindScopeResponse> findScopeAll() {
+        // 查询条件
+        SpecificationBuilder<JpaOAuth2Scope> builder = new SpecificationBuilder<>();
+        builder.eq(JpaOAuth2Scope::getEnabled, Boolean.TRUE);
+
+        // 分页查询
+        List<JpaOAuth2Scope> selectScopeList = this.scopeRepository.findAll(builder);
+
+        // 转换实体为响应bean
+        return selectScopeList
+                .stream()
+                .map(e -> {
+                    FindScopeResponse result = new FindScopeResponse();
+                    BeanUtils.copyProperties(e, result);
+                    return result;
+                }).toList();
+    }
+
+    @Override
     public List<ScopeWithDescription> findByScopes(Set<String> scopes) {
         if (ObjectUtils.isEmpty(scopes)) {
             return Collections.emptyList();

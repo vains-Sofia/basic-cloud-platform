@@ -90,7 +90,7 @@ public class BasicTokenSettings {
      * 如果访问令牌必须绑定到客户端x509使用tls_client_auth或self_signed_tls_client_auth方法进行客户端身份验证期间接收的证书，则设置为true。
      */
     @Schema(description = """
-                如果访问令牌必须绑定到客户端x509使用tls_client_auth或self_signed_tls_client_auth方法进行客户端身份验证期间接收的证书，则设置为true。
+                如果在使用 tls_client_auth 或 self_signed_tls_client_auth 时access token必须绑定到客户端身份验证期间收到的客户端 X509Certificate，则设置为 true。
             """)
     private Boolean x509CertificateBoundAccessTokens;
 

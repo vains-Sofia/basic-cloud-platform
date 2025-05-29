@@ -2,6 +2,7 @@ package com.basic.framework.oauth2.storage.service.impl;
 
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
+import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
@@ -45,6 +46,8 @@ import java.util.Optional;
 public class BasicApplicationServiceImpl implements BasicApplicationService {
 
     private final PasswordEncoder passwordEncoder;
+
+    private final Sequence sequence = new Sequence(null);
 
     private final OAuth2ApplicationRepository applicationRepository;
 
@@ -153,13 +156,19 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
             application.setTokenSettings(OAuth2JsonUtils.toJson(ClientUtils.resolveTokenSettings(TokenSettings.builder().build())));
         }
 
+        // 生成id
+        application.setId(sequence.nextId());
+
         // 密码加密
-        String password = idGenerator.generateId().toString();
-        String encodePassword = passwordEncoder.encode(password);
+        if (ObjectUtils.isEmpty(request.getClientSecret())) {
+            request.setClientSecret(idGenerator.generateId().toString());
+        }
+        String encodePassword = passwordEncoder.encode(request.getClientSecret());
         application.setClientSecret(encodePassword);
         // 设置客户端id签发时间
         application.setClientIdIssuedAt(LocalDateTime.now());
-        return password;
+        applicationRepository.save(application);
+        return request.getClientSecret();
     }
 
     @Override
@@ -187,6 +196,16 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
         if (application == null) {
             throw new ApplicationStorageException("JpaOAuth2Application convert failed. Interrupt registeredClient save.");
         }
+        JpaOAuth2Application existApplication = applicationById.get();
+        // 不修改内容
+        application.setClientId(existApplication.getClientId());
+        application.setClientSecret(existApplication.getClientSecret());
+        application.setClientIdIssuedAt(existApplication.getClientIdIssuedAt());
+
+        // 添加审计
+        application.setCreateBy(existApplication.getCreateBy());
+        application.setCreateName(existApplication.getCreateName());
+        application.setCreateTime(existApplication.getCreateTime());
         applicationRepository.save(application);
     }
 

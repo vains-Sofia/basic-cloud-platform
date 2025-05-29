@@ -37,6 +37,13 @@ public class SaveApplicationRequest {
     private String clientId;
 
     /**
+     * 客户端密钥
+     */
+    @Schema(title = "客户端secret")
+    @NotBlank(message = "{oauth2.application.clientSecret.notBlank}", groups = {Default.class})
+    private String clientSecret;
+
+    /**
      * 客户端密钥过期时间
      */
     @Schema(title = "客户端密钥过期时间")
@@ -54,6 +61,12 @@ public class SaveApplicationRequest {
      */
     @Schema(title = "客户端Logo")
     private String clientLogo;
+
+    /**
+     * 客户端描述
+     */
+    @Schema(title = "客户端描述")
+    private String description;
 
     /**
      * 客户端认证方式

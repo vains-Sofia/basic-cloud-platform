@@ -16,6 +16,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * oauth2客户端的scope相关接口
  *
@@ -35,6 +37,13 @@ public class OAuth2ScopeController {
     public Result<PageResult<FindScopeResponse>> findScopePage(@Valid FindScopePageRequest request) {
 
         return Result.success(scopeService.findScopePage(request));
+    }
+
+    @GetMapping("/findScopeList")
+    @Operation(summary = "查询所有的scope", description = "查询所有的scope")
+    public Result<List<FindScopeResponse>> findScopeList() {
+
+        return Result.success(scopeService.findScopeAll());
     }
 
     @PostMapping("/save")
