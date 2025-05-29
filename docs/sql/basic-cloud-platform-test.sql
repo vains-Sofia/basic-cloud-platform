@@ -212,7 +212,8 @@ DROP TABLE IF EXISTS `oauth2_scope`;
 CREATE TABLE `oauth2_scope`
 (
     `id`          bigint                                                 NOT NULL COMMENT '主键id',
-    `scope`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'scope 名称',
+    `name`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT 'scope 名称',
+    `scope`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'scope 编码',
     `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'scope 描述',
     `enabled`     tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否启用',
     `create_by`   bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
@@ -231,18 +232,18 @@ CREATE TABLE `oauth2_scope`
 -- Records of oauth2_scope
 -- ----------------------------
 INSERT INTO `oauth2_scope`
-VALUES (1856524382825115650, 'profile', 'This application will be able to read your profile information.', 1, 123, 123,
-        '2024-11-13 10:28:00', '2024-11-13 10:28:00', NULL, NULL);
+VALUES (1856524382825115650, '', 'profile', 'This application will be able to read your profile information.', 1, 123,
+        123, '2024-11-13 10:28:00', '2024-11-13 10:28:00', NULL, NULL);
 INSERT INTO `oauth2_scope`
-VALUES (1856525468709421058, 'message.read', 'This application will be able to read your message.', 1, 123, 123,
+VALUES (1856525468709421058, '', 'message.read', 'This application will be able to read your message.', 1, 123, 123,
         '2024-11-13 10:32:19', '2024-11-13 10:32:19', NULL, NULL);
 INSERT INTO `oauth2_scope`
-VALUES (1856525597751377922, 'message.write',
+VALUES (1856525597751377922, '', 'message.write',
         'This application will be able to add new messages. It will also be able to edit and delete existing messages.',
         1, 123, 123, '2024-11-13 10:32:50', '2024-11-13 10:32:50', NULL, NULL);
 INSERT INTO `oauth2_scope`
-VALUES (1856525703913406465, 'user.read', 'This application will be able to read your user information.', 1, 123, 123,
-        '2024-11-13 10:33:15', '2024-11-13 10:43:58', NULL, NULL);
+VALUES (1856525703913406465, '', 'user.read', 'This application will be able to read your user information.', 1, 123,
+        123, '2024-11-13 10:33:15', '2024-11-13 10:43:58', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for oauth2_scope_permission

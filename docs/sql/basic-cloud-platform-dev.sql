@@ -220,7 +220,8 @@ DROP TABLE IF EXISTS `oauth2_scope`;
 CREATE TABLE `oauth2_scope`
 (
     `id`          bigint                                                 NOT NULL COMMENT '主键id',
-    `scope`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'scope 名称',
+    `name`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT 'scope 名称',
+    `scope`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'scope 编码',
     `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'scope 描述',
     `enabled`     tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否启用',
     `create_by`   bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
@@ -239,24 +240,31 @@ CREATE TABLE `oauth2_scope`
 -- Records of oauth2_scope
 -- ----------------------------
 INSERT INTO `oauth2_scope`
-VALUES (1856524382825115650, 'profile', 'This application will be able to read your profile information.', 1, 123, 123,
-        NULL, NULL, '2024-11-13 10:28:00', '2024-11-13 10:28:00');
+VALUES (1856524382825115650, '用户信息详情', 'profile',
+        'This application will be able to read your profile information.', 1, 123, 1, NULL, '云逸',
+        '2024-11-13 10:28:00', '2025-05-29 17:58:27');
 INSERT INTO `oauth2_scope`
-VALUES (1856525468709421058, 'message.read', 'This application will be able to read your message.', 1, 123, 123, NULL,
-        NULL, '2024-11-13 10:32:19', '2024-11-13 10:32:19');
+VALUES (1856525468709421058, '读取数据范围', 'message.read', 'This application will be able to read your message.', 1,
+        123, 1, NULL, '云逸', '2024-11-13 10:32:19', '2025-05-29 17:58:11');
 INSERT INTO `oauth2_scope`
-VALUES (1856525597751377922, 'message.write',
+VALUES (1856525597751377922, '修改数据范围', 'message.write',
         'This application will be able to add new messages. It will also be able to edit and delete existing messages.',
-        1, 123, 123, NULL, NULL, '2024-11-13 10:32:50', '2024-11-13 10:32:50');
+        1, 123, 1, NULL, '云逸', '2024-11-13 10:32:50', '2025-05-29 17:58:17');
 INSERT INTO `oauth2_scope`
-VALUES (1856525703913406465, 'user.read', 'This application will be able to read your user information.', 1, 123, 123,
-        NULL, NULL, '2024-11-13 10:33:15', '2024-11-13 10:43:58');
+VALUES (1856525703913406465, '查询用户范围', 'user.read',
+        'This application will be able to read your user information.', 1, 123, 1, NULL, '云逸', '2024-11-13 10:33:15',
+        '2025-05-29 17:58:04');
 INSERT INTO `oauth2_scope`
-VALUES (1856578472980570113, 'openid', 'The openid scope is required for OpenID Connect Authentication Requests1111.',
-        1, NULL, 123, NULL, NULL, NULL, '2024-11-19 14:59:17');
+VALUES (1856578472980570113, 'OpenID Connect', 'openid',
+        'The openid scope is required for OpenID Connect Authentication Requests1111.', 1, NULL, 1, NULL, '云逸',
+        '2024-11-13 10:33:15', '2025-05-29 17:53:54');
 INSERT INTO `oauth2_scope`
-VALUES (1856578945196253186, 'email', 'The email scope requests access to the email and email_verified claims.', 1, 123,
-        123, NULL, NULL, '2024-11-13 14:04:49', '2024-11-13 14:07:25');
+VALUES (1856578945196253186, 'Email权限', 'email',
+        'The email scope requests access to the email and email_verified claims.', 1, 123, 1, NULL, '云逸',
+        '2024-11-13 14:04:49', '2025-05-29 17:57:41');
+INSERT INTO `oauth2_scope`
+VALUES (1928029770206277634, '测试添加', 'test', '测试添加', 1, 1, 1, '云逸', '云逸', '2025-05-29 18:04:53',
+        '2025-05-29 18:04:53');
 
 -- ----------------------------
 -- Table structure for oauth2_scope_permission
