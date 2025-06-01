@@ -76,7 +76,7 @@ public class AuthorizationServerConfiguration {
                             // 设置自定义用户确认授权页
                             .consentPage(oAuth2ServerProperties.getConsentPageUri())
                             // 异常处理
-                            .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri()))
+                            .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getAuthorizeErrorUri()))
                             // 授权申请成功响应处理
                             .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(oAuth2ServerProperties.getConsentPageUri()))
                     );

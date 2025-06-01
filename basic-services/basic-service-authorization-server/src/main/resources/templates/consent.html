@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Custom consent page - Consent required</title>
-  <link rel="stylesheet" th:href="${contextPath} + '/assets/css/bootstrap.css'" />
+  <link rel="stylesheet" th:href="${parameters.contextPath} + '/assets/css/bootstrap.css'" />
   <script>
     function cancelConsent() {
       document.consent_form.reset();
@@ -21,17 +21,17 @@
     <div class="col text-center">
       <p>
         The application
-        <span class="fw-bold text-primary" th:text="${clientId}"></span>
+        <span class="fw-bold text-primary" th:text="${parameters.clientId}"></span>
         wants to access your account
-        <span class="fw-bold" th:text="${principalName}"></span>
+        <span class="fw-bold" th:text="${parameters.principalName}"></span>
       </p>
     </div>
   </div>
-  <div th:if="${userCode}" class="row">
+  <div th:if="${parameters.userCode}" class="row">
     <div class="col text-center">
       <p class="alert alert-warning">
         You have provided the code
-        <span class="fw-bold" th:text="${userCode}"></span>.
+        <span class="fw-bold" th:text="${parameters.userCode}"></span>.
         Verify that this code matches what is shown on your device.
       </p>
     </div>
@@ -46,12 +46,12 @@
   </div>
   <div class="row">
     <div class="col text-center">
-      <form name="consent_form" method="post" th:action="${contextPath} + ${requestURI}">
-        <input type="hidden" name="client_id" th:value="${clientId}">
-        <input type="hidden" name="state" th:value="${state}">
-        <input th:if="${userCode}" type="hidden" name="user_code" th:value="${userCode}">
+      <form name="consent_form" method="post" th:action="${parameters.contextPath} + ${parameters.requestURI}">
+        <input type="hidden" name="client_id" th:value="${parameters.clientId}">
+        <input type="hidden" name="state" th:value="${parameters.state}">
+        <input th:if="${parameters.userCode}" type="hidden" name="user_code" th:value="${parameters.userCode}">
 
-        <div th:each="scope: ${scopes}" class="form-check py-1">
+        <div th:each="scope: ${parameters.scopes}" class="form-check py-1">
           <input class="form-check-input"
                  style="float: none"
                  type="checkbox"
@@ -62,10 +62,10 @@
           <p class="text-primary" th:text="${scope.description}"></p>
         </div>
 
-        <p th:if="${not #lists.isEmpty(previouslyApprovedScopes)}">
+        <p th:if="${not #lists.isEmpty(parameters.previouslyApprovedScopes)}">
           You have already granted the following permissions to the above app:
         </p>
-        <div th:each="scope: ${previouslyApprovedScopes}" class="form-check py-1">
+        <div th:each="scope: ${parameters.previouslyApprovedScopes}" class="form-check py-1">
           <input class="form-check-input"
                  style="float: none"
                  type="checkbox"

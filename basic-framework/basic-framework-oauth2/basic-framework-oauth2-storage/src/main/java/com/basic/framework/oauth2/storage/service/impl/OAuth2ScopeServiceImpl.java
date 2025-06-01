@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 针对表【oauth2_scope(oauth2客户端的scope)】的数据库操作Service实现
@@ -103,9 +104,9 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
     }
 
     @Override
-    public List<ScopeWithDescription> findByScopes(Set<String> scopes) {
+    public Set<ScopeWithDescription> findByScopes(Set<String> scopes) {
         if (ObjectUtils.isEmpty(scopes)) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
         // 构建查询条件
         SpecificationBuilder<JpaOAuth2Scope> builder = new SpecificationBuilder<>();
@@ -116,11 +117,10 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
         List<JpaOAuth2Scope> selectScopeList = this.scopeRepository.findAll(builder);
 
         // 转换后返回
-        List<ScopeWithDescription> withDescriptionList = selectScopeList
+        return selectScopeList
                 .stream()
-                .map(e -> new ScopeWithDescription(e.getScope(), e.getDescription()))
-                .toList();
-        return new ArrayList<>(withDescriptionList);
+                .map(e -> new ScopeWithDescription(e.getId(), e.getName(), e.getScope(), e.getDescription()))
+                .collect(Collectors.toSet());
     }
 
     @Override

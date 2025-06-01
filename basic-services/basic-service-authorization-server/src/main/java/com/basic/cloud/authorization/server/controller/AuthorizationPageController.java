@@ -1,10 +1,17 @@
 package com.basic.cloud.authorization.server.controller;
 
+import com.basic.cloud.authorization.server.domain.response.OAuth2ConsentResponse;
+import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.exception.CloudServiceException;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.oauth2.storage.domain.model.ScopeWithDescription;
+import com.basic.framework.oauth2.storage.domain.security.BasicApplication;
+import com.basic.framework.oauth2.storage.service.BasicApplicationService;
 import com.basic.framework.oauth2.storage.service.OAuth2ScopeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -14,20 +21,16 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,11 +47,9 @@ public class AuthorizationPageController {
 
     private final ServerProperties serverProperties;
 
-    private final RegisteredClientRepository registeredClientRepository;
+    private final BasicApplicationService applicationService;
 
     private final OAuth2AuthorizationConsentService authorizationConsentService;
-
-    private static final String DEFAULT_DESCRIPTION = "UNKNOWN SCOPE - We cannot provide information about this permission, use caution when granting this.";
 
     @GetMapping("/login")
     @Operation(summary = "登录页面", description = "渲染登录页面")
@@ -82,24 +83,44 @@ public class AuthorizationPageController {
         return "device-activated";
     }
 
-    @GetMapping(value = "/oauth2/consent")
-    @Operation(summary = "授权确认页面", description = "渲染授权确认页面")
-    public String consent(Principal principal, Model model,
-                          @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
-                          @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
-                          @RequestParam(OAuth2ParameterNames.STATE) String state,
-                          @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
+    @ResponseBody
+    @GetMapping(value = "/oauth2/consent/parameters")
+    @Schema(name = "获取授权确认页面所需的参数", description = "授权确认页面所需的参数")
+    public Result<OAuth2ConsentResponse> consentParameters(@RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
+                                                           @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
+                                                           @RequestParam(OAuth2ParameterNames.STATE) String state,
+                                                           @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
 
-        // Remove scopes that were already approved
+        // 获取consent页面所需的参数
+        OAuth2ConsentResponse consentParameters = this.getConsentParameters(scope, state, clientId, userCode);
+
+        return Result.success(consentParameters);
+    }
+
+    /**
+     * 根据授权确认相关参数获取授权确认与未确认的scope相关参数
+     *
+     * @param scope    scope权限
+     * @param state    state
+     * @param clientId 客户端id
+     * @param userCode 设备码授权流程中的用户码
+     * @return 页面所需数据
+     */
+    private OAuth2ConsentResponse getConsentParameters(String scope, String state, String clientId, String userCode) {
+        AuthenticatedUser authenticatedUser = SecurityUtils.getAuthenticatedUser();
+        if (authenticatedUser == null) {
+            throw new CloudServiceException("用户未登录");
+        }
+        OAuth2ConsentResponse consentParameters = new OAuth2ConsentResponse();
         Set<String> scopesToApprove = new HashSet<>();
         Set<String> previouslyApprovedScopes = new HashSet<>();
-        RegisteredClient registeredClient = this.registeredClientRepository.findByClientId(clientId);
-        if (registeredClient == null) {
+        BasicApplication application = this.applicationService.findByClientId(clientId);
+        if (application == null) {
             throw new CloudServiceException("客户端不存在");
         }
 
         OAuth2AuthorizationConsent currentAuthorizationConsent =
-                this.authorizationConsentService.findById(registeredClient.getId(), principal.getName());
+                this.authorizationConsentService.findById(String.valueOf(application.getId()), authenticatedUser.getId() + "");
         Set<String> authorizedScopes;
         if (currentAuthorizationConsent != null) {
             authorizedScopes = currentAuthorizationConsent.getScopes();
@@ -117,19 +138,36 @@ public class AuthorizationPageController {
             }
         }
 
-        model.addAttribute("clientId", clientId);
-        model.addAttribute("state", state);
-        model.addAttribute("scopes", withDescription(scopesToApprove));
-        model.addAttribute("previouslyApprovedScopes", withDescription(previouslyApprovedScopes));
-        model.addAttribute("principalName", principal.getName());
-        model.addAttribute("userCode", userCode);
+        consentParameters.setClientId(clientId);
+        consentParameters.setClientName(application.getClientName());
+        consentParameters.setClientLogo(application.getClientLogo());
+        consentParameters.setState(state);
+        consentParameters.setScopes(withDescription(scopesToApprove));
+        consentParameters.setPreviouslyApprovedScopes(withDescription(previouslyApprovedScopes));
+        consentParameters.setPrincipalName(authenticatedUser.getNickname());
+        consentParameters.setUserCode(userCode);
         ServerProperties.Servlet servlet = serverProperties.getServlet();
-        model.addAttribute("contextPath", servlet.getContextPath());
+        consentParameters.setContextPath(servlet.getContextPath());
         if (StringUtils.hasText(userCode)) {
-            model.addAttribute("requestURI", "/oauth2/device_verification");
+            consentParameters.setRequestURI("/oauth2/device_verification");
         } else {
-            model.addAttribute("requestURI", "/oauth2/authorize");
+            consentParameters.setRequestURI("/oauth2/authorize");
         }
+        return consentParameters;
+    }
+
+    @GetMapping(value = "/oauth2/consent")
+    @Operation(summary = "授权确认页面", description = "渲染授权确认页面")
+    public String consent(Model model,
+                          @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
+                          @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
+                          @RequestParam(OAuth2ParameterNames.STATE) String state,
+                          @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
+
+        // 获取consent页面所需的参数
+        OAuth2ConsentResponse consentParameters = this.getConsentParameters(scope, state, clientId, userCode);
+
+        model.addAttribute("parameters", consentParameters);
 
         return "consent";
     }
@@ -140,24 +178,9 @@ public class AuthorizationPageController {
      * @param scopes scope
      * @return 参数对应的scope列表，带描述
      */
-    private List<ScopeWithDescription> withDescription(Set<String> scopes) {
+    private Set<ScopeWithDescription> withDescription(Set<String> scopes) {
         // 数据库中的scope
-        List<ScopeWithDescription> toApproveScope = scopeService.findByScopes(scopes);
-        List<String> list = toApproveScope.stream().map(ScopeWithDescription::scope).toList();
-
-        // 不存在于数据库中的scope
-        List<ScopeWithDescription> unknownScopes = scopes
-                .stream()
-                .filter(e -> !list.contains(e))
-                .map(e -> new ScopeWithDescription(e, DEFAULT_DESCRIPTION))
-                .toList();
-
-        if (!ObjectUtils.isEmpty(unknownScopes)) {
-            // 合并
-            toApproveScope.addAll(unknownScopes);
-        }
-
-        return toApproveScope;
+        return scopeService.findByScopes(scopes);
     }
 
 }

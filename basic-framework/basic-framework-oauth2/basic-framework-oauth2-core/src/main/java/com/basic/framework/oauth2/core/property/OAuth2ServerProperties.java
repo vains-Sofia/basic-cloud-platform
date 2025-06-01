@@ -48,6 +48,11 @@ public class OAuth2ServerProperties {
     private String consentPageUri = "/oauth2/consent";
 
     /**
+     * 授权错误地址
+     */
+    private String authorizeErrorUri;
+
+    /**
      * 不需要鉴权的地址
      */
     private Set<String> ignoreUriPaths = new HashSet<>();

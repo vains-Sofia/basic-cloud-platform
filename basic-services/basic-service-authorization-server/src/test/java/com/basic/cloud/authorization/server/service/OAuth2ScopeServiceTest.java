@@ -58,7 +58,7 @@ class OAuth2ScopeServiceTest {
 
     @Test
     void findByScopes() {
-        List<ScopeWithDescription> withDescriptions = scopeService.findByScopes(Set.of(OidcScopes.PROFILE));
+        Set<ScopeWithDescription> withDescriptions = scopeService.findByScopes(Set.of(OidcScopes.PROFILE));
         withDescriptions.forEach(System.out::println);
     }
 

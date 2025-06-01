@@ -39,7 +39,7 @@ public interface OAuth2ScopeService {
      * @param scopes scope 名
      * @return 列表
      */
-    List<ScopeWithDescription> findByScopes(Set<String> scopes);
+    Set<ScopeWithDescription> findByScopes(Set<String> scopes);
 
     /**
      * 保存scope数据

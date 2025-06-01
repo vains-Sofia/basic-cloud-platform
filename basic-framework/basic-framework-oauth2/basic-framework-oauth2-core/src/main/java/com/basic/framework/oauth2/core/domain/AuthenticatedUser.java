@@ -43,4 +43,8 @@ public interface AuthenticatedUser extends OAuth2User, UserDetails, CredentialsC
 
     void setAuthorities(Collection<? extends GrantedAuthority> authorities);
 
+    default String getNickname() {
+        return this.getName();
+    }
+
 }
