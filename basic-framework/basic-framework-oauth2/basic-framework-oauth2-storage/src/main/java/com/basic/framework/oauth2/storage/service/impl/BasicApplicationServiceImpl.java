@@ -112,8 +112,12 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
         builder.eq(!ObjectUtils.isEmpty(request.getClientId()),
                 JpaOAuth2Application::getClientId, request.getClientId());
 
-        builder.like(!ObjectUtils.isEmpty(request.getApplicationName()),
-                JpaOAuth2Application::getClientName, request.getApplicationName());
+        builder.or(or -> or
+                .like(!ObjectUtils.isEmpty(request.getApplicationName()),
+                        JpaOAuth2Application::getClientName, request.getApplicationName())
+                .like(!ObjectUtils.isEmpty(request.getApplicationName()),
+                        JpaOAuth2Application::getDescription, request.getApplicationName())
+        );
 
         builder.like(!ObjectUtils.isEmpty(request.getClientAuthenticationMethod()),
                 JpaOAuth2Application::getClientAuthenticationMethods, request.getClientAuthenticationMethod());
@@ -221,8 +225,12 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
         builder.eq(!ObjectUtils.isEmpty(request.getClientId()),
                 JpaOAuth2Application::getClientId, request.getClientId());
 
-        builder.like(!ObjectUtils.isEmpty(request.getApplicationName()),
-                JpaOAuth2Application::getClientName, request.getApplicationName());
+        builder.or(or -> or
+                .like(!ObjectUtils.isEmpty(request.getApplicationName()),
+                        JpaOAuth2Application::getClientName, request.getApplicationName())
+                .like(!ObjectUtils.isEmpty(request.getApplicationName()),
+                        JpaOAuth2Application::getDescription, request.getApplicationName())
+        );
 
         builder.like(!ObjectUtils.isEmpty(request.getAuthorizationGrantType()),
                 JpaOAuth2Application::getAuthorizationGrantTypes, request.getAuthorizationGrantType());
