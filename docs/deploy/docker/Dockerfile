@@ -17,10 +17,6 @@ COPY --from=builder /builder/extracted/application/ ./
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 添加非 root 用户
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
-
 # 环境变量（默认留空，部署时传入）
 ENV JAVA_TOOL_OPTIONS=""
 
