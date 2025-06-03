@@ -1,83 +1,84 @@
 #!/bin/bash
 
-# 包名
-APP_NAME=basic-service-$2-0.0.1.jar
+# 1. 参数校验
+if [ -z "$2" ]; then
+  echo "❗️请提供项目名，例如：$0 [start|stop|restart|status] <project-name>"
+  exit 1
+fi
 
-# 项目名
-PROJECT_NAME=$2
+# 2. 配置
+PROJECT_NAME="$2"
+JAR_NAME="basic-service-${PROJECT_NAME}-0.0.1.jar"
+JAR_PATH="/home/admin/app/${JAR_NAME}"
+PROFILE="test"
+JAVA_OPTS="${JAVA_OPTS:--Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m -Xss512k}"
 
-#使用说明，用来提示输入参数
-usage() {
-    echo "Usage: sh 脚本名.sh [start|stop|restart|status]"
-    exit 1
+# 3. 检查是否运行中
+get_pid() {
+  pid=$(ps -ef | grep "$JAR_PATH" | grep -v grep | awk '{print $2}')
 }
- 
-#检查程序是否在运行
-is_exist(){
-  pid=$(ps -ef | grep "$APP_NAME" | grep -v grep | awk '{print $2}')
-  #如果不存在返回1，存在返回0
-  if [ -z "${pid}" ]; then
-   return 1
+
+# 4. 启动
+start() {
+  get_pid
+  if [ -n "$pid" ]; then
+    echo "✅ $JAR_NAME 已在运行中，PID: $pid"
   else
-    return 0
+    echo "🚀 正在启动 $JAR_NAME ..."
+    nohup /usr/local/graalvm-jdk-21.0.4+8.1/bin/java $JAVA_OPTS -jar "$JAR_PATH" --spring.profiles.active=$PROFILE >/dev/null 2>&1 &
+    sleep 2
+    get_pid
+    if [ -n "$pid" ]; then
+      echo "✅ 启动成功，PID: $pid"
+    else
+      echo "❌ 启动失败，请检查日志配置"
+    fi
   fi
 }
- 
-#启动方法
-start(){
-  is_exist
-  if [ $? -eq "0" ]; then
-    echo "${APP_NAME} is already running. pid=${pid} ."
+
+# 5. 停止
+stop() {
+  get_pid
+  if [ -n "$pid" ]; then
+    echo "🛑 正在停止 $JAR_NAME，PID: $pid"
+    kill "$pid"
+    sleep 3
+    get_pid
+    if [ -n "$pid" ]; then
+      echo "⚠️ 无法平滑停止，尝试强制 kill"
+      kill -9 "$pid"
+    fi
+    echo "✅ 已停止"
   else
-    # mv /home/admin/app/logs/"$PROJECT_NAME"/nohup.out /home/admin/app/logs/"$PROJECT_NAME"/nohup.out-"$(date "+%Y-%m-%d-%H:%M:%S")"
-	  # 启动
-    # nohup java -jar /home/admin/app/"$APP_NAME" --spring.profiles.active=test > /home/admin/app/logs/"$PROJECT_NAME"/nohup.out 2>&1 &
-    nohup java -jar /home/admin/app/"$APP_NAME" --spring.profiles.active=test > /dev/null 2>&1 &
-    echo "${APP_NAME} start success"
+    echo "❗️$JAR_NAME 未在运行"
   fi
 }
- 
-#停止方法
-stop(){
-  is_exist
-  if [ $? -eq "0" ]; then
-    kill -9 $pid
+
+# 6. 状态
+status() {
+  get_pid
+  if [ -n "$pid" ]; then
+    echo "✅ $JAR_NAME 正在运行，PID: $pid"
   else
-    echo "${APP_NAME} is not running"
+    echo "❌ $JAR_NAME 未运行"
   fi
 }
- 
-#输出运行状态
-status(){
-  is_exist
-  if [ $? -eq "0" ]; then
-    echo "${APP_NAME} is running. Pid is ${pid}"
-  else
-    echo "${APP_NAME} is NOT running."
-  fi
-}
- 
-#重启
-restart(){
+
+# 7. 重启
+restart() {
   stop
+  sleep 2
   start
 }
- 
-#根据输入参数，选择执行对应方法，不输入则执行使用说明
+
+# 8. 入口
 case "$1" in
-  "start")
-    start
-    ;;
-  "stop")
-    stop
-    ;;
-  "status")
-    status
-    ;;
-  "restart")
-    restart
-    ;;
+  start) start ;;
+  stop) stop ;;
+  restart) restart ;;
+  status) status ;;
   *)
-    usage
+    echo "Usage: $0 [start|stop|restart|status] <project-name>"
+    exit 1
     ;;
 esac
