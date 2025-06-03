@@ -74,6 +74,12 @@
             <artifactId>basic-service-system-api</artifactId>
         </dependency>
 
+        <!-- OpenFeign服务内部调用 -->
+        <dependency>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-openfeign</artifactId>
+        </dependency>
+
         <!-- 日志发送至logstash依赖 -->
         <dependency>
             <groupId>net.logstash.logback</groupId>

@@ -17,10 +17,10 @@
     </modules>
 
     <dependencies>
-        <!-- OpenFeign服务内部调用 -->
+        <!-- 内部服务调用OpenFeign -->
         <dependency>
-            <groupId>com.basic.framework</groupId>
-            <artifactId>basic-framework-openfeign</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
     </dependencies>
 

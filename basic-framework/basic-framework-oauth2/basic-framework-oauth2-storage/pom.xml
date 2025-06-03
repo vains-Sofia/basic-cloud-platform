@@ -44,6 +44,12 @@
             <artifactId>basic-service-system-api</artifactId>
         </dependency>
 
+        <!-- OpenFeign服务内部调用 -->
+        <dependency>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-openfeign</artifactId>
+        </dependency>
+
         <!-- Spring data redis -->
         <!--<dependency>
             <groupId>com.basic.framework</groupId>

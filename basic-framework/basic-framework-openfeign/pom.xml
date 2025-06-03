@@ -22,6 +22,8 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <!-- 与api模块配合使用 -->
+            <optional>true</optional>
         </dependency>
 
         <!-- OpenFeign负载均衡依赖 -->
