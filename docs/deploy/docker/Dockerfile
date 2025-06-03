@@ -34,6 +34,6 @@ LABEL maintainer="vains-Sofia <17683906991@163.com>" \
       org.opencontainers.image.title="${BUILD_PROJECT}" \
       org.opencontainers.image.version="${BUILD_VERSION}" \
       org.opencontainers.image.revision="${BUILD_COMMIT}" \
-      org.opencontainers.image.created="${BUILD_TIME}" \
+      org.opencontainers.image.created="${BUILD_TIME}"
 
 ENTRYPOINT ["java", "-jar", "application.jar"]
