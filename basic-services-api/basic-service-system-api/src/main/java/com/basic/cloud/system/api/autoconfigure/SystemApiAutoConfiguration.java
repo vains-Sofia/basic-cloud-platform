@@ -2,6 +2,7 @@ package com.basic.cloud.system.api.autoconfigure;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
@@ -10,12 +11,13 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author vains
  */
 @Slf4j
+@ConditionalOnMissingBean(SystemApiAutoConfiguration.class)
 @EnableFeignClients(basePackages = {"com.basic.cloud.system.api"})
 public class SystemApiAutoConfiguration {
 
     @PostConstruct
     public void postConstruct() {
-        log.debug("Initializing the System API.");
+        log.debug("System API FeignClients initialized successfully.");
     }
 
 }
