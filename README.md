@@ -1,5 +1,5 @@
 <h2 style="margin: 30px 0 30px; text-align: center; font-weight: bold;">Basic Cloud Platform</h2>
-<h4 style="text-align: center;">围绕Spring OAuth2 Authorization Server开发的Spring Cloud项目，目前还有很多东西不完善。</h4>
+<h4 style="text-align: center;">基于 Spring Cloud 生态的现代化微服务平台</h4>
 
 ---
 <div style="text-align: center">
@@ -15,24 +15,36 @@
 [![Static Badge](https://img.shields.io/badge/Nacos-2.5.1-1be1f6)](https://nacos.io)
 [![Static Badge](https://img.shields.io/badge/Apache%20Maven-3.9.9-f5f5f5?logo=apachemaven)](https://maven.apache.org/)
 [![Static Badge](https://img.shields.io/badge/License-Apache%20License%202.0-f5f5f5?logo=apache)](./LICENSE)
-![Static Badge](https://img.shields.io/badge/Author-vains_Sofia(%E4%BA%91%E9%80%B8)-blue)
+![Static Badge](https://img.shields.io/badge/Author-vains_Sofia(云逸)-blue)
 
 </div>
 
-----
+---
 
-### 平台简介
+### 📋 项目简介
 
-&emsp;&emsp;该项目主要是为了学习Spring Cloud和Spring OAuth2 Authorization Server而开发的，熟悉Spring Cloud项目从开发到部署的一个完整流程，目前尚未开发完毕。
+Basic Cloud Platform 是一个基于 Spring Cloud 生态体系构建的现代化微服务平台。本项目采用最新的 Spring Cloud 技术栈，集成了统一授权认证、服务治理、微服务监控等核心功能，为企业级应用开发提供完整的解决方案。
 
-### 主要功能
+### ✨ 核心特性
 
- - 认证中心
- - 网关
- - 监控中心
- - 系统服务
+- 🔐 **统一认证中心**：基于 Spring OAuth2 Authorization Server 实现，支持多种认证方式
+- 🚀 **微服务网关**：使用 Spring Cloud Gateway，实现统一的API路由和安全控制
+- 📊 **实时监控**：集成 Spring Boot Admin，提供实时的服务监控和告警能力
+- 🛠️ **系统服务**：完整的用户、角色、权限管理体系
+- 🔄 **分布式架构**：基于 Spring Cloud 实现服务注册发现、配置管理等
 
-### 项目结构
+### 🔨 技术栈
+
+- **基础框架**：Spring Boot 3.4.4 | Spring Cloud 2024.0.1
+- **安全框架**：Spring OAuth2 Authorization Server 1.4.2
+- **微服务组件**：Spring Cloud Alibaba 2023.0.3.2 | Nacos 2.5.1
+- **持久层**：Mybatis Plus 3.5.11 | Spring Data JPA
+- **接口文档**：Spring Doc 2.8.6
+- **监控组件**：Spring Boot Admin 3.4.5
+- **运行环境**：Java 21+ | Maven 3.9.9
+
+### 📦 项目结构
+
 ```shell
 |-- basic-cloud-platform
     |-- pom.xml                                                 -- 根pom.xml
@@ -83,40 +95,50 @@
             |-- basic-cloud-platform-test.sql                   -- 项目测试数据库脚本
 ```
 
-### 本地启动说明
-1. 克隆项目
-```shell
-git clone https://gitee.com/vains-Sofia/basic-cloud-platform.git
-```
-2. 初始化所需组件
-<br />将`docs/deploy/docker/infra`下的infra-compose.yml上传至测试服务器，然后执行Docker Compose命令初始化组件
-```shell
-  docker-compose -f infra-compose.yml up -d
-```
-&emsp;&emsp;或者直接进入目录下执行(如果已安装Docker)
-```shell
-cd docs/deploy/docker/infra
-docker-compose -f infra-compose.yml up -d
-```
 
-3. 创建数据库
-创建数据库
-```sql
-create database basic-cloud-platform character set utf8mb4 collate utf8mb4_bin;
-```
+### 🚀 快速开始
 
-4. 导入数据库脚本
-<br />
-导入`docs/sql/basic-cloud-platform-dev.sql`脚本至刚才创建的数据库中
-5. 导入Nacos配置
-<br />
-导入`docs/nacos/nacos_config_dev.zip`至Nacos配置中心。
-6. 修改nacos中各依赖组件的ip，例如MySQL、Redis等
-7. 启动服务
-&emsp;&emsp;依次启动basic-service-authorization-server、basic-service-gateway、basic-service-monitor、basic-service-system服务，顺序无所谓，推荐最后启动monitor服务。<br />
-- Swagger地址：http://127.0.0.1:9000/swagger-ui/index.html
-- Spring Boot Admin监控中心：http://127.0.0.1:9000/monitor/
+1. **环境准备**
+   ```bash
+   # 克隆项目
+   git clone https://gitee.com/vains-Sofia/basic-cloud-platform.git
+   ```
 
-邮箱登录：
-邮箱：17683906991@163.com
-验证码：随便
+2. **基础组件启动**
+   ```bash
+   cd docs/deploy/docker/infra
+   docker-compose -f infra-compose.yml up -d
+   ```
+
+3. **数据库初始化**
+   ```sql
+   -- 创建数据库
+   create database basic-cloud-platform character set utf8mb4 collate utf8mb4_bin;
+   
+   -- 导入数据：
+   -- docs/sql/basic-cloud-platform-dev.sql
+   ```
+
+4. **配置导入**
+    - 导入 `docs/nacos/nacos_config_dev.zip` 到 Nacos 配置中心
+    - 更新配置中心中相关组件（MySQL、Redis等）的连接信息
+
+5. **服务启动**
+   按顺序启动以下服务：
+    - basic-service-authorization-server（认证中心）
+    - basic-service-gateway（网关服务）
+    - basic-service-system（系统服务）
+    - basic-service-monitor（监控中心）
+
+### 🔍 访问地址
+
+- Swagger API文档：http://127.0.0.1:9000/swagger-ui/index.html
+- 监控中心：http://127.0.0.1:9000/monitor/
+
+### 👥 贡献指南
+
+欢迎提交 Issue 或 Pull Request 来帮助改进项目。
+
+### 📄 开源协议
+
+本项目采用 [Apache License 2.0](./LICENSE) 协议开源。
