@@ -117,7 +117,13 @@ public class BasicIdTokenCustomizer {
      * @param user             用户信息
      * @param authorizedScopes 授权确认的scope
      */
-    public void transferScopesAuthorities(AuthenticatedUser user, Set<String> authorizedScopes) {
+    public void transferScopesAuthorities(AuthenticatedUser user, Set<String> authorizedScopes, Collection<? extends GrantedAuthority> grantedAuthorities) {
+        // 合并scope与用户权限
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+        Set<GrantedAuthority> authoritySet = new HashSet<>(authorities);
+        authoritySet.addAll(grantedAuthorities);
+        user.setAuthorities(authoritySet);
+
         // 查询scope关联的权限
         List<ScopePermissionModel> scopePermissionList = scopePermissionOperator.get(AuthorizeConstants.SCOPE_PERMISSION_KEY);
         if (ObjectUtils.isEmpty(scopePermissionList)) {
@@ -135,12 +141,12 @@ public class BasicIdTokenCustomizer {
             return;
         }
         // scope对应的权限信息
-        List<BasicGrantedAuthority> grantedAuthorities = permissionsMap.values().stream()
+        List<BasicGrantedAuthority> scopeUserPermissions = permissionsMap.values().stream()
                 .flatMap(Collection::stream)
                 .filter(e -> permissionsId.contains(e.getId()))
                 .toList();
         // 合并用户原有权限
-        Set<GrantedAuthority> newAuthorities = new HashSet<>(grantedAuthorities);
+        Set<GrantedAuthority> newAuthorities = new HashSet<>(scopeUserPermissions);
         if (!ObjectUtils.isEmpty(user.getAuthorities())) {
             newAuthorities.addAll(user.getAuthorities());
         }

@@ -41,10 +41,11 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
 @RequiredArgsConstructor
 public class FederatedIdentityAutoConfiguration {
 
+    private final RedisOperator<AuthenticatedUser> redisOperator;
+
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer(
-            RedisOperator<AuthenticatedUser> redisOperator) {
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
         if (log.isDebugEnabled()) {
             log.debug("注入 自定义Jwt token内容配置类 JwtIdTokenCustomizer.");
         }
@@ -57,7 +58,7 @@ public class FederatedIdentityAutoConfiguration {
         if (log.isDebugEnabled()) {
             log.debug("注入 自定义Opaque token内容配置类 OpaqueIdTokenCustomizer.");
         }
-        return new OpaqueIdTokenCustomizer();
+        return new OpaqueIdTokenCustomizer(redisOperator);
     }
 
     @Bean

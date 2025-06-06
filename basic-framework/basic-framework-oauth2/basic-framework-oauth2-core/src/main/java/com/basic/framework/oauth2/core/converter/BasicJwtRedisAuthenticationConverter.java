@@ -21,7 +21,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.util.ObjectUtils;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,18 +65,12 @@ public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, Abst
             BearerTokenError bearerTokenError = BearerTokenErrors.invalidToken("Access token is invalid or has been logged out.");
             throw new OAuth2AuthenticationException(bearerTokenError);
         }
-        // 合并scope与用户权限
-        if (!ObjectUtils.isEmpty(grantedAuthorities)) {
-            Collection<? extends GrantedAuthority> authorities = authenticatedUser.getAuthorities();
-            Set<GrantedAuthority> authoritySet = new HashSet<>(authorities);
-            authoritySet.addAll(grantedAuthorities);
-            authenticatedUser.setAuthorities(authoritySet);
-        }
 
         if (!ObjectUtils.isEmpty(grantedAuthorities)) {
+            // 合并scope与用户权限
             Set<String> authorizedScopes = grantedAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
             // 动态从redis获取SCOPE对应的权限给用户
-            idTokenCustomizer.transferScopesAuthorities(authenticatedUser, authorizedScopes);
+            idTokenCustomizer.transferScopesAuthorities(authenticatedUser, authorizedScopes, grantedAuthorities);
         }
 
         // 返回BearerTokenAuthentication的实例

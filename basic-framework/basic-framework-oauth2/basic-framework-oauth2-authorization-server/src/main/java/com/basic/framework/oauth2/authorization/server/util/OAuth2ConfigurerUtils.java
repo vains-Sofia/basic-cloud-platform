@@ -101,7 +101,9 @@ public class OAuth2ConfigurerUtils {
                 JwtGenerator jwtGenerator = getJwtGenerator(httpSecurity);
                 OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
                 OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer = getAccessTokenCustomizer(httpSecurity);
-                accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, OpaqueIdTokenCustomizer::new));
+                ResolvableType type = ResolvableType.forClassWithGenerics(RedisOperator.class, AuthenticatedUser.class);
+                RedisOperator<AuthenticatedUser> redisOperator = getOptionalBean(httpSecurity, type);
+                accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, () -> new OpaqueIdTokenCustomizer(redisOperator)));
                 OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
                 if (jwtGenerator != null) {
                     tokenGenerator = new DelegatingOAuth2TokenGenerator(

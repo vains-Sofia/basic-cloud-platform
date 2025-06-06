@@ -22,7 +22,7 @@ public class BasicOAuth2ParameterNames {
     /**
      * 三方登录相关参数——登录类型
      */
-    public static final String OAUTH2_ACCOUNT_PLATFORM = "accountPlatform";
+    public static final String OAUTH2_ACCOUNT_PLATFORM = "account_platform";
 
     /**
      * 三方登录相关参数——accessToken在用户信息中的属性

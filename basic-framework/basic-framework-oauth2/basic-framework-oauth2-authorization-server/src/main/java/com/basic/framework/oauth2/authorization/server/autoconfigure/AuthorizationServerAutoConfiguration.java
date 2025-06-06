@@ -1,8 +1,5 @@
 package com.basic.framework.oauth2.authorization.server.autoconfigure;
 
-import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
-import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
-import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.authorization.server.captcha.CaptchaService;
 import com.basic.framework.oauth2.authorization.server.captcha.impl.RedisCaptchaService;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
@@ -15,6 +12,9 @@ import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
+import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.core.manager.ReactiveContextAuthorizationManager;
 import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
@@ -57,9 +57,6 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.cors.CorsConfiguration;
@@ -353,11 +350,12 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BasicOpaqueTokenIntrospector opaqueTokenIntrospector(OAuth2AuthorizationService authorizationService) {
+    public BasicOpaqueTokenIntrospector opaqueTokenIntrospector(BasicIdTokenCustomizer idTokenCustomizer,
+                                                                OAuth2AuthorizationService authorizationService) {
         if (log.isDebugEnabled()) {
             log.debug("注入 自定义认证服务令牌自省 BasicOpaqueTokenIntrospector.");
         }
-        return new BasicOpaqueTokenIntrospector(authorizationService);
+        return new BasicOpaqueTokenIntrospector(idTokenCustomizer, authorizationService);
     }
 
     @Bean
@@ -384,7 +382,7 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<JwtEncodingContext> jwtIdTokenCustomizer() {
+    public JwtIdTokenCustomizer jwtIdTokenCustomizer() {
         if (log.isDebugEnabled()) {
             log.debug("注入 自定义Jwt token内容配置类 JwtIdTokenCustomizer.");
         }
@@ -393,11 +391,11 @@ public class AuthorizationServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> opaqueIdTokenCustomizer() {
+    public OpaqueIdTokenCustomizer opaqueIdTokenCustomizer() {
         if (log.isDebugEnabled()) {
             log.debug("注入 自定义Opaque token内容配置类 OpaqueIdTokenCustomizer.");
         }
-        return new OpaqueIdTokenCustomizer();
+        return new OpaqueIdTokenCustomizer(redisOperator);
     }
 
     @Bean

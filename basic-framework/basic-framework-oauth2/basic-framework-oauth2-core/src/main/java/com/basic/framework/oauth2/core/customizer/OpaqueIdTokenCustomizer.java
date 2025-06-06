@@ -2,17 +2,20 @@ package com.basic.framework.oauth2.core.customizer;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsSet;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
 import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.TOKEN_UNIQUE_ID;
 
 /**
@@ -22,8 +25,11 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.TOK
  *
  * @author vains
  */
+@Slf4j
 @RequiredArgsConstructor
 public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAuth2TokenClaimsContext> {
+
+    private final RedisOperator<AuthenticatedUser> redisOperator;
 
     @Override
     public void customize(OAuth2TokenClaimsContext context) {
@@ -44,11 +50,19 @@ public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAut
 
         // 检查登录用户信息是不是OAuth2User，在token中添加loginType属性
         if (context.getPrincipal().getPrincipal() instanceof AuthenticatedUser user) {
-            // 存储用户所属平台与用户唯一id
-            claims.claim(OAUTH2_ACCOUNT_PLATFORM, user.getAccountPlatform());
-            claims.claim(TOKEN_UNIQUE_ID, user.getUsername());
-            // 资源服务自省时需要该属性
-            claims.claim(OAuth2TokenIntrospectionClaimNames.USERNAME, user.getUsername());
+            // 只在生成access token时操作
+            if (OAuth2ParameterNames.ACCESS_TOKEN.equals(context.getTokenType().getValue())) {
+                // 存储用户唯一id
+                claims.claim(TOKEN_UNIQUE_ID, user.getId());
+                // 资源服务自省时需要该属性
+                claims.claim(OAuth2TokenIntrospectionClaimNames.USERNAME, user.getUsername());
+                log.debug("当前用户id为：{}", user.getId());
+                OAuth2TokenClaimsSet build = claims.build();
+                // 计算token有效时长
+                long expire = ChronoUnit.SECONDS.between(build.getIssuedAt(), build.getExpiresAt());
+                // 将用户信息存储到Redis中，方便资源服务自省时获取
+                redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + user.getId()), user, expire);
+            }
         }
 
         if (context.getPrincipal() instanceof OAuth2ClientAuthenticationToken) {

@@ -1,12 +1,13 @@
 package com.basic.framework.oauth2.authorization.server.introspector;
 
-import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
@@ -16,10 +17,11 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
+
+    private final BasicIdTokenCustomizer idTokenCustomizer;
 
     private final OAuth2AuthorizationService authorizationService;
 
@@ -65,29 +69,26 @@ public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
             throw new InvalidBearerTokenException("Did not introspect token since not active.");
         }
 
-        Collection<String> stringAuthorities = Collections.emptyList();
-        Map<String, Object> claims = authorizedToken.getClaims();
-        if (!ObjectUtils.isEmpty(claims) && claims.containsKey(AuthorizeConstants.AUTHORITIES)) {
-            Object authorities = claims.get(AuthorizeConstants.AUTHORITIES);
-            if (authorities instanceof String) {
-                if (StringUtils.hasText((String) authorities)) {
-                    stringAuthorities = Arrays.asList(((String) authorities).split(" "));
-                }
-            }
-            if (authorities instanceof Collection<?> objs) {
-                stringAuthorities = objs.stream().map(String::valueOf).collect(Collectors.toSet());
-            }
+        Collection<? extends GrantedAuthority> grantedAuthorities;
+        // 授权过的scope
+        Set<String> authorizedScopes = authorization.getAuthorizedScopes();
+        if (!ObjectUtils.isEmpty(authorizedScopes)) {
+            grantedAuthorities = authorizedScopes.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+        } else {
+            // 如果没有scope，则使用默认的权限
+            grantedAuthorities = Collections.emptySet();
         }
-
-        Set<SimpleGrantedAuthority> authorities = stringAuthorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
 
         Object attribute = authorization.getAttribute(Principal.class.getName());
         if (attribute instanceof AbstractAuthenticationToken authenticationToken) {
             if (authenticationToken.getPrincipal() instanceof User user) {
-                return new DefaultAuthenticatedUser(user.getUsername(), OAuth2AccountPlatformEnum.SYSTEM, authorities);
+                return new DefaultAuthenticatedUser(user.getUsername(), OAuth2AccountPlatformEnum.SYSTEM, grantedAuthorities);
             }
             if (authenticationToken.getPrincipal() instanceof AuthenticatedUser user) {
-                user.setAuthorities(authorities);
+                if (!ObjectUtils.isEmpty(grantedAuthorities)) {
+                    // 动态从redis获取SCOPE对应的权限给用户
+                    idTokenCustomizer.transferScopesAuthorities(user, authorizedScopes, grantedAuthorities);
+                }
                 return user;
             }
         }
