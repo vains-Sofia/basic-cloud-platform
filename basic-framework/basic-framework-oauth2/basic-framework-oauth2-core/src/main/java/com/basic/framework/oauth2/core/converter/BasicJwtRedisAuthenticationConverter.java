@@ -49,15 +49,20 @@ public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, Abst
             return null;
         }
         Collection<GrantedAuthority> grantedAuthorities = this.jwtGrantedAuthoritiesConverter.convert(jwt);
-        // 获取jwt的id
-        String jti = jwt.getId();
-        AuthenticatedUser authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + jti);
+        // 获取用户的id
+        Object userId = jwt.getClaim(AuthorizeConstants.USER_ID_KEY);
+        // 从Redis中获取用户信息
+        AuthenticatedUser authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + userId);
         if (authenticatedUser == null) {
+            // 如果用户信息不存在，可能是客户端模式
+            Boolean isClientCredentials = jwt.getClaimAsBoolean(AuthorizeConstants.IS_CLIENT_CREDENTIALS);
             // 客户端模式
-            if (jwt.getClaimAsBoolean(AuthorizeConstants.IS_CLIENT_CREDENTIALS)) {
+            if (isClientCredentials != null && isClientCredentials) {
                 String principalClaimValue = jwt.getClaimAsString(JwtClaimNames.SUB);
                 return new JwtAuthenticationToken(jwt, grantedAuthorities, principalClaimValue);
             }
+            // 如果用户信息不存在并且不是客户端模式，可能是用户已登出或被下线
+
             // Jwt被正常解析但是无法获取到Redis的用户信息，这种情况一般是登出、管理平台下线后出现的问题
             // RFC6750规定字符只能是 %x21 / %x23-5B/ %x5D-7E，以%x20分割(https://datatracker.ietf.org/doc/rfc6750/)
             // %x21 表示 !   %x23-5B 表示 # 到 [, 包括：# $ % & ' ( ) * + , - . / 0-9 : ; < = > ? @ A-Z 和 [

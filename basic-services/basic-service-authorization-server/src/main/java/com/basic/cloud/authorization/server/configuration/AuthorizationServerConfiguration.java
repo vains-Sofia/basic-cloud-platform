@@ -3,11 +3,13 @@ package com.basic.cloud.authorization.server.configuration;
 import com.basic.framework.oauth2.authorization.server.customizer.AuthorizationServerMetadataCustomizer;
 import com.basic.framework.oauth2.authorization.server.customizer.OidcConfigurerCustomizer;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2ConfigurerUtils;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.handler.authentication.ConsentAuthenticationFailureHandler;
 import com.basic.framework.oauth2.core.handler.authentication.ConsentAuthorizationResponseHandler;
 import com.basic.framework.oauth2.core.handler.authentication.LoginTargetAuthenticationEntryPoint;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
+import com.basic.framework.redis.support.RedisOperator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +37,8 @@ public class AuthorizationServerConfiguration {
      * 认证服务配置类
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
+
+    private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final AuthorizationServerSettings authorizationServerSettings;
 
@@ -88,7 +92,7 @@ public class AuthorizationServerConfiguration {
                     });
 
                     // 开启oidc并在 /.well-known/openid-configuration 和 /.well-known/oauth-authorization-server 端点中添加自定义grant type
-                    configurer.oidc(new OidcConfigurerCustomizer());
+                    configurer.oidc(new OidcConfigurerCustomizer(redisOperator));
                     configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
 
                 });

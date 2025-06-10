@@ -20,6 +20,11 @@ public class AuthorizeConstants {
     public static final String AUTHORITY_PREFIX = "";
 
     /**
+     * 用户id在令牌中的key
+     */
+    public static final String USER_ID_KEY = "basic_id";
+
+    /**
      * 用户信息缓存前缀
      */
     public static final String USERINFO_PREFIX = "basic:jti:userinfo:";

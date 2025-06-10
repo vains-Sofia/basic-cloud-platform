@@ -16,8 +16,6 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.TOKEN_UNIQUE_ID;
-
 /**
  * An {@link OAuth2TokenCustomizer} to map claims from a federated identity to
  * the {@code id_token} produced by this authorization server.
@@ -53,7 +51,7 @@ public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAut
             // 只在生成access token时操作
             if (OAuth2ParameterNames.ACCESS_TOKEN.equals(context.getTokenType().getValue())) {
                 // 存储用户唯一id
-                claims.claim(TOKEN_UNIQUE_ID, user.getId());
+                claims.claim(AuthorizeConstants.USER_ID_KEY, user.getId());
                 // 资源服务自省时需要该属性
                 claims.claim(OAuth2TokenIntrospectionClaimNames.USERNAME, user.getUsername());
                 log.debug("当前用户id为：{}", user.getId());

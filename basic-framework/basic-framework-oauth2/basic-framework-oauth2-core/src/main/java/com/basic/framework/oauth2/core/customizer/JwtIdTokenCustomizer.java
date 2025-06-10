@@ -50,13 +50,13 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
             if (OAuth2ParameterNames.ACCESS_TOKEN.equals(context.getTokenType().getValue())) {
                 // id token不缓存用户信息
                 JwtClaimsSet.Builder claims = context.getClaims();
+                // 存储用户唯一id
+                claims.claim(AuthorizeConstants.USER_ID_KEY, user.getId());
                 JwtClaimsSet claimsSet = claims.build();
-                // 获取jwt的id(jti)
-                String jti = claimsSet.getId();
                 // 计算token有效时长
                 long expire = ChronoUnit.SECONDS.between(claimsSet.getIssuedAt(), claimsSet.getExpiresAt());
-                log.debug("Jwt的id为：{}", jti);
-                redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + jti), user, expire);
+                log.debug("认证用户的id为：{}", user.getId());
+                redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + user.getId()), user, expire);
             }
         }
 

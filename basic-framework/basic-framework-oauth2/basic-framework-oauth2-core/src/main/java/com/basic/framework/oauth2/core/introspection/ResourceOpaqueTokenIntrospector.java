@@ -18,7 +18,6 @@ import org.springframework.util.ObjectUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.TOKEN_UNIQUE_ID;
 import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames.ACTIVE;
 
 /**
@@ -67,10 +66,10 @@ public class ResourceOpaqueTokenIntrospector implements OpaqueTokenIntrospector 
         // 从 attributes 中提取用户信息
         if (attributes != null) {
 
-            // 设置用户ID
-            Object userId = attributes.get(TOKEN_UNIQUE_ID);
+            // 获取用户ID
+            Object userId = attributes.get(AuthorizeConstants.USER_ID_KEY);
             if (userId != null) {
-                authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + Long.valueOf(userId.toString()));
+                authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + userId);
                 if (authenticatedUser == null) {
                     // 客户端模式
                     Boolean isClientCredentials = (Boolean) attributes.getOrDefault(AuthorizeConstants.IS_CLIENT_CREDENTIALS, Boolean.FALSE);
