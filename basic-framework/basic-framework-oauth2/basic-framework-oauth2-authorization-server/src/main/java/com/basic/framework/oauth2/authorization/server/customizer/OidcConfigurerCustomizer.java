@@ -2,6 +2,7 @@ package com.basic.framework.oauth2.authorization.server.customizer;
 
 import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.handler.authentication.BasicOidcLogoutAuthenticationFailureHandler;
 import com.basic.framework.oauth2.core.handler.authentication.BasicOidcLogoutAuthenticationSuccessHandler;
 import com.basic.framework.oauth2.core.oidc.BasicOidcUserInfoMapper;
 import com.basic.framework.redis.support.RedisOperator;
@@ -17,6 +18,11 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 @RequiredArgsConstructor
 public class OidcConfigurerCustomizer implements Customizer<OidcConfigurer> {
 
+    /**
+     * 授权错误页面路径
+     */
+    private final String authorizeErrorUri;
+
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     @Override
@@ -29,6 +35,7 @@ public class OidcConfigurerCustomizer implements Customizer<OidcConfigurer> {
                 )
                 .logoutEndpoint(logout -> logout
                         .logoutResponseHandler(new BasicOidcLogoutAuthenticationSuccessHandler(redisOperator))
+                        .errorResponseHandler(new BasicOidcLogoutAuthenticationFailureHandler(authorizeErrorUri))
                 )
                 // 自定义oidc用户信息响应配置
                 .userInfoEndpoint(userInfo -> userInfo

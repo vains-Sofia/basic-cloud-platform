@@ -92,7 +92,7 @@ public class AuthorizationServerConfiguration {
                     });
 
                     // 开启oidc并在 /.well-known/openid-configuration 和 /.well-known/oauth-authorization-server 端点中添加自定义grant type
-                    configurer.oidc(new OidcConfigurerCustomizer(redisOperator));
+                    configurer.oidc(new OidcConfigurerCustomizer(oAuth2ServerProperties.getAuthorizeErrorUri(), redisOperator));
                     configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
 
                 });

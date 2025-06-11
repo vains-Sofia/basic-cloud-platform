@@ -19,7 +19,12 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrorCodes;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
+import org.springframework.security.web.util.UrlUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -151,6 +156,32 @@ public class SecurityUtils {
         }
         parameters.put("message", e.getMessage());
         return parameters;
+    }
+
+    /**
+     * 解析授权错误页面URI
+     *
+     * @param authorizeErrorUri 授权错误页面URI
+     * @param errorParameters   错误参数
+     * @return 完整的授权错误页面URI
+     */
+    public static String resolveAuthorizeErrorUri(String authorizeErrorUri, Map<String, String> errorParameters) {
+        MultiValueMap<String, String> valueMap = new LinkedMultiValueMap<>(errorParameters.size());
+        errorParameters.forEach((k, v) -> valueMap.add(k, URLEncoder.encode(v, StandardCharsets.UTF_8)));
+        // 如果授权错误页面路径是绝对路径，则拼接参数后直接返回
+        if (UrlUtils.isAbsoluteUrl(authorizeErrorUri)) {
+            return UriComponentsBuilder
+                    .fromUriString(authorizeErrorUri)
+                    .replaceQueryParams(valueMap)
+                    .encode(StandardCharsets.UTF_8)
+                    .build(Boolean.TRUE).toUriString();
+        }
+        // 否则，拼接成完整的URI
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(authorizeErrorUri)
+                .replaceQueryParams(valueMap)
+                .build()
+                .toUriString();
     }
 
     /**

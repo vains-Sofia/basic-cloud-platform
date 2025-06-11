@@ -30,9 +30,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 提供给当前登录用户登出时使用，前端获取的access token一定会有id_token.
- * OIDC登出自定义处理，删除Redis中缓存的用户信息，并根据url中的post_logout_redirect_uri参数决定是跳转还是响应json。
- * 该处理器在OIDC登出时被调用。参考{@link OidcLogoutAuthenticationSuccessHandler}实现。
+ * OIDC登出认证成功处理器。
+ * 处理OIDC登出请求，执行登出操作，删除用户信息缓存，并根据情况进行重定向或返回JSON响应。
+ * <p>
+ * 该类实现了AuthenticationSuccessHandler接口，用于在OIDC登出认证成功后执行特定操作。
+ * </p>
+ * 参考{@link OidcLogoutAuthenticationSuccessHandler}实现。
  *
  * @author vains
  * @see OidcLogoutAuthenticationSuccessHandler
@@ -50,45 +53,67 @@ public class BasicOidcLogoutAuthenticationSuccessHandler implements Authenticati
     private final SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException {
+        OidcLogoutAuthenticationToken oidcLogoutAuthentication = validateAuthentication(authentication);
+
+        // 执行登出操作
+        this.logoutHandler.logout(request, response, authentication);
+
+        // 删除Redis中缓存的用户信息
+        deleteUserInfoFromCache(oidcLogoutAuthentication);
+
+        // 处理重定向或返回JSON响应
+        handleLogoutResponse(request, response, oidcLogoutAuthentication);
+    }
+
+    /**
+     * 验证传入的Authentication对象是否为OidcLogoutAuthenticationToken类型。
+     * 如果不是，则抛出OAuth2AuthenticationException异常。
+     *
+     * @param authentication Authentication对象
+     * @return OidcLogoutAuthenticationToken类型的认证对象
+     */
+    private OidcLogoutAuthenticationToken validateAuthentication(Authentication authentication) {
         if (!(authentication instanceof OidcLogoutAuthenticationToken oidcLogoutAuthentication)) {
             if (log.isErrorEnabled()) {
-                log.error("{} must be of type {} but was {}", Authentication.class.getSimpleName(), OidcLogoutAuthenticationToken.class.getName(), authentication.getClass().getName());
+                log.error("{} must be of type {} but was {}",
+                        Authentication.class.getSimpleName(),
+                        OidcLogoutAuthenticationToken.class.getName(),
+                        authentication.getClass().getName());
             }
             OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR,
                     "Unable to process the OpenID Connect 1.0 RP-Initiated Logout response.", null);
             throw new OAuth2AuthenticationException(error);
         }
+        return oidcLogoutAuthentication;
+    }
 
-        this.logoutHandler.logout(request, response, authentication);
-
-        try {
-            // 删除Redis中缓存的用户信息
-            if (oidcLogoutAuthentication.getPrincipal() instanceof AbstractAuthenticationToken authenticationToken) {
-                // 当前认证信息是AbstractAuthenticationToken类型
-                if (authenticationToken.getPrincipal() instanceof AuthenticatedUser authenticatedUser) {
-                    // 删除用户信息缓存
-                    String userinfoCacheKey = AuthorizeConstants.USERINFO_PREFIX + authenticatedUser.getId();
-                    redisOperator.delete(userinfoCacheKey);
-                } else {
-                    // 当前认证信息不是AuthenticatedUser类型，不做特殊处理
-                    if (log.isWarnEnabled()) {
-                        log.warn("Authorization principal is not an instance of AuthenticatedUser: {}", authenticationToken.getPrincipal());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (log.isErrorEnabled()) {
-                log.error("Failed to delete user information from Redis during OIDC logout", e);
-            }
-        }
-
+    /**
+     * 根据OIDC登出认证信息处理登出响应。
+     * 如果提供了post_logout_redirect_uri，则重定向到该URI，否则返回JSON响应。
+     *
+     * @param request                  HttpServletRequest对象
+     * @param response                 HttpServletResponse对象
+     * @param oidcLogoutAuthentication OidcLogoutAuthenticationToken对象
+     * @throws IOException 如果发生IO异常
+     */
+    private void handleLogoutResponse(HttpServletRequest request, HttpServletResponse response,
+                                      OidcLogoutAuthenticationToken oidcLogoutAuthentication) throws IOException {
         if (StringUtils.hasText(oidcLogoutAuthentication.getPostLogoutRedirectUri())) {
-            // 如果 post_logout_redirect_uri 存在，则重定向到该 URI
-            sendLogoutRedirect(request, response, authentication);
-            return;
+            sendLogoutRedirect(request, response, oidcLogoutAuthentication);
+        } else {
+            sendJsonResponse(response);
         }
-        // 如果 post_logout_redirect_uri 不存在，则返回 JSON 响应
+    }
+
+    /**
+     * 发送JSON响应，表示OIDC登出成功。
+     * 如果没有提供post_logout_redirect_uri，则返回一个包含成功状态的JSON响应。
+     *
+     * @param response HttpServletResponse对象
+     */
+    private void sendJsonResponse(HttpServletResponse response) {
         Result<String> success = Result.success();
         ServletUtils.renderJson(response, success);
         if (log.isDebugEnabled()) {
@@ -96,6 +121,14 @@ public class BasicOidcLogoutAuthenticationSuccessHandler implements Authenticati
         }
     }
 
+    /**
+     * 执行OIDC登出操作。
+     * 如果用户会话处于活动状态，则调用SecurityContextLogoutHandler进行登出。
+     *
+     * @param request        HttpServletRequest对象
+     * @param response       HttpServletResponse对象
+     * @param authentication OidcLogoutAuthenticationToken对象
+     */
     private void performLogout(HttpServletRequest request, HttpServletResponse response,
                                Authentication authentication) {
         OidcLogoutAuthenticationToken oidcLogoutAuthentication = (OidcLogoutAuthenticationToken) authentication;
@@ -107,10 +140,50 @@ public class BasicOidcLogoutAuthenticationSuccessHandler implements Authenticati
         }
     }
 
-    private void sendLogoutRedirect(HttpServletRequest request, HttpServletResponse response,
-                                    Authentication authentication) throws IOException {
-        OidcLogoutAuthenticationToken oidcLogoutAuthentication = (OidcLogoutAuthenticationToken) authentication;
+    /**
+     * 从Redis缓存中删除用户信息。
+     * 使用用户ID作为键，删除对应的用户信息缓存。
+     * 如果删除操作失败，将记录错误日志。
+     *
+     * @param oidcLogoutAuthentication OidcLogoutAuthenticationToken对象
+     */
+    private void deleteUserInfoFromCache(OidcLogoutAuthenticationToken oidcLogoutAuthentication) {
+        if (!(oidcLogoutAuthentication.getPrincipal() instanceof AbstractAuthenticationToken authToken)) {
+            return;
+        }
 
+        if (!(authToken.getPrincipal() instanceof AuthenticatedUser authenticatedUser)) {
+            if (log.isWarnEnabled()) {
+                log.warn("Authorization principal is not an instance of AuthenticatedUser: {}",
+                        authToken.getPrincipal());
+            }
+            return;
+        }
+
+        try {
+            String userinfoCacheKey = AuthorizeConstants.USERINFO_PREFIX + authenticatedUser.getId();
+            redisOperator.delete(userinfoCacheKey);
+            if (log.isDebugEnabled()) {
+                log.debug("Successfully deleted user cache for user: {}", authenticatedUser.getId());
+            }
+        } catch (Exception e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to delete user information from Redis during OIDC logout", e);
+            }
+        }
+    }
+
+    /**
+     * 根据OIDC登出认证信息发送重定向。
+     * 如果提供了post_logout_redirect_uri参数，则重定向到该URI，否则默认重定向到根路径。
+     *
+     * @param request                  HttpServletRequest对象
+     * @param response                 HttpServletResponse对象
+     * @param oidcLogoutAuthentication OidcLogoutAuthenticationToken对象
+     * @throws IOException 如果发生IO异常
+     */
+    private void sendLogoutRedirect(HttpServletRequest request, HttpServletResponse response,
+                                    OidcLogoutAuthenticationToken oidcLogoutAuthentication) throws IOException {
         String redirectUri = "/";
         if (oidcLogoutAuthentication.isAuthenticated()
                 && StringUtils.hasText(oidcLogoutAuthentication.getPostLogoutRedirectUri())) {

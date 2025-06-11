@@ -16,15 +16,9 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.util.UrlUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -94,22 +88,7 @@ public class ConsentAuthenticationFailureHandler implements AuthenticationFailur
      */
     private String resolveErrorUri(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
         Map<String, String> errorParameter = SecurityUtils.getErrorParameter(request, response, exception);
-        MultiValueMap<String, String> valueMap = new LinkedMultiValueMap<>(errorParameter.size());
-        errorParameter.forEach((k, v) -> valueMap.add(k, URLEncoder.encode(v, StandardCharsets.UTF_8)));
-        // 如果授权错误页面路径是绝对路径，则拼接参数后直接返回
-        if (UrlUtils.isAbsoluteUrl(authorizeErrorUri)) {
-            return UriComponentsBuilder
-                    .fromUriString(authorizeErrorUri)
-                    .replaceQueryParams(valueMap)
-                    .encode(StandardCharsets.UTF_8)
-                    .build(Boolean.TRUE).toUriString();
-        }
-        // 否则，拼接成完整的URI
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(authorizeErrorUri)
-                .replaceQueryParams(valueMap)
-                .build()
-                .toUriString();
+        return SecurityUtils.resolveAuthorizeErrorUri(this.authorizeErrorUri, errorParameter);
     }
 
 }
