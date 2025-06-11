@@ -73,7 +73,7 @@ public class StorageAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public BasicAuthorizationService basicAuthorizationService() {
-        return new BasicAuthorizationServiceImpl(authorizationRepository);
+        return new BasicAuthorizationServiceImpl(applicationRepository, authorizationRepository);
     }
 
     @Bean

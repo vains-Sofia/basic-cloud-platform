@@ -4,7 +4,7 @@ import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.oauth2.storage.converter.Basic2AuthorizationConverter;
 import com.basic.framework.oauth2.storage.domain.request.FindAuthorizationPageRequest;
-import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationPageResponse;
+import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicAuthorization;
 import com.basic.framework.oauth2.storage.service.BasicAuthorizationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,10 +40,8 @@ public class OAuth2AuthorizationController {
     @GetMapping("/findByPage")
     @PreAuthorize("hasAnyAuthority('message.read')")
     @Operation(summary = "根据入参分页查询认证信息", description = "根据入参分页查询认证信息")
-    public Result<PageResult<FindAuthorizationPageResponse>> findAuthorizationPage(
-            FindAuthorizationPageRequest request) {
-        PageResult<FindAuthorizationPageResponse> authorizationPage =
-                basicAuthorizationService.findAuthorizationPage(request);
+    public Result<PageResult<FindAuthorizationResponse>> findAuthorizationPage(FindAuthorizationPageRequest request) {
+        PageResult<FindAuthorizationResponse> authorizationPage = basicAuthorizationService.findAuthorizationPage(request);
 
         return Result.success(authorizationPage);
     }

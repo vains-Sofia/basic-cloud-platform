@@ -4,36 +4,34 @@ import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
-import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
-import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.storage.converter.Authorization2JpaConverter;
 import com.basic.framework.oauth2.storage.converter.Jpa2AuthorizationConverter;
 import com.basic.framework.oauth2.storage.converter.Jpa2AuthorizationResponseConverter;
+import com.basic.framework.oauth2.storage.domain.entity.JpaOAuth2Application;
 import com.basic.framework.oauth2.storage.domain.entity.JpaOAuth2Authorization;
 import com.basic.framework.oauth2.storage.domain.request.FindAuthorizationPageRequest;
-import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationPageResponse;
+import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicAuthorization;
+import com.basic.framework.oauth2.storage.repository.OAuth2ApplicationRepository;
 import com.basic.framework.oauth2.storage.repository.OAuth2AuthorizationRepository;
 import com.basic.framework.oauth2.storage.service.BasicAuthorizationService;
-import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
-import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 基于Jpa实现的认证信息存储服务实现
@@ -44,10 +42,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BasicAuthorizationServiceImpl implements BasicAuthorizationService {
 
-    private final OAuth2AuthorizationRepository authorizationRepository;
+    private final OAuth2ApplicationRepository applicationRepository;
 
-    private final TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {
-    };
+    private final OAuth2AuthorizationRepository authorizationRepository;
 
     private final Authorization2JpaConverter authorization2JpaConverter = new Authorization2JpaConverter();
 
@@ -72,22 +69,10 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
         if (authorizationById.isPresent()) {
             this.authorizationRepository.deleteById(authorization.getId());
             jpaOAuth2Authorization.setCreateTime(authorizationById.get().getCreateTime());
+        } else {
+            jpaOAuth2Authorization.setCreateTime(LocalDateTime.now());
         }
-        if (SecurityContextHolder.getContext().getAuthentication() instanceof OAuth2ClientAuthenticationToken) {
-            Map<String, Object> attributes = OAuth2JsonUtils.toObject(authorization.getAttributes(), typeRef.getType());
-            if (attributes != null) {
-                // 现在拿不到当前登录用户，直接从认证对象中拿
-                Object attribute = attributes.get(Principal.class.getName());
-                if (attribute instanceof AbstractAuthenticationToken authenticationToken) {
-                    if (authenticationToken.getPrincipal() instanceof AuthenticatedUser user) {
-                        jpaOAuth2Authorization.setUpdateBy(user.getId());
-                        jpaOAuth2Authorization.setCreateBy(user.getId());
-                        jpaOAuth2Authorization.setCreateName(user.getUsername());
-                        jpaOAuth2Authorization.setUpdateName(user.getUsername());
-                    }
-                }
-            }
-        }
+        jpaOAuth2Authorization.setUpdateTime(LocalDateTime.now());
         this.authorizationRepository.save(jpaOAuth2Authorization);
     }
 
@@ -134,7 +119,7 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
     }
 
     @Override
-    public PageResult<FindAuthorizationPageResponse> findAuthorizationPage(FindAuthorizationPageRequest request) {
+    public PageResult<FindAuthorizationResponse> findAuthorizationPage(FindAuthorizationPageRequest request) {
         // 排序
         Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(JpaOAuth2Authorization::getUpdateTime));
 
@@ -161,10 +146,34 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
         Page<JpaOAuth2Authorization> authorizationPage = authorizationRepository.findAll(builder, pageQuery);
 
         // 转为响应bean
-        List<FindAuthorizationPageResponse> authorizationList = authorizationPage.getContent()
+        List<FindAuthorizationResponse> authorizationList = authorizationPage.getContent()
                 .stream()
                 .map(jpa2AuthorizationResponseConverter::convert)
                 .toList();
+
+        // 提取授权时使用的客户端id
+        Set<Long> applicationIdSet = authorizationList.stream()
+                .map(FindAuthorizationResponse::getRegisteredClientId)
+                .filter(id -> !ObjectUtils.isEmpty(id))
+                .map(Long::valueOf)
+                .collect(Collectors.toSet());
+
+        // 查询对应的客户端信息
+        List<JpaOAuth2Application> oAuth2Applications = applicationRepository.findAllById(applicationIdSet);
+        // 构建id和客户端信息的映射
+        var applicationMap = oAuth2Applications.stream()
+                .collect(Collectors.toMap(JpaOAuth2Application::getId, Function.identity()));
+        // 将客户端信息映射到授权响应中
+        authorizationList.stream()
+                .filter(e -> !ObjectUtils.isEmpty(e.getRegisteredClientId()))
+                .forEach(authorization -> {
+                    String applicationId = authorization.getRegisteredClientId();
+                    JpaOAuth2Application application = applicationMap.get(Long.valueOf(applicationId));
+                    if (application != null) {
+                        authorization.setRegisteredClientName(application.getClientName());
+                        authorization.setRegisteredClientLogo(application.getClientLogo());
+                    }
+                });
 
         return DataPageResult.of(authorizationPage.getNumber(), authorizationPage.getSize(), authorizationPage.getTotalElements(), authorizationList);
     }

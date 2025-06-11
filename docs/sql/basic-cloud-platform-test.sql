@@ -163,12 +163,8 @@ CREATE TABLE `oauth2_authorization`
     `device_code_issued_at`         timestamp                                               NULL DEFAULT NULL COMMENT 'device code 签发时间',
     `device_code_expires_at`        timestamp                                               NULL DEFAULT NULL COMMENT 'device code 过期时间',
     `device_code_metadata`          text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'device code 元数据',
-    `create_by`                     bigint                                                  NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`                     bigint                                                  NULL DEFAULT NULL COMMENT '修改人',
     `create_time`                   datetime                                                NULL DEFAULT NULL COMMENT '创建时间',
     `update_time`                   datetime                                                NULL DEFAULT NULL COMMENT '修改时间',
-    `create_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '修改人名称',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4

@@ -1,11 +1,11 @@
 package com.basic.framework.oauth2.storage.domain.entity;
 
-import com.basic.framework.data.jpa.domain.BasicAuditorEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -16,9 +16,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Entity
-@EqualsAndHashCode(callSuper = true)
 @Table(name = "oauth2_authorization")
-public class JpaOAuth2Authorization extends BasicAuditorEntity {
+public class JpaOAuth2Authorization {
 
     /**
      * 数据id
@@ -249,5 +248,19 @@ public class JpaOAuth2Authorization extends BasicAuditorEntity {
     @Lob
     @Column(name = "device_code_metadata")
     private String deviceCodeMetadata;
+
+    /**
+     * 创建时间
+     */
+    @CreatedDate
+    @Column(name = "create_time")
+    private LocalDateTime createTime;
+
+    /**
+     * 修改时间
+     */
+    @LastModifiedDate
+    @Column(name = "update_time")
+    private LocalDateTime updateTime;
 
 }

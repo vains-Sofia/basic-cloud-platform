@@ -149,10 +149,6 @@ CREATE TABLE `oauth2_authorization`
     `device_code_issued_at`         timestamp                                               NULL DEFAULT NULL,
     `device_code_expires_at`        timestamp                                               NULL DEFAULT NULL,
     `device_code_metadata`          text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL,
-    `create_by`                     bigint                                                  NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`                     bigint                                                  NULL DEFAULT NULL COMMENT '修改人',
-    `create_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '修改人名称',
     `create_time`                   datetime                                                NULL DEFAULT NULL COMMENT '创建时间',
     `update_time`                   datetime                                                NULL DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
@@ -182,36 +178,6 @@ CREATE TABLE `oauth2_authorization_consent`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin
   ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of oauth2_authorization_consent
--- ----------------------------
-INSERT INTO `oauth2_authorization_consent`
-VALUES (1858347147835011074, '1849006886790406146', 'user',
-        '[\"SCOPE_openid\",\"SCOPE_message.read\",\"SCOPE_message.write\",\"SCOPE_profile\"]', 123, 123, NULL, NULL,
-        '2024-11-18 11:11:01', '2024-11-18 11:11:01');
-INSERT INTO `oauth2_authorization_consent`
-VALUES (1858444031032598530, '1849006886790406146', 'vains-Sofia',
-        '[\"SCOPE_openid\",\"SCOPE_message.read\",\"SCOPE_message.write\",\"SCOPE_profile\"]', 4868375, 4868375, NULL,
-        NULL, '2024-11-18 17:36:00', '2024-11-18 17:36:00');
-INSERT INTO `oauth2_authorization_consent`
-VALUES (1860002451321872385, '1849006886790406146', '云逸',
-        '[\"SCOPE_openid\",\"SCOPE_message.read\",\"SCOPE_message.write\",\"SCOPE_profile\"]', 1, 1, '云逸', '云逸',
-        '2024-11-23 00:48:36', '2024-11-23 00:48:36');
-INSERT INTO `oauth2_authorization_consent`
-VALUES (1861249786500632577, '1849006886790406148', '云逸',
-        '[\"SCOPE_openid\",\"SCOPE_message.read\",\"SCOPE_message.write\",\"SCOPE_profile\"]', 1, 1, '云逸', '云逸',
-        '2024-11-26 11:25:04', '2024-11-26 11:25:04');
-INSERT INTO `oauth2_authorization_consent`
-VALUES (1862332334953807873, '1849006886790406146', '注册01',
-        '[\"SCOPE_openid\",\"SCOPE_message.read\",\"SCOPE_message.write\",\"SCOPE_profile\"]', 1862332106783637506,
-        1862332106783637506, '注册01', '注册01', '2024-11-29 11:06:44', '2024-11-29 11:06:44');
-INSERT INTO `oauth2_authorization_consent`
-VALUES (1910253659298799618, '1849006457251749895', '云逸', '[\"SCOPE_openid\",\"SCOPE_profile\"]', 1, 1, '云逸',
-        '云逸', '2025-04-10 16:48:58', '2025-04-10 16:48:58');
-INSERT INTO `oauth2_authorization_consent`
-VALUES (1910682151421259777, '1849006457251749895', 'admin', '[\"SCOPE_openid\",\"SCOPE_profile\"]', 1, 1, 'admin',
-        'admin', '2025-04-11 21:11:38', '2025-04-11 21:11:38');
 
 -- ----------------------------
 -- Table structure for oauth2_scope
