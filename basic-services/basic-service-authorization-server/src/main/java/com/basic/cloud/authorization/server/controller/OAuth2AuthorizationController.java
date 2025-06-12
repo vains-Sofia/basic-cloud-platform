@@ -4,19 +4,18 @@ import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.oauth2.storage.converter.Basic2AuthorizationConverter;
 import com.basic.framework.oauth2.storage.domain.request.FindAuthorizationPageRequest;
+import com.basic.framework.oauth2.storage.domain.request.RevokeAuthorizationRequest;
 import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicAuthorization;
 import com.basic.framework.oauth2.storage.service.BasicAuthorizationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 认证信息接口
@@ -55,6 +54,14 @@ public class OAuth2AuthorizationController {
         OAuth2Authorization authorization = authorizationConverter.convert(basicAuthorization);
 
         return Result.success(authorization);
+    }
+
+    @DeleteMapping("/revoke")
+    @PreAuthorize("hasAnyAuthority('message.read')")
+    @Operation(summary = "撤销认证信息", description = "根据access token撤销认证信息")
+    public Result<String> revoke(@Valid @RequestBody RevokeAuthorizationRequest request) {
+        basicAuthorizationService.revoke(request);
+        return Result.success();
     }
 
 }

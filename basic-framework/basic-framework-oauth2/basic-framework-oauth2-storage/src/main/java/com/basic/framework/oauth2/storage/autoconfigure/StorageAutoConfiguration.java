@@ -1,6 +1,7 @@
 package com.basic.framework.oauth2.storage.autoconfigure;
 
 import com.basic.cloud.system.api.SysPermissionClient;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.storage.repository.*;
 import com.basic.framework.oauth2.storage.service.BasicApplicationService;
@@ -24,10 +25,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.session.Session;
+import org.springframework.session.SessionRepository;
 
 import java.util.List;
 
@@ -48,6 +53,8 @@ public class StorageAutoConfiguration {
     private final SysPermissionClient sysPermissionClient;
 
     private final OAuth2ApplicationRepository applicationRepository;
+
+    private final RedisOperator<AuthenticatedUser> userRedisOperator;
 
     private final OAuth2AuthorizationRepository authorizationRepository;
 
@@ -72,8 +79,9 @@ public class StorageAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BasicAuthorizationService basicAuthorizationService() {
-        return new BasicAuthorizationServiceImpl(applicationRepository, authorizationRepository);
+    public BasicAuthorizationService basicAuthorizationService(SessionRegistry sessionRegistry,
+                                                               SessionRepository<? extends Session> sessionRepository) {
+        return new BasicAuthorizationServiceImpl(sessionRegistry, userRedisOperator, applicationRepository, authorizationRepository, sessionRepository);
     }
 
     @Bean
@@ -104,6 +112,12 @@ public class StorageAutoConfiguration {
     public OAuth2AuthorizationConsentService authorizationConsentService(
             BasicAuthorizationConsentService basicAuthorizationConsentService, RegisteredClientRepository registeredClientRepository) {
         return new StorageAuthorizationConsentService(basicAuthorizationConsentService, registeredClientRepository);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public SessionRegistry setSessionRegistry() {
+        return new SessionRegistryImpl();
     }
 
 }

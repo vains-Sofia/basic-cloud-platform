@@ -109,7 +109,7 @@ public class Jpa2AuthorizationResponseConverter implements Converter<JpaOAuth2Au
 
         // 尝试清理缓存
         if (METADATA_CACHE.size() > 200) {
-            // 如果缓存超过1000条，清理缓存
+            // 如果缓存超过200条，清理缓存
             METADATA_CACHE.clear();
         }
 

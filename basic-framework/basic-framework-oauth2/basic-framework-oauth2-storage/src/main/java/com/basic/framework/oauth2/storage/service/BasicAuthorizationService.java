@@ -2,6 +2,7 @@ package com.basic.framework.oauth2.storage.service;
 
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.oauth2.storage.domain.request.FindAuthorizationPageRequest;
+import com.basic.framework.oauth2.storage.domain.request.RevokeAuthorizationRequest;
 import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicAuthorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
@@ -52,4 +53,10 @@ public interface BasicAuthorizationService {
      */
     PageResult<FindAuthorizationResponse> findAuthorizationPage(FindAuthorizationPageRequest request);
 
+    /**
+     * 撤销认证信息
+     *
+     * @param request 访问令牌
+     */
+    void revoke(RevokeAuthorizationRequest request);
 }

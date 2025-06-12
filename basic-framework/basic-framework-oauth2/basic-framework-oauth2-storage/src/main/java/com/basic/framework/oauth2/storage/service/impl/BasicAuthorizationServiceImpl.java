@@ -2,36 +2,54 @@ package com.basic.framework.oauth2.storage.service.impl;
 
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
+import com.basic.framework.core.exception.CloudServiceException;
+import com.basic.framework.core.util.JsonUtils;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
+import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.util.ServletUtils;
 import com.basic.framework.oauth2.storage.converter.Authorization2JpaConverter;
 import com.basic.framework.oauth2.storage.converter.Jpa2AuthorizationConverter;
 import com.basic.framework.oauth2.storage.converter.Jpa2AuthorizationResponseConverter;
 import com.basic.framework.oauth2.storage.domain.entity.JpaOAuth2Application;
 import com.basic.framework.oauth2.storage.domain.entity.JpaOAuth2Authorization;
 import com.basic.framework.oauth2.storage.domain.request.FindAuthorizationPageRequest;
+import com.basic.framework.oauth2.storage.domain.request.RevokeAuthorizationRequest;
 import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicAuthorization;
 import com.basic.framework.oauth2.storage.repository.OAuth2ApplicationRepository;
 import com.basic.framework.oauth2.storage.repository.OAuth2AuthorizationRepository;
 import com.basic.framework.oauth2.storage.service.BasicAuthorizationService;
+import com.basic.framework.redis.support.RedisOperator;
+import com.fasterxml.jackson.core.type.TypeReference;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
+import org.springframework.session.Session;
+import org.springframework.session.SessionRepository;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.springframework.security.oauth2.server.authorization.OAuth2Authorization.Token.INVALIDATED_METADATA_NAME;
 
 /**
  * 基于Jpa实现的认证信息存储服务实现
@@ -42,9 +60,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BasicAuthorizationServiceImpl implements BasicAuthorizationService {
 
+    private final SessionRegistry sessionRegistry;
+
+    private final RedisOperator<AuthenticatedUser> redisOperator;
+
     private final OAuth2ApplicationRepository applicationRepository;
 
     private final OAuth2AuthorizationRepository authorizationRepository;
+
+    private final SessionRepository<? extends Session> sessionRepository;
+
+    private final TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {
+    };
 
     private final Authorization2JpaConverter authorization2JpaConverter = new Authorization2JpaConverter();
 
@@ -177,4 +204,132 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
 
         return DataPageResult.of(authorizationPage.getNumber(), authorizationPage.getSize(), authorizationPage.getTotalElements(), authorizationList);
     }
+
+    @Override
+    public void revoke(RevokeAuthorizationRequest request) {
+        String accessToken = request.getAccessToken();
+
+        // 根据accessToken查询授权信息
+        Optional<JpaOAuth2Authorization> authorizationOptional = this.authorizationRepository.findByAccessTokenValue(accessToken);
+        if (authorizationOptional.isEmpty()) {
+            log.warn("令牌不存在或已过期，请传入正确的access token。 access token: {}", accessToken);
+            throw new CloudServiceException("令牌不存在或已过期，请传入正确的access token。");
+        }
+
+        // 修改授权信息的元数据为已撤销状态
+        JpaOAuth2Authorization authorization = authorizationOptional.get();
+        // access token元数据
+        Map<String, Object> accessTokenMetadata = new HashMap<>(1);
+
+        String metadata = authorization.getAccessTokenMetadata();
+        if (!ObjectUtils.isEmpty(metadata)) {
+            // 将元数据转换为Map
+            Map<String, Object> metadataMap = OAuth2JsonUtils.toObject(metadata, typeRef.getType());
+            if (metadataMap != null) {
+                accessTokenMetadata.putAll(metadataMap);
+                // 设置元数据中的无效化标志
+                accessTokenMetadata.put(INVALIDATED_METADATA_NAME, Boolean.TRUE);
+            }
+        }
+
+        if (accessTokenMetadata.isEmpty()) {
+            // 如果没有元数据，则设置已失效状态为true
+            accessTokenMetadata.put(INVALIDATED_METADATA_NAME, Boolean.TRUE);
+        }
+
+        // 更新授权信息
+        authorization.setAccessTokenMetadata(OAuth2JsonUtils.toJson(accessTokenMetadata));
+        this.authorizationRepository.save(authorization);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Access token revoked successfully. Access token: {}", accessToken);
+        }
+
+        // 获取授权类型
+        String authorizationGrantType = authorization.getAuthorizationGrantType();
+        if (!Objects.equals(authorizationGrantType, AuthorizationGrantType.AUTHORIZATION_CODE.getValue())) {
+            // 如果授权类型不是授权码模式，则直接返回
+            return;
+        }
+
+        if (ObjectUtils.isEmpty(authorization.getAttributes())) {
+            // 如果attributes为空，则直接返回
+            return;
+        }
+
+        // 获取认证信息attributes
+        Map<String, Object> attributes = OAuth2JsonUtils.toObject(authorization.getAttributes(), typeRef.getType());
+        if (attributes == null || attributes.isEmpty()) {
+            // 如果attributes为空，则直接返回
+            return;
+        }
+
+        // 获取Principal对象
+        Object principalObject = attributes.get(Principal.class.getName());
+        if (principalObject instanceof AbstractAuthenticationToken authenticationToken) {
+            // 如果Principal是AbstractAuthenticationToken类型，则获取认证用户信息
+            if (authenticationToken.getPrincipal() instanceof AuthenticatedUser authenticatedUser) {
+                // 清除Redis中缓存的用户信息
+                String userinfoCacheKey = AuthorizeConstants.USERINFO_PREFIX + authenticatedUser.getId();
+                redisOperator.delete(userinfoCacheKey);
+            }
+        } else if (principalObject instanceof AuthenticatedUser authenticatedUser) {
+            // 如果Principal是AuthenticatedUser类型，则直接清除Redis中缓存的用户信息
+            String userinfoCacheKey = AuthorizeConstants.USERINFO_PREFIX + authenticatedUser.getId();
+            redisOperator.delete(userinfoCacheKey);
+        }
+
+        // 尝试清除Session
+        if (principalObject instanceof AbstractAuthenticationToken authenticationToken) {
+            // 如果Principal是AbstractAuthenticationToken类型，则获取认证用户信息
+            if (authenticationToken.getPrincipal() instanceof AuthenticatedUser authenticatedUser) {
+
+                // 获取access token对应的Session信息
+                List<SessionInformation> authenticationSessions = this.sessionRegistry.getAllSessions(authenticatedUser, Boolean.TRUE);
+
+                // access token对应的sessionId
+                List<String> sessionIds = authenticationSessions.stream()
+                        .filter(Objects::nonNull)
+                        .map(SessionInformation::getSessionId)
+                        .filter(Objects::nonNull)
+                        .toList();
+
+                for (SessionInformation authenticationSession : authenticationSessions) {
+                    // 检查Session是否存在
+                    if (authenticationSession != null) {
+                        // 使Session失效
+                        authenticationSession.expireNow();
+                    }
+                }
+
+                // 清除Session信息
+                if (!ObjectUtils.isEmpty(sessionIds)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Removing session with id list: {}", JsonUtils.toJson(sessionIds));
+                    }
+                    for (String sessionId : sessionIds) {
+                        HttpServletRequest httpRequest = ServletUtils.getRequest();
+                        if (httpRequest != null) {
+                            // 获取当前Session
+                            HttpSession currentSession = httpRequest.getSession(Boolean.FALSE);
+                            if (currentSession != null && sessionId.equals(currentSession.getId())) {
+                                // 如果当前Session与要清除的Session相同，则使其失效
+                                currentSession.invalidate();
+                                // 跳过Redis Session的清除
+                                continue;
+                            }
+                        }
+
+                        // 清除SessionRepository中的Session信息
+                        Session session = this.sessionRepository.findById(sessionId);
+                        if (session != null) {
+                            // 销毁Session
+                            this.sessionRepository.deleteById(sessionId);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
