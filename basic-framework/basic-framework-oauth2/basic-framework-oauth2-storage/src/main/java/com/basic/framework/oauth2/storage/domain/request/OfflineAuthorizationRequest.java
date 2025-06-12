@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author vains
  */
 @Data
-public class RevokeAuthorizationRequest implements Serializable {
+public class OfflineAuthorizationRequest implements Serializable {
 
     @NotBlank
     @Schema(title = "访问令牌", description = "OAuth2授权登录流程中获取的access token")

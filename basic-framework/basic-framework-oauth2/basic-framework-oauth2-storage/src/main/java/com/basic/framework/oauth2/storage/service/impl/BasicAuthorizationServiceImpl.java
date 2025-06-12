@@ -16,7 +16,7 @@ import com.basic.framework.oauth2.storage.converter.Jpa2AuthorizationResponseCon
 import com.basic.framework.oauth2.storage.domain.entity.JpaOAuth2Application;
 import com.basic.framework.oauth2.storage.domain.entity.JpaOAuth2Authorization;
 import com.basic.framework.oauth2.storage.domain.request.FindAuthorizationPageRequest;
-import com.basic.framework.oauth2.storage.domain.request.RevokeAuthorizationRequest;
+import com.basic.framework.oauth2.storage.domain.request.OfflineAuthorizationRequest;
 import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicAuthorization;
 import com.basic.framework.oauth2.storage.repository.OAuth2ApplicationRepository;
@@ -206,7 +206,7 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
     }
 
     @Override
-    public void revoke(RevokeAuthorizationRequest request) {
+    public void offline(OfflineAuthorizationRequest request) {
         String accessToken = request.getAccessToken();
 
         // 根据accessToken查询授权信息

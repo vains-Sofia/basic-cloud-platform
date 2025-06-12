@@ -4,7 +4,7 @@ import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.oauth2.storage.converter.Basic2AuthorizationConverter;
 import com.basic.framework.oauth2.storage.domain.request.FindAuthorizationPageRequest;
-import com.basic.framework.oauth2.storage.domain.request.RevokeAuthorizationRequest;
+import com.basic.framework.oauth2.storage.domain.request.OfflineAuthorizationRequest;
 import com.basic.framework.oauth2.storage.domain.response.FindAuthorizationResponse;
 import com.basic.framework.oauth2.storage.domain.security.BasicAuthorization;
 import com.basic.framework.oauth2.storage.service.BasicAuthorizationService;
@@ -56,11 +56,11 @@ public class OAuth2AuthorizationController {
         return Result.success(authorization);
     }
 
-    @DeleteMapping("/revoke")
-    @PreAuthorize("hasAnyAuthority('message.read')")
-    @Operation(summary = "撤销认证信息", description = "根据access token撤销认证信息")
-    public Result<String> revoke(@Valid @RequestBody RevokeAuthorizationRequest request) {
-        basicAuthorizationService.revoke(request);
+    @DeleteMapping("/offline")
+    @PreAuthorize("hasAnyAuthority('message.write')")
+    @Operation(summary = "踢出登录", description = "根据access token撤销认证信息")
+    public Result<String> offline(@Valid @RequestBody OfflineAuthorizationRequest request) {
+        basicAuthorizationService.offline(request);
         return Result.success();
     }
 
