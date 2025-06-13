@@ -46,7 +46,7 @@ public class FindAuthorizationResponse implements Serializable {
     @Schema(title = "授权码过期时间")
     private LocalDateTime authorizationCodeExpiresAt;
 
-    @Schema(title = "授权码已失效", description = "如果授权码已被使用或已过期，则为true")
+    @Schema(title = "授权码是否已失效", description = "如果授权码已被使用或已过期，则为true")
     private Boolean authorizationCodeInvalidated;
 
     @Schema(title = "认证后签发的access token")

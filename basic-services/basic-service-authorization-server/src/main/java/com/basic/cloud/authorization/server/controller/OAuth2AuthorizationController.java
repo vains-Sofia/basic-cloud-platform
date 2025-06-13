@@ -39,7 +39,7 @@ public class OAuth2AuthorizationController {
     @GetMapping("/findByPage")
     @PreAuthorize("hasAnyAuthority('message.read')")
     @Operation(summary = "根据入参分页查询认证信息", description = "根据入参分页查询认证信息")
-    public Result<PageResult<FindAuthorizationResponse>> findAuthorizationPage(FindAuthorizationPageRequest request) {
+    public Result<PageResult<FindAuthorizationResponse>> findAuthorizationPage(@Valid FindAuthorizationPageRequest request) {
         PageResult<FindAuthorizationResponse> authorizationPage = basicAuthorizationService.findAuthorizationPage(request);
 
         return Result.success(authorizationPage);

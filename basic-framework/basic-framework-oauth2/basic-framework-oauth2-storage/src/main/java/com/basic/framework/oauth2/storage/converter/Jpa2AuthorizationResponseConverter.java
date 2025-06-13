@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -53,25 +54,52 @@ public class Jpa2AuthorizationResponseConverter implements Converter<JpaOAuth2Au
      * 使用函数式编程简化重复逻辑
      */
     private void checkTokenStatus(JpaOAuth2Authorization source, FindAuthorizationResponse authorization) {
-        LocalDateTime now = LocalDateTime.now();
         // 使用函数式编程简化重复逻辑
-        checkSingleTokenStatus(source.getAuthorizationCodeMetadata(), source.getAuthorizationCodeExpiresAt(),
-                now, authorization::setAuthorizationCodeInvalidated);
+        LocalDateTime now = LocalDateTime.now();
 
-        checkSingleTokenStatus(source.getRefreshTokenMetadata(), source.getRefreshTokenExpiresAt(),
-                now, authorization::setRefreshTokenInvalidated);
+        // 授权码
+        if (ObjectUtils.isEmpty(source.getAuthorizationCodeValue())) {
+            authorization.setAuthorizationCodeInvalidated(true);
+        } else {
+            checkSingleTokenStatus(source.getAuthorizationCodeMetadata(), source.getAuthorizationCodeExpiresAt(),
+                    now, authorization::setAuthorizationCodeInvalidated);
+        }
 
-        checkSingleTokenStatus(source.getAccessTokenMetadata(), source.getAccessTokenExpiresAt(),
-                now, authorization::setAccessTokenInvalidated);
+        // 刷新令牌
+        if (ObjectUtils.isEmpty(source.getRefreshTokenValue())) {
+            authorization.setRefreshTokenInvalidated(true);
+        } else {
+            checkSingleTokenStatus(source.getRefreshTokenMetadata(), source.getRefreshTokenExpiresAt(),
+                    now, authorization::setRefreshTokenInvalidated);
+        }
 
-        checkSingleTokenStatus(source.getOidcIdTokenMetadata(), source.getOidcIdTokenExpiresAt(),
-                now, authorization::setOidcIdTokenInvalidated);
+        if (ObjectUtils.isEmpty(source.getAccessTokenValue())) {
+            authorization.setAccessTokenInvalidated(true);
+        } else {
+            checkSingleTokenStatus(source.getAccessTokenMetadata(), source.getAccessTokenExpiresAt(),
+                    now, authorization::setAccessTokenInvalidated);
+        }
 
-        checkSingleTokenStatus(source.getUserCodeMetadata(), source.getUserCodeExpiresAt(),
-                now, authorization::setUserCodeInvalidated);
+        if (ObjectUtils.isEmpty(source.getOidcIdTokenValue())) {
+            authorization.setOidcIdTokenInvalidated(true);
+        } else {
+            checkSingleTokenStatus(source.getOidcIdTokenMetadata(), source.getOidcIdTokenExpiresAt(),
+                    now, authorization::setOidcIdTokenInvalidated);
+        }
 
-        checkSingleTokenStatus(source.getDeviceCodeMetadata(), source.getDeviceCodeExpiresAt(),
-                now, authorization::setDeviceCodeInvalidated);
+        if (ObjectUtils.isEmpty(source.getUserCodeValue())) {
+            authorization.setUserCodeInvalidated(true);
+        } else {
+            checkSingleTokenStatus(source.getUserCodeMetadata(), source.getUserCodeExpiresAt(),
+                    now, authorization::setUserCodeInvalidated);
+        }
+
+        if (ObjectUtils.isEmpty(source.getDeviceCodeValue())) {
+            authorization.setDeviceCodeInvalidated(true);
+        } else {
+            checkSingleTokenStatus(source.getDeviceCodeMetadata(), source.getDeviceCodeExpiresAt(),
+                    now, authorization::setDeviceCodeInvalidated);
+        }
     }
 
     /**
