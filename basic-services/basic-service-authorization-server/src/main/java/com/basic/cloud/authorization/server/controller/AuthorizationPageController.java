@@ -172,6 +172,14 @@ public class AuthorizationPageController {
         return "consent";
     }
 
+    @ResponseBody
+    @GetMapping(value = "/check/login")
+    @Operation(summary = "检查是否登录过", description = "检查是否登录过")
+    public Result<String> checkLogin() {
+
+        return Result.success();
+    }
+
     /**
      * 查询scope描述并处理可能不存在于数据库中的scope，添加一个默认描述
      *

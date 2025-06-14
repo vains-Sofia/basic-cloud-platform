@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContextHolder;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -40,6 +42,11 @@ public class ConsentAuthenticationFailureHandler implements AuthenticationFailur
      */
     private final String authorizeErrorUri;
 
+    /**
+     * 设备码验证页面地址
+     */
+    private final String deviceVerificationUri;
+
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
@@ -50,6 +57,28 @@ public class ConsentAuthenticationFailureHandler implements AuthenticationFailur
             String resolvedErrorUri = resolveErrorUri(request, response, exception);
             this.redirectStrategy.sendRedirect(request, response, resolvedErrorUri);
             return;
+        }
+
+        // 获取当前授权服务器设置
+        AuthorizationServerSettings authorizationServerSettings =
+                AuthorizationServerContextHolder.getContext().getAuthorizationServerSettings();
+        // 设备码验证页面提交的请求
+        if (request.getMethod().equals(HttpMethod.POST.name())
+                && request.getRequestURI().endsWith(authorizationServerSettings.getDeviceVerificationEndpoint())) {
+            // 如果设备码验证页面是前后端分离的页面
+            if (UrlUtils.isAbsoluteUrl(this.deviceVerificationUri)) {
+                // 响应json
+                String resolvedErrorUri = resolveErrorUri(request, response, exception);
+                // 写回json(前端会自动跳转到返回的URI)
+                Result<Object> result = Result.success(resolvedErrorUri);
+                ServletUtils.renderJson(response, result);
+                return;
+            } else {
+                // 重定向到授权错误页面
+                String resolvedErrorUri = resolveErrorUri(request, response, exception);
+                this.redirectStrategy.sendRedirect(request, response, resolvedErrorUri);
+                return;
+            }
         }
 
         // 授权确认页面提交的请求

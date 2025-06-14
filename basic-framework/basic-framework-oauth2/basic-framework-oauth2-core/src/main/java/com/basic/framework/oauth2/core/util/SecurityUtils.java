@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.server.resource.authentication.Abstra
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -166,6 +167,10 @@ public class SecurityUtils {
      * @return 完整的授权错误页面URI
      */
     public static String resolveAuthorizeErrorUri(String authorizeErrorUri, Map<String, String> errorParameters) {
+        if (errorParameters != null) {
+            // 移除空值参数
+            errorParameters.values().removeIf(ObjectUtils::isEmpty);
+        }
         MultiValueMap<String, String> valueMap = new LinkedMultiValueMap<>(errorParameters.size());
         errorParameters.forEach((k, v) -> valueMap.add(k, URLEncoder.encode(v, StandardCharsets.UTF_8)));
         // 如果授权错误页面路径是绝对路径，则拼接参数后直接返回

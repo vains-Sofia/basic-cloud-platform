@@ -10,6 +10,7 @@ import com.basic.framework.oauth2.authorization.server.grant.password.OAuth2Pass
 import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
 import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.handler.authentication.ConsentAuthenticationFailureHandler;
 import com.basic.framework.oauth2.core.handler.authentication.DeviceAuthorizationResponseHandler;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.redis.support.RedisOperator;
@@ -342,8 +343,11 @@ public class OAuth2ConfigurerUtils {
                 // 设置验证设备码用户确认页面
                 .deviceVerificationEndpoint(deviceVerificationEndpoint -> deviceVerificationEndpoint
                                 .consentPage(oAuth2ServerProperties.getConsentPageUri())
-//                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(serverProperties.getConsentPageUri()))
-                                .deviceVerificationResponseHandler(new DeviceAuthorizationResponseHandler(oAuth2ServerProperties.getDeviceActivatedPageUri()))
+                                .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getAuthorizeErrorUri(), oAuth2ServerProperties.getDeviceVerificationUri()))
+                                .deviceVerificationResponseHandler(
+                                        new DeviceAuthorizationResponseHandler(
+                                                oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getDeviceActivatedPageUri(), oAuth2ServerProperties.getDeviceVerificationUri())
+                                )
                 )
                 .clientAuthentication(clientAuthentication ->
                         // 客户端认证添加设备码的converter和provider
