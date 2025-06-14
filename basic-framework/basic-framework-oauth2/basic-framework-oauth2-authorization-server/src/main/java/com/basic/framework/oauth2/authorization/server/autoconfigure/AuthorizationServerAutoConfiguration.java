@@ -90,6 +90,8 @@ public class AuthorizationServerAutoConfiguration {
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
 
+    private final RedisOperator<Long> redisHashOperator;
+
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final ResourceServerProperties resourceServerProperties;
@@ -355,7 +357,7 @@ public class AuthorizationServerAutoConfiguration {
         if (log.isDebugEnabled()) {
             log.debug("注入 自定义认证服务令牌自省 BasicOpaqueTokenIntrospector.");
         }
-        return new BasicOpaqueTokenIntrospector(idTokenCustomizer, authorizationService);
+        return new BasicOpaqueTokenIntrospector(redisHashOperator, idTokenCustomizer, redisOperator, authorizationService);
     }
 
     @Bean
@@ -373,7 +375,7 @@ public class AuthorizationServerAutoConfiguration {
                                                              BasicIdTokenCustomizer idTokenCustomizer) {
         JwtAuthenticationProvider authenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
 
-        authenticationProvider.setJwtAuthenticationConverter(new BasicJwtRedisAuthenticationConverter(idTokenCustomizer, redisOperator));
+        authenticationProvider.setJwtAuthenticationConverter(new BasicJwtRedisAuthenticationConverter(redisHashOperator, idTokenCustomizer, redisOperator));
         if (log.isDebugEnabled()) {
             log.debug("注入 从redis中根据jwt获取认证信息的Jwt token解析器.");
         }
@@ -386,7 +388,7 @@ public class AuthorizationServerAutoConfiguration {
         if (log.isDebugEnabled()) {
             log.debug("注入 自定义Jwt token内容配置类 JwtIdTokenCustomizer.");
         }
-        return new JwtIdTokenCustomizer(redisOperator);
+        return new JwtIdTokenCustomizer(redisHashOperator, redisOperator);
     }
 
     @Bean
@@ -395,7 +397,7 @@ public class AuthorizationServerAutoConfiguration {
         if (log.isDebugEnabled()) {
             log.debug("注入 自定义Opaque token内容配置类 OpaqueIdTokenCustomizer.");
         }
-        return new OpaqueIdTokenCustomizer(redisOperator);
+        return new OpaqueIdTokenCustomizer(redisHashOperator, redisOperator);
     }
 
     @Bean

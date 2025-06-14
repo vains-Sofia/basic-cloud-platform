@@ -25,9 +25,14 @@ public class AuthorizeConstants {
     public static final String USER_ID_KEY = "basic_id";
 
     /**
+     * 用户id与令牌唯一id的映射关系缓存key
+     */
+    public static final String JTI_USER_HASH = "basic:userinfo:jti";
+
+    /**
      * 用户信息缓存前缀
      */
-    public static final String USERINFO_PREFIX = "basic:jti:userinfo:";
+    public static final String USERINFO_PREFIX = "basic:userinfo:id:";
 
     /**
      * 用户信息缓存前缀

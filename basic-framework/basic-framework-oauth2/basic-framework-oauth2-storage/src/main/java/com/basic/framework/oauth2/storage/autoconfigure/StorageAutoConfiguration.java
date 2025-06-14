@@ -1,7 +1,6 @@
 package com.basic.framework.oauth2.storage.autoconfigure;
 
 import com.basic.cloud.system.api.SysPermissionClient;
-import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.storage.repository.*;
 import com.basic.framework.oauth2.storage.service.BasicApplicationService;
@@ -50,11 +49,11 @@ public class StorageAutoConfiguration {
 
     private final OAuth2ScopeRepository scopeRepository;
 
+    private final RedisOperator<Long> redisHashOperator;
+
     private final SysPermissionClient sysPermissionClient;
 
     private final OAuth2ApplicationRepository applicationRepository;
-
-    private final RedisOperator<AuthenticatedUser> userRedisOperator;
 
     private final OAuth2AuthorizationRepository authorizationRepository;
 
@@ -81,7 +80,7 @@ public class StorageAutoConfiguration {
     @ConditionalOnMissingBean
     public BasicAuthorizationService basicAuthorizationService(SessionRegistry sessionRegistry,
                                                                SessionRepository<? extends Session> sessionRepository) {
-        return new BasicAuthorizationServiceImpl(sessionRegistry, userRedisOperator, applicationRepository, authorizationRepository, sessionRepository);
+        return new BasicAuthorizationServiceImpl(sessionRegistry, redisHashOperator, applicationRepository, authorizationRepository, sessionRepository);
     }
 
     @Bean

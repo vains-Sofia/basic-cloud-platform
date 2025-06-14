@@ -69,4 +69,23 @@ public class OAuth2JsonUtils {
         return null;
     }
 
+    /**
+     * 将对象转为另一个对象
+     * 切记,两个对象结构要一致
+     * 多用于Object转为具体的对象
+     *
+     * @param o            将要转化的对象
+     * @param clazz        主体类的class
+     * @param genericClazz 泛型类的class
+     * @param <T>          泛型, 代表返回参数的类型
+     * @return 返回T的实例
+     */
+    public static <T> T objectToObject(Object o, Class<?> clazz, Class<?>... genericClazz) {
+        if (o == null || clazz == null || genericClazz == null) {
+            return null;
+        }
+        JavaType javaType = objectMapper.getTypeFactory().constructParametricType(clazz, genericClazz);
+        return objectMapper.convertValue(o, javaType);
+    }
+
 }

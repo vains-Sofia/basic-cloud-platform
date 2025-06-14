@@ -103,7 +103,9 @@ public class OAuth2ConfigurerUtils {
                 OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer = getAccessTokenCustomizer(httpSecurity);
                 ResolvableType type = ResolvableType.forClassWithGenerics(RedisOperator.class, AuthenticatedUser.class);
                 RedisOperator<AuthenticatedUser> redisOperator = getOptionalBean(httpSecurity, type);
-                accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, () -> new OpaqueIdTokenCustomizer(redisOperator)));
+                ResolvableType typeLong = ResolvableType.forClassWithGenerics(RedisOperator.class, Long.class);
+                RedisOperator<Long> redisHashOperator = getOptionalBean(httpSecurity, typeLong);
+                accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, () -> new OpaqueIdTokenCustomizer(redisHashOperator, redisOperator)));
                 OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
                 if (jwtGenerator != null) {
                     tokenGenerator = new DelegatingOAuth2TokenGenerator(
@@ -153,7 +155,9 @@ public class OAuth2ConfigurerUtils {
                 if (jwtCustomizer != null) {
                     ResolvableType type = ResolvableType.forClassWithGenerics(RedisOperator.class, AuthenticatedUser.class);
                     RedisOperator<AuthenticatedUser> redisOperator = getOptionalBean(httpSecurity, type);
-                    jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, () -> new JwtIdTokenCustomizer(redisOperator)));
+                    ResolvableType typeLong = ResolvableType.forClassWithGenerics(RedisOperator.class, Long.class);
+                    RedisOperator<Long> redisHashOperator = getOptionalBean(httpSecurity, typeLong);
+                    jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, () -> new JwtIdTokenCustomizer(redisHashOperator, redisOperator)));
                 }
                 httpSecurity.setSharedObject(JwtGenerator.class, jwtGenerator);
             }

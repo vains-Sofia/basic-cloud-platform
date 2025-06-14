@@ -116,7 +116,7 @@ public class RedisOperator<V> {
      * @param value 存入的value
      */
     public void setHash(String key, String field, V value) {
-        hashOperations().put(key, field, value);
+        redisTemplate.opsForHash().put(key, field, value);
     }
 
     /**
@@ -125,8 +125,20 @@ public class RedisOperator<V> {
      * @param key 缓存中的key
      * @return 缓存key对应的hash数据中field属性的值
      */
-    public Object getHash(String key, String field) {
-        return hashOperations().hasKey(key, field) ? hashOperations().get(key, field) : null;
+    public V getHash(String key, String field, Class<V> clazz) {
+        HashOperations<Object, Object, V> opsForHash = redisTemplate.opsForHash();
+        if (!opsForHash.hasKey(key, field)) {
+            return null;
+        }
+        Object value = opsForHash.get(key, field);
+        if (value == null) return null;
+        // 如果value是clazz类型的实例，则直接返回
+        if (clazz.isInstance(value)) {
+            return clazz.cast(value);
+        }
+
+        // 否则尝试将value转换为clazz类型
+        return JsonUtils.objectToObject(value, clazz);
     }
 
     /**

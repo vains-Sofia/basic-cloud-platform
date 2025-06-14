@@ -50,6 +50,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames.JTI;
+import static org.springframework.security.oauth2.server.authorization.OAuth2Authorization.Token.CLAIMS_METADATA_NAME;
 import static org.springframework.security.oauth2.server.authorization.OAuth2Authorization.Token.INVALIDATED_METADATA_NAME;
 
 /**
@@ -63,7 +65,7 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
 
     private final SessionRegistry sessionRegistry;
 
-    private final RedisOperator<AuthenticatedUser> redisOperator;
+    private final RedisOperator<Long> redisHashOperator;
 
     private final OAuth2ApplicationRepository applicationRepository;
 
@@ -279,20 +281,18 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
             return;
         }
 
+        // 尝试删除access token与用户id的映射关系
+        Map<String, Object> claims = OAuth2JsonUtils.objectToObject(accessTokenMetadata.get(CLAIMS_METADATA_NAME), Map.class, String.class, Object.class);
+        String jti = claims.get(JTI) + "";
+        Long l = redisHashOperator.deleteHashField(AuthorizeConstants.JTI_USER_HASH, jti);
+        if (l > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("Access token jti: {} removed from Redis with result: {}", jti, l);
+            }
+        }
+
         // 获取Principal对象
         Object principalObject = attributes.get(Principal.class.getName());
-        if (principalObject instanceof AbstractAuthenticationToken authenticationToken) {
-            // 如果Principal是AbstractAuthenticationToken类型，则获取认证用户信息
-            if (authenticationToken.getPrincipal() instanceof AuthenticatedUser authenticatedUser) {
-                // 清除Redis中缓存的用户信息
-                String userinfoCacheKey = AuthorizeConstants.USERINFO_PREFIX + authenticatedUser.getId();
-                redisOperator.delete(userinfoCacheKey);
-            }
-        } else if (principalObject instanceof AuthenticatedUser authenticatedUser) {
-            // 如果Principal是AuthenticatedUser类型，则直接清除Redis中缓存的用户信息
-            String userinfoCacheKey = AuthorizeConstants.USERINFO_PREFIX + authenticatedUser.getId();
-            redisOperator.delete(userinfoCacheKey);
-        }
 
         // 尝试清除Session
         if (!(principalObject instanceof AbstractAuthenticationToken authenticationToken)) {

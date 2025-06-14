@@ -26,7 +26,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
 
+    private final RedisOperator<Long> redisHashOperator;
+
     private final RedisOperator<AuthenticatedUser> redisOperator;
+
 
     @Override
     public void customize(JwtEncodingContext context) {
@@ -52,10 +55,18 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
                 JwtClaimsSet.Builder claims = context.getClaims();
                 // 存储用户唯一id
                 claims.claim(AuthorizeConstants.USER_ID_KEY, user.getId());
+                // 获取jti
                 JwtClaimsSet claimsSet = claims.build();
+                String jti = claims.build().getId();
                 // 计算token有效时长
                 long expire = ChronoUnit.SECONDS.between(claimsSet.getIssuedAt(), claimsSet.getExpiresAt());
-                log.debug("认证用户的id为：{}", user.getId());
+                if (log.isDebugEnabled()) {
+                    log.debug("当前用户id为：{}", user.getId());
+                    log.debug("认证用户的jti为：{}", jti);
+                }
+                // token与用户id的映射关系存储到Redis中
+                redisHashOperator.setHash(AuthorizeConstants.JTI_USER_HASH, jti, user.getId());
+                // 将用户信息存储到Redis中，方便资源服务自省时获取
                 redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + user.getId()), user, expire);
             }
         }

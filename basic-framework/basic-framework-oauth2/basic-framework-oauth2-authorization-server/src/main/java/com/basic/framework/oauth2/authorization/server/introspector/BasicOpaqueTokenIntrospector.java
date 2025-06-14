@@ -1,15 +1,14 @@
 package com.basic.framework.oauth2.authorization.server.introspector;
 
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
-import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
+import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.DefaultOAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
@@ -18,11 +17,13 @@ import org.springframework.security.oauth2.server.resource.InvalidBearerTokenExc
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.util.ObjectUtils;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames.JTI;
 
 /**
  * 认证服务令牌自省
@@ -33,7 +34,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
 
+    private final RedisOperator<Long> redisHashOperator;
+
     private final BasicIdTokenCustomizer idTokenCustomizer;
+
+    private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final OAuth2AuthorizationService authorizationService;
 
@@ -69,7 +74,7 @@ public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
             throw new InvalidBearerTokenException("Did not introspect token since not active.");
         }
 
-        Collection<? extends GrantedAuthority> grantedAuthorities;
+        Collection<GrantedAuthority> grantedAuthorities;
         // 授权过的scope
         Set<String> authorizedScopes = authorization.getAuthorizedScopes();
         if (!ObjectUtils.isEmpty(authorizedScopes)) {
@@ -79,20 +84,34 @@ public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
             grantedAuthorities = Collections.emptySet();
         }
 
-        Object attribute = authorization.getAttribute(Principal.class.getName());
-        if (attribute instanceof AbstractAuthenticationToken authenticationToken) {
-            if (authenticationToken.getPrincipal() instanceof User user) {
-                return new DefaultAuthenticatedUser(user.getUsername(), OAuth2AccountPlatformEnum.SYSTEM, grantedAuthorities);
+        // 尝试获取用户的信息
+        Map<String, Object> claims = authorizedToken.getClaims();
+        if (ObjectUtils.isEmpty(claims)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Did not introspect token since no claims found");
             }
-            if (authenticationToken.getPrincipal() instanceof AuthenticatedUser user) {
-                if (!ObjectUtils.isEmpty(grantedAuthorities)) {
-                    // 动态从redis获取SCOPE对应的权限给用户
-                    idTokenCustomizer.transferScopesAuthorities(user, authorizedScopes, grantedAuthorities);
-                }
-                return user;
+            throw new InvalidBearerTokenException("Did not introspect token since no claims found.");
+        }
+        String jti = claims.get(JTI) + "";
+        Long userId = redisHashOperator.getHash(AuthorizeConstants.JTI_USER_HASH, jti, Long.class);
+        // 从Redis中获取用户信息
+        AuthenticatedUser authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + userId);
+        if (userId == null || authenticatedUser == null) {
+            // 如果用户信息不存在，可能是客户端模式
+            Boolean isClientCredentials = (Boolean) claims.getOrDefault(AuthorizeConstants.IS_CLIENT_CREDENTIALS, Boolean.FALSE);
+            // 客户端模式
+            if (isClientCredentials != null && isClientCredentials) {
+                return new DefaultOAuth2AuthenticatedPrincipal(claims, grantedAuthorities);
             }
+
+            // token 被正常解析但是无法获取到Redis的用户信息，这种情况一般是登出、管理平台下线后出现的问题
+            throw new InvalidBearerTokenException("Access token is invalid or has been logged out.");
         }
 
-        return null;
+        if (!ObjectUtils.isEmpty(grantedAuthorities)) {
+            // 动态从redis获取SCOPE对应的权限给用户
+            idTokenCustomizer.transferScopesAuthorities(authenticatedUser, authorizedScopes, grantedAuthorities);
+        }
+        return authenticatedUser;
     }
 }

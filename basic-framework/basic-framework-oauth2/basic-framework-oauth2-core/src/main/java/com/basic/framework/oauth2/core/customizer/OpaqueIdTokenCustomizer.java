@@ -27,6 +27,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAuth2TokenClaimsContext> {
 
+    private final RedisOperator<Long> redisHashOperator;
+
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     @Override
@@ -54,10 +56,17 @@ public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAut
                 claims.claim(AuthorizeConstants.USER_ID_KEY, user.getId());
                 // 资源服务自省时需要该属性
                 claims.claim(OAuth2TokenIntrospectionClaimNames.USERNAME, user.getUsername());
-                log.debug("当前用户id为：{}", user.getId());
                 OAuth2TokenClaimsSet build = claims.build();
                 // 计算token有效时长
                 long expire = ChronoUnit.SECONDS.between(build.getIssuedAt(), build.getExpiresAt());
+                // 获取jti
+                String jti = claims.build().getId();
+                if (log.isDebugEnabled()) {
+                    log.debug("当前用户id为：{}", user.getId());
+                    log.debug("认证用户的jti为：{}", jti);
+                }
+                // token与用户id的映射关系存储到Redis中
+                redisHashOperator.setHash(AuthorizeConstants.JTI_USER_HASH, jti, user.getId());
                 // 将用户信息存储到Redis中，方便资源服务自省时获取
                 redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + user.getId()), user, expire);
             }

@@ -5,12 +5,12 @@ import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
+import com.basic.framework.oauth2.core.introspection.ResourceOpaqueTokenIntrospector;
 import com.basic.framework.oauth2.core.manager.ReactiveContextAuthorizationManager;
 import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
 import com.basic.framework.oauth2.resource.server.configure.ReactiveResourceServerConfiguration;
 import com.basic.framework.oauth2.resource.server.configure.ResourceServerConfiguration;
-import com.basic.framework.oauth2.core.introspection.ResourceOpaqueTokenIntrospector;
 import com.basic.framework.redis.support.RedisOperator;
 import com.basic.framework.redis.util.RedisConfigUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,12 +72,13 @@ public class ResourceServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BasicJwtRedisAuthenticationConverter authenticationConverter(BasicIdTokenCustomizer idTokenCustomizer,
+    public BasicJwtRedisAuthenticationConverter authenticationConverter(RedisOperator<Long> redisHashOperator,
+                                                                        BasicIdTokenCustomizer idTokenCustomizer,
                                                                         RedisOperator<AuthenticatedUser> redisOperator) {
         if (log.isDebugEnabled()) {
             log.debug("注入 从redis中根据jwt获取认证信息的Jwt token解析器.");
         }
-        return new BasicJwtRedisAuthenticationConverter(idTokenCustomizer, redisOperator);
+        return new BasicJwtRedisAuthenticationConverter(redisHashOperator, idTokenCustomizer, redisOperator);
     }
 
     /**
@@ -115,7 +116,8 @@ public class ResourceServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ResourceOpaqueTokenIntrospector resourceOpaqueTokenIntrospector(BasicIdTokenCustomizer idTokenCustomizer,
+    public ResourceOpaqueTokenIntrospector resourceOpaqueTokenIntrospector(RedisOperator<Long> redisHashOperator,
+                                                                           BasicIdTokenCustomizer idTokenCustomizer,
                                                                            RedisOperator<AuthenticatedUser> redisOperator,
                                                                            OAuth2ResourceServerProperties resourceServerProperties) {
         if (resourceServerProperties.getOpaquetoken() == null) {
@@ -128,7 +130,7 @@ public class ResourceServerAutoConfiguration {
         if (log.isDebugEnabled()) {
             log.debug("注入 自定义的Opaque Token自省实现 ResourceOpaqueTokenIntrospector.");
         }
-        return new ResourceOpaqueTokenIntrospector(idTokenCustomizer, redisOperator, resourceServerProperties);
+        return new ResourceOpaqueTokenIntrospector(redisHashOperator, idTokenCustomizer, redisOperator, resourceServerProperties);
     }
 
     @PostConstruct

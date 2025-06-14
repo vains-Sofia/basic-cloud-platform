@@ -31,15 +31,20 @@ import java.util.stream.Collectors;
  */
 public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
+    private final RedisOperator<Long> redisHashOperator;
+
     private final BasicIdTokenCustomizer idTokenCustomizer;
 
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
-    public BasicJwtRedisAuthenticationConverter(BasicIdTokenCustomizer idTokenCustomizer, RedisOperator<AuthenticatedUser> redisOperator) {
+    public BasicJwtRedisAuthenticationConverter(RedisOperator<Long> redisHashOperator,
+                                                BasicIdTokenCustomizer idTokenCustomizer,
+                                                RedisOperator<AuthenticatedUser> redisOperator) {
         this.idTokenCustomizer = idTokenCustomizer;
         this.redisOperator = redisOperator;
+        this.redisHashOperator = redisHashOperator;
         this.jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
     }
 
@@ -50,10 +55,10 @@ public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, Abst
         }
         Collection<GrantedAuthority> grantedAuthorities = this.jwtGrantedAuthoritiesConverter.convert(jwt);
         // 获取用户的id
-        Object userId = jwt.getClaim(AuthorizeConstants.USER_ID_KEY);
+        Long userId = redisHashOperator.getHash(AuthorizeConstants.JTI_USER_HASH, jwt.getId(), Long.class);
         // 从Redis中获取用户信息
         AuthenticatedUser authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + userId);
-        if (authenticatedUser == null) {
+        if (userId == null || authenticatedUser == null) {
             // 如果用户信息不存在，可能是客户端模式
             Boolean isClientCredentials = jwt.getClaimAsBoolean(AuthorizeConstants.IS_CLIENT_CREDENTIALS);
             // 客户端模式

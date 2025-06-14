@@ -9,8 +9,10 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2Res
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames;
-import org.springframework.security.oauth2.server.resource.introspection.OAuth2IntrospectionException;
+import org.springframework.security.oauth2.server.resource.BearerTokenError;
+import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 import org.springframework.security.oauth2.server.resource.introspection.SpringOpaqueTokenIntrospector;
 import org.springframework.util.ObjectUtils;
@@ -19,6 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames.ACTIVE;
+import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames.JTI;
 
 /**
  * 自定义的不透明令牌内省器
@@ -29,17 +32,21 @@ import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionC
 @Slf4j
 public class ResourceOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
 
+    private final RedisOperator<Long> redisHashOperator;
+
     private final BasicIdTokenCustomizer idTokenCustomizer;
 
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final SpringOpaqueTokenIntrospector springOpaqueTokenIntrospector;
 
-    public ResourceOpaqueTokenIntrospector(BasicIdTokenCustomizer idTokenCustomizer,
+    public ResourceOpaqueTokenIntrospector(RedisOperator<Long> redisHashOperator,
+                                           BasicIdTokenCustomizer idTokenCustomizer,
                                            RedisOperator<AuthenticatedUser> redisOperator,
                                            OAuth2ResourceServerProperties resourceServerProperties) {
         this.idTokenCustomizer = idTokenCustomizer;
         this.redisOperator = redisOperator;
+        this.redisHashOperator = redisHashOperator;
         OAuth2ResourceServerProperties.Opaquetoken opaquetoken = resourceServerProperties.getOpaquetoken();
         this.springOpaqueTokenIntrospector = new SpringOpaqueTokenIntrospector(
                 opaquetoken.getIntrospectionUri(),
@@ -61,33 +68,24 @@ public class ResourceOpaqueTokenIntrospector implements OpaqueTokenIntrospector 
         Map<String, Object> attributes = principal.getAttributes();
         Collection<? extends GrantedAuthority> grantedAuthorities;
 
-        AuthenticatedUser authenticatedUser;
-
         // 从 attributes 中提取用户信息
         if (attributes != null) {
 
-            // 获取用户ID
-            Object userId = attributes.get(AuthorizeConstants.USER_ID_KEY);
-            if (userId != null) {
-                authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + userId);
-                if (authenticatedUser == null) {
-                    // 客户端模式
-                    Boolean isClientCredentials = (Boolean) attributes.getOrDefault(AuthorizeConstants.IS_CLIENT_CREDENTIALS, Boolean.FALSE);
-                    if (isClientCredentials != null && isClientCredentials) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Client credentials mode detected, returning original principal: {}", principal);
-                        }
-                        return principal;
+            // 获取用户的id
+            Long userId = redisHashOperator.getHash(AuthorizeConstants.JTI_USER_HASH, principal.getAttribute(JTI), Long.class);
+            AuthenticatedUser authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + userId);
+            if (authenticatedUser == null) {
+                // 客户端模式
+                Boolean isClientCredentials = (Boolean) attributes.getOrDefault(AuthorizeConstants.IS_CLIENT_CREDENTIALS, Boolean.FALSE);
+                if (isClientCredentials != null && isClientCredentials) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Client credentials mode detected, returning original principal: {}", principal);
                     }
+                    return principal;
+                }
 
-                    throw new OAuth2IntrospectionException("Access token is invalid or has been logged out.");
-                }
-            } else {
-                // 如果没有用户ID，可能不是从认证服务器获取的令牌，或者令牌已过期或被撤销
-                if (log.isDebugEnabled()) {
-                    log.debug("Access token introspection result does not contain user ID, returning original principal: {}", principal);
-                }
-                return principal;
+                BearerTokenError bearerTokenError = BearerTokenErrors.invalidToken("Access token is invalid or has been logged out.");
+                throw new OAuth2AuthenticationException(bearerTokenError);
             }
 
             // 解析scope
