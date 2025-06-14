@@ -49,6 +49,11 @@ import java.util.Objects;
 public class OAuth2ConfigurerUtils {
 
     /**
+     * 设备码流程跳转至授权确认页面的中转接口
+     */
+    private static final String DEVICE_CONSENT_PAGE_URI = "/oauth2/consent/redirect";
+
+    /**
      * 从ioc中获取bean，如果ioc中没有则返回null
      *
      * @param builder httpSecurity实例
@@ -342,7 +347,7 @@ public class OAuth2ConfigurerUtils {
                         deviceAuthorizationEndpoint.verificationUri(oAuth2ServerProperties.getDeviceVerificationUri()))
                 // 设置验证设备码用户确认页面
                 .deviceVerificationEndpoint(deviceVerificationEndpoint -> deviceVerificationEndpoint
-                                .consentPage(oAuth2ServerProperties.getConsentPageUri())
+                                .consentPage(DEVICE_CONSENT_PAGE_URI)
                                 .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getAuthorizeErrorUri(), oAuth2ServerProperties.getDeviceVerificationUri()))
                                 .deviceVerificationResponseHandler(
                                         new DeviceAuthorizationResponseHandler(

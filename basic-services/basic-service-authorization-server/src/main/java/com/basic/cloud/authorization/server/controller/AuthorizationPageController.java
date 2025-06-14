@@ -4,6 +4,7 @@ import com.basic.cloud.authorization.server.domain.response.OAuth2ConsentRespons
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.oauth2.storage.domain.model.ScopeWithDescription;
 import com.basic.framework.oauth2.storage.domain.security.BasicApplication;
@@ -13,22 +14,32 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -49,7 +60,12 @@ public class AuthorizationPageController {
 
     private final BasicApplicationService applicationService;
 
+    private final OAuth2ServerProperties oauth2ServerProperties;
+
     private final OAuth2AuthorizationConsentService authorizationConsentService;
+
+    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
 
     @GetMapping("/login")
     @Operation(summary = "登录页面", description = "渲染登录页面")
@@ -178,6 +194,34 @@ public class AuthorizationPageController {
     public Result<String> checkLogin() {
 
         return Result.success();
+    }
+
+    @SneakyThrows
+    @ResponseBody
+    @GetMapping(value = "/oauth2/consent/redirect")
+    public Result<String> consentRedirect(HttpServletRequest request,
+                                          HttpServletResponse response,
+                                          @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
+                                          @RequestParam(OAuth2ParameterNames.STATE) String state,
+                                          @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
+                                          @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
+
+        // 携带当前请求参数重定向至前端页面
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(oauth2ServerProperties.getConsentPageUri())
+                .queryParam(OAuth2ParameterNames.SCOPE, UriUtils.encode(scope, StandardCharsets.UTF_8))
+                .queryParam(OAuth2ParameterNames.STATE, UriUtils.encode(state, StandardCharsets.UTF_8))
+                .queryParam(OAuth2ParameterNames.CLIENT_ID, clientId)
+                .queryParam(OAuth2ParameterNames.USER_CODE, userCode);
+
+        String uriString = uriBuilder.build(Boolean.TRUE).toUriString();
+        if (ObjectUtils.isEmpty(userCode) || !UrlUtils.isAbsoluteUrl(oauth2ServerProperties.getDeviceVerificationUri())) {
+            // 不是设备码模式或者设备码验证页面不是前后端分离的，无需返回json，直接重定向
+            this.redirectStrategy.sendRedirect(request, response, uriString);
+            return null;
+        }
+        // 兼容设备码，需响应JSON，由前端进行跳转
+        return Result.success(uriString);
     }
 
     /**
