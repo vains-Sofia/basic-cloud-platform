@@ -117,6 +117,7 @@ CREATE TABLE `oauth2_authorization`
 (
     `id`                            varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NOT NULL,
     `registered_client_id`          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL,
+    `principal_id`                  bigint                                                  NULL DEFAULT NULL,
     `principal_name`                varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL,
     `authorization_grant_type`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL,
     `authorized_scopes`             varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
@@ -150,7 +151,7 @@ CREATE TABLE `oauth2_authorization`
     `device_code_expires_at`        timestamp                                               NULL DEFAULT NULL,
     `device_code_metadata`          text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL,
     `create_time`                   datetime                                                NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`                   datetime                                                NULL DEFAULT NULL COMMENT '修改时间',
+    `update_time`                   datetime                                                NULL DEFAULT NULL,
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4

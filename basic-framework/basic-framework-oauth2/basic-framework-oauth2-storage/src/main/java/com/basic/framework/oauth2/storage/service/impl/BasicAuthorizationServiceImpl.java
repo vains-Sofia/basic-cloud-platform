@@ -9,6 +9,7 @@ import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.oauth2.core.util.ServletUtils;
 import com.basic.framework.oauth2.storage.converter.Authorization2JpaConverter;
 import com.basic.framework.oauth2.storage.converter.Jpa2AuthorizationConverter;
@@ -95,9 +96,23 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
 
         if (authorizationById.isPresent()) {
             this.authorizationRepository.deleteById(authorization.getId());
+            // 设置授权用户id
+            if (authorizationById.get().getPrincipalId() == null) {
+                // 当前用户id
+                Long userId = SecurityUtils.getUserId();
+                // 如果没有用户信息，则设置为客户端id
+                jpaOAuth2Authorization.setPrincipalId(Objects.requireNonNullElseGet(userId, () -> Long.valueOf(jpaOAuth2Authorization.getRegisteredClientId())));
+            } else {
+                // 如果已经存在授权信息，则保留原有的用户id
+                jpaOAuth2Authorization.setPrincipalId(authorizationById.get().getPrincipalId());
+            }
             jpaOAuth2Authorization.setCreateTime(authorizationById.get().getCreateTime());
         } else {
             jpaOAuth2Authorization.setCreateTime(LocalDateTime.now());
+            // 当前用户id
+            Long userId = SecurityUtils.getUserId();
+            // 如果没有用户信息，则设置为客户端id
+            jpaOAuth2Authorization.setPrincipalId(Objects.requireNonNullElseGet(userId, () -> Long.valueOf(jpaOAuth2Authorization.getRegisteredClientId())));
         }
         jpaOAuth2Authorization.setUpdateTime(LocalDateTime.now());
         this.authorizationRepository.save(jpaOAuth2Authorization);
@@ -280,53 +295,55 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
         }
 
         // 尝试清除Session
-        if (principalObject instanceof AbstractAuthenticationToken authenticationToken) {
-            // 如果Principal是AbstractAuthenticationToken类型，则获取认证用户信息
-            if (authenticationToken.getPrincipal() instanceof AuthenticatedUser authenticatedUser) {
+        if (!(principalObject instanceof AbstractAuthenticationToken authenticationToken)) {
+            return;
+        }
+        // 如果Principal是AbstractAuthenticationToken类型，则获取认证用户信息
+        if (!(authenticationToken.getPrincipal() instanceof AuthenticatedUser authenticatedUser)) {
+            return;
+        }
 
-                // 获取access token对应的Session信息
-                List<SessionInformation> authenticationSessions = this.sessionRegistry.getAllSessions(authenticatedUser, Boolean.TRUE);
+        // 获取access token对应的Session信息
+        List<SessionInformation> authenticationSessions = this.sessionRegistry.getAllSessions(authenticatedUser, Boolean.TRUE);
 
-                // access token对应的sessionId
-                List<String> sessionIds = authenticationSessions.stream()
-                        .filter(Objects::nonNull)
-                        .map(SessionInformation::getSessionId)
-                        .filter(Objects::nonNull)
-                        .toList();
+        // access token对应的sessionId
+        List<String> sessionIds = authenticationSessions.stream()
+                .filter(Objects::nonNull)
+                .map(SessionInformation::getSessionId)
+                .filter(Objects::nonNull)
+                .toList();
 
-                for (SessionInformation authenticationSession : authenticationSessions) {
-                    // 检查Session是否存在
-                    if (authenticationSession != null) {
-                        // 使Session失效
-                        authenticationSession.expireNow();
+        for (SessionInformation authenticationSession : authenticationSessions) {
+            // 检查Session是否存在
+            if (authenticationSession != null) {
+                // 使Session失效
+                authenticationSession.expireNow();
+            }
+        }
+
+        // 清除Session信息
+        if (!ObjectUtils.isEmpty(sessionIds)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Removing session with id list: {}", JsonUtils.toJson(sessionIds));
+            }
+            for (String sessionId : sessionIds) {
+                HttpServletRequest httpRequest = ServletUtils.getRequest();
+                if (httpRequest != null) {
+                    // 获取当前Session
+                    HttpSession currentSession = httpRequest.getSession(Boolean.FALSE);
+                    if (currentSession != null && sessionId.equals(currentSession.getId())) {
+                        // 如果当前Session与要清除的Session相同，则使其失效
+                        currentSession.invalidate();
+                        // 跳过Redis Session的清除
+                        continue;
                     }
                 }
 
-                // 清除Session信息
-                if (!ObjectUtils.isEmpty(sessionIds)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Removing session with id list: {}", JsonUtils.toJson(sessionIds));
-                    }
-                    for (String sessionId : sessionIds) {
-                        HttpServletRequest httpRequest = ServletUtils.getRequest();
-                        if (httpRequest != null) {
-                            // 获取当前Session
-                            HttpSession currentSession = httpRequest.getSession(Boolean.FALSE);
-                            if (currentSession != null && sessionId.equals(currentSession.getId())) {
-                                // 如果当前Session与要清除的Session相同，则使其失效
-                                currentSession.invalidate();
-                                // 跳过Redis Session的清除
-                                continue;
-                            }
-                        }
-
-                        // 清除SessionRepository中的Session信息
-                        Session session = this.sessionRepository.findById(sessionId);
-                        if (session != null) {
-                            // 销毁Session
-                            this.sessionRepository.deleteById(sessionId);
-                        }
-                    }
+                // 清除SessionRepository中的Session信息
+                Session session = this.sessionRepository.findById(sessionId);
+                if (session != null) {
+                    // 销毁Session
+                    this.sessionRepository.deleteById(sessionId);
                 }
             }
         }

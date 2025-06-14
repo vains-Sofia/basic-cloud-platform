@@ -28,6 +28,9 @@ public class FindAuthorizationResponse implements Serializable {
     @Schema(title = "认证时使用的客户端Logo")
     private String registeredClientLogo;
 
+    @Schema(title = "认证用户id")
+    private Long principalId;
+
     @Schema(title = "认证用户名")
     private String principalName;
 

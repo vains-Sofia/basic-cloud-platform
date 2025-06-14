@@ -131,6 +131,7 @@ CREATE TABLE `oauth2_authorization`
 (
     `id`                            varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NOT NULL COMMENT '数据id',
     `registered_client_id`          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT 'oauth2授权登录时使用的客户端id',
+    `principal_id`                  bigint                                                  NULL DEFAULT NULL COMMENT 'oauth2授权登录时授权用户id',
     `principal_name`                varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT 'oauth2授权登录时授权用户名',
     `authorization_grant_type`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT 'oauth2授权登录时使用的授权模式',
     `authorized_scopes`             varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'oauth2授权登录时申请的权限',

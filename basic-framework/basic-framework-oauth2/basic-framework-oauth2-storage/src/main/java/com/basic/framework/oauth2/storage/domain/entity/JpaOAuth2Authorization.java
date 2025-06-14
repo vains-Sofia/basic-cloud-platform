@@ -36,6 +36,12 @@ public class JpaOAuth2Authorization {
     private String registeredClientId;
 
     /**
+     * 认证用户Id
+     */
+    @Column(name = "principal_id")
+    private Long principalId;
+
+    /**
      * 认证用户名
      */
     @NotNull
