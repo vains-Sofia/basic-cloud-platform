@@ -20,6 +20,10 @@ public class UserRegisterRequest implements Serializable {
     private String nickname;
 
     @NotBlank
+    @Schema(title = "账号")
+    private String username;
+
+    @NotBlank
     @Schema(title = "密码")
     private String password;
 

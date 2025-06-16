@@ -53,9 +53,8 @@ public interface SysBasicUserService {
      * 根据邮箱获取验证码
      *
      * @param email 邮箱
-     * @return 错误信息(如果有)
      */
-    String getRegisterEmailCode(@Email String email);
+    void getRegisterEmailCode(@Email String email);
 
     /**
      * 添加/修改用户信息(如果id不为空则是修改，否则是添加)

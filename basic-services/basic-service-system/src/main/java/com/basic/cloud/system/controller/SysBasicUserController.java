@@ -13,7 +13,6 @@ import com.basic.framework.core.domain.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
@@ -59,8 +58,8 @@ public class SysBasicUserController implements SysBasicUserClient {
 
     @Override
     public Result<String> getRegisterEmailCode(String email) {
-        String errorMessage = basicUserService.getRegisterEmailCode(email);
-        return ObjectUtils.isEmpty(errorMessage) ? Result.success() : Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), errorMessage);
+        basicUserService.getRegisterEmailCode(email);
+        return Result.success();
     }
 
     @Override

@@ -132,9 +132,18 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         if (exists) {
             throw new CloudIllegalArgumentException("邮箱已被注册。");
         }
+
+        // 检查账号是否已存在
+        SpecificationBuilder<SysBasicUser> usernameBuilder = new SpecificationBuilder<>();
+        usernameBuilder.eq(SysBasicUser::getUsername, request.getUsername());
+        if (basicUserRepository.exists(usernameBuilder)) {
+            throw new CloudIllegalArgumentException("账号已被注册。");
+        }
+
         // 组装用户信息
         SysBasicUser sysBasicUser = new SysBasicUser();
         sysBasicUser.setId(sequence.nextId());
+        sysBasicUser.setUsername(request.getUsername());
         sysBasicUser.setNickname(request.getNickname());
         sysBasicUser.setEmail(request.getEmail());
         sysBasicUser.setEmailVerified(Boolean.TRUE);
@@ -154,7 +163,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
     }
 
     @Override
-    public String getRegisterEmailCode(String email) {
+    public void getRegisterEmailCode(String email) {
         int randomLength = 4;
         String captcha = RandomUtils.randomNumber(randomLength);
         MailSenderRequest request = new MailSenderRequest();
@@ -167,7 +176,6 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         // 缓存验证码至redis，5分钟
         redisOperator.set(EMAIL_CAPTCHA_KEY.concat(email), captcha, (5 * 60));
         log.debug("[{}]获取验证码成功，验证码：{}.", email, captcha);
-        return null;
     }
 
     @Override
