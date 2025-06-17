@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>确认账号绑定</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .message {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #555;
+        }
+
+        .provider-info {
+            background-color: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .provider-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .provider-info p {
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .confirm-button {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .security-note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .security-note h4 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .security-note p {
+            color: #856404;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .alternative-link {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .alternative-link h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .alternative-link p {
+            font-size: 12px;
+            color: #666;
+            word-break: break-all;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px 40px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .footer .company {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .expire-notice {
+            color: #e74c3c;
+            font-weight: 600;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fdf2f2;
+            border-radius: 4px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .header, .content, .footer {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .greeting {
+                font-size: 16px;
+            }
+
+            .message {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <!-- 邮件头部 -->
+    <div class="header">
+        <h1>🔗 确认账号绑定</h1>
+        <p>账号绑定确认</p>
+    </div>
+
+    <!-- 邮件内容 -->
+    <div class="content">
+        <div class="greeting" th:text="'你好，' + ${nickname} + '！'">
+        </div>
+
+        <div class="message">
+            我们检测到你正在尝试将 <strong th:text="${accountPlatform}"></strong> 账号与你的现有账号进行绑定。为了确保账号安全，请点击下方按钮确认此次绑定操作。
+        </div>
+
+        <!-- 第三方账号信息 -->
+        <div class="provider-info">
+            <h3>🔍 绑定信息详情</h3>
+            <p><strong>第三方平台：</strong><span th:text="${accountPlatform}"></span></p>
+            <p><strong>绑定邮箱：</strong><span th:text="${email}"></span></p>
+            <p><strong>申请时间：</strong><span th:text="${requestTime}"></span></p>
+            <p><strong>IP地址：</strong><span th:text="${ipAddress}"></span></p>
+        </div>
+
+        <!-- 确认按钮 -->
+        <div class="confirm-button">
+            <a th:href="${confirmUrl}" class="btn">
+                ✅ 确认绑定账号
+            </a>
+        </div>
+
+        <!-- 过期提醒 -->
+        <div class="expire-notice" th:text="'⏰ 此确认链接将在 ' + ${expiresIn} + ' 后过期，请尽快完成确认'">
+        </div>
+
+        <!-- 安全提醒 -->
+        <div class="security-note">
+            <h4>🛡️ 安全提醒</h4>
+            <p>如果这不是你本人的操作，请忽略此邮件。你的账号仍然是安全的，未经确认的绑定申请将自动过期。</p>
+        </div>
+
+        <!-- 备用链接 -->
+        <div class="alternative-link">
+            <h4>🔗 无法点击按钮？</h4>
+            <p>请复制以下链接到浏览器中打开：</p>
+            <p th:text="${confirmUrl}"></p>
+        </div>
+
+        <div class="message" th:text="'绑定成功后，你可以使用 ' + ${companyName} + ' 账号快速登录我们的平台，享受更便捷的服务体验。'">
+        </div>
+    </div>
+
+    <!-- 邮件底部 -->
+    <div class="footer">
+        <p>此邮件由系统自动发送，请勿直接回复。</p>
+        <p>如有疑问，请联系我们的客服团队。</p>
+        <p class="company" th:text="${companyName} + '团队'"></p>
+    </div>
+</div>
+</body>
+</html>

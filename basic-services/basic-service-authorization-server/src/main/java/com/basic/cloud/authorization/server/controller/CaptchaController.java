@@ -1,6 +1,7 @@
 package com.basic.cloud.authorization.server.controller;
 
 import com.basic.cloud.authorization.server.domain.response.CaptchaResponse;
+import com.basic.framework.core.constants.PlatformConstants;
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.util.RandomUtils;
 import com.basic.framework.data.validation.annotation.Phone;
@@ -71,7 +72,7 @@ public class CaptchaController {
 
         // 发送邮件
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("(Basic cloud platform)" + mailProperties.getUsername());
+        message.setFrom("(" + PlatformConstants.PLATFORM_NAME + ")" + mailProperties.getUsername());
         message.setTo(email);
         message.setSubject("Your Verification Code");
         message.setText("Your verification code is: " + captcha);

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号绑定成功</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .account-bind-success {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            z-index: 2;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #67c23a, #85ce61);
+        }
+
+        .icon-container {
+            margin-bottom: 20px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #67c23a;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #303133;
+            margin: 20px 0 10px 0;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .success-description {
+            font-size: 16px;
+            color: #606266;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .bind-info {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            animation: fadeInUp 0.6s ease-out 0.6s both;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            color: #409eff;
+        }
+
+        .info-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #606266;
+            min-width: 70px;
+        }
+
+        .info-value {
+            color: #303133;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease-out 0.8s both;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: #409eff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #337ecc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: #f5f7fa;
+            color: #606266;
+            border: 1px solid #dcdfe6;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ecf5ff;
+            border-color: #409eff;
+            color: #409eff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .countdown-info {
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #f0f9ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            animation: fadeInUp 0.6s ease-out 1s both;
+            display: none;
+        }
+
+        .countdown-info.show {
+            display: block;
+        }
+
+        .countdown-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            color: #1d4ed8;
+            font-size: 14px;
+        }
+
+        .countdown-text svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        /* 背景装饰 */
+        .background-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .decoration-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .circle-1 {
+            width: 120px;
+            height: 120px;
+            top: 15%;
+            left: 8%;
+            animation-delay: 0s;
+        }
+
+        .circle-2 {
+            width: 180px;
+            height: 180px;
+            top: 50%;
+            right: 5%;
+            animation-delay: 2s;
+        }
+
+        .circle-3 {
+            width: 90px;
+            height: 90px;
+            bottom: 25%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+
+        .circle-4 {
+            width: 60px;
+            height: 60px;
+            top: 25%;
+            right: 25%;
+            animation-delay: 1s;
+        }
+
+        /* 动画效果 */
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .success-card {
+                padding: 30px 20px;
+            }
+
+            .success-title {
+                font-size: 24px;
+            }
+
+            .success-description {
+                font-size: 14px;
+            }
+
+            .success-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .success-icon svg {
+                width: 30px;
+                height: 30px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .bind-info {
+                padding: 15px;
+            }
+
+            .info-item {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .info-label {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .success-title {
+                font-size: 20px;
+            }
+
+            .success-description {
+                font-size: 13px;
+            }
+
+            .bind-info {
+                padding: 12px;
+            }
+
+            .info-item {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="account-bind-success">
+    <div class="success-card">
+        <!-- 成功图标 -->
+        <div class="icon-container">
+            <div class="success-icon">
+                <svg viewBox="0 0 1024 1024">
+                    <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm193.5 301.7l-210.6 292a31.8 31.8 0 0 1-51.7 0L318.5 484.9c-3.8-5.3 0-12.7 6.5-12.7h46.9c10.2 0 19.9 4.9 25.9 13.3l71.2 98.8 157.2-218c6-8.3 15.6-13.3 25.9-13.3H699c6.5 0 10.3 7.4 6.5 12.7z"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 标题 -->
+        <h2 class="success-title">账号绑定成功！</h2>
+
+        <!-- 描述信息 -->
+        <p class="success-description">
+            您的账号已成功绑定，现在可以享受更完整的服务体验。
+        </p>
+
+        <!-- 绑定信息展示 -->
+        <div class="bind-info">
+            <div class="info-item">
+                <div class="info-icon">
+                    <svg viewBox="0 0 1024 1024">
+                        <path d="M858.5 763.6a374 374 0 0 0-80.6-119.5 375.63 375.63 0 0 0-119.5-80.6c-.4-.2-.8-.3-1.2-.5C719.5 518 760 444.7 760 362c0-137-111-248-248-248S264 225 264 362c0 82.7 40.5 156 102.8 201.1-.4.2-.8.3-1.2.5-44.8 18.9-85 46-119.5 80.6a375.63 375.63 0 0 0-80.6 119.5A371.7 371.7 0 0 0 136 901.8a8 8 0 0 0 8 8.2h60c4.4 0 7.9-3.5 8-7.8 2-77.2 33-149.5 87.8-204.3 56.7-56.7 132-87.9 212.2-87.9s155.5 31.2 212.2 87.9C779 752.7 810 825 812 902.2c.1 4.4 3.6 7.8 8 7.8h60a8 8 0 0 0 8-8.2c-1-47.8-10.9-94.3-29.5-138.2zM512 534c-45.9 0-89.1-17.9-121.6-50.4S340 407.9 340 362c0-45.9 17.9-89.1 50.4-121.6S466.1 190 512 190s89.1 17.9 121.6 50.4S684 316.1 684 362c0 45.9-17.9 89.1-50.4 121.6S557.9 534 512 534z"/>
+                    </svg>
+                </div>
+                <span class="info-label">绑定账号:</span>
+                <span class="info-value" th:text="${nickname}"></span>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <svg viewBox="0 0 1024 1024">
+                        <path d="M880 184H712v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H384v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H144c-17.7 0-32 14.3-32 32v664c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V216c0-17.7-14.3-32-32-32zM648 232v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h128v120H176V232h128v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h272zm200 600H176V408h672v424z"/>
+                    </svg>
+                </div>
+                <span class="info-label">绑定时间:</span>
+                <span class="info-value" th:text="${bindTime}"></span>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="handleContinue()">
+                <svg viewBox="0 0 1024 1024">
+                    <path d="M869 487.8L491.2 159.9c-2.9-2.5-6.6-3.9-10.5-3.9h-88.5c-7.4 0-10.4 9.7-4.2 14.2l350.2 304H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h586.2L388 854.2c-6.2 4.5-3.2 14.2 4.2 14.2h88.5c3.9 0 7.6-1.4 10.5-3.9L869 536.2a32.07 32.07 0 0 0 0-48.4z"/>
+                </svg>
+                关闭页面
+            </button>
+        </div>
+
+        <!-- 自动跳转倒计时 -->
+        <div class="countdown-info" id="countdownInfo">
+            <div class="countdown-text">
+                <svg viewBox="0 0 1024 1024">
+                    <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm176.5 585.7l-28.6 39a7.99 7.99 0 0 1-11.2 1.7L483.3 569.8a7.92 7.92 0 0 1-3.3-6.5V288c0-4.4 3.6-8 8-8h48.1c4.4 0 8 3.6 8 8v247.5l142.8 103.1c3.6 2.5 4.4 7.5 1.8 11.1z"/>
+                </svg>
+                <span id="countdownText">5秒后自动跳转到主页</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 背景装饰 -->
+<div class="background-decoration">
+    <div class="decoration-circle circle-1"></div>
+    <div class="decoration-circle circle-2"></div>
+    <div class="decoration-circle circle-3"></div>
+    <div class="decoration-circle circle-4"></div>
+</div>
+
+<script>
+    // 页面配置
+    const config = {
+        bindAccount: '示例用户账号',
+        autoRedirect: false, // 设置为 true 启用自动跳转
+        redirectDelay: 5
+    };
+
+    let countdown = 0;
+    let timer = null;
+
+    // 开始倒计时
+    function startCountdown() {
+        countdown = config.redirectDelay;
+        const countdownInfo = document.getElementById('countdownInfo');
+        const countdownText = document.getElementById('countdownText');
+
+        countdownInfo.classList.add('show');
+        updateCountdownText();
+
+        timer = setInterval(() => {
+            countdown--;
+            updateCountdownText();
+
+            if (countdown <= 0) {
+                clearInterval(timer);
+                handleReturn();
+            }
+        }, 1000);
+    }
+
+    // 更新倒计时文本
+    function updateCountdownText() {
+        const countdownText = document.getElementById('countdownText');
+        countdownText.textContent = `${countdown}秒后自动跳转到主页`;
+    }
+
+    // 处理继续使用
+    function handleContinue() {
+        // 清除倒计时
+        if (timer) {
+            clearInterval(timer);
+        }
+
+        // 关闭页面逻辑
+        window.close();
+    }
+
+    // 处理返回首页
+    function handleReturn() {
+        // 清除倒计时
+        if (timer) {
+            clearInterval(timer);
+        }
+
+        // 这里可以添加跳转逻辑
+        console.log('返回首页');
+        // window.location.href = '/';
+        alert('返回首页');
+    }
+
+    // 页面加载完成后初始化
+    // document.addEventListener('DOMContentLoaded', init);
+
+    // 页面卸载时清除定时器
+    window.addEventListener('beforeunload', () => {
+        if (timer) {
+            clearInterval(timer);
+        }
+    });
+</script>
+</body>
+</html>

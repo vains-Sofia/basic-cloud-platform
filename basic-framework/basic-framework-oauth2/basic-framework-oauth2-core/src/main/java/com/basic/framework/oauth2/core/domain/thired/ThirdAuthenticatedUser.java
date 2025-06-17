@@ -2,7 +2,6 @@ package com.basic.framework.oauth2.core.domain.thired;
 
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -76,16 +75,19 @@ public class ThirdAuthenticatedUser extends DefaultAuthenticatedUser {
     private Long updatedAt;
 
     /**
-     * 三方登录获取的认证信息
+     * 三方登录获取的access token
      */
-    @JsonIgnore
-    private String credentials;
+    private String accessToken;
 
     /**
-     * 三方登录获取的认证信息的过期时间
+     * 三方登录获取的refresh token
      */
-    @JsonIgnore
-    private LocalDateTime credentialsExpiresAt;
+    private String refreshToken;
+
+    /**
+     * access_token 过期时间
+     */
+    private LocalDateTime expiresAt;
 
     /**
      * 博客地址

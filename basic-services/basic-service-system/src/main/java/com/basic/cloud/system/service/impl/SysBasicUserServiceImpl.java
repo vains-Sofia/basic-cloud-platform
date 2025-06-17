@@ -11,6 +11,7 @@ import com.basic.cloud.system.repository.SysBasicUserRepository;
 import com.basic.cloud.system.repository.SysUserRoleRepository;
 import com.basic.cloud.system.service.CommonService;
 import com.basic.cloud.system.service.SysBasicUserService;
+import com.basic.framework.core.constants.PlatformConstants;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
@@ -21,6 +22,7 @@ import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
+import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.redis.support.RedisOperator;
@@ -167,7 +169,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
         int randomLength = 4;
         String captcha = RandomUtils.randomNumber(randomLength);
         MailSenderRequest request = new MailSenderRequest();
-        request.setFrom("Basic Cloud Platform");
+        request.setFrom(PlatformConstants.PLATFORM_NAME);
         request.setSubject("注册验证码");
         request.setMailTo(Set.of(email));
         request.setContent("Your verification code is: " + captcha);
@@ -250,6 +252,11 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
     public AuthenticatedUserResponse getLoginUserinfo() {
         AuthenticatedUserResponse userResponse = new AuthenticatedUserResponse();
         AuthenticatedUser authenticatedUser = SecurityUtils.getAuthenticatedUser();
+        if (authenticatedUser instanceof ThirdAuthenticatedUser user) {
+            user.setAccessToken(null);
+            user.setRefreshToken(null);
+            user.setExpiresAt(null);
+        }
         if (authenticatedUser != null) {
             log.debug("当前登录用户信息为：{}", authenticatedUser);
             BeanUtils.copyProperties(authenticatedUser, userResponse);

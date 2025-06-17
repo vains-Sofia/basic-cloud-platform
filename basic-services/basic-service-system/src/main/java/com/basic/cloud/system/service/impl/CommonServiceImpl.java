@@ -2,6 +2,7 @@ package com.basic.cloud.system.service.impl;
 
 import com.basic.cloud.system.api.domain.request.MailSenderRequest;
 import com.basic.cloud.system.service.CommonService;
+import com.basic.framework.core.constants.PlatformConstants;
 import com.basic.framework.core.exception.CloudServiceException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class CommonServiceImpl implements CommonService {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, hasMultipart, StandardCharsets.UTF_8.name());
 
             // 发送人
-            String from = ObjectUtils.isEmpty(request.getFrom()) ? "Basic Cloud Platform" : request.getFrom();
+            String from = ObjectUtils.isEmpty(request.getFrom()) ? PlatformConstants.PLATFORM_NAME : request.getFrom();
             mimeMessageHelper.setFrom(from + "<" + mailProperties.getUsername() + ">");
             // 收件人
             mimeMessageHelper.setTo(request.getMailTo().toArray(new String[0]));

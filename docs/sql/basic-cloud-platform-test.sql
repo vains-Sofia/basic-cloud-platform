@@ -482,4 +482,32 @@ CREATE TABLE `sys_user_role`
 INSERT INTO `sys_user_role`
 VALUES (1, 1, 1, 1, 1, '云逸', '云逸', '2024-11-25 17:39:25', '2024-11-25 17:39:25');
 
+-- ----------------------------
+-- Table structure for sys_third_user_bind
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_third_user_bind`;
+CREATE TABLE `sys_third_user_bind`
+(
+    `id`               bigint                                                 NOT NULL COMMENT '主键',
+    `user_id`          bigint                                                 NOT NULL COMMENT '本地系统用户ID',
+    `provider`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '第三方平台标识（如 github/gitee/wechat）',
+    `provider_user_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '第三方用户唯一标识（如 openid 或 user_id）',
+    `email`            varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '第三方用户邮箱，用于绑定校验',
+    `access_token`     text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin         NULL COMMENT '第三方登录时的 access token（可选存储）',
+    `refresh_token`    text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin         NULL COMMENT '第三方 refresh token（可选）',
+    `expires_at`       datetime                                               NULL DEFAULT NULL COMMENT 'access_token 过期时间',
+    `bind_status`      tinyint(1)                                             NULL DEFAULT 0 COMMENT '绑定状态：0-待确认/1-已绑定',
+    `bind_time`        datetime                                               NULL DEFAULT CURRENT_TIMESTAMP COMMENT '绑定时间',
+    `confirm_token`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用于邮箱绑定确认的 token',
+    `token_expires_at` datetime                                               NULL DEFAULT NULL COMMENT '确认token有效期',
+    `create_time`      datetime                                               NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`      datetime                                               NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `idx_user_id` (`user_id` ASC) USING BTREE,
+    INDEX `idx_email` (`email` ASC) USING BTREE
+) ENGINE = InnoDB
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT = '第三方账号绑定表'
+  ROW_FORMAT = Dynamic;
+
 SET FOREIGN_KEY_CHECKS = 1;

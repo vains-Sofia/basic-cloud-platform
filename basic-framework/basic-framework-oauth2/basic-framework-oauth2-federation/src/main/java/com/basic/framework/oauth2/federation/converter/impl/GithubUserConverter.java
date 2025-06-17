@@ -4,6 +4,7 @@ import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
+import com.basic.framework.oauth2.federation.util.GithubApiHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -30,7 +31,6 @@ public class GithubUserConverter implements OAuth2UserConverter {
         // 转换至 统一用户信息类中
         // 转换至 统一用户信息类中
         authenticatedUser.setNickname(oAuth2User.getName());
-        authenticatedUser.setEmail(attributes.get("email") + "");
         authenticatedUser.setSub(String.valueOf(attributes.get("login")));
         authenticatedUser.setBlog(attributes.get("blog") + "");
         authenticatedUser.setProfile(attributes.get("html_url") + "");
@@ -46,13 +46,17 @@ public class GithubUserConverter implements OAuth2UserConverter {
             long updateAt = instant.getEpochSecond();
             authenticatedUser.setUpdatedAt(updateAt);
         } catch (Exception e) {
-            log.debug("Gitee用户信息最后修改时间解析失败，{}", e.getMessage());
+            log.debug("Github用户信息最后修改时间解析失败，{}", e.getMessage());
         }
 
         authenticatedUser.setAttributes(attributes);
 
         // 设置三方access token信息
         setThirdAccessTokenInfo(authenticatedUser, attributes);
+
+        // 获取用户的主邮箱
+        String primaryEmail = GithubApiHelper.fetchPrimaryEmail(authenticatedUser.getAccessToken());
+        authenticatedUser.setEmail(primaryEmail);
         return authenticatedUser;
     }
 }

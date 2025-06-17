@@ -31,12 +31,12 @@ public interface OAuth2UserConverter extends Converter<OAuth2User, Authenticated
         Object accessTokenObj = attributes.get(OAUTH2_ACCESS_TOKEN);
         if (accessTokenObj instanceof OAuth2AccessToken accessToken) {
             // 设置token
-            authenticatedUser.setCredentials(accessToken.getTokenValue());
+            authenticatedUser.setAccessToken(accessToken.getTokenValue());
             Instant expiresAt = accessToken.getExpiresAt();
             if (expiresAt != null) {
                 LocalDateTime tokenExpiresAt = expiresAt.atZone(ZoneId.of("UTC")).toLocalDateTime();
                 // token过期时间
-                authenticatedUser.setCredentialsExpiresAt(tokenExpiresAt);
+                authenticatedUser.setExpiresAt(tokenExpiresAt);
             }
         }
     }
