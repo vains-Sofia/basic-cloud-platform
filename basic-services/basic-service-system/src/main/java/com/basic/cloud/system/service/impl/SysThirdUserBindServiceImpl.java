@@ -137,6 +137,7 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
 
     @Override
     public void registerBasicUser(ThirdAuthenticatedUser thirdUser) {
+        log.info("三方登录获取到的邮箱为：{}", thirdUser.getEmail());
         SysBasicUser sysBasicUser = new SysBasicUser();
         sysBasicUser.setId(sequence.nextId());
         sysBasicUser.setUsername(thirdUser.getSub());
@@ -165,6 +166,9 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
         UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
                 .authenticated(authenticatedUser, sysBasicUser.getPassword(), null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        log.info("基础用户信息中的邮箱为：{}", sysBasicUser.getEmail());
+        log.info("注册三方用户信息：{}", sysBasicUser);
         basicUserRepository.save(sysBasicUser);
     }
 
