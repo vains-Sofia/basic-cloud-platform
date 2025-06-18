@@ -13,6 +13,7 @@ import com.basic.cloud.system.service.CommonService;
 import com.basic.cloud.system.service.SysThirdUserBindService;
 import com.basic.framework.core.constants.DateFormatConstants;
 import com.basic.framework.core.constants.PlatformConstants;
+import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.core.util.JsonUtils;
 import com.basic.framework.core.util.Sequence;
@@ -211,42 +212,52 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ConfirmSuccessTemplate confirm(String confirmToken) {
-        SysThirdUserBind thirdUserBind = thirdUserBindRepository.findByConfirmToken(confirmToken)
-                .orElseThrow(() -> new CloudServiceException("无效或已失效的绑定请求"));
+        try {
+            SysThirdUserBind thirdUserBind = thirdUserBindRepository.findByConfirmToken(confirmToken)
+                    .orElseThrow(() -> new CloudServiceException("无效或已失效的绑定请求"));
 
-        if (BindStatusEnum.BOUND.equals(thirdUserBind.getBindStatus())) {
-            throw new CloudServiceException("该绑定请求已被确认，请勿重复操作");
+            if (BindStatusEnum.BOUND.equals(thirdUserBind.getBindStatus())) {
+                throw new CloudServiceException("该绑定请求已被确认，请勿重复操作");
+            }
+
+            if (thirdUserBind.getTokenExpiresAt() == null || thirdUserBind.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+                throw new CloudIllegalArgumentException("绑定请求已过期");
+            }
+
+            // 检查该 provider_user_id 是否已绑定其他用户（防止多绑定）
+            boolean exists = thirdUserBindRepository.existsByProviderAndProviderUserIdAndBindStatus(
+                    thirdUserBind.getProvider(), thirdUserBind.getProviderUserId(), BindStatusEnum.BOUND
+            );
+            if (exists) {
+                throw new CloudServiceException("该三方账号已被其他用户绑定，请使用其他账号进行绑定");
+            }
+
+            // 更新状态为已绑定
+            thirdUserBind.setBindStatus(BindStatusEnum.BOUND);
+            thirdUserBind.setConfirmToken(null);
+            thirdUserBind.setTokenExpiresAt(null);
+            thirdUserBind.setBindTime(LocalDateTime.now());
+            thirdUserBind.setUpdateTime(LocalDateTime.now());
+            thirdUserBindRepository.save(thirdUserBind);
+
+            SysBasicUser basicUserOpt = basicUserRepository.findById(thirdUserBind.getUserId())
+                    .orElseThrow(() -> new CloudServiceException("绑定用户不存在"));
+
+            // 返回绑定成功模板数据
+            return ConfirmSuccessTemplate.builder()
+                    .success(true)
+                    .nickname(basicUserOpt.getNickname())
+                    .bindTime(thirdUserBind.getBindTime().format(DateTimeFormatter.ofPattern(DateFormatConstants.DEFAULT_DATE_TIME_FORMAT)))
+                    .build();
+        } catch (Exception e) {
+            log.error("确认绑定失败，原因：{}", e.getMessage(), e);
+            return ConfirmSuccessTemplate.builder()
+                    .success(false)
+                    .cause(e.getMessage())
+                    .build();
         }
-
-        if (thirdUserBind.getTokenExpiresAt() == null || thirdUserBind.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("绑定请求已过期");
-        }
-
-        // 检查该 provider_user_id 是否已绑定其他用户（防止多绑定）
-        boolean exists = thirdUserBindRepository.existsByProviderAndProviderUserIdAndBindStatus(
-                thirdUserBind.getProvider(), thirdUserBind.getProviderUserId(), BindStatusEnum.BOUND
-        );
-        if (exists) {
-            throw new CloudServiceException("该三方账号已被其他用户绑定，请使用其他账号进行绑定");
-        }
-
-        // 更新状态为已绑定
-        thirdUserBind.setBindStatus(BindStatusEnum.BOUND);
-        thirdUserBind.setConfirmToken(null);
-        thirdUserBind.setTokenExpiresAt(null);
-        thirdUserBind.setBindTime(LocalDateTime.now());
-        thirdUserBind.setUpdateTime(LocalDateTime.now());
-        thirdUserBindRepository.save(thirdUserBind);
-
-        SysBasicUser basicUser = basicUserRepository.findById(thirdUserBind.getUserId())
-                .orElseThrow(() -> new CloudServiceException("绑定用户不存在"));
-
-        // 返回绑定成功模板数据
-        return ConfirmSuccessTemplate.builder()
-                .nickname(basicUser.getNickname())
-                .bindTime(thirdUserBind.getBindTime().format(DateTimeFormatter.ofPattern(DateFormatConstants.DEFAULT_DATE_TIME_FORMAT)))
-                .build();
     }
 
     /**

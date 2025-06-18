@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>账号绑定成功</title>
+    <title th:text="${success} ? '账号绑定成功' : '账号绑定失败'">账号绑定结果</title>
     <style>
         * {
             margin: 0;
@@ -21,14 +21,14 @@
             padding: 20px;
         }
 
-        .account-bind-success {
+        .account-bind-result {
             position: relative;
             width: 100%;
             max-width: 520px;
             z-index: 2;
         }
 
-        .success-card {
+        .result-card {
             background: white;
             border-radius: 20px;
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
@@ -38,7 +38,7 @@
             overflow: hidden;
         }
 
-        .success-card::before {
+        .result-card.success::before {
             content: '';
             position: absolute;
             top: 0;
@@ -48,14 +48,23 @@
             background: linear-gradient(90deg, #67c23a, #85ce61);
         }
 
+        .result-card.error::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f56c6c, #f78989);
+        }
+
         .icon-container {
             margin-bottom: 20px;
         }
 
-        .success-icon {
+        .result-icon {
             width: 80px;
             height: 80px;
-            background: #67c23a;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
@@ -63,13 +72,21 @@
             animation: scaleIn 0.5s ease-out;
         }
 
-        .success-icon svg {
+        .result-icon.success {
+            background: #67c23a;
+        }
+
+        .result-icon.error {
+            background: #f56c6c;
+        }
+
+        .result-icon svg {
             width: 40px;
             height: 40px;
             fill: white;
         }
 
-        .success-title {
+        .result-title {
             font-size: 28px;
             font-weight: 600;
             color: #303133;
@@ -77,7 +94,7 @@
             animation: fadeInUp 0.6s ease-out 0.2s both;
         }
 
-        .success-description {
+        .result-description {
             font-size: 16px;
             color: #606266;
             margin-bottom: 30px;
@@ -87,6 +104,16 @@
 
         .bind-info {
             background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            animation: fadeInUp 0.6s ease-out 0.6s both;
+        }
+
+        .error-info {
+            background-color: #fef0f0;
+            border: 1px solid #fbc4c4;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 30px;
@@ -111,7 +138,13 @@
             color: #409eff;
         }
 
-        .info-icon svg {
+        .error-icon {
+            width: 16px;
+            height: 16px;
+            color: #f56c6c;
+        }
+
+        .info-icon svg, .error-icon svg {
             width: 100%;
             height: 100%;
             fill: currentColor;
@@ -123,9 +156,21 @@
             min-width: 70px;
         }
 
+        .error-label {
+            font-weight: 500;
+            color: #f56c6c;
+            min-width: 70px;
+        }
+
         .info-value {
             color: #303133;
             font-weight: 500;
+        }
+
+        .error-value {
+            color: #f56c6c;
+            font-weight: 500;
+            line-height: 1.5;
         }
 
         .action-buttons {
@@ -173,6 +218,17 @@
             color: #409eff;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-danger {
+            background-color: #f56c6c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #f45454;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 108, 108, 0.4);
         }
 
         .btn svg {
@@ -299,24 +355,24 @@
                 padding: 10px;
             }
 
-            .success-card {
+            .result-card {
                 padding: 30px 20px;
             }
 
-            .success-title {
+            .result-title {
                 font-size: 24px;
             }
 
-            .success-description {
+            .result-description {
                 font-size: 14px;
             }
 
-            .success-icon {
+            .result-icon {
                 width: 60px;
                 height: 60px;
             }
 
-            .success-icon svg {
+            .result-icon svg {
                 width: 30px;
                 height: 30px;
             }
@@ -331,7 +387,7 @@
                 justify-content: center;
             }
 
-            .bind-info {
+            .bind-info, .error-info {
                 padding: 15px;
             }
 
@@ -340,21 +396,21 @@
                 gap: 5px;
             }
 
-            .info-label {
+            .info-label, .error-label {
                 min-width: auto;
             }
         }
 
         @media (max-width: 480px) {
-            .success-title {
+            .result-title {
                 font-size: 20px;
             }
 
-            .success-description {
+            .result-description {
                 font-size: 13px;
             }
 
-            .bind-info {
+            .bind-info, .error-info {
                 padding: 12px;
             }
 
@@ -365,27 +421,34 @@
     </style>
 </head>
 <body>
-<div class="account-bind-success">
-    <div class="success-card">
-        <!-- 成功图标 -->
+<div class="account-bind-result">
+    <div class="result-card" th:class="${success} ? 'result-card success' : 'result-card error'">
+        <!-- 结果图标 -->
         <div class="icon-container">
-            <div class="success-icon">
+            <!-- 成功图标 -->
+            <div th:if="${success}" class="result-icon success">
                 <svg viewBox="0 0 1024 1024">
                     <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm193.5 301.7l-210.6 292a31.8 31.8 0 0 1-51.7 0L318.5 484.9c-3.8-5.3 0-12.7 6.5-12.7h46.9c10.2 0 19.9 4.9 25.9 13.3l71.2 98.8 157.2-218c6-8.3 15.6-13.3 25.9-13.3H699c6.5 0 10.3 7.4 6.5 12.7z"/>
+                </svg>
+            </div>
+            <!-- 失败图标 -->
+            <div th:unless="${success}" class="result-icon error">
+                <svg viewBox="0 0 1024 1024">
+                    <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 0 1-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z"/>
                 </svg>
             </div>
         </div>
 
         <!-- 标题 -->
-        <h2 class="success-title">账号绑定成功！</h2>
+        <h2 class="result-title" th:text="${success} ? '账号绑定成功！' : '账号绑定失败！'">结果标题</h2>
 
         <!-- 描述信息 -->
-        <p class="success-description">
-            您的账号已成功绑定，现在可以享受更完整的服务体验。
+        <p class="result-description" th:text="${success} ? '您的账号已成功绑定，现在可以享受更完整的服务体验。' : '很抱歉，账号绑定过程中出现了问题，请稍后重试或联系客服。'">
+            结果描述
         </p>
 
-        <!-- 绑定信息展示 -->
-        <div class="bind-info">
+        <!-- 成功信息展示 -->
+        <div th:if="${success}" class="bind-info">
             <div class="info-item">
                 <div class="info-icon">
                     <svg viewBox="0 0 1024 1024">
@@ -393,7 +456,7 @@
                     </svg>
                 </div>
                 <span class="info-label">绑定账号:</span>
-                <span class="info-value" th:text="${nickname}"></span>
+                <span class="info-value" th:text="${nickname}">示例用户账号</span>
             </div>
             <div class="info-item">
                 <div class="info-icon">
@@ -402,22 +465,47 @@
                     </svg>
                 </div>
                 <span class="info-label">绑定时间:</span>
-                <span class="info-value" th:text="${bindTime}"></span>
+                <span class="info-value" th:text="${bindTime}">2024-01-01 12:00:00</span>
+            </div>
+        </div>
+
+        <!-- 失败信息展示 -->
+        <div th:unless="${success}" class="error-info">
+            <div class="info-item">
+                <div class="error-icon">
+                    <svg viewBox="0 0 1024 1024">
+                        <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm-32 232c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V296zm32 440a48.01 48.01 0 0 1 0-96 48.01 48.01 0 0 1 0 96z"/>
+                    </svg>
+                </div>
+                <span class="error-label">失败原因:</span>
+                <span class="error-value" th:text="${cause}">未知错误</span>
             </div>
         </div>
 
         <!-- 操作按钮 -->
         <div class="action-buttons">
-            <button class="btn btn-primary" onclick="handleContinue()">
-                <svg viewBox="0 0 1024 1024">
-                    <path d="M869 487.8L491.2 159.9c-2.9-2.5-6.6-3.9-10.5-3.9h-88.5c-7.4 0-10.4 9.7-4.2 14.2l350.2 304H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h586.2L388 854.2c-6.2 4.5-3.2 14.2 4.2 14.2h88.5c3.9 0 7.6-1.4 10.5-3.9L869 536.2a32.07 32.07 0 0 0 0-48.4z"/>
-                </svg>
-                关闭页面
-            </button>
+            <!-- 成功状态按钮 -->
+            <div th:if="${success}">
+                <button class="btn btn-primary" onclick="handleContinue()">
+                    <svg viewBox="0 0 1024 1024">
+                        <path d="M869 487.8L491.2 159.9c-2.9-2.5-6.6-3.9-10.5-3.9h-88.5c-7.4 0-10.4 9.7-4.2 14.2l350.2 304H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h586.2L388 854.2c-6.2 4.5-3.2 14.2 4.2 14.2h88.5c3.9 0 7.6-1.4 10.5-3.9L869 536.2a32.07 32.07 0 0 0 0-48.4z"/>
+                    </svg>
+                    关闭页面
+                </button>
+            </div>
+            <!-- 失败状态按钮 -->
+            <div th:unless="${success}">
+                <button class="btn btn-danger" onclick="handleRetry()">
+                    <svg viewBox="0 0 1024 1024">
+                        <path d="M909.1 209.3l-56.4 44.1C775.8 155.1 656.2 92 521.9 92 290 92 102.3 279.5 102 511.5 101.7 743.7 289.8 932 521.9 932c181.3 0 335.8-115 394.6-276.1 1.5-4.2-.7-8.9-4.9-10.3l-41.6-15.3c-4.2-1.5-8.9.7-10.3 4.9C810.2 726.6 680.3 820 521.9 820c-179.9 0-326.2-146.0-326.2-325.8C195.7 314.2 342.1 168 521.9 168c85.5 0 162.7 33.2 220.8 87.1L690.4 307c-4.2 4.4-1.5 11.7 4.6 11.7h204.6c4.4 0 8-3.6 8-8V106.3c0-6.1-7.3-8.8-11.5-4.4z"/>
+                    </svg>
+                    重 试
+                </button>
+            </div>
         </div>
 
-        <!-- 自动跳转倒计时 -->
-        <div class="countdown-info" id="countdownInfo">
+        <!-- 自动跳转倒计时（仅成功时显示） -->
+        <div th:if="${success}" class="countdown-info" id="countdownInfo">
             <div class="countdown-text">
                 <svg viewBox="0 0 1024 1024">
                     <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm176.5 585.7l-28.6 39a7.99 7.99 0 0 1-11.2 1.7L483.3 569.8a7.92 7.92 0 0 1-3.3-6.5V288c0-4.4 3.6-8 8-8h48.1c4.4 0 8 3.6 8 8v247.5l142.8 103.1c3.6 2.5 4.4 7.5 1.8 11.1z"/>
@@ -439,41 +527,48 @@
 <script>
     // 页面配置
     const config = {
-        bindAccount: '示例用户账号',
-        autoRedirect: false, // 设置为 true 启用自动跳转
+        autoRedirect: false, // 设置为 true 启用自动跳转（仅成功时）
         redirectDelay: 5
     };
 
     let countdown = 0;
     let timer = null;
 
-    // 开始倒计时
+    // 开始倒计时（仅成功时）
     function startCountdown() {
+        // 检查是否为成功状态
+        const isSuccess = document.querySelector('.result-card.success') !== null;
+        if (!isSuccess) return;
+
         countdown = config.redirectDelay;
         const countdownInfo = document.getElementById('countdownInfo');
         const countdownText = document.getElementById('countdownText');
 
-        countdownInfo.classList.add('show');
-        updateCountdownText();
-
-        timer = setInterval(() => {
-            countdown--;
+        if (countdownInfo && countdownText) {
+            countdownInfo.classList.add('show');
             updateCountdownText();
 
-            if (countdown <= 0) {
-                clearInterval(timer);
-                handleReturn();
-            }
-        }, 1000);
+            timer = setInterval(() => {
+                countdown--;
+                updateCountdownText();
+
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    handleReturn();
+                }
+            }, 1000);
+        }
     }
 
     // 更新倒计时文本
     function updateCountdownText() {
         const countdownText = document.getElementById('countdownText');
-        countdownText.textContent = `${countdown}秒后自动跳转到主页`;
+        if (countdownText) {
+            countdownText.textContent = `${countdown}秒后自动跳转到主页`;
+        }
     }
 
-    // 处理继续使用
+    // 处理继续使用（成功状态）
     function handleContinue() {
         // 清除倒计时
         if (timer) {
@@ -481,10 +576,33 @@
         }
 
         // 关闭页面逻辑
-        window.close();
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.close();
+        }
     }
 
-    // 处理返回首页
+    // 处理重新绑定（失败状态）
+    function handleRetry() {
+        // 这里可以添加重新绑定的逻辑
+        window.reload();
+        // window.location.href = '/bind';
+    }
+
+    // 处理返回上页（失败状态）
+    function handleBack() {
+        // 返回上一页
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // 如果没有上一页，可以跳转到首页
+            console.log('返回首页');
+            // window.location.href = '/';
+        }
+    }
+
+    // 处理返回首页（成功状态自动跳转）
     function handleReturn() {
         // 清除倒计时
         if (timer) {
@@ -498,10 +616,15 @@
     }
 
     // 页面加载完成后初始化
-    // document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function() {
+        // 如果启用自动跳转且为成功状态，则开始倒计时
+        if (config.autoRedirect) {
+            startCountdown();
+        }
+    });
 
     // 页面卸载时清除定时器
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener('beforeunload', function() {
         if (timer) {
             clearInterval(timer);
         }

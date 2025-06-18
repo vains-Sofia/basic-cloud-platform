@@ -24,4 +24,14 @@ public class ConfirmSuccessTemplate implements Serializable {
      */
     private String bindTime;
 
+    /**
+     * 是否成功
+     */
+    private Boolean success;
+
+    /**
+     * 失败原因
+     */
+    private String cause;
+
 }
