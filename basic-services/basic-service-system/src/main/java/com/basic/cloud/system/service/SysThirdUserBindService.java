@@ -22,8 +22,9 @@ public interface SysThirdUserBindService {
      * 根据三方用户信息自动生成用户信息
      *
      * @param thirdUser 三方用户
+     * @return 用户id
      */
-    void registerBasicUser(ThirdAuthenticatedUser thirdUser);
+    Long registerBasicUser(ThirdAuthenticatedUser thirdUser);
 
     /**
      * 发送绑定确认消息

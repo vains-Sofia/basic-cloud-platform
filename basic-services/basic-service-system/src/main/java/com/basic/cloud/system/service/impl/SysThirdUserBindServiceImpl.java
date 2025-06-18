@@ -104,22 +104,23 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
             return CheckBindingStatusEnum.NON_EMAIL;
         }
 
+        SysThirdUserBind thirdUserBind = new SysThirdUserBind();
+        thirdUserBind.setId(sequence.nextId());
+        thirdUserBind.setProvider(thirdUser.getAccountPlatform());
+        thirdUserBind.setProviderUserId(userId);
+        thirdUserBind.setEmail(thirdUser.getEmail());
+        thirdUserBind.setAccessToken(thirdUser.getAccessToken());
+        thirdUserBind.setConfirmToken(UUID.randomUUID().toString());
+        thirdUserBind.setTokenExpiresAt(LocalDateTime.now().plusMinutes(30));
+        thirdUserBind.setCreateTime(LocalDateTime.now());
+        thirdUserBind.setUpdateTime(LocalDateTime.now());
+
         // 检查是否有相同邮箱的本地账号
         Optional<SysBasicUser> existingUser = basicUserRepository.findByEmail(thirdUser.getEmail());
         if (existingUser.isPresent()) {
             // 创建待绑定记录 + 发送确认邮件
-            SysThirdUserBind thirdUserBind = new SysThirdUserBind();
-            thirdUserBind.setId(sequence.nextId());
             thirdUserBind.setUserId(existingUser.get().getId());
-            thirdUserBind.setProvider(thirdUser.getAccountPlatform());
-            thirdUserBind.setProviderUserId(userId);
-            thirdUserBind.setEmail(thirdUser.getEmail());
-            thirdUserBind.setAccessToken(thirdUser.getAccessToken());
             thirdUserBind.setBindStatus(BindStatusEnum.PENDING_CONFIRMATION);
-            thirdUserBind.setConfirmToken(UUID.randomUUID().toString());
-            thirdUserBind.setTokenExpiresAt(LocalDateTime.now().plusMinutes(30));
-            thirdUserBind.setCreateTime(LocalDateTime.now());
-            thirdUserBind.setUpdateTime(LocalDateTime.now());
             thirdUserBindRepository.save(thirdUserBind);
 
             // 发送邮件
@@ -130,13 +131,20 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
         }
 
         // 创建新用户并绑定
-        this.registerBasicUser(thirdUser);
+        Long basicUserId = this.registerBasicUser(thirdUser);
 
+        // 创建绑定记录
+        thirdUserBind.setUserId(basicUserId);
+        thirdUserBind.setBindStatus(BindStatusEnum.BOUND);
+        thirdUserBind.setBindTime(LocalDateTime.now());
+        thirdUserBind.setConfirmToken(null);
+        thirdUserBind.setTokenExpiresAt(null);
+        thirdUserBindRepository.save(thirdUserBind);
         return CheckBindingStatusEnum.NEW_CREATED;
     }
 
     @Override
-    public void registerBasicUser(ThirdAuthenticatedUser thirdUser) {
+    public Long registerBasicUser(ThirdAuthenticatedUser thirdUser) {
         SysBasicUser sysBasicUser = new SysBasicUser();
         sysBasicUser.setId(sequence.nextId());
         sysBasicUser.setUsername(thirdUser.getSub());
@@ -167,6 +175,8 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         basicUserRepository.save(sysBasicUser);
+
+        return sysBasicUser.getId();
     }
 
     @Override
