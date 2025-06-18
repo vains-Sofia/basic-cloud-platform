@@ -4,13 +4,16 @@ import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
+import com.basic.framework.oauth2.federation.util.GiteeApiHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 转换通过码云登录的用户信息
@@ -37,6 +40,10 @@ public class GiteeUserConverter implements OAuth2UserConverter {
         authenticatedUser.setProfile(attributes.get("html_url") + "");
         authenticatedUser.setPicture(attributes.get("avatar_url") + "");
         authenticatedUser.setEmail(attributes.get("email") + "");
+        if (Objects.equals(authenticatedUser.getEmail(), "null")) {
+            // 不知道为什么会出现 email 为 "null" 的情况...
+            authenticatedUser.setEmail(null);
+        }
 
         // 解析修改时间
         try {
@@ -55,6 +62,13 @@ public class GiteeUserConverter implements OAuth2UserConverter {
 
         // 设置三方access token信息
         setThirdAccessTokenInfo(authenticatedUser, attributes);
+        // 如果用户没有公开邮箱，则尝试通过 Gitee API 获取主邮箱
+        if (ObjectUtils.isEmpty(authenticatedUser.getEmail())) {
+            String primaryEmail = GiteeApiHelper.fetchPrimaryEmail(authenticatedUser.getAccessToken());
+            if (!ObjectUtils.isEmpty(primaryEmail)) {
+                authenticatedUser.setEmail(primaryEmail);
+            }
+        }
         return authenticatedUser;
     }
 }

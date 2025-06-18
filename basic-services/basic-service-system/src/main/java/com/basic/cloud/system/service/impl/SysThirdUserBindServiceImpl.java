@@ -72,8 +72,6 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
             throw new CloudServiceException("当前用户不是三方登录用户，无法进行绑定检查");
         }
 
-        log.info("三方用户信息邮箱：{}", thirdUser.getEmail());
-
         // 检查绑定记录
         String userId = thirdUser.getId() == null ? thirdUser.getSub() : thirdUser.getId() + "";
         Optional<SysThirdUserBind> userBindOpt = thirdUserBindRepository.findByProviderAndProviderUserId(thirdUser.getAccountPlatform(), userId);
@@ -105,8 +103,6 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
             }
             return CheckBindingStatusEnum.NON_EMAIL;
         }
-
-        log.info("三方用户信息邮箱：{}，检查绑定", thirdUser.getEmail());
 
         // 检查是否有相同邮箱的本地账号
         Optional<SysBasicUser> existingUser = basicUserRepository.findByEmail(thirdUser.getEmail());
@@ -141,7 +137,6 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
 
     @Override
     public void registerBasicUser(ThirdAuthenticatedUser thirdUser) {
-        log.info("三方登录获取到的邮箱为：{}", thirdUser.getEmail());
         SysBasicUser sysBasicUser = new SysBasicUser();
         sysBasicUser.setId(sequence.nextId());
         sysBasicUser.setUsername(thirdUser.getSub());
@@ -171,8 +166,6 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
                 .authenticated(authenticatedUser, sysBasicUser.getPassword(), null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-        log.info("基础用户信息中的邮箱为：{}", sysBasicUser.getEmail());
-        log.info("注册三方用户信息：{}", sysBasicUser);
         basicUserRepository.save(sysBasicUser);
     }
 
