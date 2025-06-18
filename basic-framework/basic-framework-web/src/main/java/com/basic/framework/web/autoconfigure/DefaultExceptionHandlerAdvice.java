@@ -65,20 +65,20 @@ public class DefaultExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public Result<String> handleNotSupportedHttpMethodException(HttpRequestMethodNotSupportedException e) {
-        log.warn("Method not allowed, {}.", e.getMessage());
+        log.error("Method not allowed, {}.", e.getMessage(), e);
         return Result.error(HttpStatus.METHOD_NOT_ALLOWED.value(), e.getMessage());
     }
 
     /**
-     * media type not support
+     * media type doesn't support
      *
-     * @param e media type not support 异常
+     * @param e media type doesn't support 异常
      * @return 统一响应类
      */
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(value = HttpMediaTypeNotSupportedException.class)
     public Result<String> handleNotSupportedHttpMethodException(HttpMediaTypeNotSupportedException e) {
-        log.warn("Unsupported Media Type, {}.", e.getMessage());
+        log.error("Unsupported Media Type, {}.", e.getMessage(), e);
         return Result.error(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), e.getMessage());
     }
 
@@ -104,7 +104,7 @@ public class DefaultExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CloudIllegalArgumentException.class)
     public Result<String> badRequestCloudException(CloudIllegalArgumentException e) {
-        log.warn("Cloud illegal or inappropriate argument, {}.", e.getMessage());
+        log.error("Cloud illegal or inappropriate argument, {}.", e.getMessage(), e);
         return Result.error(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
@@ -117,7 +117,7 @@ public class DefaultExceptionHandlerAdvice {
     @ExceptionHandler(CloudServiceException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<String> cloudServiceException(CloudServiceException e) {
-        log.warn("Cloud service exception, {}.", e.getMessage());
+        log.error("Cloud service exception, {}.", e.getMessage(), e);
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
 
@@ -146,7 +146,7 @@ public class DefaultExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<String> exception(Exception e,
                                     HttpServletRequest request) {
-        log.warn("Request [{}] error, Other exception, {}", request.getRequestURI(), e.getMessage());
+        log.error("Request [{}] error, Other exception, {}", request.getRequestURI(), e.getMessage(), e);
         return Result.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
 

@@ -36,7 +36,7 @@ public class ValidationExceptionAdvice {
     public Result<String> methodArgumentNotValidException(HttpServletRequest request,
                                                           MethodArgumentNotValidException e) {
         String errors = ValidationExceptionResolver.resolveFiledErrors(e.getBindingResult().getFieldErrors());
-        log.warn("请求[{}]异常，Bean入参校验失败：{}", request.getRequestURI(), errors);
+        log.error("请求[{}]异常，Bean入参校验失败：{}", request.getRequestURI(), errors, e);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 
@@ -51,7 +51,7 @@ public class ValidationExceptionAdvice {
     public Result<String> bindException(BindException e,
                                         HttpServletRequest request) {
         String errors = ValidationExceptionResolver.resolveFiledErrors(e.getFieldErrors());
-        log.warn("请求[{}]异常，Form参数校验失败：{}", request.getRequestURI(), errors);
+        log.error("请求[{}]异常，Form参数校验失败：{}", request.getRequestURI(), errors, e);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 
@@ -67,7 +67,7 @@ public class ValidationExceptionAdvice {
                                                           ConstraintViolationException e) {
         String errors = ValidationExceptionResolver.resolveConstraintViolations(e);
 
-        log.warn("请求[{}]异常，接口非Bean参数校验失败：{}", request.getRequestURI(), errors);
+        log.error("请求[{}]异常，接口非Bean参数校验失败：{}", request.getRequestURI(), errors, e);
 
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
@@ -86,7 +86,7 @@ public class ValidationExceptionAdvice {
         List<? extends MessageSourceResolvable> allErrors = e.getAllErrors();
         String errors = ValidationExceptionResolver.resolveMessageErrors(allErrors);
 
-        log.warn("请求[{}]异常，参数校验失败：{}", request.getRequestURI(), errors);
+        log.error("请求[{}]异常，参数校验失败：{}", request.getRequestURI(), errors, e);
         return Result.error(HttpStatus.BAD_REQUEST.value(), errors);
     }
 
