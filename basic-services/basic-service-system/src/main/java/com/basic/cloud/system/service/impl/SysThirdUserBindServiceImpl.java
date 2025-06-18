@@ -72,6 +72,8 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
             throw new CloudServiceException("当前用户不是三方登录用户，无法进行绑定检查");
         }
 
+        log.info("三方用户信息邮箱：{}", thirdUser.getEmail());
+
         // 检查绑定记录
         String userId = thirdUser.getId() == null ? thirdUser.getSub() : thirdUser.getId() + "";
         Optional<SysThirdUserBind> userBindOpt = thirdUserBindRepository.findByProviderAndProviderUserId(thirdUser.getAccountPlatform(), userId);
@@ -103,6 +105,8 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
             }
             return CheckBindingStatusEnum.NON_EMAIL;
         }
+
+        log.info("三方用户信息邮箱：{}，检查绑定", thirdUser.getEmail());
 
         // 检查是否有相同邮箱的本地账号
         Optional<SysBasicUser> existingUser = basicUserRepository.findByEmail(thirdUser.getEmail());
