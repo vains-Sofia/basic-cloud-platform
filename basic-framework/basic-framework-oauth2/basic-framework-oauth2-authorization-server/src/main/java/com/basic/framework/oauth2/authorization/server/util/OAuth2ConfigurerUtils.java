@@ -109,8 +109,8 @@ public class OAuth2ConfigurerUtils {
                 OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer = getAccessTokenCustomizer(httpSecurity);
                 ResolvableType type = ResolvableType.forClassWithGenerics(RedisOperator.class, AuthenticatedUser.class);
                 RedisOperator<AuthenticatedUser> redisOperator = getOptionalBean(httpSecurity, type);
-                ResolvableType typeLong = ResolvableType.forClassWithGenerics(RedisOperator.class, Long.class);
-                RedisOperator<Long> redisHashOperator = getOptionalBean(httpSecurity, typeLong);
+                ResolvableType typeString = ResolvableType.forClassWithGenerics(RedisOperator.class, String.class);
+                RedisOperator<String> redisHashOperator = getOptionalBean(httpSecurity, typeString);
                 accessTokenGenerator.setAccessTokenCustomizer(Objects.requireNonNullElseGet(accessTokenCustomizer, () -> new OpaqueIdTokenCustomizer(redisHashOperator, redisOperator)));
                 OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
                 if (jwtGenerator != null) {
@@ -161,8 +161,8 @@ public class OAuth2ConfigurerUtils {
                 if (jwtCustomizer != null) {
                     ResolvableType type = ResolvableType.forClassWithGenerics(RedisOperator.class, AuthenticatedUser.class);
                     RedisOperator<AuthenticatedUser> redisOperator = getOptionalBean(httpSecurity, type);
-                    ResolvableType typeLong = ResolvableType.forClassWithGenerics(RedisOperator.class, Long.class);
-                    RedisOperator<Long> redisHashOperator = getOptionalBean(httpSecurity, typeLong);
+                    ResolvableType typeString = ResolvableType.forClassWithGenerics(RedisOperator.class, String.class);
+                    RedisOperator<String> redisHashOperator = getOptionalBean(httpSecurity, typeString);
                     jwtGenerator.setJwtCustomizer(Objects.requireNonNullElseGet(jwtCustomizer, () -> new JwtIdTokenCustomizer(redisHashOperator, redisOperator)));
                 }
                 httpSecurity.setSharedObject(JwtGenerator.class, jwtGenerator);
@@ -347,12 +347,12 @@ public class OAuth2ConfigurerUtils {
                         deviceAuthorizationEndpoint.verificationUri(oAuth2ServerProperties.getDeviceVerificationUri()))
                 // 设置验证设备码用户确认页面
                 .deviceVerificationEndpoint(deviceVerificationEndpoint -> deviceVerificationEndpoint
-                                .consentPage(DEVICE_CONSENT_PAGE_URI)
-                                .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getAuthorizeErrorUri(), oAuth2ServerProperties.getDeviceVerificationUri()))
-                                .deviceVerificationResponseHandler(
-                                        new DeviceAuthorizationResponseHandler(
-                                                oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getDeviceActivatedPageUri(), oAuth2ServerProperties.getDeviceVerificationUri())
-                                )
+                        .consentPage(DEVICE_CONSENT_PAGE_URI)
+                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getAuthorizeErrorUri(), oAuth2ServerProperties.getDeviceVerificationUri()))
+                        .deviceVerificationResponseHandler(
+                                new DeviceAuthorizationResponseHandler(
+                                        oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getDeviceActivatedPageUri(), oAuth2ServerProperties.getDeviceVerificationUri())
+                        )
                 )
                 .clientAuthentication(clientAuthentication ->
                         // 客户端认证添加设备码的converter和provider

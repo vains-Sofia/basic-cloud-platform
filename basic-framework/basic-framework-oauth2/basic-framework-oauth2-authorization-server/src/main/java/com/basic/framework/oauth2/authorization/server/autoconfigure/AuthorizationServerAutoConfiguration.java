@@ -85,12 +85,12 @@ import java.util.UUID;
 @EnableConfigurationProperties({OAuth2ServerProperties.class, ResourceServerProperties.class})
 public class AuthorizationServerAutoConfiguration {
 
+    private final RedisOperator<String> redisHashOperator;
+
     /**
      * 认证服务配置类
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
-
-    private final RedisOperator<Long> redisHashOperator;
 
     private final RedisOperator<AuthenticatedUser> redisOperator;
 

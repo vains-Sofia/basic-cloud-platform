@@ -74,7 +74,7 @@ public class ResourceServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BasicJwtRedisAuthenticationConverter authenticationConverter(RedisOperator<Long> redisHashOperator,
+    public BasicJwtRedisAuthenticationConverter authenticationConverter(RedisOperator<String> redisHashOperator,
                                                                         BasicIdTokenCustomizer idTokenCustomizer,
                                                                         RedisOperator<AuthenticatedUser> redisOperator) {
         if (log.isDebugEnabled()) {
@@ -123,7 +123,7 @@ public class ResourceServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ResourceOpaqueTokenIntrospector resourceOpaqueTokenIntrospector(RedisOperator<Long> redisHashOperator,
+    public ResourceOpaqueTokenIntrospector resourceOpaqueTokenIntrospector(RedisOperator<String> redisHashOperator,
                                                                            BasicIdTokenCustomizer idTokenCustomizer,
                                                                            RedisOperator<AuthenticatedUser> redisOperator,
                                                                            OAuth2ResourceServerProperties resourceServerProperties) {

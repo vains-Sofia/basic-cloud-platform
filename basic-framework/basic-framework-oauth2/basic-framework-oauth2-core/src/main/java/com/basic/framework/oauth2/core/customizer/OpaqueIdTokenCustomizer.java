@@ -27,7 +27,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAuth2TokenClaimsContext> {
 
-    private final RedisOperator<Long> redisHashOperator;
+    private final RedisOperator<String> redisHashOperator;
 
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
@@ -66,7 +66,7 @@ public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAut
                     log.debug("认证用户的jti为：{}", jti);
                 }
                 // token与用户id的映射关系存储到Redis中
-                redisHashOperator.setHash(AuthorizeConstants.JTI_USER_HASH, jti, user.getId());
+                redisHashOperator.set(AuthorizeConstants.JTI_USER_HASH + jti, user.getId() + "", expire);
                 // 将用户信息存储到Redis中，方便资源服务自省时获取
                 redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + user.getId()), user, expire);
             }

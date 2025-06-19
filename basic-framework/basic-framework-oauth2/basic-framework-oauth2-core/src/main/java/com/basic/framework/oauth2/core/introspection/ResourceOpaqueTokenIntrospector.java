@@ -32,7 +32,7 @@ import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionC
 @Slf4j
 public class ResourceOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
 
-    private final RedisOperator<Long> redisHashOperator;
+    private final RedisOperator<String> redisHashOperator;
 
     private final BasicIdTokenCustomizer idTokenCustomizer;
 
@@ -40,7 +40,7 @@ public class ResourceOpaqueTokenIntrospector implements OpaqueTokenIntrospector 
 
     private final SpringOpaqueTokenIntrospector springOpaqueTokenIntrospector;
 
-    public ResourceOpaqueTokenIntrospector(RedisOperator<Long> redisHashOperator,
+    public ResourceOpaqueTokenIntrospector(RedisOperator<String> redisHashOperator,
                                            BasicIdTokenCustomizer idTokenCustomizer,
                                            RedisOperator<AuthenticatedUser> redisOperator,
                                            OAuth2ResourceServerProperties resourceServerProperties) {
@@ -72,7 +72,7 @@ public class ResourceOpaqueTokenIntrospector implements OpaqueTokenIntrospector 
         if (attributes != null) {
 
             // 获取用户的id
-            Long userId = redisHashOperator.getHash(AuthorizeConstants.JTI_USER_HASH, principal.getAttribute(JTI), Long.class);
+            String userId = redisHashOperator.get(AuthorizeConstants.JTI_USER_HASH + principal.getAttribute(JTI));
             AuthenticatedUser authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + userId);
             if (authenticatedUser == null) {
                 // 客户端模式

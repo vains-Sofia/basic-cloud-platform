@@ -41,7 +41,7 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
 @RequiredArgsConstructor
 public class FederatedIdentityAutoConfiguration {
 
-    private final RedisOperator<Long> redisHashOperator;
+    private final RedisOperator<String> redisHashOperator;
 
     private final RedisOperator<AuthenticatedUser> redisOperator;
 

@@ -34,7 +34,7 @@ import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionC
 @RequiredArgsConstructor
 public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
 
-    private final RedisOperator<Long> redisHashOperator;
+    private final RedisOperator<String> redisHashOperator;
 
     private final BasicIdTokenCustomizer idTokenCustomizer;
 
@@ -93,7 +93,7 @@ public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
             throw new InvalidBearerTokenException("Did not introspect token since no claims found.");
         }
         String jti = claims.get(JTI) + "";
-        Long userId = redisHashOperator.getHash(AuthorizeConstants.JTI_USER_HASH, jti, Long.class);
+        String userId = redisHashOperator.get(AuthorizeConstants.JTI_USER_HASH + jti);
         // 从Redis中获取用户信息
         AuthenticatedUser authenticatedUser = redisOperator.get(AuthorizeConstants.USERINFO_PREFIX + userId);
         if (userId == null || authenticatedUser == null) {
