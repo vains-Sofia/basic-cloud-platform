@@ -1,9 +1,8 @@
 package com.basic.framework.oauth2.federation.converter.impl;
 
-import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
-import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Objects;
 public class WechatUserConverter implements OAuth2UserConverter {
 
     @Override
-    public AuthenticatedUser convert(OAuth2User oAuth2User) {
+    public ThirdAuthenticatedUser convert(OAuth2User oAuth2User) {
         // 获取三方用户信息
         Map<String, Object> attributes = oAuth2User.getAttributes();
 

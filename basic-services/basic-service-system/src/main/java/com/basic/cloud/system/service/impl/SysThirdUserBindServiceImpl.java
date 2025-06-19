@@ -1,8 +1,11 @@
 package com.basic.cloud.system.service.impl;
 
+import com.basic.cloud.system.api.domain.request.EnhancedThirdUserRequest;
 import com.basic.cloud.system.api.domain.request.MailSenderRequest;
+import com.basic.cloud.system.api.domain.response.EnhancedUserResponse;
 import com.basic.cloud.system.api.enums.CheckBindingStatusEnum;
 import com.basic.cloud.system.domain.SysBasicUser;
+import com.basic.cloud.system.domain.SysRole;
 import com.basic.cloud.system.domain.SysThirdUserBind;
 import com.basic.cloud.system.domain.model.BindingConfirmationTemplate;
 import com.basic.cloud.system.domain.model.ConfirmSuccessTemplate;
@@ -19,12 +22,14 @@ import com.basic.framework.core.util.JsonUtils;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.oauth2.core.util.ServletUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,10 +42,8 @@ import org.thymeleaf.context.Context;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 三方登录用户绑定服务实现类
@@ -63,6 +66,12 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
     private final SysBasicUserRepository basicUserRepository;
 
     private final SysThirdUserBindRepository thirdUserBindRepository;
+
+    /**
+     * 确认绑定token过期时间，单位：秒
+     * 30分钟
+     */
+    private final Long CONFIRM_TOKEN_EXPIRES = 30L * 60;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -111,7 +120,7 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
         thirdUserBind.setEmail(thirdUser.getEmail());
         thirdUserBind.setAccessToken(thirdUser.getAccessToken());
         thirdUserBind.setConfirmToken(UUID.randomUUID().toString());
-        thirdUserBind.setTokenExpiresAt(LocalDateTime.now().plusMinutes(30));
+        thirdUserBind.setTokenExpiresAt(LocalDateTime.now().plusSeconds(CONFIRM_TOKEN_EXPIRES));
         thirdUserBind.setCreateTime(LocalDateTime.now());
         thirdUserBind.setUpdateTime(LocalDateTime.now());
 
@@ -201,7 +210,7 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
                 .email(thirdUser.getEmail())
                 .requestTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormatConstants.DEFAULT_DATE_TIME_FORMAT)))
                 .ipAddress(getClientIpAddress(request))
-                .expiresIn(30 + "分钟")
+                .expiresIn((CONFIRM_TOKEN_EXPIRES / 60) + "分钟")
                 .confirmUrl(confirmUrl)
                 .companyName(PlatformConstants.PLATFORM_NAME)
                 .build();
@@ -269,6 +278,61 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
                     .cause(e.getMessage())
                     .build();
         }
+    }
+
+    @Override
+    public EnhancedUserResponse enhancedThirdUser(EnhancedThirdUserRequest request) {
+        SysThirdUserBind thirdUserBind = thirdUserBindRepository.findByProviderAndProviderUserId(request.getProvider(), request.getProviderUserId())
+                .orElse(null);
+        if (thirdUserBind == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("未找到对应的三方用户绑定信息，provider: {}, providerUserId: {}", request.getProvider(), request.getProviderUserId());
+            }
+            return null;
+        }
+        if (!BindStatusEnum.BOUND.equals(thirdUserBind.getBindStatus())) {
+            if (log.isDebugEnabled()) {
+                log.debug("三方用户绑定状态不正确，provider: {}, providerUserId: {}, status: {}", request.getProvider(), request.getProviderUserId(), thirdUserBind.getBindStatus());
+            }
+            return null;
+        }
+        Optional<SysBasicUser> basicUserOpt = basicUserRepository.findById(thirdUserBind.getUserId());
+        if (basicUserOpt.isEmpty()) {
+            if (log.isDebugEnabled()) {
+                log.debug("未找到对应的基本用户信息，userId: {}", thirdUserBind.getUserId());
+            }
+            return null;
+        }
+
+        SysBasicUser basicUser = basicUserOpt.get();
+        // 构建增强的用户信息响应
+        EnhancedUserResponse response = new EnhancedUserResponse();
+        BeanUtils.copyProperties(basicUser, response);
+        response.setAccountPlatform(thirdUserBind.getProvider());
+        // 提取角色
+        List<SysRole> roles = basicUser.getRoles();
+        if (!ObjectUtils.isEmpty(roles)) {
+            // 提取用户权限
+            Set<BasicGrantedAuthority> authorities = roles.stream()
+                    .filter(role -> !ObjectUtils.isEmpty(role.getPermissions()))
+                    .flatMap(role -> role
+                            .getPermissions()
+                            .stream()
+                            .map(e -> {
+                                BasicGrantedAuthority authority = new BasicGrantedAuthority();
+                                authority.setId(e.getId());
+                                authority.setPath(e.getPath());
+                                authority.setPermission(e.getPermission());
+                                authority.setPermissionType(e.getPermissionType());
+                                authority.setAuthority(e.getPermission());
+                                authority.setRequestMethod(e.getRequestMethod());
+                                authority.setNeedAuthentication(e.getNeedAuthentication());
+                                return authority;
+                            })
+                    ).collect(Collectors.toSet());
+            response.setAuthorities(authorities);
+        }
+        return response;
     }
 
     /**

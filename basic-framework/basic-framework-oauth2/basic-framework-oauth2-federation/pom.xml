@@ -38,6 +38,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- System模块api -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-service-system-api</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>

@@ -52,6 +52,11 @@ public class DefaultAuthenticatedUser implements AuthenticatedUser {
      */
     private String sub;
 
+    /**
+     * 令牌ID
+     */
+    private String jti;
+
     @JsonIgnore
     private Map<String, Object> attributes = new HashMap<>();
 

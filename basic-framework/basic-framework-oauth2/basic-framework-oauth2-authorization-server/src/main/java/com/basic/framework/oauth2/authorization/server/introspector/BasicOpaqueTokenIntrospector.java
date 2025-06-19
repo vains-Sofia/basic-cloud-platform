@@ -3,6 +3,7 @@ package com.basic.framework.oauth2.authorization.server.introspector;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -106,6 +107,11 @@ public class BasicOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
 
             // token 被正常解析但是无法获取到Redis的用户信息，这种情况一般是登出、管理平台下线后出现的问题
             throw new InvalidBearerTokenException("Access token is invalid or has been logged out.");
+        }
+
+        if (authenticatedUser instanceof DefaultAuthenticatedUser defaultAuthenticatedUser) {
+            // 设置jti
+            defaultAuthenticatedUser.setJti(jti);
         }
 
         if (!ObjectUtils.isEmpty(grantedAuthorities)) {

@@ -1,5 +1,7 @@
 package com.basic.cloud.system.service;
 
+import com.basic.cloud.system.api.domain.request.EnhancedThirdUserRequest;
+import com.basic.cloud.system.api.domain.response.EnhancedUserResponse;
 import com.basic.cloud.system.api.enums.CheckBindingStatusEnum;
 import com.basic.cloud.system.domain.model.ConfirmSuccessTemplate;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
@@ -40,4 +42,13 @@ public interface SysThirdUserBindService {
      * @param confirmToken 确认绑定token
      */
     ConfirmSuccessTemplate confirm(String confirmToken);
+
+    /**
+     * 获取增强的三方用户信息
+     *
+     * @param request 增强三方用户请求参数
+     * @return 增强的三方用户信息
+     */
+    EnhancedUserResponse enhancedThirdUser(EnhancedThirdUserRequest request);
+
 }

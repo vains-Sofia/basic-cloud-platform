@@ -94,4 +94,9 @@ public class ThirdAuthenticatedUser extends DefaultAuthenticatedUser {
      */
     private String blog;
 
+    /**
+     * 检查过，即是否已确认绑定
+     */
+    private Boolean bindBasicUserChecked;
+
 }

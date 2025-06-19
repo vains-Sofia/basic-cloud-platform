@@ -1,6 +1,5 @@
 package com.basic.framework.oauth2.federation.converter;
 
-import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -18,7 +17,7 @@ import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAU
  *
  * @author vains
  */
-public interface OAuth2UserConverter extends Converter<OAuth2User, AuthenticatedUser> {
+public interface OAuth2UserConverter extends Converter<OAuth2User, ThirdAuthenticatedUser> {
 
     /**
      * 设置三方token信息

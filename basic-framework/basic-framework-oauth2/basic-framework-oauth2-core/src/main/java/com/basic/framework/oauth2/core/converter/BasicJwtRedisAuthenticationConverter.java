@@ -76,6 +76,11 @@ public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, Abst
             throw new OAuth2AuthenticationException(bearerTokenError);
         }
 
+        if (authenticatedUser instanceof DefaultAuthenticatedUser defaultAuthenticatedUser) {
+            // 设置jti
+            defaultAuthenticatedUser.setJti(jwt.getId());
+        }
+
         if (!ObjectUtils.isEmpty(grantedAuthorities)) {
             // 合并scope与用户权限
             Set<String> authorizedScopes = grantedAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());

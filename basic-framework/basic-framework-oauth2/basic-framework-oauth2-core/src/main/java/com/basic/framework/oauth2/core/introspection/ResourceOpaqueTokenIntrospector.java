@@ -3,6 +3,7 @@ package com.basic.framework.oauth2.core.introspection;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
@@ -86,6 +87,11 @@ public class ResourceOpaqueTokenIntrospector implements OpaqueTokenIntrospector 
 
                 BearerTokenError bearerTokenError = BearerTokenErrors.invalidToken("Access token is invalid or has been logged out.");
                 throw new OAuth2AuthenticationException(bearerTokenError);
+            }
+
+            if (authenticatedUser instanceof DefaultAuthenticatedUser defaultAuthenticatedUser) {
+                // 设置jti
+                defaultAuthenticatedUser.setJti(principal.getAttribute(JTI));
             }
 
             // 解析scope

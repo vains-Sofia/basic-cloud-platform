@@ -1,12 +1,17 @@
 package com.basic.cloud.system.api;
 
+import com.basic.cloud.system.api.domain.request.EnhancedThirdUserRequest;
+import com.basic.cloud.system.api.domain.response.EnhancedUserResponse;
 import com.basic.cloud.system.api.enums.CheckBindingStatusEnum;
 import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.core.domain.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -27,5 +32,15 @@ public interface SysThirdUserBindClient {
     @GetMapping("/check-binding")
     @Operation(summary = "检查当前三方用户是否绑定本地用户", description = "检查当前三方用户是否绑定本地用户")
     Result<CheckBindingStatusEnum> checkBinding();
+
+    /**
+     * 获取增强的三方用户信息
+     *
+     * @param request 增强三方用户请求参数
+     * @return 增强的三方用户信息
+     */
+    @PostMapping("/enhanced-third-user")
+    @Operation(summary = "获取增强的三方用户信息", description = "获取增强的三方用户信息")
+    Result<EnhancedUserResponse> enhancedThirdUser(@Valid @RequestBody EnhancedThirdUserRequest request);
 
 }

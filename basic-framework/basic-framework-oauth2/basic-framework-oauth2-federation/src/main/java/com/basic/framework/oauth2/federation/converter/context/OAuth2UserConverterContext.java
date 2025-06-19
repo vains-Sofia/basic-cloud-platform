@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.federation.converter.context;
 
-import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -47,9 +47,9 @@ public class OAuth2UserConverterContext {
      * 根据登录方式获取转换器实例，使用转换器获取用户信息
      *
      * @param oAuth2User 三方登录获取到的认证信息
-     * @return {@link AuthenticatedUser}
+     * @return {@link ThirdAuthenticatedUser}
      */
-    public AuthenticatedUser convert(OAuth2User oAuth2User) {
+    public ThirdAuthenticatedUser convert(OAuth2User oAuth2User) {
         return this.getInstance(oAuth2User.getAttribute(OAUTH2_ACCOUNT_PLATFORM))
                 .convert(oAuth2User);
     }

@@ -29,6 +29,12 @@ public class AuthenticatedUserResponse extends FindBasicUserResponse implements 
     @Schema(title = "权限列表")
     private Set<GrantedAuthority> authorities;
 
+    /**
+     * 检查过，即是否已确认绑定
+     */
+    @Schema(title = "检查过，即是否已确认绑定")
+    private Boolean bindBasicUserChecked;
+
     @Override
     public Map<String, Object> getAttributes() {
         return Map.of();
