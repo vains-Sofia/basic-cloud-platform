@@ -397,6 +397,28 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
         log.debug("[{}]获取验证码成功，验证码：{}.", email, captcha);
     }
 
+    @Override
+    public void resendBindConfirmation() {
+        AuthenticatedUser authenticatedUser = SecurityUtils.getAuthenticatedUser();
+        if (!(authenticatedUser instanceof ThirdAuthenticatedUser thirdUser)) {
+            throw new CloudServiceException("当前用户不是三方登录用户，无法进行绑定检查");
+        }
+
+        // 检查绑定记录
+        String userId = thirdUser.getId() != null ? thirdUser.getId() + "" : thirdUser.getSub();
+        Optional<SysThirdUserBind> userBindOpt = thirdUserBindRepository.findByProviderAndProviderUserId(thirdUser.getAccountPlatform(), userId);
+        if (userBindOpt.isEmpty()) {
+            throw new CloudServiceException("当前用户没有绑定记录，无法重新发送确认邮件");
+        }
+        SysThirdUserBind thirdUserBind = userBindOpt.get();
+        if (!BindStatusEnum.PENDING_CONFIRMATION.equals(thirdUserBind.getBindStatus())) {
+            throw new CloudServiceException("当前用户的绑定状态不正确，无法重新发送确认邮件");
+        }
+
+        // 重新发送确认邮件
+        this.sendBindConfirmation(thirdUser, thirdUserBind.getConfirmToken());
+    }
+
     /**
      * 获取客户端IP地址
      *

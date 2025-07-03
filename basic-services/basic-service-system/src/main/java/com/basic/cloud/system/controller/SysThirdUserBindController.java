@@ -45,4 +45,10 @@ public class SysThirdUserBindController implements SysThirdUserBindClient {
         return Result.success();
     }
 
+    @Override
+    public Result<String> resendBindConfirmation() {
+        thirdUserBindService.resendBindConfirmation();
+        return Result.success();
+    }
+
 }

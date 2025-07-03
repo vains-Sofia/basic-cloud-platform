@@ -66,4 +66,10 @@ public interface SysThirdUserBindService {
      * @param email 电子邮箱地址
      */
     void sendBindEmailCode(String email);
+
+    /**
+     * 重新发送绑定确认消息
+     */
+    void resendBindConfirmation();
+
 }

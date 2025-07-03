@@ -65,4 +65,13 @@ public interface SysThirdUserBindClient {
     @Parameter(name = "email", description = "电子邮箱地址", required = true, example = "example@gmail.com")
     Result<String> sendBindEmailCode(@Valid @NotBlank @Email @PathVariable String email);
 
+    /**
+     * 重新发送绑定确认
+     *
+     * @return 结果
+     */
+    @PostMapping("/resend-bind-confirmation")
+    @Operation(summary = "重新发送绑定确认", description = "重新发送绑定确认")
+    Result<String> resendBindConfirmation();
+
 }
