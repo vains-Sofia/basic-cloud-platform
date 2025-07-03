@@ -2,6 +2,7 @@ package com.basic.framework.oauth2.core.customizer;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
+import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,23 +53,29 @@ public final class OpaqueIdTokenCustomizer implements OAuth2TokenCustomizer<OAut
         if (context.getPrincipal().getPrincipal() instanceof AuthenticatedUser user) {
             // 只在生成access token时操作
             if (OAuth2ParameterNames.ACCESS_TOKEN.equals(context.getTokenType().getValue())) {
+                String unionId;
+                if (user instanceof DefaultAuthenticatedUser defaultAuthenticatedUser) {
+                    unionId = user.getId() == null ? defaultAuthenticatedUser.getSub() : user.getId() + "";
+                } else {
+                    unionId = user.getId() == null ? user.getName() : user.getId() + "";
+                }
                 // 存储用户唯一id
-                claims.claim(AuthorizeConstants.USER_ID_KEY, user.getId());
+                claims.claim(AuthorizeConstants.USER_ID_KEY, unionId);
                 // 资源服务自省时需要该属性
                 claims.claim(OAuth2TokenIntrospectionClaimNames.USERNAME, user.getUsername());
                 OAuth2TokenClaimsSet build = claims.build();
-                // 计算token有效时长
-                long expire = ChronoUnit.SECONDS.between(build.getIssuedAt(), build.getExpiresAt());
                 // 获取jti
                 String jti = claims.build().getId();
                 if (log.isDebugEnabled()) {
-                    log.debug("当前用户id为：{}", user.getId());
+                    log.debug("当前用户id为：{}", unionId);
                     log.debug("认证用户的jti为：{}", jti);
                 }
+                // 计算token有效时长
+                long expire = ChronoUnit.SECONDS.between(build.getIssuedAt(), build.getExpiresAt());
                 // token与用户id的映射关系存储到Redis中
-                redisHashOperator.set(AuthorizeConstants.JTI_USER_HASH + jti, user.getId() + "", expire);
+                redisHashOperator.set(AuthorizeConstants.JTI_USER_HASH + jti, unionId, expire);
                 // 将用户信息存储到Redis中，方便资源服务自省时获取
-                redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + user.getId()), user, expire);
+                redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + unionId), user, expire);
             }
         }
 
