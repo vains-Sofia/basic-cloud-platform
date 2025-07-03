@@ -66,7 +66,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
 
     private final SysBasicUserRepository basicUserRepository;
 
-    private final String EMAIL_CAPTCHA_KEY = "captcha:email:";
+    private final String EMAIL_CAPTCHA_KEY = "basic:captcha:email:";
 
     @Override
     public BasicUserResponse getBasicUserByEmail(String email) {

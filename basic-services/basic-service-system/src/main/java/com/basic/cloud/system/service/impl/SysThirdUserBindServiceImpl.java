@@ -1,5 +1,6 @@
 package com.basic.cloud.system.service.impl;
 
+import com.basic.cloud.system.api.domain.request.BindEmailRequest;
 import com.basic.cloud.system.api.domain.request.EnhancedThirdUserRequest;
 import com.basic.cloud.system.api.domain.request.MailSenderRequest;
 import com.basic.cloud.system.api.domain.response.EnhancedUserResponse;
@@ -19,6 +20,7 @@ import com.basic.framework.core.constants.PlatformConstants;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
 import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.core.util.JsonUtils;
+import com.basic.framework.core.util.RandomUtils;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
@@ -26,6 +28,7 @@ import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.domain.thired.ThirdAuthenticatedUser;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.oauth2.core.util.ServletUtils;
+import com.basic.framework.redis.support.RedisOperator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +64,8 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
 
     private final ServerProperties serverProperties;
 
+    private final RedisOperator<String> redisOperator;
+
     private final Sequence sequence = new Sequence((null));
 
     private final SysBasicUserRepository basicUserRepository;
@@ -71,7 +76,18 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
      * 确认绑定token过期时间，单位：秒
      * 30分钟
      */
-    private final Long CONFIRM_TOKEN_EXPIRES = 30L * 60;
+    private final long CONFIRM_TOKEN_EXPIRES = 30L * 60;
+
+    /**
+     * 绑定邮箱验证码过期时间，单位：秒
+     * 10分钟
+     */
+    private final long BINDING_EMAIL_EXPIRES = 10L * 60;
+
+    /**
+     * 邮箱验证码缓存key前缀
+     */
+    private final String EMAIL_CAPTCHA_KEY = "basic:email:bind:captcha:";
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -333,6 +349,56 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
             response.setAuthorities(authorities);
         }
         return response;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public CheckBindingStatusEnum bindEmail(BindEmailRequest request) {
+        AuthenticatedUser authenticatedUser = SecurityUtils.getAuthenticatedUser();
+        if (!(authenticatedUser instanceof ThirdAuthenticatedUser thirdUser)) {
+            throw new CloudServiceException("当前用户不是三方登录用户，无法进行绑定检查");
+        }
+
+        String cacheCode = redisOperator.get(EMAIL_CAPTCHA_KEY.concat(request.getEmail()));
+        if (ObjectUtils.isEmpty(cacheCode)) {
+            log.warn("绑定邮箱验证码已过期或不存在，email: {}", request.getEmail());
+            throw new CloudServiceException("绑定邮箱验证码已过期或不存在，请重新获取");
+        }
+
+        if (!cacheCode.equals(request.getEmailCaptcha())) {
+            log.warn("绑定邮箱验证码不正确，email: {}, 输入验证码: {}, 缓存验证码: {}", request.getEmail(), request.getEmailCaptcha(), cacheCode);
+            throw new CloudServiceException("绑定邮箱验证码不正确，请检查后重新输入");
+        }
+
+        thirdUser.setEmail(request.getEmail());
+        return this.checkBinding();
+    }
+
+    @Override
+    public void sendBindEmailCode(String email) {
+        int randomLength = 4;
+        String captcha = RandomUtils.randomNumber(randomLength);
+        // 创建 Thymeleaf 上下文
+        Context context = new Context();
+        context.setVariable("emailCaptcha", captcha);
+        context.setVariable("captchaExpires", (BINDING_EMAIL_EXPIRES / 60) + "分钟");
+        context.setVariable("platform", PlatformConstants.PLATFORM_NAME);
+        // 渲染模板
+        String content = templateEngine.process("bind-email-code", context);
+
+        // 构建邮件发送请求
+        MailSenderRequest senderRequest = new MailSenderRequest();
+        senderRequest.setFrom(PlatformConstants.PLATFORM_NAME);
+        senderRequest.setMailTo(Set.of(email));
+        senderRequest.setSubject("Basic Cloud 绑定确认");
+        senderRequest.setContent(content);
+        senderRequest.setContentIsHtml(Boolean.TRUE);
+        // 发送邮件
+        commonService.mailSender(senderRequest);
+
+        // 缓存验证码至redis，10分钟有效期
+        redisOperator.set(EMAIL_CAPTCHA_KEY.concat(email), captcha, BINDING_EMAIL_EXPIRES);
+        log.debug("[{}]获取验证码成功，验证码：{}.", email, captcha);
     }
 
     /**

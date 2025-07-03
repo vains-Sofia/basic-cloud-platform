@@ -61,8 +61,9 @@ public class StorageAuthorizationConsentService implements OAuth2AuthorizationCo
         if (authenticatedUser == null) {
             throw new OAuth2AuthenticationException("用户未登录，无法保存授权确认信息");
         }
+        String name = authenticatedUser.getId() == null ? principalName : authenticatedUser.getId() + "";
         // 根据客户端id和用户查询授权确认信息
-        BasicAuthorizationConsent consent = this.basicAuthorizationConsentService.findById(registeredClientId, authenticatedUser.getId() + "");
+        BasicAuthorizationConsent consent = this.basicAuthorizationConsentService.findById(registeredClientId, name);
         return this.basic2ConsentConverter.convert(consent);
     }
 }

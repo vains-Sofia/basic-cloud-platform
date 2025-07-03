@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮箱验证码</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background-color: #4285f4;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .content {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .code-box {
+            background-color: #f8f9fa;
+            border: 2px dashed #4285f4;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4285f4;
+            letter-spacing: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .message {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 20px 0;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .warning {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>邮箱验证</h2>
+    </div>
+
+    <div class="content">
+        <h3>验证码</h3>
+        <p class="message">您正在进行邮箱绑定操作，请使用以下验证码完成验证：</p>
+
+        <div class="code-box">
+            <div class="code" th:text="${emailCaptcha}">1234</div>
+        </div>
+
+        <p class="message">验证码有效期为 <strong th:text="${captchaExpires}">10分钟</strong>，请尽快完成验证。</p>
+
+        <p class="warning">如果这不是您的操作，请忽略此邮件。</p>
+    </div>
+
+    <div class="footer">
+        <p>此邮件为系统自动发送，请勿回复</p>
+        <p th:text="${platform}">Basic Cloud Platform</p>
+    </div>
+</div>
+</body>
+</html>

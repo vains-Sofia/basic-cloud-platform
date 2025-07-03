@@ -1,5 +1,6 @@
 package com.basic.cloud.system.service;
 
+import com.basic.cloud.system.api.domain.request.BindEmailRequest;
 import com.basic.cloud.system.api.domain.request.EnhancedThirdUserRequest;
 import com.basic.cloud.system.api.domain.response.EnhancedUserResponse;
 import com.basic.cloud.system.api.enums.CheckBindingStatusEnum;
@@ -51,4 +52,18 @@ public interface SysThirdUserBindService {
      */
     EnhancedUserResponse enhancedThirdUser(EnhancedThirdUserRequest request);
 
+    /**
+     * 绑定邮箱
+     *
+     * @param request 邮箱绑定请求参数
+     * @return 绑定状态
+     */
+    CheckBindingStatusEnum bindEmail(BindEmailRequest request);
+
+    /**
+     * 发送绑定邮箱验证码
+     *
+     * @param email 电子邮箱地址
+     */
+    void sendBindEmailCode(String email);
 }

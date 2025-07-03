@@ -1,6 +1,7 @@
 package com.basic.cloud.system.controller;
 
 import com.basic.cloud.system.api.SysThirdUserBindClient;
+import com.basic.cloud.system.api.domain.request.BindEmailRequest;
 import com.basic.cloud.system.api.domain.request.EnhancedThirdUserRequest;
 import com.basic.cloud.system.api.domain.response.EnhancedUserResponse;
 import com.basic.cloud.system.api.enums.CheckBindingStatusEnum;
@@ -30,6 +31,18 @@ public class SysThirdUserBindController implements SysThirdUserBindClient {
     public Result<EnhancedUserResponse> enhancedThirdUser(EnhancedThirdUserRequest request) {
         EnhancedUserResponse userResponse = thirdUserBindService.enhancedThirdUser(request);
         return Result.success(userResponse);
+    }
+
+    @Override
+    public Result<CheckBindingStatusEnum> bindEmail(BindEmailRequest request) {
+        CheckBindingStatusEnum bindingStatus = thirdUserBindService.bindEmail(request);
+        return Result.success(bindingStatus, bindingStatus.getDescription());
+    }
+
+    @Override
+    public Result<String> sendBindEmailCode(String email) {
+        thirdUserBindService.sendBindEmailCode(email);
+        return Result.success();
     }
 
 }

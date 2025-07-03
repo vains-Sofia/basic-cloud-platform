@@ -98,7 +98,7 @@ public class BasicOAuth2UserService extends DefaultOAuth2UserService {
                 if (enhancedThirdUserResponse == null || enhancedThirdUserResponse.getData() == null) {
                     if (log.isWarnEnabled()) {
                         log.warn("No enhanced third-party user information found for provider: {}, userId: {}",
-                                authenticatedUser.getAccountPlatform(), authenticatedUser.getId());
+                                authenticatedUser.getAccountPlatform(), enhancedRequest.getProviderUserId());
                     }
                     authenticatedUser.setBindBasicUserChecked(false);
                 } else {

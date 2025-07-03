@@ -34,8 +34,6 @@ public class WebThirdUserBindController {
     @Operation(summary = "三方登录用户确认绑定本地账号", description = "确认绑定后会跳转到绑定成功页面")
     public String confirm(String confirmToken, Model model) {
         ConfirmSuccessTemplate confirm = thirdUserBindService.confirm(confirmToken);
-        // TODO 绑定失败处理
-
         // 将确认成功信息转换为Map并添加到模型中
         Map<String, Object> confirmDataMap = JsonUtils.objectToObject(confirm, Map.class, String.class, Object.class);
         model.addAllAttributes(confirmDataMap);
