@@ -79,12 +79,6 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
     private final long CONFIRM_TOKEN_EXPIRES = 30L * 60;
 
     /**
-     * 绑定邮箱验证码过期时间，单位：秒
-     * 10分钟
-     */
-    private final long BINDING_EMAIL_EXPIRES = 10L * 60;
-
-    /**
      * 邮箱验证码缓存key前缀
      */
     private final String EMAIL_CAPTCHA_KEY = "basic:email:bind:captcha:";
@@ -381,7 +375,9 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
         // 创建 Thymeleaf 上下文
         Context context = new Context();
         context.setVariable("emailCaptcha", captcha);
-        context.setVariable("captchaExpires", (BINDING_EMAIL_EXPIRES / 60) + "分钟");
+        // 绑定邮箱验证码过期时间，单位：秒，10分钟
+        long bindingEmailExpires = 10L * 60;
+        context.setVariable("captchaExpires", (bindingEmailExpires / 60) + "分钟");
         context.setVariable("platform", PlatformConstants.PLATFORM_NAME);
         // 渲染模板
         String content = templateEngine.process("bind-email-code", context);
@@ -397,7 +393,7 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
         commonService.mailSender(senderRequest);
 
         // 缓存验证码至redis，10分钟有效期
-        redisOperator.set(EMAIL_CAPTCHA_KEY.concat(email), captcha, BINDING_EMAIL_EXPIRES);
+        redisOperator.set(EMAIL_CAPTCHA_KEY.concat(email), captcha, bindingEmailExpires);
         log.debug("[{}]获取验证码成功，验证码：{}.", email, captcha);
     }
 

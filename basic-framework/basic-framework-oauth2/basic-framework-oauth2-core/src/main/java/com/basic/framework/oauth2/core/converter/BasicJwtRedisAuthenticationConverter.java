@@ -91,7 +91,8 @@ public class BasicJwtRedisAuthenticationConverter implements Converter<Jwt, Abst
         // 返回BearerTokenAuthentication的实例
         OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, jwt.getTokenValue(),
                 jwt.getIssuedAt(), jwt.getExpiresAt());
-        if (authenticatedUser instanceof DefaultAuthenticatedUser user) {
+        if (authenticatedUser instanceof DefaultAuthenticatedUser user && ObjectUtils.isEmpty(user.getSub())) {
+            // 设置sub，如果用户信息中没有sub，则从jwt中获取
             user.setSub(jwt.getSubject());
         }
         return new BearerTokenAuthentication(authenticatedUser, accessToken, authenticatedUser.getAuthorities());
