@@ -137,7 +137,16 @@ Basic Cloud Platform 是一个基于 Spring Cloud 生态体系构建的现代化
 
 ### 👥 贡献指南
 
-欢迎提交 Issue 或 Pull Request 来帮助改进项目。
+我们欢迎社区贡献，如修复 bug、优化代码、完善文档等。请按照以下步骤参与贡献：
+1. Fork 项目
+2. 创建新分支（feature/xxx 或 fix/xxx）
+3. 提交代码并描述清楚变更
+4. 提交 PR 并等待审核
+
+请确保你的提交符合以下规范：
+- 使用合理的 commit message
+- 编写单元测试（如新增业务逻辑）
+- 统一使用 Lombok 等通用组件
 
 ### 📄 开源协议
 
