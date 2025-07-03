@@ -25,6 +25,19 @@
 
 Basic Cloud Platform 是一个基于 Spring Cloud 生态体系构建的现代化微服务平台。本项目采用最新的 Spring Cloud 技术栈，集成了统一授权认证、服务治理、微服务监控等核心功能，为企业级应用开发提供完整的解决方案。
 
+### ⭐ 如果这个项目对您有帮助，请点个Star支持一下！
+
+您的支持是我们持续改进和维护项目的动力！如果您觉得项目不错，请：
+- 🌟 给项目点个Star
+- 🔄 分享给更多需要的朋友
+- 🐛 提交Issue帮助我们改进
+- 🔧 贡献代码让项目更完善
+
+### 🎯 相关项目
+
+- **前端项目**：[Basic Cloud Platform UI](https://gitee.com/vains-Sofia/basic-cloud-platform-ui) - 基于 Vue3 + TypeScript 的现代化前端管理系统
+- **感谢开源**：本项目前端基于 [Pure Admin](https://gitee.com/yiming_chang/pure-admin-thin) 脚手架构建，感谢Pure Admin提供的优秀前端解决方案
+
 ### ✨ 核心特性
 
 - 🔐 **统一认证中心**：基于 Spring OAuth2 Authorization Server 实现，支持多种认证方式
@@ -90,7 +103,7 @@ Basic Cloud Platform 是一个基于 Spring Cloud 生态体系构建的现代化
         |-- nacos
         |   |-- nacos_config_dev.zip                            -- nacos配置中心dev环境配置
         |   |-- nacos_config_test.zip                           -- nacos配置中心test环境配置
-        |-- sql -- 项目数据库相关
+        |-- sql                                                 -- 项目数据库相关
             |-- basic-cloud-platform-dev.sql                    -- 项目数据库脚本
             |-- basic-cloud-platform-test.sql                   -- 项目测试数据库脚本
 ```
