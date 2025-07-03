@@ -415,6 +415,11 @@ public class SysThirdUserBindServiceImpl implements SysThirdUserBindService {
             throw new CloudServiceException("当前用户的绑定状态不正确，无法重新发送确认邮件");
         }
 
+        // 可能有手动绑定邮箱的情况
+        if (ObjectUtils.isEmpty(thirdUser.getEmail())) {
+            thirdUser.setEmail(thirdUserBind.getEmail());
+        }
+
         // 重新发送确认邮件
         this.sendBindConfirmation(thirdUser, thirdUserBind.getConfirmToken());
     }
