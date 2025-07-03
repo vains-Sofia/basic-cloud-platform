@@ -257,7 +257,7 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
             user.setRefreshToken(null);
             user.setExpiresAt(null);
         }
-        if (authenticatedUser != null) {
+        if (authenticatedUser != null && authenticatedUser.getId() != null) {
             log.debug("当前登录用户信息为：{}", authenticatedUser);
             BeanUtils.copyProperties(authenticatedUser, userResponse);
             // 获取用户角色
