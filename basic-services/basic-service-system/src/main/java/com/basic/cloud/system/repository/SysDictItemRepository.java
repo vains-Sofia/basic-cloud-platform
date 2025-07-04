@@ -1,5 +1,6 @@
 package com.basic.cloud.system.repository;
 
+import com.basic.cloud.system.api.enums.StatusEnum;
 import com.basic.cloud.system.domain.SysDictItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,12 +16,21 @@ import java.util.List;
 public interface SysDictItemRepository extends JpaRepository<SysDictItem, Long>, JpaSpecificationExecutor<SysDictItem> {
 
     /**
-     * 根据字典类型编码查询字典项，并按排序顺序升序排列
+     * 根据字典类型编码和状态查询字典项，并按排序顺序升序排列
      *
      * @param typeCode 字典类型编码
      * @return 字典项列表
      */
     List<SysDictItem> findByTypeCodeOrderBySortOrderAsc(String typeCode);
+
+    /**
+     * 根据字典类型编码和状态查询字典项，并按排序顺序升序排列
+     *
+     * @param typeCode 字典类型编码
+     * @param status   字典项状态
+     * @return 字典项列表
+     */
+    List<SysDictItem> findByTypeCodeAndStatusOrderBySortOrderAsc(String typeCode, StatusEnum status);
 
     /**
      * 根据字典类型编码删除所有相关的字典项

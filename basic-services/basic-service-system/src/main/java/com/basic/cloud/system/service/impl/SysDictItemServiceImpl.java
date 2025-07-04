@@ -3,6 +3,7 @@ package com.basic.cloud.system.service.impl;
 import com.basic.cloud.system.api.domain.request.SysDictItemPageRequest;
 import com.basic.cloud.system.api.domain.request.SysDictItemRequest;
 import com.basic.cloud.system.api.domain.response.FindSysDictItemResponse;
+import com.basic.cloud.system.api.enums.StatusEnum;
 import com.basic.cloud.system.converter.SysDictItemConverter;
 import com.basic.cloud.system.domain.SysDictItem;
 import com.basic.cloud.system.domain.SysDictType;
@@ -56,7 +57,7 @@ public class SysDictItemServiceImpl implements SysDictItemService {
         SysDictType dictType = sysDictTypeRepository.findByTypeCode(typeCode)
                 .orElseThrow(() -> new CloudServiceException("字典类型不存在，类型编码：" + typeCode));
 
-        List<SysDictItem> dictItems = sysDictItemRepository.findByTypeCodeOrderBySortOrderAsc(dictType.getTypeCode());
+        List<SysDictItem> dictItems = sysDictItemRepository.findByTypeCodeAndStatusOrderBySortOrderAsc(dictType.getTypeCode(), StatusEnum.ENABLE);
         return sysDictItemConverter.convertToResponseList(dictItems);
     }
 
