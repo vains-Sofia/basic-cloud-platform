@@ -1,8 +1,9 @@
 package com.basic.framework.web.autoconfigure;
 
 import com.basic.framework.web.deserializer.TimeStampLocalDateTimeDeserializer;
+import com.basic.framework.web.serizalizer.IdToStringModifier;
 import com.basic.framework.web.serizalizer.TimeStampLocalDateTimeSerializer;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
@@ -106,8 +107,11 @@ public class DefaultJackson2AutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
+        SimpleModule module = new SimpleModule();
+        // 默认只将Long类型的id转为字符串，避免前端传入Long类型的id导致精度丢失
+        module.setSerializerModifier(new IdToStringModifier());
         return builder -> {
-            builder.serializerByType(Long.class, ToStringSerializer.instance);
+            builder.modules(module);
             builder.serializerByType(LocalDateTime.class, localDateTimeSerializer());
             builder.deserializerByType(LocalDateTime.class, localDateTimeDeserializer());
             builder.simpleDateFormat(DEFAULT_DATE_TIME_FORMAT);

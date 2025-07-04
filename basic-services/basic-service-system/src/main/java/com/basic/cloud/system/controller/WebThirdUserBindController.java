@@ -4,6 +4,7 @@ import com.basic.cloud.system.domain.model.ConfirmSuccessTemplate;
 import com.basic.cloud.system.service.SysThirdUserBindService;
 import com.basic.framework.core.util.JsonUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/third/user")
+@Tag(name = "三方用户绑定接口-页面", description = "提供三方用户绑定相关的页面操作")
 public class WebThirdUserBindController {
 
     private final SysThirdUserBindService thirdUserBindService;

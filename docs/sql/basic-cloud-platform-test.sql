@@ -510,4 +510,54 @@ CREATE TABLE `sys_third_user_bind`
   COLLATE = utf8mb4_bin COMMENT = '第三方账号绑定表'
   ROW_FORMAT = Dynamic;
 
+-- ----------------------------
+-- Table structure for sys_dict_type
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dict_type`;
+CREATE TABLE `sys_dict_type`
+(
+    `id`          bigint                                                 NOT NULL COMMENT '主键',
+    `type_code`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '字典类型编码',
+    `name`        varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '字典名称',
+    `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin         NULL COMMENT '类型说明',
+    `status`      varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL DEFAULT 'Y' COMMENT '状态（Y=启用，N=禁用）',
+    `create_by`   bigint                                                 NULL     DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint                                                 NULL     DEFAULT NULL COMMENT '修改人',
+    `create_time` datetime                                               NULL     DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime                                               NULL     DEFAULT NULL COMMENT '修改时间',
+    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '创建人名称',
+    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '修改人名称',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `uk_type_code` (`type_code` ASC) USING BTREE
+) ENGINE = InnoDB
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT = '字典类型表'
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for sys_dict_item
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dict_item`;
+CREATE TABLE `sys_dict_item`
+(
+    `id`          bigint                                                 NOT NULL COMMENT '主键',
+    `type_code`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '字典类型编码（外键）',
+    `item_key`    varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '字典项键',
+    `item_value`  varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '字典项值',
+    `sort_order`  int                                                    NULL     DEFAULT 0 COMMENT '排序值',
+    `status`      varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL DEFAULT 'Y' COMMENT '状态（Y=启用，N=禁用）',
+    `i18n_json`   text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin         NULL COMMENT '多语言 JSON 值',
+    `create_by`   bigint                                                 NULL     DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint                                                 NULL     DEFAULT NULL COMMENT '修改人',
+    `create_time` datetime                                               NULL     DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime                                               NULL     DEFAULT NULL COMMENT '修改时间',
+    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '创建人名称',
+    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '修改人名称',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `idx_type_code` (`type_code` ASC) USING BTREE
+) ENGINE = InnoDB
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT = '字典项表'
+  ROW_FORMAT = Dynamic;
+
 SET FOREIGN_KEY_CHECKS = 1;

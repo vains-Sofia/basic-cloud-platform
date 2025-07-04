@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * 绑定email入参
  *
- * @author YuJx
+ * @author vains
  */
 @Data
 public class BindEmailRequest implements Serializable {

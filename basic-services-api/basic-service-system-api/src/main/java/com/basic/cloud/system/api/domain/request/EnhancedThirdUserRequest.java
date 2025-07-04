@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * 增强三方用户入参
  *
- * @author YuJx
+ * @author vains
  */
 @Data
 public class EnhancedThirdUserRequest implements Serializable {
