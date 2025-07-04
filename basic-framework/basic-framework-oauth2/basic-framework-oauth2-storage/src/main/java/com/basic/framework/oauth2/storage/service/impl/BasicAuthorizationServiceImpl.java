@@ -284,7 +284,7 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
         // 尝试删除access token与用户id的映射关系
         Map<String, Object> claims = OAuth2JsonUtils.objectToObject(accessTokenMetadata.get(CLAIMS_METADATA_NAME), Map.class, String.class, Object.class);
         String jti = claims.get(JTI) + "";
-        Long l = redisHashOperator.deleteHashField(AuthorizeConstants.JTI_USER_HASH, jti);
+        Long l = redisHashOperator.delete(AuthorizeConstants.JTI_USER_HASH + jti);
         if (l > 0) {
             if (log.isDebugEnabled()) {
                 log.debug("Access token jti: {} removed from Redis with result: {}", jti, l);
