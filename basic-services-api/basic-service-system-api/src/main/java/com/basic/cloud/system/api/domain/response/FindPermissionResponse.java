@@ -1,6 +1,8 @@
 package com.basic.cloud.system.api.domain.response;
 
 import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -47,6 +49,7 @@ public class FindPermissionResponse implements Serializable {
     private Boolean needAuthentication;
 
     @Schema(title = "父节点id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     @Schema(title = "组件路径")
