@@ -14,12 +14,12 @@ import java.util.Collection;
 public abstract class AbstractLoginAuthenticationToken extends AbstractAuthenticationToken {
 
     /**
-     * 邮箱地址
+     * 通常为 username 或可作为认证的主体信息
      */
     private final Object principal;
 
     /**
-     * 邮件验证码
+     * 通常为密码或验证码等凭证信息
      */
     private Object credentials;
 

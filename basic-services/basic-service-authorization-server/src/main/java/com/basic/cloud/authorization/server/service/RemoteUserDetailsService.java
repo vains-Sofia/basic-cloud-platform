@@ -43,6 +43,9 @@ public class RemoteUserDetailsService implements UserDetailsService {
         } else if (Objects.equals(requestPath, oauth2ServerProperties.getEmailLoginProcessingUri())) {
             // 这里认为username(账号)是邮箱
             responseResult = basicUserClient.getByEmail(username);
+        } else if (Objects.equals(requestPath, oauth2ServerProperties.getQrCodeLoginProcessingUri())) {
+            // 这里认为username(账号)是邮箱
+            responseResult = basicUserClient.getByEmail(username);
         } else {
             log.debug("不支持登录地址{}，终止查询用户{}.", requestPath, username);
             throw new UsernameNotFoundException(username);

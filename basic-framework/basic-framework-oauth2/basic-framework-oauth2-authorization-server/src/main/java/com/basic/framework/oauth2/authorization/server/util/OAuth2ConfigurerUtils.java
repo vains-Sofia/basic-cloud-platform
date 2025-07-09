@@ -221,7 +221,7 @@ public class OAuth2ConfigurerUtils {
      * @return bean的实例
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getOptionalBean(HttpSecurity httpSecurity, ResolvableType type) {
+    public static <T, B extends HttpSecurityBuilder<B>> T getOptionalBean(HttpSecurityBuilder<B> httpSecurity, ResolvableType type) {
         ApplicationContext context = httpSecurity.getSharedObject(ApplicationContext.class);
         String[] names = context.getBeanNamesForType(type);
         if (names.length > 1) {

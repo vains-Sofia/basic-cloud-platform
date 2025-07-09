@@ -37,6 +37,16 @@ public class AuthorizeConstants {
     /**
      * 用户信息缓存前缀
      */
+    public static final String QR_STATUS_CACHE = "basic:qr-code:status:";
+
+    /**
+     * 二维码过期时间，单位为秒，默认为5分钟
+     */
+    public static final Long EXPIRE_SECONDS = 5 * 60L;
+
+    /**
+     * 用户信息缓存前缀
+     */
     public static final String IS_CLIENT_CREDENTIALS = "client_credentials";
 
     /**
@@ -53,6 +63,11 @@ public class AuthorizeConstants {
      * 邮箱验证码邮件参数名
      */
     public static final String EMAIL_PARAMETER = "email";
+
+    /**
+     * 代表二维码唯一标识参数的名称
+     */
+    public static final String QR_CODE_PARAMETER = "token";
 
     /**
      * 邮箱验证码在参数中的名字

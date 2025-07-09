@@ -43,6 +43,11 @@ public class OAuth2ServerProperties {
     private String emailLoginProcessingUri = "/login/email";
 
     /**
+     * 邮件登录处理地址
+     */
+    private String qrCodeLoginProcessingUri = "/login/qr-code";
+
+    /**
      * 授权确认地址
      */
     private String consentPageUri = "/oauth2/consent";

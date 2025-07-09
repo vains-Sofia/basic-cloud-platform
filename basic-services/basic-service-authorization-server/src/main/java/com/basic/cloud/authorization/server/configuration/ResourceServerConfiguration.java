@@ -1,8 +1,10 @@
 package com.basic.cloud.authorization.server.configuration;
 
-import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
+import com.basic.framework.oauth2.authorization.server.qrcode.QrCodeLoginConfigurer;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.domain.security.QrCodeStatus;
+import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.core.handler.authentication.LoginFailureHandler;
 import com.basic.framework.oauth2.core.handler.authentication.LoginSuccessHandler;
 import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
@@ -42,6 +44,8 @@ public class ResourceServerConfiguration {
      * 认证服务配置类
      */
     private final OAuth2ServerProperties oAuth2ServerProperties;
+
+    private final RedisOperator<QrCodeStatus> qrCodeRedisOperator;
 
     private final RedisOperator<List<ScopePermissionModel>> redisOperator;
 
@@ -106,9 +110,18 @@ public class ResourceServerConfiguration {
         );
 
         // 添加邮件登录过滤器
-        http.with(new EmailCaptchaLoginConfigurer<>(), c -> c
+        http.with(new EmailCaptchaLoginConfigurer<>(), configurer -> configurer
                 .loginPage(oAuth2ServerProperties.getLoginPageUri())
                 .loginProcessingUrl(oAuth2ServerProperties.getEmailLoginProcessingUri())
+                .successHandler(new LoginSuccessHandler(oAuth2ServerProperties.getLoginPageUri()))
+                .failureHandler(new LoginFailureHandler(oAuth2ServerProperties.getLoginPageUri()))
+        );
+
+        // 添加二维码登录过滤器
+        http.with(new QrCodeLoginConfigurer<>(), configurer -> configurer
+                .redisOperator(qrCodeRedisOperator)
+                .loginPage(oAuth2ServerProperties.getLoginPageUri())
+                .loginProcessingUrl(oAuth2ServerProperties.getQrCodeLoginProcessingUri())
                 .successHandler(new LoginSuccessHandler(oAuth2ServerProperties.getLoginPageUri()))
                 .failureHandler(new LoginFailureHandler(oAuth2ServerProperties.getLoginPageUri()))
         );

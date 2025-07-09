@@ -1,16 +1,12 @@
 package com.basic.framework.oauth2.storage.autoconfigure;
 
 import com.basic.cloud.system.api.SysPermissionClient;
+import com.basic.framework.oauth2.core.domain.security.QrCodeStatus;
 import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.storage.repository.*;
-import com.basic.framework.oauth2.storage.service.BasicApplicationService;
-import com.basic.framework.oauth2.storage.service.BasicAuthorizationConsentService;
-import com.basic.framework.oauth2.storage.service.BasicAuthorizationService;
-import com.basic.framework.oauth2.storage.service.OAuth2ScopeService;
-import com.basic.framework.oauth2.storage.service.impl.BasicApplicationServiceImpl;
-import com.basic.framework.oauth2.storage.service.impl.BasicAuthorizationConsentServiceImpl;
-import com.basic.framework.oauth2.storage.service.impl.BasicAuthorizationServiceImpl;
-import com.basic.framework.oauth2.storage.service.impl.OAuth2ScopeServiceImpl;
+import com.basic.framework.oauth2.storage.service.*;
+import com.basic.framework.oauth2.storage.service.impl.*;
+import com.basic.framework.oauth2.storage.sse.SseEmitterManager;
 import com.basic.framework.oauth2.storage.storage.StorageAuthorizationConsentService;
 import com.basic.framework.oauth2.storage.storage.StorageAuthorizationService;
 import com.basic.framework.oauth2.storage.storage.StorageRegisteredClientRepository;
@@ -21,9 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,6 +40,7 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Import(SseEmitterManager.class)
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @EntityScan("com.basic.framework.oauth2.storage.domain.entity")
 @EnableJpaRepositories(basePackages = "com.basic.framework.oauth2.storage.repository")
@@ -117,6 +116,14 @@ public class StorageAutoConfiguration {
     @ConditionalOnMissingBean
     public SessionRegistry setSessionRegistry() {
         return new SessionRegistryImpl();
+    }
+
+    @Bean
+    public QrCodeLoginService qrCodeLoginService(SseEmitterManager sseEmitterManager,
+                                                 RedisTemplate<String, ?> redisTemplate,
+                                                 RedisOperator<String> stringRedisOperator,
+                                                 RedisOperator<QrCodeStatus> redisOperator) {
+        return new QrCodeLoginServiceImpl(sseEmitterManager, redisTemplate, stringRedisOperator, redisOperator);
     }
 
 }

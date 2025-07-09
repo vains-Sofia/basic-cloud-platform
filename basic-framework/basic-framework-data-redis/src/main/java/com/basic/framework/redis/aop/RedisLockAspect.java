@@ -44,7 +44,7 @@ public class RedisLockAspect {
     /**
      * 默认分布式锁key的前缀
      */
-    private static final String KEY_PREFIX = "lock:";
+    private static final String KEY_PREFIX = "basic:lock:";
 
     /**
      * SpEL表达式解析

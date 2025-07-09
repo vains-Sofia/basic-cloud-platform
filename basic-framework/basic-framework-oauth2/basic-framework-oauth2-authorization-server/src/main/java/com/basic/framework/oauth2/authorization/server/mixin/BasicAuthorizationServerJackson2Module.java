@@ -1,6 +1,7 @@
 package com.basic.framework.oauth2.authorization.server.mixin;
 
 import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationToken;
+import com.basic.framework.oauth2.authorization.server.qrcode.QrCodeLoginAuthenticationToken;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -17,6 +18,7 @@ public class BasicAuthorizationServerJackson2Module extends SimpleModule {
 
     @Override
     public void setupModule(SetupContext context) {
+        context.setMixInAnnotations(QrCodeLoginAuthenticationToken.class, QrCodeLoginAuthenticationTokenMixin.class);
         context.setMixInAnnotations(EmailCaptchaLoginAuthenticationToken.class, EmailCaptchaLoginAuthenticationTokenMixin.class);
     }
 }
