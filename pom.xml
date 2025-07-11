@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.4</version>
+        <version>3.5.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -36,11 +36,11 @@
         <!-- Mybatis Plus 版本号 -->
         <mybatis-plus.version>3.5.11</mybatis-plus.version>
         <!-- Spring Cloud 版本号 -->
-        <spring-cloud.version>2024.0.1</spring-cloud.version>
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
         <!-- Spring Boot Admin 版本号 -->
         <spring-boot-admin.version>3.4.5</spring-boot-admin.version>
         <!-- Spring Cloud Alibaba 版本号 -->
-        <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
+        <spring-cloud-alibaba.version>2023.0.3.3</spring-cloud-alibaba.version>
         <!-- 日志发送至logstash依赖版本 -->
         <logstash-logback-encoder.version>8.0</logstash-logback-encoder.version>
     </properties>
