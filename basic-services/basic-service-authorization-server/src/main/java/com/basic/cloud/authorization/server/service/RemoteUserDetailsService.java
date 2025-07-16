@@ -5,8 +5,6 @@ import com.basic.cloud.system.api.domain.response.BasicUserResponse;
 import com.basic.framework.core.constants.HttpCodeConstants;
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.oauth2.core.domain.oauth2.BasicAuthenticatedUser;
-import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
-import com.basic.framework.oauth2.core.util.ServletUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -16,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * 远程用户信息Service实现
@@ -30,25 +28,15 @@ public class RemoteUserDetailsService implements UserDetailsService {
 
     private final SysBasicUserClient basicUserClient;
 
-    private final OAuth2ServerProperties oauth2ServerProperties;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // 替换ContextPath
-        String requestPath = ServletUtils.getRequestPath();
         Result<BasicUserResponse> responseResult;
-        if (Objects.equals(requestPath, oauth2ServerProperties.getLoginProcessingUri())) {
-            // 这里认为username(账号)就是账号
-            responseResult = basicUserClient.getByUsername(username);
-        } else if (Objects.equals(requestPath, oauth2ServerProperties.getEmailLoginProcessingUri())) {
-            // 这里认为username(账号)是邮箱
-            responseResult = basicUserClient.getByEmail(username);
-        } else if (Objects.equals(requestPath, oauth2ServerProperties.getQrCodeLoginProcessingUri())) {
+        if (this.isValidEmail(username)) {
             // 这里认为username(账号)是邮箱
             responseResult = basicUserClient.getByEmail(username);
         } else {
-            log.debug("不支持登录地址{}，终止查询用户{}.", requestPath, username);
-            throw new UsernameNotFoundException(username);
+            // 这里认为username(账号)就是账号
+            responseResult = basicUserClient.getByUsername(username);
         }
         if (responseResult == null) {
             log.debug("调用api根据{}查询用户信息失败，响应null.", username);
@@ -72,6 +60,11 @@ public class RemoteUserDetailsService implements UserDetailsService {
         authenticatedUser.setUsername(userResponse.getNickname());
         authenticatedUser.setAuthorities(userResponse.getAuthorities());
         return authenticatedUser;
+    }
+
+    private boolean isValidEmail(String email) {
+        String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        return Pattern.matches(regex, email);
     }
 
 }
