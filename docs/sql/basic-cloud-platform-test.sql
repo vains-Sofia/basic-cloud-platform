@@ -15,7 +15,8 @@
 */
 
 SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
+SET
+FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
 -- Table structure for oauth2_application
@@ -26,10 +27,10 @@ CREATE TABLE `oauth2_application`
     `id`                            bigint                                                  NOT NULL COMMENT '数据主键',
     `client_id`                     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '客户端id',
     `client_id_issued_at`           timestamp                                               NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '客户端id签发时间',
-    `client_secret`                 varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '客户端秘钥',
-    `client_secret_expires_at`      timestamp                                               NULL     DEFAULT NULL COMMENT '客户端秘钥过期时间',
+    `client_secret`                 varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '客户端秘钥',
+    `client_secret_expires_at`      timestamp NULL     DEFAULT NULL COMMENT '客户端秘钥过期时间',
     `client_name`                   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '客户端名称',
-    `client_logo`                   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '客户端logo',
+    `client_logo`                   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '客户端logo',
     `client_authentication_methods` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端支持的认证方式',
     `description`                   varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '客户端描述',
     `authorization_grant_types`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端支持的授权模式',
@@ -38,12 +39,12 @@ CREATE TABLE `oauth2_application`
     `scopes`                        varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端拥有的scope',
     `client_settings`               varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端设置',
     `token_settings`                varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端生成token设置',
-    `create_by`                     bigint                                                  NULL     DEFAULT NULL COMMENT '创建人',
-    `update_by`                     bigint                                                  NULL     DEFAULT NULL COMMENT '修改人',
-    `create_time`                   datetime                                                NULL     DEFAULT NULL COMMENT '创建时间',
-    `update_time`                   datetime                                                NULL     DEFAULT NULL COMMENT '修改时间',
-    `create_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL     DEFAULT NULL COMMENT '创建人名称',
-    `update_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL     DEFAULT NULL COMMENT '修改人名称',
+    `create_by`                     bigint NULL     DEFAULT NULL COMMENT '创建人',
+    `update_by`                     bigint NULL     DEFAULT NULL COMMENT '修改人',
+    `create_time`                   datetime NULL     DEFAULT NULL COMMENT '创建时间',
+    `update_time`                   datetime NULL     DEFAULT NULL COMMENT '修改时间',
+    `create_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '创建人名称',
+    `update_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '修改人名称',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -129,43 +130,43 @@ VALUES (1851513255444410369, 'private-key-jwt-client-update', '2024-10-30 06:35:
 DROP TABLE IF EXISTS `oauth2_authorization`;
 CREATE TABLE `oauth2_authorization`
 (
-    `id`                            varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NOT NULL COMMENT '数据id',
-    `registered_client_id`          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT 'oauth2授权登录时使用的客户端id',
-    `principal_id`                  bigint                                                  NULL DEFAULT NULL COMMENT 'oauth2授权登录时授权用户id',
-    `principal_name`                varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT 'oauth2授权登录时授权用户名',
-    `authorization_grant_type`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT 'oauth2授权登录时使用的授权模式',
+    `id`                            varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '数据id',
+    `registered_client_id`          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'oauth2授权登录时使用的客户端id',
+    `principal_id`                  bigint NULL DEFAULT NULL COMMENT 'oauth2授权登录时授权用户id',
+    `principal_name`                varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'oauth2授权登录时授权用户名',
+    `authorization_grant_type`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'oauth2授权登录时使用的授权模式',
     `authorized_scopes`             varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'oauth2授权登录时申请的权限',
     `attributes`                    text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'oauth2授权登录属性',
-    `state`                         varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT 'oauth2授权登录时的state',
+    `state`                         varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'oauth2授权登录时的state',
     `authorization_code_value`      text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT '授权码的值',
-    `authorization_code_issued_at`  timestamp                                               NULL DEFAULT NULL COMMENT '授权码签发时间',
-    `authorization_code_expires_at` timestamp                                               NULL DEFAULT NULL COMMENT '授权码过期时间',
+    `authorization_code_issued_at`  timestamp NULL DEFAULT NULL COMMENT '授权码签发时间',
+    `authorization_code_expires_at` timestamp NULL DEFAULT NULL COMMENT '授权码过期时间',
     `authorization_code_metadata`   text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT '授权码元数据',
     `access_token_value`            text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'access token的值',
-    `access_token_issued_at`        timestamp                                               NULL DEFAULT NULL COMMENT 'access token签发时间',
-    `access_token_expires_at`       timestamp                                               NULL DEFAULT NULL COMMENT 'access token过期时间',
+    `access_token_issued_at`        timestamp NULL DEFAULT NULL COMMENT 'access token签发时间',
+    `access_token_expires_at`       timestamp NULL DEFAULT NULL COMMENT 'access token过期时间',
     `access_token_metadata`         text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'access token元数据',
-    `access_token_type`             varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT 'access token类型(一般是bearer)',
+    `access_token_type`             varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'access token类型(一般是bearer)',
     `access_token_scopes`           text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'access token中包含的scope',
     `refresh_token_value`           text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT '认证后签发的 refresh token',
-    `refresh_token_issued_at`       timestamp                                               NULL DEFAULT NULL COMMENT 'refresh token 签发时间',
-    `refresh_token_expires_at`      timestamp                                               NULL DEFAULT NULL COMMENT 'refresh token 过期时间',
+    `refresh_token_issued_at`       timestamp NULL DEFAULT NULL COMMENT 'refresh token 签发时间',
+    `refresh_token_expires_at`      timestamp NULL DEFAULT NULL COMMENT 'refresh token 过期时间',
     `refresh_token_metadata`        text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'refresh token 元数据',
     `oidc_id_token_value`           text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT '认证后签发的 oidc id token',
-    `oidc_id_token_issued_at`       timestamp                                               NULL DEFAULT NULL COMMENT 'oidc id token 签发时间',
-    `oidc_id_token_expires_at`      timestamp                                               NULL DEFAULT NULL COMMENT 'oidc id token 过期时间',
+    `oidc_id_token_issued_at`       timestamp NULL DEFAULT NULL COMMENT 'oidc id token 签发时间',
+    `oidc_id_token_expires_at`      timestamp NULL DEFAULT NULL COMMENT 'oidc id token 过期时间',
     `oidc_id_token_metadata`        text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'oidc id token 元数据',
     `oidc_id_token_claims`          text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'oidc id token 声明(Claims)信息(一般情况下是用户数据)',
     `user_code_value`               text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT '设备码模式(Device Flow)中的 user code',
-    `user_code_issued_at`           timestamp                                               NULL DEFAULT NULL COMMENT 'user code 签发时间',
-    `user_code_expires_at`          timestamp                                               NULL DEFAULT NULL COMMENT 'user code 过期时间',
+    `user_code_issued_at`           timestamp NULL DEFAULT NULL COMMENT 'user code 签发时间',
+    `user_code_expires_at`          timestamp NULL DEFAULT NULL COMMENT 'user code 过期时间',
     `user_code_metadata`            text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'user code 元数据',
     `device_code_value`             text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT '设备码模式(Device Flow)中的 device code',
-    `device_code_issued_at`         timestamp                                               NULL DEFAULT NULL COMMENT 'device code 签发时间',
-    `device_code_expires_at`        timestamp                                               NULL DEFAULT NULL COMMENT 'device code 过期时间',
+    `device_code_issued_at`         timestamp NULL DEFAULT NULL COMMENT 'device code 签发时间',
+    `device_code_expires_at`        timestamp NULL DEFAULT NULL COMMENT 'device code 过期时间',
     `device_code_metadata`          text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          NULL COMMENT 'device code 元数据',
-    `create_time`                   datetime                                                NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`                   datetime                                                NULL DEFAULT NULL COMMENT '修改时间',
+    `create_time`                   datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`                   datetime NULL DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -182,12 +183,12 @@ CREATE TABLE `oauth2_authorization_consent`
     `registered_client_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '针对该客户端id对应的客户端的授权确认',
     `principal_name`       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '授权确认的用户',
     `authorities`          varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '授权确认的scope',
-    `create_by`            bigint                                                  NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`            bigint                                                  NULL DEFAULT NULL COMMENT '修改人',
-    `create_time`          datetime                                                NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`          datetime                                                NULL DEFAULT NULL COMMENT '修改时间',
-    `create_name`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_by`            bigint NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`            bigint NULL DEFAULT NULL COMMENT '修改人',
+    `create_time`          datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`          datetime NULL DEFAULT NULL COMMENT '修改时间',
+    `create_name`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -213,12 +214,12 @@ CREATE TABLE `oauth2_scope`
     `scope`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'scope 编码',
     `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'scope 描述',
     `enabled`     tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否启用',
-    `create_by`   bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`   bigint                                                 NULL DEFAULT NULL COMMENT '修改人',
-    `create_time` datetime                                               NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time` datetime                                               NULL DEFAULT NULL COMMENT '修改时间',
-    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_by`   bigint NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint NULL DEFAULT NULL COMMENT '修改人',
+    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -248,15 +249,15 @@ VALUES (1856525703913406465, '', 'user.read', 'This application will be able to 
 DROP TABLE IF EXISTS `oauth2_scope_permission`;
 CREATE TABLE `oauth2_scope_permission`
 (
-    `id`            bigint                                                 NOT NULL COMMENT '主键id',
+    `id`            bigint NOT NULL COMMENT '主键id',
     `scope`         varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'oauth2 scope名',
-    `permission_id` bigint                                                 NULL DEFAULT NULL COMMENT '权限id',
-    `create_by`     bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`     bigint                                                 NULL DEFAULT NULL COMMENT '修改人',
-    `create_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '修改人名称',
-    `create_time`   datetime                                               NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`   datetime                                               NULL DEFAULT NULL COMMENT '修改时间',
+    `permission_id` bigint NULL DEFAULT NULL COMMENT '权限id',
+    `create_by`     bigint NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`     bigint NULL DEFAULT NULL COMMENT '修改人',
+    `create_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time`   datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`   datetime NULL DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -276,27 +277,27 @@ VALUES (1870115747740577793, 'message.read', 1870104226282090498, 1, 1, '云逸'
 DROP TABLE IF EXISTS `sys_basic_user`;
 CREATE TABLE `sys_basic_user`
 (
-    `id`                    bigint                                                 NOT NULL COMMENT '自增id',
+    `id`                    bigint NOT NULL COMMENT '自增id',
     `username`              varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '账号',
     `nickname`              varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户名、昵称',
     `profile`               varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户个人资料页面的 URL。',
     `picture`               varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户个人资料图片的 URL。此 URL 必须指向图像文件（例如，PNG、JPEG 或 GIF 图像文件），而不是指向包含图像的网页。',
-    `email`                 varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '用户的首选电子邮件地址。其值必须符合RFC 5322 [RFC5322] addr-spec 语法',
+    `email`                 varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户的首选电子邮件地址。其值必须符合RFC 5322 [RFC5322] addr-spec 语法',
     `email_verified`        tinyint(1)                                             NULL DEFAULT NULL COMMENT '邮箱是否验证过',
     `gender`                tinyint(1)                                             NULL DEFAULT NULL COMMENT '用户性别',
     `password`              varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '密码',
-    `birthdate`             date                                                   NULL DEFAULT NULL COMMENT '出生日期，以 ISO 8601-1 [ISO8601‑1] YYYY-MM-DD 格式表示。',
-    `phone_number`          varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '手机号',
+    `birthdate`             date NULL DEFAULT NULL COMMENT '出生日期，以 ISO 8601-1 [ISO8601‑1] YYYY-MM-DD 格式表示。',
+    `phone_number`          varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '手机号',
     `phone_number_verified` tinyint(1)                                             NULL DEFAULT NULL COMMENT '手机号是否已验证',
     `address`               varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户的首选邮政地址',
     `deleted`               tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否已删除',
     `account_platform`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户来源',
-    `create_by`             bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`             bigint                                                 NULL DEFAULT NULL COMMENT '修改人',
-    `create_name`           varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name`           varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '修改人名称',
-    `create_time`           datetime                                               NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`           datetime                                               NULL DEFAULT NULL COMMENT '修改时间',
+    `create_by`             bigint NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`             bigint NULL DEFAULT NULL COMMENT '修改人',
+    `create_name`           varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name`           varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time`           datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`           datetime NULL DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -321,38 +322,38 @@ VALUES (1862332106783637506, 'test01', '注册01', NULL, NULL, '17683906001@163.
 DROP TABLE IF EXISTS `sys_permission`;
 CREATE TABLE `sys_permission`
 (
-    `id`                  bigint                                                  NOT NULL COMMENT '主键id',
-    `title`               varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '菜单名称（兼容国际化、非国际化，如果用国际化的写法就必须在根目录的locales文件夹下对应添加）',
-    `name`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '权限名',
-    `permission`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '权限码',
-    `path`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '路径',
-    `request_method`      varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT 'HTTP请求方式',
+    `id`                  bigint NOT NULL COMMENT '主键id',
+    `title`               varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '菜单名称（兼容国际化、非国际化，如果用国际化的写法就必须在根目录的locales文件夹下对应添加）',
+    `name`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '权限名',
+    `permission`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '权限码',
+    `path`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '路径',
+    `request_method`      varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'HTTP请求方式',
     `permission_type`     tinyint(1)                                              NOT NULL COMMENT '0:菜单,1:接口,2:其它',
-    `module_name`         varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '所属模块名字',
-    `description`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '描述',
+    `module_name`         varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '所属模块名字',
+    `description`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '描述',
     `need_authentication` tinyint(1)                                              NULL DEFAULT 0 COMMENT '是否需要鉴权',
-    `parent_id`           bigint                                                  NULL DEFAULT 0 COMMENT '父节点id',
-    `component`           varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '组件路径',
-    `redirect`            varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '路由重定向',
+    `parent_id`           bigint NULL DEFAULT 0 COMMENT '父节点id',
+    `component`           varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '组件路径',
+    `redirect`            varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '路由重定向',
     `deleted`             tinyint(1)                                              NULL DEFAULT NULL COMMENT '是否已删除',
-    `icon`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '菜单图标',
-    `extra_icon`          varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '右侧图标',
-    `enter_transition`    varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '进场动画（页面加载动画）',
-    `leave_transition`    varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '离场动画（页面加载动画）',
+    `icon`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '菜单图标',
+    `extra_icon`          varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '右侧图标',
+    `enter_transition`    varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '进场动画（页面加载动画）',
+    `leave_transition`    varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '离场动画（页面加载动画）',
     `frame_src`           varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '链接地址（需要内嵌的iframe链接地址）',
-    `frame_loading`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '加载动画（内嵌的iframe页面是否开启首次加载动画）',
+    `frame_loading`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '加载动画（内嵌的iframe页面是否开启首次加载动画）',
     `keep_alive`          tinyint(1)                                              NULL DEFAULT NULL COMMENT '缓存页面（是否缓存该路由页面，开启后会保存该页面的整体状态，刷新后会清空状态）',
     `show_link`           tinyint(1)                                              NULL DEFAULT NULL COMMENT '是否显示该菜单',
     `hidden_tag`          tinyint(1)                                              NULL DEFAULT NULL COMMENT '隐藏标签页（当前菜单名称或自定义信息禁止添加到标签页）',
     `fixed_tag`           tinyint(1)                                              NULL DEFAULT NULL COMMENT '固定标签页（当前菜单名称是否固定显示在标签页且不可关闭）',
     `show_parent`         tinyint(1)                                              NULL DEFAULT NULL COMMENT '是否显示父级菜单',
-    `rank`                decimal(10, 0)                                          NULL DEFAULT NULL COMMENT '菜单排序',
-    `create_by`           bigint                                                  NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`           bigint                                                  NULL DEFAULT NULL COMMENT '修改人',
-    `create_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '修改人名称',
-    `create_time`         datetime                                                NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`         datetime                                                NULL DEFAULT NULL COMMENT '修改时间',
+    `rank`                decimal(10, 0) NULL DEFAULT NULL COMMENT '菜单排序',
+    `create_by`           bigint NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`           bigint NULL DEFAULT NULL COMMENT '修改人',
+    `create_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time`         datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`         datetime NULL DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -403,17 +404,17 @@ VALUES (1919661595269836801, 'menus.pureDept', 'SystemDept', 'menu:system:dept',
 DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role`
 (
-    `id`          bigint                                                 NOT NULL COMMENT '主键id',
-    `code`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '角色代码',
-    `name`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '角色名称',
+    `id`          bigint NOT NULL COMMENT '主键id',
+    `code`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '角色代码',
+    `name`        varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '角色名称',
     `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '角色描述',
     `deleted`     tinyint(1)                                             NULL DEFAULT NULL COMMENT '是否已删除',
-    `create_by`   bigint                                                 NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`   bigint                                                 NULL DEFAULT NULL COMMENT '修改人',
-    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '修改人名称',
-    `create_time` datetime                                               NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time` datetime                                               NULL DEFAULT NULL COMMENT '修改时间',
+    `create_by`   bigint NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint NULL DEFAULT NULL COMMENT '修改人',
+    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
+    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
+    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -432,15 +433,15 @@ VALUES (1, 'normal', '普通用户', '普通用户', 0, 1, 1, '云逸', '云逸'
 DROP TABLE IF EXISTS `sys_role_permission`;
 CREATE TABLE `sys_role_permission`
 (
-    `id`            bigint                                                NOT NULL AUTO_INCREMENT COMMENT '角色菜单关联表ID',
-    `role_id`       bigint                                                NOT NULL COMMENT '角色ID',
-    `permission_id` bigint                                                NOT NULL COMMENT '权限菜单ID',
-    `create_by`     bigint                                                NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`     bigint                                                NULL DEFAULT NULL COMMENT '修改人',
+    `id`            bigint NOT NULL AUTO_INCREMENT COMMENT '角色菜单关联表ID',
+    `role_id`       bigint NOT NULL COMMENT '角色ID',
+    `permission_id` bigint NOT NULL COMMENT '权限菜单ID',
+    `create_by`     bigint NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`     bigint NULL DEFAULT NULL COMMENT '修改人',
     `create_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
     `update_name`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
-    `create_time`   datetime                                              NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`   datetime                                              NULL DEFAULT NULL COMMENT '修改时间',
+    `create_time`   datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`   datetime NULL DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 2
@@ -460,15 +461,15 @@ VALUES (1, 1, 1, 1, 1, '云逸', '云逸', '2024-11-25 17:39:25', '2024-11-25 17
 DROP TABLE IF EXISTS `sys_user_role`;
 CREATE TABLE `sys_user_role`
 (
-    `id`          bigint                                                NOT NULL AUTO_INCREMENT COMMENT '主键id',
-    `role_id`     bigint                                                NULL DEFAULT NULL COMMENT '角色ID',
-    `user_id`     bigint                                                NULL DEFAULT NULL COMMENT '用户ID',
-    `create_by`   bigint                                                NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`   bigint                                                NULL DEFAULT NULL COMMENT '修改人',
+    `id`          bigint NOT NULL AUTO_INCREMENT COMMENT '主键id',
+    `role_id`     bigint NULL DEFAULT NULL COMMENT '角色ID',
+    `user_id`     bigint NULL DEFAULT NULL COMMENT '用户ID',
+    `create_by`   bigint NULL DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint NULL DEFAULT NULL COMMENT '修改人',
     `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '创建人名称',
     `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '修改人名称',
-    `create_time` datetime                                              NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time` datetime                                              NULL DEFAULT NULL COMMENT '修改时间',
+    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 2
@@ -495,16 +496,16 @@ CREATE TABLE `sys_third_user_bind`
     `email`            varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '第三方用户邮箱，用于绑定校验',
     `access_token`     text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin         NULL COMMENT '第三方登录时的 access token（可选存储）',
     `refresh_token`    text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin         NULL COMMENT '第三方 refresh token（可选）',
-    `expires_at`       datetime                                               NULL DEFAULT NULL COMMENT 'access_token 过期时间',
+    `expires_at`       datetime NULL DEFAULT NULL COMMENT 'access_token 过期时间',
     `bind_status`      tinyint(1)                                             NULL DEFAULT 0 COMMENT '绑定状态：0-待确认/1-已绑定',
-    `bind_time`        datetime                                               NULL DEFAULT CURRENT_TIMESTAMP COMMENT '绑定时间',
+    `bind_time`        datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '绑定时间',
     `confirm_token`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用于邮箱绑定确认的 token',
-    `token_expires_at` datetime                                               NULL DEFAULT NULL COMMENT '确认token有效期',
-    `create_time`      datetime                                               NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time`      datetime                                               NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `token_expires_at` datetime NULL DEFAULT NULL COMMENT '确认token有效期',
+    `create_time`      datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`      datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX `idx_user_id` (`user_id` ASC) USING BTREE,
-    INDEX `idx_email` (`email` ASC) USING BTREE
+    INDEX              `idx_user_id` (`user_id` ASC) USING BTREE,
+    INDEX              `idx_email` (`email` ASC) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT = '第三方账号绑定表'
@@ -521,12 +522,12 @@ CREATE TABLE `sys_dict_type`
     `name`        varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '字典名称',
     `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin         NULL COMMENT '类型说明',
     `status`      varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL DEFAULT 'Y' COMMENT '状态（Y=启用，N=禁用）',
-    `create_by`   bigint                                                 NULL     DEFAULT NULL COMMENT '创建人',
-    `update_by`   bigint                                                 NULL     DEFAULT NULL COMMENT '修改人',
-    `create_time` datetime                                               NULL     DEFAULT NULL COMMENT '创建时间',
-    `update_time` datetime                                               NULL     DEFAULT NULL COMMENT '修改时间',
-    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '创建人名称',
-    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '修改人名称',
+    `create_by`   bigint NULL     DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint NULL     DEFAULT NULL COMMENT '修改人',
+    `create_time` datetime NULL     DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL     DEFAULT NULL COMMENT '修改时间',
+    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '创建人名称',
+    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '修改人名称',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `uk_type_code` (`type_code` ASC) USING BTREE
 ) ENGINE = InnoDB
@@ -542,22 +543,23 @@ CREATE TABLE `sys_dict_item`
 (
     `id`          bigint                                                 NOT NULL COMMENT '主键',
     `type_code`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '字典类型编码（外键）',
-    `item_key`    varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '字典项键',
-    `item_value`  varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '字典项值',
-    `sort_order`  int                                                    NULL     DEFAULT 0 COMMENT '排序值',
+    `item_code`   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '字典项键',
+    `item_name`   varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '字典项值',
+    `sort_order`  int NULL     DEFAULT 0 COMMENT '排序值',
     `status`      varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL DEFAULT 'Y' COMMENT '状态（Y=启用，N=禁用）',
     `i18n_json`   text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin         NULL COMMENT '多语言 JSON 值',
-    `create_by`   bigint                                                 NULL     DEFAULT NULL COMMENT '创建人',
-    `update_by`   bigint                                                 NULL     DEFAULT NULL COMMENT '修改人',
-    `create_time` datetime                                               NULL     DEFAULT NULL COMMENT '创建时间',
-    `update_time` datetime                                               NULL     DEFAULT NULL COMMENT '修改时间',
-    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '创建人名称',
-    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '修改人名称',
+    `create_by`   bigint NULL     DEFAULT NULL COMMENT '创建人',
+    `update_by`   bigint NULL     DEFAULT NULL COMMENT '修改人',
+    `create_time` datetime NULL     DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL     DEFAULT NULL COMMENT '修改时间',
+    `create_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '创建人名称',
+    `update_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '修改人名称',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX `idx_type_code` (`type_code` ASC) USING BTREE
+    INDEX         `idx_type_code` (`type_code` ASC) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT = '字典项表'
   ROW_FORMAT = Dynamic;
 
-SET FOREIGN_KEY_CHECKS = 1;
+SET
+FOREIGN_KEY_CHECKS = 1;

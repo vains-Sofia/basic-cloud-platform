@@ -27,14 +27,14 @@ public class SysDictItemRequest implements Serializable {
     private String typeCode;
 
     @Size(max = 50)
-    @NotBlank(message = "项键不能为空")
-    @Schema(title = "项键", description = "字典项的唯一键，用于标识该项")
-    private String itemKey;
+    @NotBlank(message = "字典项编码不能为空")
+    @Schema(title = "字典项编码", description = "字典项的唯一键，用于标识该项")
+    private String itemCode;
 
     @Size(max = 100)
-    @NotBlank(message = "项值不能为空")
-    @Schema(title = "项值", description = "字典项的值，通常是用户可见的描述信息")
-    private String itemValue;
+    @NotBlank(message = "字典项名称不能为空")
+    @Schema(title = "字典项名称", description = "字典项的名称，通常是用户可见的描述信息")
+    private String itemName;
 
     @Schema(title = "排序序号", description = "排序序号", defaultValue = "0")
     private Integer sortOrder = 0;

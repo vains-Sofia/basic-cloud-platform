@@ -78,10 +78,10 @@ public class SysDictItemServiceImpl implements SysDictItemService {
         // 检查同一字典类型下是否存在相同的字典项键
         List<SysDictItem> existingItems = sysDictItemRepository.findByTypeCodeOrderBySortOrderAsc(dictType.getTypeCode());
         boolean keyExists = existingItems.stream()
-                .anyMatch(item -> item.getItemKey().equals(request.getItemKey()));
+                .anyMatch(item -> item.getItemCode().equals(request.getItemCode()));
 
         if (keyExists) {
-            throw new CloudServiceException("字典项键已存在：" + request.getItemKey());
+            throw new CloudServiceException("字典项在类型 [ " + dictType.getTypeCode() + " ] 中已存在：" + request.getItemCode());
         }
 
         SysDictItem dictItem = sysDictItemConverter.convertFromRequest(request);
@@ -90,7 +90,7 @@ public class SysDictItemServiceImpl implements SysDictItemService {
 
         if (log.isDebugEnabled()) {
             log.debug("创建字典项成功，ID：{}，字典类型：{}，字典项键：{}",
-                    savedDictItem.getId(), savedDictItem.getTypeCode(), savedDictItem.getItemKey());
+                    savedDictItem.getId(), savedDictItem.getTypeCode(), savedDictItem.getItemCode());
         }
 
         return sysDictItemConverter.convertToResponse(savedDictItem);
@@ -111,16 +111,16 @@ public class SysDictItemServiceImpl implements SysDictItemService {
         // 检查同一字典类型下是否存在相同的字典项键（排除当前记录）
         List<SysDictItem> existingItems = sysDictItemRepository.findByTypeCodeOrderBySortOrderAsc(request.getTypeCode());
         boolean keyExists = existingItems.stream()
-                .anyMatch(item -> item.getItemKey().equals(request.getItemKey()) && !item.getId().equals(id));
+                .anyMatch(item -> item.getItemCode().equals(request.getItemCode()) && !item.getId().equals(id));
 
         if (keyExists) {
-            throw new CloudServiceException("字典项键已存在：" + request.getItemKey());
+            throw new CloudServiceException("字典项键已存在：" + request.getItemCode());
         }
 
         // 更新字典项信息
         existingDictItem.setTypeCode(request.getTypeCode());
-        existingDictItem.setItemKey(request.getItemKey());
-        existingDictItem.setItemValue(request.getItemValue());
+        existingDictItem.setItemCode(request.getItemCode());
+        existingDictItem.setItemName(request.getItemName());
         existingDictItem.setSortOrder(request.getSortOrder());
         existingDictItem.setStatus(request.getStatus());
         existingDictItem.setI18nJson(request.getI18nJson());
@@ -129,7 +129,7 @@ public class SysDictItemServiceImpl implements SysDictItemService {
 
         if (log.isDebugEnabled()) {
             log.debug("更新字典项成功，ID：{}，字典类型：{}，字典项键：{}",
-                    updatedDictItem.getId(), updatedDictItem.getTypeCode(), updatedDictItem.getItemKey());
+                    updatedDictItem.getId(), updatedDictItem.getTypeCode(), updatedDictItem.getItemCode());
         }
 
         return sysDictItemConverter.convertToResponse(updatedDictItem);
@@ -144,7 +144,7 @@ public class SysDictItemServiceImpl implements SysDictItemService {
         sysDictItemRepository.deleteById(id);
 
         if (log.isDebugEnabled()) {
-            log.debug("删除字典项成功，ID：{}，字典项键：{}", id, dictItem.getItemKey());
+            log.debug("删除字典项成功，ID：{}，字典项键：{}", id, dictItem.getItemCode());
         }
     }
 
@@ -156,7 +156,7 @@ public class SysDictItemServiceImpl implements SysDictItemService {
 
         List<SysDictItem> dictItems = sysDictItemRepository.findByTypeCodeOrderBySortOrderAsc(dictType.getTypeCode());
         SysDictItem dictItem = dictItems.stream()
-                .filter(item -> item.getItemKey().equals(itemKey))
+                .filter(item -> item.getItemCode().equals(itemKey))
                 .findFirst()
                 .orElseThrow(() -> new CloudServiceException("字典项不存在，类型编码：" + typeCode + "，键：" + itemKey));
 
@@ -176,8 +176,8 @@ public class SysDictItemServiceImpl implements SysDictItemService {
         builder.eq(!ObjectUtils.isEmpty(request.getTypeCode()), SysDictItem::getTypeCode, request.getTypeCode());
         builder.or(or -> {
             if (!ObjectUtils.isEmpty(request.getKeyword())) {
-                or.like(SysDictItem::getItemKey, request.getKeyword());
-                or.like(SysDictItem::getItemValue, request.getKeyword());
+                or.like(SysDictItem::getItemCode, request.getKeyword());
+                or.like(SysDictItem::getItemName, request.getKeyword());
             }
         });
 
