@@ -26,7 +26,7 @@
 
 Basic Cloud Platform 是一个基于 Spring Cloud 生态体系构建的现代化微服务平台。本项目采用最新的 Spring Cloud 技术栈，集成了统一授权认证、服务治理、微服务监控等核心功能，为企业级应用开发提供完整的解决方案。
 
-### 📖 DeepWiki
+### 🤖 DeepWiki
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/vains-Sofia/basic-cloud-platform)<br />
 现在项目已使用 DeepWiki 自动生成wiki，您可访问 https://deepwiki.com/vains-Sofia/basic-cloud-platform 或点击上方icon来查看。<br />
 DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获取项目相关信息。您可以通过 DeepWiki 提问，获取关于 Basic Cloud Platform 的详细解答和使用指导。
@@ -39,7 +39,7 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 - 🐛 提交Issue帮助我们改进
 - 🔧 贡献代码让项目更完善
 
-### 🎯 相关项目
+### 🔗 相关项目
 
 - **前端项目**：[Basic Cloud Platform UI](https://gitee.com/vains-Sofia/basic-cloud-platform-ui) - 基于 Vue3 + TypeScript 的现代化前端管理系统
 - **感谢开源**：本项目前端基于 [Pure Admin](https://gitee.com/yiming_chang/pure-admin-thin) 脚手架构建，感谢Pure Admin提供的优秀前端解决方案
@@ -68,7 +68,7 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 - **权限管理**：菜单权限、按钮权限、数据权限控制
 - **字典管理**：数据字典类型和项目管理
 - **公共接口**：文件上传、下载等通用功能
-- **第三方用户绑定**：微信、QQ、GitHub 等三方账号绑定管理
+- **第三方用户绑定**：微信、Gitee、GitHub 等三方账号绑定管理
 
 #### 🌐 网关服务 (basic-service-gateway)
 - **统一路由**：API 请求路由和负载均衡
@@ -90,6 +90,23 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 - **服务注册发现**：基于 Nacos 的服务治理
 - **配置中心**：集中化配置管理和动态更新
 - **分布式锁**：Redis 分布式锁支持
+
+#### 🔑 登录方式
+- **二维码登录**：支持移动端扫码登录，方便快捷
+- **邮件验证码登录**：支持通过邮箱验证码进行登录，增强安全性和用户体验
+- **账号密码登录**：传统的用户名和密码登录方式，兼容性强
+- **第三方登录**：支持微信、Gitee、GitHub 等第三方账号登录，提升用户注册和登录体验
+
+#### 🎫 支持的 OAuth2 Grant Types
+##### 默认支持
+- **Authorization Code**：支持 OAuth2 授权码模式，适用于用户授权的场景
+- **PKCE**：支持 OAuth2 PKCE 模式，增强移动端和公共客户端的安全性
+- **Client Credentials**：支持 OAuth2 客户端模式，适用于机器对机器的场景
+- **Refresh Token**：支持使用刷新令牌获取新的访问令牌，延长会话有效期
+
+##### 自定义支持
+- **密码模式**：支持 OAuth2 密码模式登录，适用于信任的客户端
+- **邮件验证码**：支持通过邮件验证码进行登录，增强安全性(类似密码模式，未加入配置)
 
 ### 🖼️ 演示图片
 
@@ -117,7 +134,7 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 |----------------|----------------------|
 | ![Swagger文档](docs/images/SwaggerUi.png) | ![监控中心](docs/images/SpringBootAdmin.png) |
 
-### 🔨 技术栈
+### 🛡️ 技术栈
 
 - **基础框架**：Spring Boot 3.4.4 | Spring Cloud 2024.0.1
 - **安全框架**：Spring OAuth2 Authorization Server 1.4.2
@@ -127,7 +144,7 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 - **监控组件**：Spring Boot Admin 3.4.5
 - **运行环境**：Java 21+ | Maven 3.9.9
 
-### 📦 项目结构
+### 📁 项目结构
 
 ```shell
 |-- basic-cloud-platform
@@ -190,7 +207,7 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 
 2. **基础组件启动**
    ```bash
-   cd docs/deploy/docker/infra
+   cd ops/deploy/docker/infra
    docker-compose -f infra-compose.yml up -d
    ```
 
@@ -200,26 +217,35 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
    create database basic-cloud-platform character set utf8mb4 collate utf8mb4_bin;
    
    -- 导入数据：
-   -- docs/sql/basic-cloud-platform-dev.sql
+   -- ops/sql/basic-cloud-platform-dev.sql
    ```
 
 4. **配置导入**
-    - 导入 `docs/nacos/nacos_config_dev.zip` 到 Nacos 配置中心
+    - 导入 `ops/nacos/nacos_config_dev.zip` 到 Nacos 配置中心
     - 更新配置中心中相关组件（MySQL、Redis等）的连接信息
 
-5. **服务启动**
+5. **服务启动**<br />
    按顺序启动以下服务：
     - basic-service-authorization-server（认证中心）
     - basic-service-gateway（网关服务）
     - basic-service-system（系统服务）
     - basic-service-monitor（监控中心）
 
-### 🔍 访问地址
+### 🌐 访问地址
 
-- Swagger API文档：http://127.0.0.1:9000/swagger-ui/index.html
-- 监控中心：http://127.0.0.1:9000/monitor/
+| 服务 | 地址 | 描述 |
+|------|------|------|
+| 网关服务 | http://127.0.0.1:9000 | 统一入口 |
+| Swagger文档 | http://127.0.0.1:9000/swagger-ui/index.html | API 文档 |
+| 监控中心 | http://127.0.0.1:9000/monitor/ | 服务监控 |
 
-### 👥 贡献指南
+### 🎯 默认账号
+
+| 系统 | 用户名                 | 密码        | 说明 |
+|------|---------------------|-----------|------|
+| 认证中心 | 17683906991@163.com | 随意四位阿拉伯数字 | 管理员账号 |
+
+### 🤝 贡献指南
 
 我们欢迎社区贡献，如修复 bug、优化代码、完善文档等。请按照以下步骤参与贡献：
 1. Fork 项目
@@ -232,6 +258,6 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 - 编写单元测试（如新增业务逻辑）
 - 统一使用 Lombok 等通用组件
 
-### 📄 开源协议
+### 📜 开源协议
 
 本项目采用 [Apache License 2.0](./LICENSE) 协议开源。
