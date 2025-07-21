@@ -35,13 +35,13 @@ public class SysDictItem extends BasicAuditorEntity {
     @Column(name = "type_code", nullable = false, length = 50)
     private String typeCode;
 
-    @Comment("字典项键")
-    @Column(name = "item_key", nullable = false, length = 50)
-    private String itemKey;
+    @Comment("字典项编码")
+    @Column(name = "item_code", nullable = false, length = 50)
+    private String itemCode;
 
-    @Comment("字典项值")
-    @Column(name = "item_value", nullable = false, length = 100)
-    private String itemValue;
+    @Comment("字典项名称")
+    @Column(name = "item_name", nullable = false, length = 100)
+    private String itemName;
 
     @Comment("排序值")
     @Column(name = "sort_order")

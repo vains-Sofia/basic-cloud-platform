@@ -30,8 +30,8 @@ public class SysDictItemConverter {
         FindSysDictItemResponse response = new FindSysDictItemResponse();
         response.setId(dictItem.getId());
         response.setTypeCode(dictItem.getTypeCode());
-        response.setItemKey(dictItem.getItemKey());
-        response.setItemValue(dictItem.getItemValue());
+        response.setItemCode(dictItem.getItemCode());
+        response.setItemName(dictItem.getItemName());
         response.setSortOrder(dictItem.getSortOrder());
         response.setStatus(dictItem.getStatus());
         response.setI18nJson(dictItem.getI18nJson());
@@ -74,8 +74,8 @@ public class SysDictItemConverter {
 
         SysDictItem dictItem = new SysDictItem();
         dictItem.setTypeCode(request.getTypeCode());
-        dictItem.setItemKey(request.getItemKey());
-        dictItem.setItemValue(request.getItemValue());
+        dictItem.setItemCode(request.getItemCode());
+        dictItem.setItemName(request.getItemName());
         dictItem.setSortOrder(request.getSortOrder());
         dictItem.setStatus(request.getStatus());
         dictItem.setI18nJson(request.getI18nJson());

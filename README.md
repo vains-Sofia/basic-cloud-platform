@@ -4,6 +4,7 @@
 ---
 <div style="text-align: center">
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/vains-Sofia/basic-cloud-platform)
 [![Static Badge](https://img.shields.io/badge/Spring%20Boot-3.4.4-6DB33F?logo=springboot)](https://docs.spring.io/spring-boot/index.html)
 [![Static Badge](https://img.shields.io/badge/Spring%20OAuth2%20Authorization%20Server-1.4.2-6DB33F?logo=springsecurity)](https://docs.spring.io/spring-authorization-server/reference/index.html)
 [![Static Badge](https://img.shields.io/badge/Spring%20Cloud-2024.0.1-6DB33F?logo=spring)](https://docs.spring.io/spring-cloud-release/reference/index.html)
@@ -24,6 +25,11 @@
 ### 📋 项目简介
 
 Basic Cloud Platform 是一个基于 Spring Cloud 生态体系构建的现代化微服务平台。本项目采用最新的 Spring Cloud 技术栈，集成了统一授权认证、服务治理、微服务监控等核心功能，为企业级应用开发提供完整的解决方案。
+
+### 📖 DeepWiki
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/vains-Sofia/basic-cloud-platform)<br />
+现在项目已使用 DeepWiki 自动生成wiki，您可访问 https://deepwiki.com/vains-Sofia/basic-cloud-platform 或点击上方icon来查看。<br />
+DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获取项目相关信息。您可以通过 DeepWiki 提问，获取关于 Basic Cloud Platform 的详细解答和使用指导。
 
 ### ⭐ 如果这个项目对您有帮助，请点个Star支持一下！
 

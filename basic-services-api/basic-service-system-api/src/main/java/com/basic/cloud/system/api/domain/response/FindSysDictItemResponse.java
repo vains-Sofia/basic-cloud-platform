@@ -28,11 +28,11 @@ public class FindSysDictItemResponse implements Serializable {
     @Schema(title = "字典类型代码", description = "字典项所属的字典类型代码")
     private String typeCode;
 
-    @Schema(title = "字典项键", description = "字典项的键，用于标识该字典项")
-    private String itemKey;
+    @Schema(title = "字典项编码", description = "字典项的键，用于标识该字典项")
+    private String itemCode;
 
-    @Schema(title = "字典项值", description = "字典项的值，用于描述该字典项")
-    private String itemValue;
+    @Schema(title = "字典项名称", description = "字典项的名称，用于描述该字典项")
+    private String itemName;
 
     @Schema(title = "字典项排序", description = "字典项的排序值，用于控制显示顺序")
     private Integer sortOrder;
