@@ -52,6 +52,71 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 - 🛠️ **系统服务**：完整的用户、角色、权限管理体系
 - 🔄 **分布式架构**：基于 Spring Cloud 实现服务注册发现、配置管理等
 
+### 🔧 功能列表
+
+#### 🔐 认证中心服务 (basic-service-authorization-server)
+- **OAuth2 应用管理**：应用注册、配置管理、密钥管理
+- **OAuth2 授权管理**：令牌管理、下线令牌、授权码管理
+- **OAuth2 作用域管理**：API 访问范围定义和控制
+- **验证码服务**：图形验证码生成和验证
+- **二维码授权**：移动端扫码登录支持
+- **认证页面管理**：登录页面、授权确认页面定制
+
+#### 🏛️ 系统管理服务 (basic-service-system)
+- **用户管理**：用户增删改查、用户状态管理、密码管理
+- **角色管理**：角色定义、权限分配、角色层级管理
+- **权限管理**：菜单权限、按钮权限、数据权限控制
+- **字典管理**：数据字典类型和项目管理
+- **公共接口**：文件上传、下载等通用功能
+- **第三方用户绑定**：微信、QQ、GitHub 等三方账号绑定管理
+
+#### 🌐 网关服务 (basic-service-gateway)
+- **统一路由**：API 请求路由和负载均衡
+- **安全控制**：请求鉴权(可选)
+- **跨域处理**：CORS 跨域请求支持
+
+#### 📊 监控中心 (basic-service-monitor)
+- **服务监控**：微服务健康状态实时监控
+- **性能指标**：JVM、数据库、缓存性能监控
+- **日志管理**：集中式日志查看和分析
+- **告警通知**：异常状态自动告警
+
+#### 📝 接口文档
+- **Swagger 集成**：自动生成 API 文档
+- **在线调试**：接口在线测试功能
+- **认证集成**：文档页面支持 OAuth2 登录测试
+
+#### 🔄 分布式特性
+- **服务注册发现**：基于 Nacos 的服务治理
+- **配置中心**：集中化配置管理和动态更新
+- **分布式锁**：Redis 分布式锁支持
+
+### 🖼️ 演示图片
+
+#### 🔐 登录认证
+| 账号密码登录 | 邮箱验证码登录 | 二维码登录 |
+|-------------|-------------|-----------|
+| ![账号密码登录](docs/images/LoginAccount.png) | ![邮箱验证码登录](docs/images/LoginEmail.png) | ![二维码登录](docs/images/LoginQrCode.png) |
+
+#### 🛠️ 系统管理
+| 用户管理 | 角色管理 | 权限管理 |
+|---------|---------|---------|
+| ![用户管理](docs/images/UserManager.png) | ![角色管理](docs/images/RoleManager.png) | ![权限管理](docs/images/PermissionManager.png) |
+
+#### 🔧 OAuth2 管理
+| 应用管理 | 应用详情 | 授权管理 |
+|---------|---------|---------|
+| ![应用管理](docs/images/ApplicationManager.png) | ![应用详情](docs/images/ApplicationDetail.png) | ![授权管理](docs/images/AuthorizationManager.png) |
+
+| 作用域管理 | 字典管理 | 用户注册 |
+|-----------|---------|---------|
+| ![作用域管理](docs/images/ScopeManager.png) | ![字典管理](docs/images/DictManager.png) | ![用户注册](docs/images/Register.png) |
+
+#### 📊 监控与文档
+| Swagger API文档 | Spring Boot Admin监控 |
+|----------------|----------------------|
+| ![Swagger文档](docs/images/SwaggerUi.png) | ![监控中心](docs/images/SpringBootAdmin.png) |
+
 ### 🔨 技术栈
 
 - **基础框架**：Spring Boot 3.4.4 | Spring Cloud 2024.0.1
