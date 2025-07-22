@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.authorization.server.introspector;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
-import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.redis.support.RedisOperator;

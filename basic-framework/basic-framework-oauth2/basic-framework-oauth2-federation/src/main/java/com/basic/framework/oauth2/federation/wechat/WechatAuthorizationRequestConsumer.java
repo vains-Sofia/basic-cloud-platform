@@ -7,8 +7,8 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.WECHAT_PARAMETER_APPID;
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.WECHAT_PARAMETER_FORCE_POPUP;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.WECHAT_PARAMETER_APPID;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.WECHAT_PARAMETER_FORCE_POPUP;
 
 /**
  * 自定义微信登录认证请求

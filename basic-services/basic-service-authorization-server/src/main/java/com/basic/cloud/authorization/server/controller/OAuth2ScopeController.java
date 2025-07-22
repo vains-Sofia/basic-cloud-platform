@@ -81,8 +81,8 @@ public class OAuth2ScopeController {
     @GetMapping("/findPermissionIdsByScope/{scope}")
     @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "查询scope对应的权限", description = "查询scope对应的权限")
-    public Result<List<Long>> findPermissionIdsByScope(@PathVariable String scope) {
-        List<Long> menuIds = scopeService.findPermissionIdsByScope(scope);
+    public Result<List<String>> findPermissionIdsByScope(@PathVariable String scope) {
+        List<String> menuIds = scopeService.findPermissionIdsByScope(scope);
         return Result.success(menuIds);
     }
 

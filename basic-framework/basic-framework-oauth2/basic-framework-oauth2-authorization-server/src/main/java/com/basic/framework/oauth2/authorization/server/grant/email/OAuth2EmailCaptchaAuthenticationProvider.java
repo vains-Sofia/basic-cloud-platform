@@ -2,8 +2,8 @@ package com.basic.framework.oauth2.authorization.server.grant.email;
 
 import com.basic.framework.oauth2.authorization.server.core.AbstractOAuth2AuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.core.AbstractOAuth2AuthenticationToken;
-import com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames;
-import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationToken;
+import com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames;
+import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginAuthenticationToken;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;

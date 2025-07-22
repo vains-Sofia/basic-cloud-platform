@@ -223,7 +223,7 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
     }
 
     @Override
-    public List<Long> findPermissionIdsByScope(String scope) {
+    public List<String> findPermissionIdsByScope(String scope) {
         List<JpaOAuth2ScopePermission> scopePermissions = this.scopePermissionRepository.findByScope(scope);
         if (scopePermissions == null || scopePermissions.isEmpty()) {
             return null;
@@ -234,7 +234,7 @@ public class OAuth2ScopeServiceImpl implements OAuth2ScopeService {
                 .toList();
 
         // 过滤掉有子节点的权限id(ElementPlus Tree组件如果有设置父节点选中，则不管所有子节点是否选中，父节点都选中，这时会让子节点默认全部选中)
-        Result<List<Long>> result = sysPermissionClient.findNonParentPermissions(permissionIds);
+        Result<List<String>> result = sysPermissionClient.findNonParentPermissions(permissionIds);
         if (result == null) {
             throw new CloudServiceException("查询权限失败，服务不可用");
         }

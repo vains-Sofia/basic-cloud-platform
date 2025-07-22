@@ -2,24 +2,25 @@ package com.basic.framework.oauth2.authorization.server.autoconfigure;
 
 import com.basic.framework.oauth2.authorization.server.captcha.CaptchaService;
 import com.basic.framework.oauth2.authorization.server.captcha.impl.RedisCaptchaService;
-import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
+import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.introspector.BasicOpaqueTokenIntrospector;
 import com.basic.framework.oauth2.core.annotation.ConditionalOnInMemoryStorage;
-import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
-import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
-import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
-import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
-import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
+import com.basic.framework.oauth2.core.property.BasicLoginProperties;
+import com.basic.framework.oauth2.core.token.converter.BasicJwtRedisAuthenticationConverter;
+import com.basic.framework.oauth2.core.constant.BasicAuthorizationGrantType;
+import com.basic.framework.oauth2.core.token.customizer.BasicIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.JwtIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
-import com.basic.framework.oauth2.core.manager.ReactiveContextAuthorizationManager;
-import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
-import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
+import com.basic.framework.oauth2.core.authorization.ReactiveContextAuthorizationManager;
+import com.basic.framework.oauth2.core.authorization.RequestContextAuthorizationManager;
+import com.basic.framework.oauth2.core.property.AuthorizationServerProperties;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
-import com.basic.framework.oauth2.core.resolver.DelegatingTokenAuthenticationResolver;
+import com.basic.framework.oauth2.core.token.resolver.DelegatingTokenAuthenticationResolver;
 import com.basic.framework.redis.support.RedisOperator;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -82,19 +83,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Import({ServerRedisAutoConfiguration.class, RedisOperator.class})
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
-@EnableConfigurationProperties({OAuth2ServerProperties.class, ResourceServerProperties.class})
+@EnableConfigurationProperties({BasicLoginProperties.class, AuthorizationServerProperties.class, ResourceServerProperties.class})
 public class AuthorizationServerAutoConfiguration {
 
     private final RedisOperator<String> redisHashOperator;
 
     /**
-     * 认证服务配置类
+     * 登录配置类
      */
-    private final OAuth2ServerProperties oAuth2ServerProperties;
+    private final BasicLoginProperties basicLoginProperties;
 
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final ResourceServerProperties resourceServerProperties;
+
+    /**
+     * 认证服务配置类
+     */
+    private final AuthorizationServerProperties authorizationServerProperties;
 
     private final RedisOperator<List<ScopePermissionModel>> scopePermissionOperator;
 
@@ -159,7 +165,7 @@ public class AuthorizationServerAutoConfiguration {
         if (log.isDebugEnabled()) {
             log.debug("注入 验证码Service RedisCaptchaService.");
         }
-        return new RedisCaptchaService(oAuth2ServerProperties, redisOperator);
+        return new RedisCaptchaService(basicLoginProperties, redisOperator);
     }
 
     /**
@@ -339,7 +345,7 @@ public class AuthorizationServerAutoConfiguration {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        Set<String> allowedOrigins = oAuth2ServerProperties.getAllowedOrigins();
+        Set<String> allowedOrigins = authorizationServerProperties.getAllowedOrigins();
         if (!ObjectUtils.isEmpty(allowedOrigins)) {
             // 设置允许跨域的域名,如果允许携带cookie的话,路径就不能写*号, *表示所有的域名都可以跨域访问
             allowedOrigins.forEach(config::addAllowedOrigin);

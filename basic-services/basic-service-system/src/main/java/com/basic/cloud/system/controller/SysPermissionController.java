@@ -63,14 +63,14 @@ public class SysPermissionController implements SysPermissionClient {
     }
 
     @Override
-    public Result<List<Long>> findPermissionIdsByRoleId(Long roleId) {
-        List<Long> permissionIds = sysPermissionService.findPermissionIdsByRoleId(roleId);
+    public Result<List<String>> findPermissionIdsByRoleId(Long roleId) {
+        List<String> permissionIds = sysPermissionService.findPermissionIdsByRoleId(roleId);
         return Result.success(permissionIds);
     }
 
     @Override
-    public Result<List<Long>> findNonParentPermissions(List<Long> permissionIds) {
-        List<Long> nonChildrenList = sysPermissionService.findNonParentPermissions(permissionIds);
+    public Result<List<String>> findNonParentPermissions(List<Long> permissionIds) {
+        List<String> nonChildrenList = sysPermissionService.findNonParentPermissions(permissionIds);
         return Result.success(nonChildrenList);
     }
 }

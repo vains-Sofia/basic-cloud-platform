@@ -7,8 +7,8 @@ import org.springframework.security.oauth2.client.endpoint.DefaultOAuth2TokenReq
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.util.MultiValueMap;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.WECHAT_PARAMETER_APPID;
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.WECHAT_PARAMETER_SECRET;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.WECHAT_PARAMETER_APPID;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.WECHAT_PARAMETER_SECRET;
 
 /**
  * 微信登录请求token入参处理类

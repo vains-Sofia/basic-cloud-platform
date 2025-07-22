@@ -1,8 +1,8 @@
 package com.basic.framework.oauth2.federation.autoconfigure;
 
 import com.basic.cloud.system.api.SysThirdUserBindClient;
-import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
-import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.JwtIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.federation.converter.OAuth2UserConverter;
 import com.basic.framework.oauth2.federation.converter.context.OAuth2UserConverterContext;
@@ -31,7 +31,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 
 import java.util.Map;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.*;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.*;
 
 /**
  * 联合身份认证自动配置类

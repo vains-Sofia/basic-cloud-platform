@@ -1,9 +1,9 @@
 package com.basic.framework.oauth2.authorization.server.customizer;
 
-import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
+import com.basic.framework.oauth2.core.constant.BasicAuthorizationGrantType;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.handler.authentication.BasicOidcLogoutAuthenticationFailureHandler;
-import com.basic.framework.oauth2.core.handler.authentication.BasicOidcLogoutAuthenticationSuccessHandler;
+import com.basic.framework.oauth2.core.handler.BasicOidcLogoutAuthenticationFailureHandler;
+import com.basic.framework.oauth2.core.handler.BasicOidcLogoutAuthenticationSuccessHandler;
 import com.basic.framework.oauth2.core.oidc.BasicOidcUserInfoMapper;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.mixin;
 
-import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationToken;
-import com.fasterxml.jackson.core.JacksonException;
+import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginAuthenticationToken;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -28,7 +27,7 @@ public class EmailCaptchaLoginAuthenticationTokenDeserializer extends JsonDeseri
     };
 
     @Override
-    public EmailCaptchaLoginAuthenticationToken deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public EmailCaptchaLoginAuthenticationToken deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
         JsonNode jsonNode = mapper.readTree(jsonParser);
         // 获取是否认证属性

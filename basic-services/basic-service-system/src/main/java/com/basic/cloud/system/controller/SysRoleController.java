@@ -63,12 +63,12 @@ public class SysRoleController implements SysRoleClient {
     }
 
     @Override
-    public Result<List<Long>> findRoleIdsByUserId(Long userId) {
+    public Result<List<String>> findRoleIdsByUserId(Long userId) {
         List<SysUserRole> userRoles = userRoleRepository.findByUserId(userId);
         if (ObjectUtils.isEmpty(userRoles)) {
             return Result.success(null);
         }
-        return Result.success(userRoles.stream().map(SysUserRole::getRoleId).toList());
+        return Result.success(userRoles.stream().map(SysUserRole::getRoleId).map(String::valueOf).toList());
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.basic.cloud.authorization.server.domain.response.OAuth2ConsentRespons
 import com.basic.framework.core.domain.Result;
 import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
+import com.basic.framework.oauth2.core.property.AuthorizationServerProperties;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.oauth2.storage.domain.model.ScopeWithDescription;
 import com.basic.framework.oauth2.storage.domain.security.BasicApplication;
@@ -60,7 +60,7 @@ public class AuthorizationPageController {
 
     private final BasicApplicationService applicationService;
 
-    private final OAuth2ServerProperties oauth2ServerProperties;
+    private final AuthorizationServerProperties oauth2ServerProperties;
 
     private final OAuth2AuthorizationConsentService authorizationConsentService;
 

@@ -264,13 +264,9 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
 
         // 获取授权类型
         String authorizationGrantType = authorization.getAuthorizationGrantType();
-        if (!Objects.equals(authorizationGrantType, AuthorizationGrantType.AUTHORIZATION_CODE.getValue())) {
-            // 如果授权类型不是授权码模式，则直接返回
-            return;
-        }
-
-        if (ObjectUtils.isEmpty(authorization.getAttributes())) {
-            // 如果attributes为空，则直接返回
+        if (!Objects.equals(authorizationGrantType, AuthorizationGrantType.AUTHORIZATION_CODE.getValue())
+                || ObjectUtils.isEmpty(authorization.getAttributes())) {
+            // 如果授权类型不是授权码模式或attributes为空，则直接返回，则直接返回
             return;
         }
 

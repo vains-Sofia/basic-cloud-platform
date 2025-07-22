@@ -33,8 +33,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.*;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCESS_TOKEN;
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.OAUTH2_ACCESS_TOKEN;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
 
 /**
  * 自定义三方oauth2登录获取用户信息服务

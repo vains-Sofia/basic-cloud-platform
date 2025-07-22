@@ -1,13 +1,13 @@
 package com.basic.framework.oauth2.resource.server.autoconfigure;
 
-import com.basic.framework.oauth2.core.converter.BasicJwtRedisAuthenticationConverter;
-import com.basic.framework.oauth2.core.customizer.BasicIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.converter.BasicJwtRedisAuthenticationConverter;
+import com.basic.framework.oauth2.core.token.customizer.BasicIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.core.introspection.ResourceOpaqueTokenIntrospector;
-import com.basic.framework.oauth2.core.manager.ReactiveContextAuthorizationManager;
-import com.basic.framework.oauth2.core.manager.RequestContextAuthorizationManager;
+import com.basic.framework.oauth2.core.authorization.ReactiveContextAuthorizationManager;
+import com.basic.framework.oauth2.core.authorization.RequestContextAuthorizationManager;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
 import com.basic.framework.oauth2.resource.server.configure.ReactiveResourceServerConfiguration;
 import com.basic.framework.oauth2.resource.server.configure.ResourceServerConfiguration;

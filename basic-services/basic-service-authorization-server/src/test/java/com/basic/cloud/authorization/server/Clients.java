@@ -1,6 +1,6 @@
 package com.basic.cloud.authorization.server;
 
-import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
+import com.basic.framework.oauth2.core.constant.BasicAuthorizationGrantType;
 import com.basic.framework.core.util.Sequence;
 import lombok.experimental.UtilityClass;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;

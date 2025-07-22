@@ -9,7 +9,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Map;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
 
 /**
  * 三方oauth2登录获取的用户信息转换处理
