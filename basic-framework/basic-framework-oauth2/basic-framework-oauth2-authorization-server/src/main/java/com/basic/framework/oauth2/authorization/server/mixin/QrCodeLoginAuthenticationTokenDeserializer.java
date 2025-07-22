@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.mixin;
 
-import com.basic.framework.oauth2.authorization.server.qrcode.QrCodeLoginAuthenticationToken;
+import com.basic.framework.oauth2.authorization.server.login.qrcode.QrCodeLoginAuthenticationToken;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;

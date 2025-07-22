@@ -1,6 +1,6 @@
 package com.basic.framework.oauth2.authorization.server.customizer;
 
-import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
+import com.basic.framework.oauth2.core.constant.BasicAuthorizationGrantType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerMetadataEndpointConfigurer;
 

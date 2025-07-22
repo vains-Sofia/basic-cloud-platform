@@ -1,13 +1,13 @@
 package com.basic.cloud.authorization.server.configuration;
 
-import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginConfigurer;
-import com.basic.framework.oauth2.authorization.server.qrcode.QrCodeLoginConfigurer;
+import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginConfigurer;
+import com.basic.framework.oauth2.authorization.server.login.qrcode.QrCodeLoginConfigurer;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.core.domain.security.QrCodeStatus;
 import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
-import com.basic.framework.oauth2.core.handler.authentication.LoginFailureHandler;
-import com.basic.framework.oauth2.core.handler.authentication.LoginSuccessHandler;
-import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
+import com.basic.framework.oauth2.core.handler.LoginFailureHandler;
+import com.basic.framework.oauth2.core.handler.LoginSuccessHandler;
+import com.basic.framework.oauth2.core.property.BasicLoginProperties;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.oauth2.storage.repository.OAuth2ScopePermissionRepository;
 import com.basic.framework.redis.support.RedisOperator;
@@ -40,10 +40,7 @@ import java.util.List;
 @Configuration(proxyBeanMethods = false)
 public class ResourceServerConfiguration {
 
-    /**
-     * 认证服务配置类
-     */
-    private final OAuth2ServerProperties oAuth2ServerProperties;
+    private final BasicLoginProperties basicLoginProperties;
 
     private final RedisOperator<QrCodeStatus> qrCodeRedisOperator;
 
@@ -83,15 +80,15 @@ public class ResourceServerConfiguration {
         // Form login handles the redirect to the login page from the
         // authorization server filter chain
         http.formLogin(form -> form
-                .loginPage(oAuth2ServerProperties.getLoginPageUri())
-                .loginProcessingUrl(oAuth2ServerProperties.getLoginProcessingUri())
-                .successHandler(new LoginSuccessHandler(oAuth2ServerProperties.getLoginPageUri()))
-                .failureHandler(new LoginFailureHandler(oAuth2ServerProperties.getLoginPageUri()))
+                .loginPage(basicLoginProperties.getLoginPageUri())
+                .loginProcessingUrl(basicLoginProperties.getLoginProcessingUri())
+                .successHandler(new LoginSuccessHandler(basicLoginProperties.getLoginPageUri()))
+                .failureHandler(new LoginFailureHandler(basicLoginProperties.getLoginPageUri()))
         );
 
         // 开启oauth2登录支持
         http.oauth2Login(oauth2Login -> oauth2Login
-                .loginPage(oAuth2ServerProperties.getLoginPageUri())
+                .loginPage(basicLoginProperties.getLoginPageUri())
                 // 针对微信的特殊处理，自动替换为微信需要的授权申请参数
                 .authorizationEndpoint(authorization -> authorization
                         .authorizationRequestResolver(authorizationRequestResolver)
@@ -111,19 +108,19 @@ public class ResourceServerConfiguration {
 
         // 添加邮件登录过滤器
         http.with(new EmailCaptchaLoginConfigurer<>(), configurer -> configurer
-                .loginPage(oAuth2ServerProperties.getLoginPageUri())
-                .loginProcessingUrl(oAuth2ServerProperties.getEmailLoginProcessingUri())
-                .successHandler(new LoginSuccessHandler(oAuth2ServerProperties.getLoginPageUri()))
-                .failureHandler(new LoginFailureHandler(oAuth2ServerProperties.getLoginPageUri()))
+                .loginPage(basicLoginProperties.getLoginPageUri())
+                .loginProcessingUrl(basicLoginProperties.getEmailLoginProcessingUri())
+                .successHandler(new LoginSuccessHandler(basicLoginProperties.getLoginPageUri()))
+                .failureHandler(new LoginFailureHandler(basicLoginProperties.getLoginPageUri()))
         );
 
         // 添加二维码登录过滤器
         http.with(new QrCodeLoginConfigurer<>(), configurer -> configurer
                 .redisOperator(qrCodeRedisOperator)
-                .loginPage(oAuth2ServerProperties.getLoginPageUri())
-                .loginProcessingUrl(oAuth2ServerProperties.getQrCodeLoginProcessingUri())
-                .successHandler(new LoginSuccessHandler(oAuth2ServerProperties.getLoginPageUri()))
-                .failureHandler(new LoginFailureHandler(oAuth2ServerProperties.getLoginPageUri()))
+                .loginPage(basicLoginProperties.getLoginPageUri())
+                .loginProcessingUrl(basicLoginProperties.getQrCodeLoginProcessingUri())
+                .successHandler(new LoginSuccessHandler(basicLoginProperties.getLoginPageUri()))
+                .failureHandler(new LoginFailureHandler(basicLoginProperties.getLoginPageUri()))
         );
 
         return http.build();

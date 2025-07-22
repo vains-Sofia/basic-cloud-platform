@@ -75,5 +75,5 @@ public interface OAuth2ScopeService {
      * @param scope scope名称
      * @return 权限ID列表
      */
-    List<Long> findPermissionIdsByScope(String scope);
+    List<String> findPermissionIdsByScope(String scope);
 }

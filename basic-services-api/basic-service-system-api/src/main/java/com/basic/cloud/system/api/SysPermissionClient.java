@@ -100,7 +100,7 @@ public interface SysPermissionClient {
      */
     @GetMapping("/findPermissionIdsByRoleId/{roleId}")
     @Operation(summary = "根据角色id查询权限id列表", description = "根据角色id查询权限id列表")
-    Result<List<Long>> findPermissionIdsByRoleId(@Valid @NotNull @PathVariable Long roleId);
+    Result<List<String>> findPermissionIdsByRoleId(@Valid @NotNull @PathVariable Long roleId);
 
     /**
      * 权限id列表获取没有子节点的权限id列表
@@ -110,6 +110,6 @@ public interface SysPermissionClient {
      */
     @PostMapping("/findNonParentPermissions")
     @Operation(summary = "权限id列表获取没有子节点的权限id列表", description = "权限id列表获取没有子节点的权限id列表")
-    Result<List<Long>> findNonParentPermissions(@Valid @NotNull @RequestBody List<Long> permissionIds);
+    Result<List<String>> findNonParentPermissions(@Valid @NotNull @RequestBody List<Long> permissionIds);
 
 }

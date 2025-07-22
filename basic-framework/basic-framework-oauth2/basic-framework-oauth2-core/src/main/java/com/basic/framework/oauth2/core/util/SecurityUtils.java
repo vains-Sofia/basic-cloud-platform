@@ -33,8 +33,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.basic.framework.oauth2.core.constant.AuthorizeConstants.AUTHORITIES;
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.TOKEN_UNIQUE_ID;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.OAUTH2_ACCOUNT_PLATFORM;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.TOKEN_UNIQUE_ID;
 
 /**
  * 安全帮助类
@@ -171,8 +171,10 @@ public class SecurityUtils {
             // 移除空值参数
             errorParameters.values().removeIf(ObjectUtils::isEmpty);
         }
-        MultiValueMap<String, String> valueMap = new LinkedMultiValueMap<>(errorParameters.size());
-        errorParameters.forEach((k, v) -> valueMap.add(k, URLEncoder.encode(v, StandardCharsets.UTF_8)));
+        MultiValueMap<String, String> valueMap = new LinkedMultiValueMap<>(errorParameters == null ? 16 : errorParameters.size());
+        if (errorParameters != null) {
+            errorParameters.forEach((k, v) -> valueMap.add(k, URLEncoder.encode(v, StandardCharsets.UTF_8)));
+        }
         // 如果授权错误页面路径是绝对路径，则拼接参数后直接返回
         if (UrlUtils.isAbsoluteUrl(authorizeErrorUri)) {
             return UriComponentsBuilder

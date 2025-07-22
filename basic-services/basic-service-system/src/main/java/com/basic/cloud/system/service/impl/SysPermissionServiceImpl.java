@@ -210,7 +210,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
     }
 
     @Override
-    public List<Long> findPermissionIdsByRoleId(Long roleId) {
+    public List<String> findPermissionIdsByRoleId(Long roleId) {
         List<SysRolePermission> rolePermissions = rolePermissionRepository.findByRoleId(roleId);
         if (rolePermissions == null || rolePermissions.isEmpty()) {
             return null;
@@ -225,7 +225,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
     }
 
     @Override
-    public List<Long> findNonParentPermissions(List<Long> permissionIds) {
+    public List<String> findNonParentPermissions(List<Long> permissionIds) {
         // 过滤掉有子节点的权限id(ElementPlus Tree组件如果有设置父节点选中，则不管所有子节点是否选中，父节点都选中，这时会让子节点默认全部选中)
         List<SysPermission> permissions = permissionRepository.findAllById(permissionIds);
         // 提取所有父节点id
@@ -239,6 +239,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         // 过滤掉 parentIds 中的节点（也就是有子节点的父节点）
         return permissionIds.stream()
                 .filter(parentId -> !parentPermissionIds.contains(parentId))
+                .map(String::valueOf)
                 .toList();
     }
 

@@ -1,18 +1,18 @@
 package com.basic.framework.oauth2.authorization.server.util;
 
-import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationProvider;
+import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationConverter;
 import com.basic.framework.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationConverter;
 import com.basic.framework.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationConverter;
 import com.basic.framework.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationProvider;
-import com.basic.framework.oauth2.core.customizer.JwtIdTokenCustomizer;
-import com.basic.framework.oauth2.core.customizer.OpaqueIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.JwtIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.handler.authentication.ConsentAuthenticationFailureHandler;
-import com.basic.framework.oauth2.core.handler.authentication.DeviceAuthorizationResponseHandler;
-import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
+import com.basic.framework.oauth2.core.handler.ConsentAuthenticationFailureHandler;
+import com.basic.framework.oauth2.core.handler.DeviceAuthorizationResponseHandler;
+import com.basic.framework.oauth2.core.property.AuthorizationServerProperties;
 import com.basic.framework.redis.support.RedisOperator;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
@@ -326,9 +326,9 @@ public class OAuth2ConfigurerUtils {
      * 配置自定义GrantType之设备码流程
      *
      * @param builder                httpSecurity 实例
-     * @param oAuth2ServerProperties 认证服务自定义配置
+     * @param authorizationServerProperties 认证服务自定义配置
      */
-    public static void configureDeviceGrantType(HttpSecurity builder, OAuth2ServerProperties oAuth2ServerProperties) {
+    public static void configureDeviceGrantType(HttpSecurity builder, AuthorizationServerProperties authorizationServerProperties) {
         RegisteredClientRepository registeredClientRepository = OAuth2ConfigurerUtils.getBeanOrNull(builder, RegisteredClientRepository.class);
         AuthorizationServerSettings authorizationServerSettings = OAuth2ConfigurerUtils.getBeanOrNull(builder, AuthorizationServerSettings.class);
 
@@ -344,14 +344,14 @@ public class OAuth2ConfigurerUtils {
         builder.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 // 设置设备码用户验证url(自定义用户验证页)
                 .deviceAuthorizationEndpoint(deviceAuthorizationEndpoint ->
-                        deviceAuthorizationEndpoint.verificationUri(oAuth2ServerProperties.getDeviceVerificationUri()))
+                        deviceAuthorizationEndpoint.verificationUri(authorizationServerProperties.getDeviceVerificationUri()))
                 // 设置验证设备码用户确认页面
                 .deviceVerificationEndpoint(deviceVerificationEndpoint -> deviceVerificationEndpoint
                         .consentPage(DEVICE_CONSENT_PAGE_URI)
-                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getAuthorizeErrorUri(), oAuth2ServerProperties.getDeviceVerificationUri()))
+                        .errorResponseHandler(new ConsentAuthenticationFailureHandler(authorizationServerProperties.getConsentPageUri(), authorizationServerProperties.getAuthorizeErrorUri(), authorizationServerProperties.getDeviceVerificationUri()))
                         .deviceVerificationResponseHandler(
                                 new DeviceAuthorizationResponseHandler(
-                                        oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getDeviceActivatedPageUri(), oAuth2ServerProperties.getDeviceVerificationUri())
+                                        authorizationServerProperties.getConsentPageUri(), authorizationServerProperties.getDeviceActivatedPageUri(), authorizationServerProperties.getDeviceVerificationUri())
                         )
                 )
                 .clientAuthentication(clientAuthentication ->

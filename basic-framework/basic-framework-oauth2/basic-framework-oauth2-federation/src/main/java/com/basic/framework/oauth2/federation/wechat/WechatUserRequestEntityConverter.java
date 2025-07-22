@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.WECHAT_PARAMETER_OPENID;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.WECHAT_PARAMETER_OPENID;
 
 /**
  * 微信登录获取用户信息参数转换器

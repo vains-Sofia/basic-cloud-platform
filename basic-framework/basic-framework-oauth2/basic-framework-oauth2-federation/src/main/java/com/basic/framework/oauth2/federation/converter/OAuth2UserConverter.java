@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Map;
 
-import static com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames.OAUTH2_ACCESS_TOKEN;
+import static com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames.OAUTH2_ACCESS_TOKEN;
 
 /**
  * oauth2登录获取的用户信息转为统一认证用户信息

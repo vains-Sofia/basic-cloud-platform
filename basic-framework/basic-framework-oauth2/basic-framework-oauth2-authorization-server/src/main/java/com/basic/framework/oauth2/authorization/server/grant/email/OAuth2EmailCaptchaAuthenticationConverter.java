@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.authorization.server.grant.email;
 
-import com.basic.framework.oauth2.core.core.BasicAuthorizationGrantType;
-import com.basic.framework.oauth2.core.core.BasicOAuth2ParameterNames;
+import com.basic.framework.oauth2.core.constant.BasicAuthorizationGrantType;
+import com.basic.framework.oauth2.core.constant.BasicOAuth2ParameterNames;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2EndpointUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Setter;

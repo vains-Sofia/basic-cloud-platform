@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.authorization.server.mixin;
 
-import com.basic.framework.oauth2.authorization.server.email.EmailCaptchaLoginAuthenticationToken;
-import com.basic.framework.oauth2.authorization.server.qrcode.QrCodeLoginAuthenticationToken;
+import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginAuthenticationToken;
+import com.basic.framework.oauth2.authorization.server.login.qrcode.QrCodeLoginAuthenticationToken;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 

@@ -4,10 +4,11 @@ import com.basic.framework.oauth2.authorization.server.customizer.AuthorizationS
 import com.basic.framework.oauth2.authorization.server.customizer.OidcConfigurerCustomizer;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2ConfigurerUtils;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
-import com.basic.framework.oauth2.core.handler.authentication.ConsentAuthenticationFailureHandler;
-import com.basic.framework.oauth2.core.handler.authentication.ConsentAuthorizationResponseHandler;
-import com.basic.framework.oauth2.core.handler.authentication.LoginTargetAuthenticationEntryPoint;
-import com.basic.framework.oauth2.core.property.OAuth2ServerProperties;
+import com.basic.framework.oauth2.core.handler.ConsentAuthenticationFailureHandler;
+import com.basic.framework.oauth2.core.handler.ConsentAuthorizationResponseHandler;
+import com.basic.framework.oauth2.core.handler.LoginTargetAuthenticationEntryPoint;
+import com.basic.framework.oauth2.core.property.AuthorizationServerProperties;
+import com.basic.framework.oauth2.core.property.BasicLoginProperties;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.redis.support.RedisOperator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,14 +34,16 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfiguration {
 
-    /**
-     * 认证服务配置类
-     */
-    private final OAuth2ServerProperties oAuth2ServerProperties;
+    private final BasicLoginProperties basicLoginProperties;
 
     private final RedisOperator<AuthenticatedUser> redisOperator;
 
     private final AuthorizationServerSettings authorizationServerSettings;
+
+    /**
+     * 认证服务配置类
+     */
+    private final AuthorizationServerProperties authorizationServerProperties;
 
     private final AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver;
 
@@ -78,11 +81,11 @@ public class AuthorizationServerConfiguration {
                     // 授权申请的/oauth2/authorize相关端点的自定义配置
                     configurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
                             // 设置自定义用户确认授权页
-                            .consentPage(oAuth2ServerProperties.getConsentPageUri())
+                            .consentPage(authorizationServerProperties.getConsentPageUri())
                             // 异常处理
-                            .errorResponseHandler(new ConsentAuthenticationFailureHandler(oAuth2ServerProperties.getConsentPageUri(), oAuth2ServerProperties.getAuthorizeErrorUri(), oAuth2ServerProperties.getDeviceVerificationUri()))
+                            .errorResponseHandler(new ConsentAuthenticationFailureHandler(authorizationServerProperties.getConsentPageUri(), authorizationServerProperties.getAuthorizeErrorUri(), authorizationServerProperties.getDeviceVerificationUri()))
                             // 授权申请成功响应处理
-                            .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(oAuth2ServerProperties.getConsentPageUri()))
+                            .authorizationResponseHandler(new ConsentAuthorizationResponseHandler(authorizationServerProperties.getConsentPageUri()))
                     );
 
                     // 获取access token的/oauth2/token端点的自定义配置
@@ -92,7 +95,7 @@ public class AuthorizationServerConfiguration {
                     });
 
                     // 开启oidc并在 /.well-known/openid-configuration 和 /.well-known/oauth-authorization-server 端点中添加自定义grant type
-                    configurer.oidc(new OidcConfigurerCustomizer(oAuth2ServerProperties.getAuthorizeErrorUri(), redisOperator));
+                    configurer.oidc(new OidcConfigurerCustomizer(authorizationServerProperties.getAuthorizeErrorUri(), redisOperator));
                     configurer.authorizationServerMetadataEndpoint(new AuthorizationServerMetadataCustomizer());
 
                 });
@@ -103,14 +106,14 @@ public class AuthorizationServerConfiguration {
         // 添加密码模式
         OAuth2ConfigurerUtils.configurePasswordGrantType(http, (null), (null));
         // 添加设备码流程
-        OAuth2ConfigurerUtils.configureDeviceGrantType(http, oAuth2ServerProperties);
+        OAuth2ConfigurerUtils.configureDeviceGrantType(http, authorizationServerProperties);
 
         // Redirect to the login page when not authenticated from the
         // authorization endpoint
         http.exceptionHandling((exceptions) -> exceptions
                 .defaultAuthenticationEntryPointFor(
                         new LoginTargetAuthenticationEntryPoint(
-                                oAuth2ServerProperties.getLoginPageUri(), oAuth2ServerProperties.getDeviceVerificationUri(), authorizationServerSettings.getDeviceVerificationEndpoint()),
+                                basicLoginProperties.getLoginPageUri(), authorizationServerProperties.getDeviceVerificationUri(), authorizationServerSettings.getDeviceVerificationEndpoint()),
                         new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                 )
         );

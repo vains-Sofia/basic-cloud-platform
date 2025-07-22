@@ -92,7 +92,7 @@ public interface SysRoleClient {
     @GetMapping("/findRoleIdsByUserId/{userId}")
     @Parameter(name = "userId", description = "用户id")
     @Operation(summary = "根据用户id查询角色id列表", description = "根据用户id查询角色id列表")
-    Result<List<Long>> findRoleIdsByUserId(@NotNull @PathVariable Long userId);
+    Result<List<String>> findRoleIdsByUserId(@NotNull @PathVariable Long userId);
 
     /**
      * 根据条件查询所有角色id列表

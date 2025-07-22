@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.resource.server.configure;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
-import com.basic.framework.oauth2.core.resolver.DelegatingTokenAuthenticationResolver;
+import com.basic.framework.oauth2.core.token.resolver.DelegatingTokenAuthenticationResolver;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

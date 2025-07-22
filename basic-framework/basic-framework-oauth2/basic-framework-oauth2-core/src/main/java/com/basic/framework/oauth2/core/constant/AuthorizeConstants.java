@@ -80,6 +80,11 @@ public class AuthorizeConstants {
     public static final String SCOPE_PERMISSION_KEY = "basic:scope:permission:all";
 
     /**
+     * 验证码登录时验证码缓存的前缀
+     */
+    public static final String CAPTCHA_KEY_PREFIX = "basic:captcha:";
+
+    /**
      * 默认忽略鉴权的地址
      */
     public static final Set<String> DEFAULT_IGNORE_PATHS = Set.of(

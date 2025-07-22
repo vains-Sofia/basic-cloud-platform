@@ -1,7 +1,7 @@
 package com.basic.framework.oauth2.resource.server.configure;
 
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
-import com.basic.framework.oauth2.core.resolver.DelegatingReactiveTokenAuthenticationResolver;
+import com.basic.framework.oauth2.core.token.resolver.DelegatingReactiveTokenAuthenticationResolver;
 import com.basic.framework.oauth2.core.util.ReactiveSecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
