@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/open/scope")
+@RequestMapping("/scope")
 @Tag(name = "客户端的scope接口", description = "oauth2客户端的scope相关接口")
 public class OAuth2ScopeController {
 

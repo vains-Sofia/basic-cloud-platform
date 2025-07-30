@@ -23,6 +23,11 @@ public class FeignConstants {
     public static final String SYSTEM_APPLICATION = "system";
 
     /**
+     * Gateway模块的application name
+     */
+    public static final String GATEWAY_APPLICATION = "gateway";
+
+    /**
      * system模块的ContextPath
      */
     public static final String SYSTEM_CONTEXT_PATH = "${basic.cloud.api.system.path:/system}";

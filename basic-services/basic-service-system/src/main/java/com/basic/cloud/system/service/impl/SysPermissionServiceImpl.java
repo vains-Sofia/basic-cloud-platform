@@ -50,7 +50,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
     @Override
     public DataPageResult<FindPermissionResponse> findByPage(FindPermissionPageRequest request) {
         // 排序
-        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(SysPermission::getUpdateTime));
+        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(SysPermission::getRank));
         // 分页
         PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
@@ -187,6 +187,8 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 
     @Override
     public List<FindPermissionResponse> findPermissions(FindPermissionRequest request) {
+        // 排序
+        Sort sort = Sort.by(LambdaUtils.extractMethodToProperty(SysPermission::getRank));
         // 条件构造器
         SpecificationBuilder<SysPermission> builder = new SpecificationBuilder<>();
         builder.like(!ObjectUtils.isEmpty(request.getPath()), SysPermission::getPath, request.getPath());
@@ -197,7 +199,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 request.getPermissionType());
 
         // 执行查询
-        List<SysPermission> findPageResult = permissionRepository.findAll(builder);
+        List<SysPermission> findPageResult = permissionRepository.findAll(builder, sort);
         // 转为响应bean并返回
         return findPageResult
                 .stream()

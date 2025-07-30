@@ -49,7 +49,7 @@ public interface SysRoleClient {
      */
     @GetMapping("/roleDetails/{id}")
     @Parameter(name = "id", description = "角色id")
-    @Operation(summary = "查询权限详情", description = "根据权限id查询权限详情")
+    @Operation(summary = "查询角色详情", description = "根据角色id查询角色详情")
     Result<FindRoleResponse> roleDetails(@Valid @NotNull @PathVariable Long id);
 
     /**
