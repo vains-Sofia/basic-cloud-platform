@@ -73,4 +73,11 @@ public interface SysPermissionService {
      * @return 非子权限的权限id列表
      */
     List<String> findNonParentPermissions(List<Long> permissionIds);
+
+    /**
+     * 批量修改权限信息
+     *
+     * @param requests 权限信息列表
+     */
+    void batchUpdatePermissions(List<SavePermissionRequest> requests);
 }

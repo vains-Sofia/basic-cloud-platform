@@ -61,7 +61,7 @@ public class FindApiEndpointResponse implements Serializable {
     /**
      * 扫描状态
      */
-    @Schema(title = "扫描状态", description = "扫描状态：1-新发现 2-已存在 3-缺少注解 4-异常")
+    @Schema(title = "扫描状态", description = "扫描状态：1-新发现 2-已存在 3-缺少注解 4-忽略")
     private ScanStatusEnum scanStatus;
 
     /**

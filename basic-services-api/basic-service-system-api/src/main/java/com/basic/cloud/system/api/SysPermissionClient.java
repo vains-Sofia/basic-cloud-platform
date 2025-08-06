@@ -82,6 +82,16 @@ public interface SysPermissionClient {
     Result<String> updatePermission(@Validated(Update.class) @RequestBody SavePermissionRequest request);
 
     /**
+     * 批量修改权限信息
+     *
+     * @param requests 权限信息
+     * @return 统一响应
+     */
+    @PutMapping("/batchUpdatePermissions")
+    @Operation(summary = "批量修改权限信息", description = "批量修改权限信息")
+    Result<String> batchUpdatePermissions(@Validated(Update.class) @RequestBody List<SavePermissionRequest> requests);
+
+    /**
      * 删除权限信息
      *
      * @param id 权限id

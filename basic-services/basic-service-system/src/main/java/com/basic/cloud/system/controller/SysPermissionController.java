@@ -57,6 +57,12 @@ public class SysPermissionController implements SysPermissionClient {
     }
 
     @Override
+    public Result<String> batchUpdatePermissions(List<SavePermissionRequest> requests) {
+        sysPermissionService.batchUpdatePermissions(requests);
+        return Result.success();
+    }
+
+    @Override
     public Result<String> removeById(Long id) {
         sysPermissionService.removeById(id);
         return Result.success();

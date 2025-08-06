@@ -11,6 +11,7 @@ import com.basic.cloud.system.repository.SysRolePermissionRepository;
 import com.basic.cloud.system.service.SysPermissionService;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
+import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
@@ -243,6 +244,90 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 .filter(parentId -> !parentPermissionIds.contains(parentId))
                 .map(String::valueOf)
                 .toList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchUpdatePermissions(List<SavePermissionRequest> requests) {
+        // 判断入参是否存在重复
+        Set<String> duplicateChecker = new HashSet<>();
+        List<String> duplicates = new ArrayList<>();
+
+        for (SavePermissionRequest request : requests) {
+            String key = buildUniqueKey(request.getPath(), request.getRequestMethod());
+            if (!duplicateChecker.add(key)) {
+                duplicates.add(key);
+            }
+        }
+
+        if (!duplicates.isEmpty()) {
+            throw new CloudServiceException("路径和请求方法组合不能重复: " + String.join(", ", duplicates));
+        }
+
+        // 检查是否和已有权限冲突
+        for (SavePermissionRequest request : requests) {
+            SpecificationBuilder<SysPermission> builder = new SpecificationBuilder<>();
+            // 请求方式
+            if (ObjectUtils.isEmpty(request.getRequestMethod())) {
+                builder.isNull(SysPermission::getRequestMethod);
+            } else {
+                builder.eq(SysPermission::getRequestMethod, request.getRequestMethod());
+            }
+            // 请求路径
+            builder.eq(SysPermission::getPath, request.getPath());
+            // 修改需排除当前数据
+            builder.ne(request.getId() != null, SysPermission::getId, request.getId());
+            boolean exists = permissionRepository.exists(builder);
+            if (exists) {
+                duplicates.add(buildUniqueKey(request.getPath(), request.getRequestMethod()));
+            }
+        }
+
+        if (!duplicates.isEmpty()) {
+            throw new CloudServiceException("路径和请求方法组合已存在: " + String.join(", ", duplicates));
+        }
+
+        // 批量更新权限
+        List<SysPermission> permissionsToSave = requests.stream().map(request -> {
+            SysPermission permission = new SysPermission();
+            BeanUtils.copyProperties(request, permission);
+            // 如果是新增，则设置ID
+            if (request.getId() == null) {
+                permission.setId(sequence.nextId());
+                permission.setDeleted(Boolean.FALSE);
+            } else {
+                // 如果是修改，则保留原有的创建信息
+                Optional<SysPermission> existingPermission = permissionRepository.findById(request.getId());
+                existingPermission.ifPresent(existing -> {
+                    permission.setCreateBy(existing.getCreateBy());
+                    permission.setCreateName(existing.getCreateName());
+                    permission.setCreateTime(existing.getCreateTime());
+                });
+            }
+            // 默认设置不删除
+            if (permission.getDeleted() == null) {
+                permission.setDeleted(Boolean.FALSE);
+            }
+            return permission;
+        }).toList();
+
+        if (!ObjectUtils.isEmpty(permissionsToSave)) {
+            permissionRepository.saveAll(permissionsToSave);
+        }
+
+        // 刷新权限缓存
+        this.refreshPermissionCache();
+    }
+
+    /**
+     * 构建唯一键，用于检查重复的路径和请求方法组合
+     *
+     * @param path 请求路径
+     * @param requestMethod 请求方法
+     * @return 唯一键
+     */
+    private String buildUniqueKey(String path, String requestMethod) {
+        return (path != null ? path : "") + ":" + (requestMethod != null ? requestMethod : "");
     }
 
 }

@@ -72,7 +72,7 @@ public class OAuth2ScopeController {
 
     @DeleteMapping("/removeById/{id}")
     @PreAuthorize("hasAnyAuthority('message.write')")
-    @Operation(summary = "重置scope对应的权限", description = "重置scope对应的权限")
+    @Operation(summary = "根据id删除scope", description = "根据id删除scope")
     public Result<String> removeScopeById(@PathVariable Long id) {
         scopeService.removeScopeById(id);
         return Result.success();
