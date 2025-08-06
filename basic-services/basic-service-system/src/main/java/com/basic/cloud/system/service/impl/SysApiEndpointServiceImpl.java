@@ -81,8 +81,8 @@ public class SysApiEndpointServiceImpl implements SysApiEndpointService {
         // 如果keyword不为空，则添加模糊查询条件(路径、权限码或标题)
         builder.or(or ->
                 or.like(!ObjectUtils.isEmpty(request.getKeyword()), SysApiEndpoint::getPath, request.getKeyword())
-                .like(!ObjectUtils.isEmpty(request.getKeyword()), SysApiEndpoint::getPermission, request.getKeyword())
-                .like(!ObjectUtils.isEmpty(request.getKeyword()), SysApiEndpoint::getTitle, request.getKeyword())
+                        .like(!ObjectUtils.isEmpty(request.getKeyword()), SysApiEndpoint::getPermission, request.getKeyword())
+                        .like(!ObjectUtils.isEmpty(request.getKeyword()), SysApiEndpoint::getTitle, request.getKeyword())
         );
         builder.eq(!ObjectUtils.isEmpty(request.getRequestMethod()), SysApiEndpoint::getRequestMethod, request.getRequestMethod());
         builder.like(!ObjectUtils.isEmpty(request.getModuleName()), SysApiEndpoint::getModuleName, request.getModuleName());
@@ -366,7 +366,11 @@ public class SysApiEndpointServiceImpl implements SysApiEndpointService {
 
         // 过滤出未导入的接口
         List<SysApiEndpoint> unimportedEndpoints = endpoints.stream()
-                .filter(endpoint -> !Boolean.TRUE.equals(endpoint.getImported()))
+                .filter(endpoint ->
+                        !endpoint.getImported()
+                                && !ObjectUtils.isEmpty(endpoint.getTitle())
+                                && endpoint.getScanStatus() == ScanStatusEnum.NEW
+                )
                 .toList();
 
         if (unimportedEndpoints.isEmpty()) {
@@ -477,7 +481,11 @@ public class SysApiEndpointServiceImpl implements SysApiEndpointService {
         }
         // 过滤出未导入的接口
         List<SysApiEndpoint> unimportedEndpoints = endpoints.stream()
-                .filter(endpoint -> !endpoint.getImported() && !ObjectUtils.isEmpty(endpoint.getTitle()))
+                .filter(endpoint ->
+                        !endpoint.getImported()
+                                && !ObjectUtils.isEmpty(endpoint.getTitle())
+                                && endpoint.getScanStatus() == ScanStatusEnum.NEW
+                )
                 .toList();
 
         if (unimportedEndpoints.isEmpty()) {
