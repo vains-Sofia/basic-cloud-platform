@@ -72,7 +72,7 @@ public class SysApiEndpointServiceImpl implements SysApiEndpointService {
     @Override
     public DataPageResult<FindApiEndpointResponse> findByPage(FindApiEndpointPageRequest request) {
         // 排序
-        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(SysApiEndpoint::getCreateTime));
+        Sort sort = Sort.by(LambdaUtils.extractMethodToProperty(SysApiEndpoint::getPath));
         // 分页
         PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
