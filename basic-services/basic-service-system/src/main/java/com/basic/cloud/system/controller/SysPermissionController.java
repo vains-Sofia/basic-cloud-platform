@@ -1,6 +1,7 @@
 package com.basic.cloud.system.controller;
 
 import com.basic.cloud.system.api.SysPermissionClient;
+import com.basic.cloud.system.api.domain.model.DynamicRouter;
 import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
 import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
@@ -57,6 +58,12 @@ public class SysPermissionController implements SysPermissionClient {
     }
 
     @Override
+    public Result<String> batchUpdatePermissions(List<SavePermissionRequest> requests) {
+        sysPermissionService.batchUpdatePermissions(requests);
+        return Result.success();
+    }
+
+    @Override
     public Result<String> removeById(Long id) {
         sysPermissionService.removeById(id);
         return Result.success();
@@ -72,5 +79,11 @@ public class SysPermissionController implements SysPermissionClient {
     public Result<List<String>> findNonParentPermissions(List<Long> permissionIds) {
         List<String> nonChildrenList = sysPermissionService.findNonParentPermissions(permissionIds);
         return Result.success(nonChildrenList);
+    }
+
+    @Override
+    public Result<List<DynamicRouter>> findUserRouters() {
+        List<DynamicRouter> dynamicRouters = sysPermissionService.findUserRouters();
+        return Result.success(dynamicRouters);
     }
 }

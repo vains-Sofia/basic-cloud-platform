@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
@@ -89,6 +90,10 @@ public class ClientSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        // 允许 iframe 嵌套
+        http.headers(header -> header
+                .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
+        );
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated()

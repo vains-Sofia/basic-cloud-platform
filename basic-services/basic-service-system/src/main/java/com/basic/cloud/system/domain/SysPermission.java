@@ -180,4 +180,8 @@ public class SysPermission extends BasicAuditorEntity {
     @Comment(value = "菜单排序")
     private Integer rank;
 
+    @Column(name = "`active_path`")
+    @Comment(value = "指定激活菜单即可获得高亮，`activePath`为指定激活菜单的`path`")
+    private String activePath;
+
 }

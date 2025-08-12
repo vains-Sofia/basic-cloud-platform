@@ -123,4 +123,7 @@ public class SavePermissionRequest implements Serializable {
     @Schema(title = "菜单排序")
     private Integer rank;
 
+    @Schema(title = "指定激活菜单即可获得高亮", description = "`activePath`为指定激活菜单的`path`，用于高亮显示当前激活的菜单项")
+    private String activePath;
+
 }

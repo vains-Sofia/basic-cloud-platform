@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/open/scope")
+@RequestMapping("/scope")
 @Tag(name = "客户端的scope接口", description = "oauth2客户端的scope相关接口")
 public class OAuth2ScopeController {
 
@@ -72,7 +72,7 @@ public class OAuth2ScopeController {
 
     @DeleteMapping("/removeById/{id}")
     @PreAuthorize("hasAnyAuthority('message.write')")
-    @Operation(summary = "重置scope对应的权限", description = "重置scope对应的权限")
+    @Operation(summary = "根据id删除scope", description = "根据id删除scope")
     public Result<String> removeScopeById(@PathVariable Long id) {
         scopeService.removeScopeById(id);
         return Result.success();

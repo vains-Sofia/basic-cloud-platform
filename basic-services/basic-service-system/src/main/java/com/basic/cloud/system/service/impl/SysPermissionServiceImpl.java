@@ -1,9 +1,11 @@
 package com.basic.cloud.system.service.impl;
 
+import com.basic.cloud.system.api.domain.model.DynamicRouter;
 import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
 import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
 import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
+import com.basic.cloud.system.converter.RouterConverter;
 import com.basic.cloud.system.domain.SysPermission;
 import com.basic.cloud.system.domain.SysRolePermission;
 import com.basic.cloud.system.repository.SysPermissionRepository;
@@ -11,18 +13,22 @@ import com.basic.cloud.system.repository.SysRolePermissionRepository;
 import com.basic.cloud.system.service.SysPermissionService;
 import com.basic.framework.core.domain.DataPageResult;
 import com.basic.framework.core.exception.CloudIllegalArgumentException;
+import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
+import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -45,12 +51,14 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 
     private final SysRolePermissionRepository rolePermissionRepository;
 
+    private final RouterConverter routerConverter = new RouterConverter();
+
     private final RedisOperator<Map<String, List<BasicGrantedAuthority>>> redisOperator;
 
     @Override
     public DataPageResult<FindPermissionResponse> findByPage(FindPermissionPageRequest request) {
         // 排序
-        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(SysPermission::getUpdateTime));
+        Sort sort = Sort.by(Sort.Direction.DESC, LambdaUtils.extractMethodToProperty(SysPermission::getRank));
         // 分页
         PageRequest pageQuery = PageRequest.of(request.current(), request.size(), sort);
 
@@ -187,6 +195,8 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 
     @Override
     public List<FindPermissionResponse> findPermissions(FindPermissionRequest request) {
+        // 排序
+        Sort sort = Sort.by(LambdaUtils.extractMethodToProperty(SysPermission::getRank));
         // 条件构造器
         SpecificationBuilder<SysPermission> builder = new SpecificationBuilder<>();
         builder.like(!ObjectUtils.isEmpty(request.getPath()), SysPermission::getPath, request.getPath());
@@ -197,7 +207,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 request.getPermissionType());
 
         // 执行查询
-        List<SysPermission> findPageResult = permissionRepository.findAll(builder);
+        List<SysPermission> findPageResult = permissionRepository.findAll(builder, sort);
         // 转为响应bean并返回
         return findPageResult
                 .stream()
@@ -241,6 +251,120 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 .filter(parentId -> !parentPermissionIds.contains(parentId))
                 .map(String::valueOf)
                 .toList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchUpdatePermissions(List<SavePermissionRequest> requests) {
+        // 判断入参是否存在重复
+        Set<String> duplicateChecker = new HashSet<>();
+        List<String> duplicates = new ArrayList<>();
+
+        for (SavePermissionRequest request : requests) {
+            String key = buildUniqueKey(request.getPath(), request.getRequestMethod());
+            if (!duplicateChecker.add(key)) {
+                duplicates.add(key);
+            }
+        }
+
+        if (!duplicates.isEmpty()) {
+            throw new CloudServiceException("路径和请求方法组合不能重复: " + String.join(", ", duplicates));
+        }
+
+        // 检查是否和已有权限冲突
+        for (SavePermissionRequest request : requests) {
+            SpecificationBuilder<SysPermission> builder = new SpecificationBuilder<>();
+            // 请求方式
+            if (ObjectUtils.isEmpty(request.getRequestMethod())) {
+                builder.isNull(SysPermission::getRequestMethod);
+            } else {
+                builder.eq(SysPermission::getRequestMethod, request.getRequestMethod());
+            }
+            // 请求路径
+            builder.eq(SysPermission::getPath, request.getPath());
+            // 修改需排除当前数据
+            builder.ne(request.getId() != null, SysPermission::getId, request.getId());
+            boolean exists = permissionRepository.exists(builder);
+            if (exists) {
+                duplicates.add(buildUniqueKey(request.getPath(), request.getRequestMethod()));
+            }
+        }
+
+        if (!duplicates.isEmpty()) {
+            throw new CloudServiceException("路径和请求方法组合已存在: " + String.join(", ", duplicates));
+        }
+
+        // 批量更新权限
+        List<SysPermission> permissionsToSave = requests.stream().map(request -> {
+            SysPermission permission = new SysPermission();
+            BeanUtils.copyProperties(request, permission);
+            // 如果是新增，则设置ID
+            if (request.getId() == null) {
+                permission.setId(sequence.nextId());
+                permission.setDeleted(Boolean.FALSE);
+            } else {
+                // 如果是修改，则保留原有的创建信息
+                Optional<SysPermission> existingPermission = permissionRepository.findById(request.getId());
+                existingPermission.ifPresent(existing -> {
+                    permission.setCreateBy(existing.getCreateBy());
+                    permission.setCreateName(existing.getCreateName());
+                    permission.setCreateTime(existing.getCreateTime());
+                });
+            }
+            // 默认设置不删除
+            if (permission.getDeleted() == null) {
+                permission.setDeleted(Boolean.FALSE);
+            }
+            return permission;
+        }).toList();
+
+        if (!ObjectUtils.isEmpty(permissionsToSave)) {
+            permissionRepository.saveAll(permissionsToSave);
+        }
+
+        // 刷新权限缓存
+        this.refreshPermissionCache();
+    }
+
+    /**
+     * 构建唯一键，用于检查重复的路径和请求方法组合
+     *
+     * @param path 请求路径
+     * @param requestMethod 请求方法
+     * @return 唯一键
+     */
+    private String buildUniqueKey(String path, String requestMethod) {
+        return (path != null ? path : "") + ":" + (requestMethod != null ? requestMethod : "");
+    }
+
+    @Override
+    public List<DynamicRouter> findUserRouters() {
+        // 获取当前登录用户信息
+        AuthenticatedUser authenticatedUser = SecurityUtils.getAuthenticatedUser();
+        if (authenticatedUser == null) {
+            throw new CloudServiceException("获取当前用户信息失败.");
+        }
+
+        // 获取用户拥有的权限列表
+        Collection<? extends GrantedAuthority> authorities = authenticatedUser.getAuthorities();
+
+        if (ObjectUtils.isEmpty(authorities)) {
+            return Collections.emptyList();
+        }
+        // 提取拥有的菜单权限
+        Set<Long> menuPermissionIds = authorities
+                .stream()
+                .filter(e -> e instanceof BasicGrantedAuthority)
+                .map(e -> (BasicGrantedAuthority) e)
+                .filter(e -> PermissionTypeEnum.isMenuType(e.getPermissionType()))
+                .map(BasicGrantedAuthority::getId)
+                .collect(Collectors.toSet());
+
+        // 获取完整的权限数据
+        List<SysPermission> menus = this.permissionRepository.findAllById(menuPermissionIds);
+
+        // 转为DynamicRouter返回
+        return routerConverter.convertToRouterTree(menus);
     }
 
 }

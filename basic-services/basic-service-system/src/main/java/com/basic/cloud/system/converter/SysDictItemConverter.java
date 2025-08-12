@@ -5,6 +5,7 @@ import com.basic.cloud.system.api.domain.response.FindSysDictItemResponse;
 import com.basic.cloud.system.domain.SysDictItem;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,7 @@ public class SysDictItemConverter {
      */
     public List<FindSysDictItemResponse> convertToResponseList(List<SysDictItem> dictItems) {
         if (dictItems == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         return dictItems.stream()
