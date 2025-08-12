@@ -1,9 +1,11 @@
 package com.basic.cloud.system.service.impl;
 
+import com.basic.cloud.system.api.domain.model.DynamicRouter;
 import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
 import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
 import com.basic.cloud.system.api.domain.response.FindPermissionResponse;
+import com.basic.cloud.system.converter.RouterConverter;
 import com.basic.cloud.system.domain.SysPermission;
 import com.basic.cloud.system.domain.SysRolePermission;
 import com.basic.cloud.system.repository.SysPermissionRepository;
@@ -16,14 +18,17 @@ import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
+import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.redis.support.RedisOperator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -45,6 +50,8 @@ public class SysPermissionServiceImpl implements SysPermissionService {
     private final SysPermissionRepository permissionRepository;
 
     private final SysRolePermissionRepository rolePermissionRepository;
+
+    private final RouterConverter routerConverter = new RouterConverter();
 
     private final RedisOperator<Map<String, List<BasicGrantedAuthority>>> redisOperator;
 
@@ -328,6 +335,36 @@ public class SysPermissionServiceImpl implements SysPermissionService {
      */
     private String buildUniqueKey(String path, String requestMethod) {
         return (path != null ? path : "") + ":" + (requestMethod != null ? requestMethod : "");
+    }
+
+    @Override
+    public List<DynamicRouter> findUserRouters() {
+        // 获取当前登录用户信息
+        AuthenticatedUser authenticatedUser = SecurityUtils.getAuthenticatedUser();
+        if (authenticatedUser == null) {
+            throw new CloudServiceException("获取当前用户信息失败.");
+        }
+
+        // 获取用户拥有的权限列表
+        Collection<? extends GrantedAuthority> authorities = authenticatedUser.getAuthorities();
+
+        if (ObjectUtils.isEmpty(authorities)) {
+            return Collections.emptyList();
+        }
+        // 提取拥有的菜单权限
+        Set<Long> menuPermissionIds = authorities
+                .stream()
+                .filter(e -> e instanceof BasicGrantedAuthority)
+                .map(e -> (BasicGrantedAuthority) e)
+                .filter(e -> PermissionTypeEnum.isMenuType(e.getPermissionType()))
+                .map(BasicGrantedAuthority::getId)
+                .collect(Collectors.toSet());
+
+        // 获取完整的权限数据
+        List<SysPermission> menus = this.permissionRepository.findAllById(menuPermissionIds);
+
+        // 转为DynamicRouter返回
+        return routerConverter.convertToRouterTree(menus);
     }
 
 }

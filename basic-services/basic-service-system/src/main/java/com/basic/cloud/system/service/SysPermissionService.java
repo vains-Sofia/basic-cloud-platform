@@ -1,5 +1,6 @@
 package com.basic.cloud.system.service;
 
+import com.basic.cloud.system.api.domain.model.DynamicRouter;
 import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
 import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
@@ -9,9 +10,9 @@ import com.basic.framework.core.domain.DataPageResult;
 import java.util.List;
 
 /**
- * RBAC权限信息Service
- *
- * @author vains
+ * SysPermissionService defines a set of methods for managing system permissions,
+ * including querying, modifying, and caching permission data. It facilitates
+ * operations to ensure effective handling of permission-related functionalities.
  */
 public interface SysPermissionService {
 
@@ -80,4 +81,12 @@ public interface SysPermissionService {
      * @param requests 权限信息列表
      */
     void batchUpdatePermissions(List<SavePermissionRequest> requests);
+
+    /**
+     * 检索当前用户的动态菜单路由器列表。
+     *
+     * @return 包装 DynamicRouter 对象列表的结果，表示用户的菜单结构
+     */
+    List<DynamicRouter> findUserRouters();
+
 }

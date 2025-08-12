@@ -20,7 +20,7 @@ import java.util.List;
  * @author vains
  */
 @RequestMapping("/dict/type")
-@Tag(name = "字典类型 api 接口", description = "字典类型 api 接口")
+@Tag(name = "字典 api 接口", description = "字典类型 api 接口")
 @FeignClient(name = FeignConstants.SYSTEM_APPLICATION, path = FeignConstants.SYSTEM_CONTEXT_PATH, contextId = "SysDictTypeClient")
 public interface SysDictTypeClient {
 

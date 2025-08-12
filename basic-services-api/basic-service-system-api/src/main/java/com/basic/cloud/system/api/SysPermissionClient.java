@@ -1,5 +1,6 @@
 package com.basic.cloud.system.api;
 
+import com.basic.cloud.system.api.domain.model.DynamicRouter;
 import com.basic.cloud.system.api.domain.request.FindPermissionPageRequest;
 import com.basic.cloud.system.api.domain.request.FindPermissionRequest;
 import com.basic.cloud.system.api.domain.request.SavePermissionRequest;
@@ -113,13 +114,22 @@ public interface SysPermissionClient {
     Result<List<String>> findPermissionIdsByRoleId(@Valid @NotNull @PathVariable Long roleId);
 
     /**
-     * 权限id列表获取没有子节点的权限id列表
+     * 权限id列表获取没有父节点的权限id列表
      *
      * @param permissionIds 权限id列表
      * @return 权限id列表
      */
     @PostMapping("/findNonParentPermissions")
-    @Operation(summary = "权限id列表获取没有子节点的权限id列表", description = "权限id列表获取没有子节点的权限id列表")
+    @Operation(summary = "根据权限id列表获取没有父节点的权限id列表", description = "根据权限id列表获取没有父节点的权限id列表")
     Result<List<String>> findNonParentPermissions(@Valid @NotNull @RequestBody List<Long> permissionIds);
+
+    /**
+     * 检索当前用户的动态菜单路由器列表。
+     *
+     * @return 包装 DynamicRouter 对象列表的结果，表示用户的菜单结构
+     */
+    @GetMapping("/findUserRouters")
+    @Operation(summary = "获取当前用户的菜单列表", description = "获取当前用户的菜单列表")
+    Result<List<DynamicRouter>> findUserRouters();
 
 }
