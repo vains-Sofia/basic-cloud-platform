@@ -344,1016 +344,907 @@ VALUES (1934450355763220481, 'cxw', 'ChenXw', NULL,
 DROP TABLE IF EXISTS `sys_permission`;
 CREATE TABLE `sys_permission`
 (
-    `id`                  bigint                                                  NOT NULL COMMENT '主键id',
-    `title`               varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '菜单名称（兼容国际化、非国际化，如果用国际化的写法就必须在根目录的locales文件夹下对应添加）',
-    `name`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '权限名',
-    `permission`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '权限码',
-    `path`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '路径',
-    `request_method`      varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT 'HTTP请求方式',
-    `permission_type`     tinyint(1)                                              NOT NULL COMMENT '0:菜单,1:接口,2:其它',
-    `module_name`         varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '所属模块名字',
-    `description`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '描述',
-    `need_authentication` tinyint(1)                                              NULL DEFAULT 0 COMMENT '是否需要鉴权',
-    `parent_id`           bigint                                                  NULL DEFAULT 0 COMMENT '父节点id',
-    `component`           varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '组件路径',
-    `redirect`            varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '路由重定向',
-    `deleted`             tinyint(1)                                              NULL DEFAULT NULL COMMENT '是否已删除',
-    `icon`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '菜单图标',
-    `extra_icon`          varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '右侧图标',
-    `enter_transition`    varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '进场动画（页面加载动画）',
-    `leave_transition`    varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '离场动画（页面加载动画）',
-    `frame_src`           varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '链接地址（需要内嵌的iframe链接地址）',
-    `frame_loading`       varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL DEFAULT NULL COMMENT '加载动画（内嵌的iframe页面是否开启首次加载动画）',
-    `keep_alive`          tinyint(1)                                              NULL DEFAULT NULL COMMENT '缓存页面（是否缓存该路由页面，开启后会保存该页面的整体状态，刷新后会清空状态）',
-    `show_link`           tinyint(1)                                              NULL DEFAULT NULL COMMENT '是否显示该菜单',
-    `hidden_tag`          tinyint(1)                                              NULL DEFAULT NULL COMMENT '隐藏标签页（当前菜单名称或自定义信息禁止添加到标签页）',
-    `fixed_tag`           tinyint(1)                                              NULL DEFAULT NULL COMMENT '固定标签页（当前菜单名称是否固定显示在标签页且不可关闭）',
-    `show_parent`         tinyint(1)                                              NULL DEFAULT NULL COMMENT '是否显示父级菜单',
-    `rank`                decimal(10, 0)                                          NULL DEFAULT NULL COMMENT '菜单排序',
-    `create_by`           bigint                                                  NULL DEFAULT NULL COMMENT '创建人',
-    `update_by`           bigint                                                  NULL DEFAULT NULL COMMENT '修改人',
-    `create_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '创建人名称',
-    `update_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL DEFAULT NULL COMMENT '修改人名称',
-    `create_time`         datetime                                                NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`         datetime                                                NULL DEFAULT NULL COMMENT '修改时间',
-    PRIMARY KEY (`id`) USING BTREE
+    `id`                  bigint     NOT NULL COMMENT '主键id',
+    `title`               varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '菜单名称（兼容国际化、非国际化，如果用国际化的写法就必须在根目录的locales文件夹下对应添加）',
+    `name`                varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '权限名',
+    `permission`          varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  DEFAULT NULL COMMENT '权限码',
+    `path`                varchar(100) COLLATE utf8mb4_bin                       DEFAULT NULL COMMENT '路径',
+    `request_method`      varchar(10) COLLATE utf8mb4_bin                        DEFAULT NULL COMMENT 'HTTP请求方式',
+    `permission_type`     tinyint(1) NOT NULL COMMENT '0:菜单,1:接口,2:其它',
+    `module_name`         varchar(100) COLLATE utf8mb4_bin                       DEFAULT NULL COMMENT '所属模块名字',
+    `description`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '描述',
+    `need_authentication` tinyint(1)                                             DEFAULT '0' COMMENT '是否需要鉴权',
+    `parent_id`           bigint                                                 DEFAULT '0' COMMENT '父节点id',
+    `component`           varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '组件路径',
+    `redirect`            varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '路由重定向',
+    `deleted`             tinyint(1)                                             DEFAULT NULL COMMENT '是否已删除',
+    `icon`                varchar(100) COLLATE utf8mb4_bin                       DEFAULT NULL COMMENT '菜单图标',
+    `extra_icon`          varchar(100) COLLATE utf8mb4_bin                       DEFAULT NULL COMMENT '右侧图标',
+    `enter_transition`    varchar(100) COLLATE utf8mb4_bin                       DEFAULT NULL COMMENT '进场动画（页面加载动画）',
+    `leave_transition`    varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '离场动画（页面加载动画）',
+    `frame_src`           varchar(1000) COLLATE utf8mb4_bin                      DEFAULT NULL COMMENT '链接地址（需要内嵌的iframe链接地址）',
+    `frame_loading`       varchar(100) COLLATE utf8mb4_bin                       DEFAULT NULL COMMENT '加载动画（内嵌的iframe页面是否开启首次加载动画）',
+    `keep_alive`          tinyint(1)                                             DEFAULT NULL COMMENT '缓存页面（是否缓存该路由页面，开启后会保存该页面的整体状态，刷新后会清空状态）',
+    `show_link`           tinyint(1)                                             DEFAULT NULL COMMENT '是否显示该菜单',
+    `hidden_tag`          tinyint(1)                                             DEFAULT NULL COMMENT '隐藏标签页（当前菜单名称或自定义信息禁止添加到标签页）',
+    `fixed_tag`           tinyint(1)                                             DEFAULT NULL COMMENT '固定标签页（当前菜单名称是否固定显示在标签页且不可关闭）',
+    `show_parent`         tinyint(1)                                             DEFAULT NULL COMMENT '是否显示父级菜单',
+    `rank`                decimal(10, 0)                                         DEFAULT NULL COMMENT '菜单排序',
+    `active_path`         varchar(100) COLLATE utf8mb4_bin                       DEFAULT NULL COMMENT '指定激活菜单即可获得高亮，`activePath`为指定激活菜单的`path`',
+    `create_by`           bigint                                                 DEFAULT NULL COMMENT '创建人',
+    `update_by`           bigint                                                 DEFAULT NULL COMMENT '修改人',
+    `create_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  DEFAULT NULL COMMENT '创建人名称',
+    `update_name`         varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  DEFAULT NULL COMMENT '修改人名称',
+    `create_time`         datetime                                               DEFAULT NULL COMMENT '创建时间',
+    `update_time`         datetime                                               DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_bin COMMENT = 'RBAC权限表'
-  ROW_FORMAT = Dynamic;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT ='RBAC权限表';
 
 -- ----------------------------
 -- Records of sys_permission
 -- ----------------------------
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1, '测试接口', '测试接口', 'test:test01', '/test/test01', 'GET', 3, NULL, NULL, 0, 1952661871538835457, '', '',
+        0, 'ep:bell', 'ep:bell', '', '', '', '', 0, 1, 0, 0, 0, 1, NULL, 1, 1, '云逸', '云逸', '2024-11-25 17:38:48',
+        '2025-08-06 13:51:44');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1864241504623833089, '修改权限信息', '修改权限信息', 'permission:updatePermission',
-        '/permission/updatePermission', 'PUT', 3, NULL, NULL, 1, 1919661224031989762, '', '', 0, 'ep:bell', 'ep:bell',
-        '', '', '', '', 0, 1, 0, 0, 0, 9, 1, 1, '云逸', '云逸', '2024-12-04 17:35:50', '2025-08-06 09:57:30');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        '/permission/updatePermission', 'PUT', 3, '', NULL, 1, 1919661224031989762, '', '', 0, '', 'ep:bell', '', '',
+        '', '', 0, 1, 0, 0, 0, 8, NULL, 1, 1, '云逸', '云逸', '2024-12-04 17:35:50', '2025-08-06 13:49:35');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1870104848520814594, '查询权限详情', '查询权限详情', 'permission:permissionDetails',
         '/permission/permissionDetails/{id}', 'GET', 3, NULL, NULL, 1, 1919661224031989762, '', '', 1, 'ep:bell',
-        'ep:bell', '', '', '', 'true', 0, 1, 0, 0, 0, 7, 1, 1, '云逸', '云逸', '2024-12-20 21:51:55',
-        '2025-08-06 09:52:40');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        'ep:bell', '', '', '', 'true', 0, 1, 0, 0, 0, 8, NULL, 1, 1, '云逸', '云逸', '2024-12-20 21:51:55',
+        '2025-08-06 13:45:14');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1919658873598554113, 'menus.pureSysManagement', 'System', 'menu:system', '/system', NULL, 0, NULL, NULL, NULL,
-        0, '', '', 0, 'ri:settings-3-line', '', '', '', '', '', 0, 1, 0, 0, 1, 1, 1, 1, '云逸', '云逸',
-        '2025-05-06 15:41:56', '2025-08-04 17:46:35');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        0, '', '', 0, 'ri:settings-3-line', '', '', '', '', '', 0, 1, 0, 0, 1, 1, NULL, 1, 1, '云逸', '云逸',
+        '2025-05-06 15:41:56', '2025-08-06 12:54:31');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1919660730064613377, 'menus.pureUser', 'SystemUser', 'menu:system:user', '/system/user/index', NULL, 0, NULL,
-        NULL, NULL, 1919658873598554113, '/system/user/index', '', 0, 'ri:admin-line', '', 'pulse', 'flash', '', '', 0,
-        1, 0, 0, 1, 1, 1, 1, '云逸', '云逸', '2025-05-06 15:49:18', '2025-05-06 15:58:55');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        NULL, NULL, 1919658873598554113, '/system/user/index', '', 0, 'ri:admin-line', '', '', '', '', '', 0, 1, 0, 0,
+        1, 1, NULL, 1, 1, '云逸', '云逸', '2025-05-06 15:49:18', '2025-08-06 13:49:23');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1919660995832492033, 'menus.pureRole', 'SystemRole', 'menu:system:role', '/system/role/index', NULL, 0, NULL,
-        NULL, NULL, 1919658873598554113, '/system/role/index', '', 0, 'ri:admin-fill', '', 'pulse', 'flash', '', '', 0,
-        1, 0, 0, 1, 2, 1, 1, '云逸', '云逸', '2025-05-06 15:50:22', '2025-05-06 15:59:02');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        NULL, NULL, 1919658873598554113, '/system/role/index', '', 0, 'ri:admin-fill', '', '', '', '', '', 0, 1, 0, 0,
+        1, 2, NULL, 1, 1, '云逸', '云逸', '2025-05-06 15:50:22', '2025-08-06 13:49:23');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1919661224031989762, 'menus.pureSystemMenu', 'SystemMenu', 'menu:system:menu', '/system/menu/index', NULL, 0,
-        NULL, NULL, NULL, 1919658873598554113, '/system/menu/index', '', 0, 'ep:menu', '', 'pulse', 'flash', '', '', 0,
-        1, 0, 0, 1, 3, 1, 1, '云逸', '云逸', '2025-05-06 15:51:16', '2025-08-06 09:44:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        NULL, NULL, NULL, 1919658873598554113, '/system/menu/index', '', 0, 'ep:menu', '', '', '', '', '', 0, 1, 0, 0,
+        1, 3, NULL, 1, 1, '云逸', '云逸', '2025-05-06 15:51:16', '2025-08-06 13:49:23');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1919661595269836801, 'menus.pureDept', 'SystemDept', 'menu:system:dept', '/system/dept/index', NULL, 0, NULL,
-        NULL, NULL, 1919658873598554113, '/system/dept/index', '', 1, 'ri:git-branch-line', '', 'pulse', 'flash', '',
-        '', 0, 1, 0, 0, 1, 4, 1, 1, '云逸', '云逸', '2025-05-06 15:52:45', '2025-05-06 15:59:16');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        NULL, NULL, 1919658873598554113, '/system/dept/index', '', 1, 'ri:git-branch-line', '', '', '', '', '', 0, 1, 0,
+        0, 1, 4, NULL, 1, 1, '云逸', '云逸', '2025-05-06 15:52:45', '2025-05-06 15:59:16');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1952306933212164097, 'menus.pureSystemDict', 'SystemDict', 'system:dict:index', '/system/dict/index', '', 0,
         'system', NULL, 1, 1919658873598554113, '/system/dict/index', '', 0, 'ri:book-2-line', '', '', '', '', '', 1, 1,
-        0, 0, 0, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:53:40', '2025-08-06 09:44:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184129, '修改scope信息', '修改scope信息', 'scope:update', '/scope/update', 'PUT', 3, 'auth', NULL,
-        0, 1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 1,
-        1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 17:36:03');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184130, '重置scope对应的权限', '重置scope对应的权限', 'scope:resetScopePermission',
-        '/scope/resetScopePermission', 'PUT', 3, 'auth', NULL, 0, 1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-05 18:05:16');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184131, '更新客户端信息', '更新客户端信息', 'application:update', '/application/update', 'PUT', 3,
-        'auth', NULL, 0, 1952658080221388801, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 10:02:38');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184132, '测试Json请求验证', '测试Json请求验证', 'test:validateJson', '/test/validateJson', 'POST',
-        3, 'auth', NULL, 0, 1952661871538835457, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 17:24:50');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184133, '测试表单验证', '测试表单验证', 'test:validateForm', '/test/validateForm', 'POST', 3,
-        'auth', NULL, 0, 1952661871538835457, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 17:24:50');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184134, '保存scope信息', '保存scope信息', 'scope:save', '/scope/save', 'POST', 3, 'auth', NULL, 0,
-        1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 17:36:03');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184135, '移动端扫码', '移动端扫码', 'qr-code:app:scan', '/qr-code/app/scan', 'POST', 3, 'auth',
-        NULL, 0, 1952671270177181698, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 18:01:40');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184136, '移动端确认登录', '移动端确认登录', 'qr-code:app:confirm', '/qr-code/app/confirm', 'POST',
-        3, 'auth', NULL, 0, 1952671270177181698, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 18:01:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184137, '保存客户端信息', '保存客户端信息', 'application:save', '/application/save', 'POST', 3,
-        'auth', NULL, 0, 1952658080221388801, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 10:02:35');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184138, '测试手机号验证', '测试手机号验证', 'test:validatePhone', '/test/validatePhone', 'GET', 3,
-        'auth', NULL, 0, 1952661871538835457, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 17:24:50');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184139, '测试接口，需要有profile权限', '测试接口，需要有profile权限', 'test:test01', '/test/test01',
-        'GET', 3, 'auth', NULL, 0, 1952661871538835457, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 17:24:50');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184140, '查询所有的scope', '查询所有的scope', 'scope:findScopeList', '/scope/findScopeList', 'GET',
-        3, 'auth', NULL, 0, 1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 17:36:03');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184141, '查询scope对应的权限', '查询scope对应的权限', 'scope:findPermissionIdsByScope',
-        '/scope/findPermissionIdsByScope/*', 'GET', 3, 'auth', NULL, 0, 1952657633259577345, NULL, NULL, 0, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-05 17:36:03');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184142, '根据入参分页查询scope信息', '根据入参分页查询scope信息', 'scope:findByPage',
-        '/scope/findByPage', 'GET', 3, 'auth', NULL, 0, 1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-05 17:36:03');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184143, '轮询二维码状态', '轮询二维码状态', 'qr-code:poll', '/qr-code/poll', 'GET', 3, 'auth',
-        NULL, 0, 1952671270177181698, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 18:01:35');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184144, '生成二维码', '生成二维码', 'qr-code:init', '/qr-code/init', 'GET', 3, 'auth', NULL, 0,
-        1952671270177181698, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 18:01:35');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184145, '授权确认页面', '授权确认页面', 'oauth2:consent', '/oauth2/consent', 'GET', 3, 'auth',
-        NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, 1, 1, '云逸',
-        '云逸', '2025-08-04 17:54:29', '2025-08-05 17:24:50');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184146, '登录页面', '登录页面', 'login', '/login', 'GET', 3, 'auth', NULL, 0, 0, NULL, NULL, 1,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1, '云逸', '云逸',
-        '2025-08-04 17:54:29', '2025-08-05 18:00:30');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184147, '获取短信验证码', '获取短信验证码', 'getSmsCaptcha', '/getSmsCaptcha', 'GET', 3, 'auth',
-        NULL, 0, 1952671616769298434, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 18:03:01');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184148, '获取邮件验证码', '获取邮件验证码', 'getEmailCaptcha', '/getEmailCaptcha', 'GET', 3,
-        'auth', NULL, 0, 1952671616769298434, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 18:02:57');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184149, '获取验证码', '获取验证码', 'getCaptcha', '/getCaptcha', 'GET', 3, 'auth', NULL, 0,
-        1952671616769298434, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 18:03:01');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184150, '检查是否登录过', '检查是否登录过', 'check:login', '/check/login', 'GET', 3, 'auth', NULL,
-        0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 1, 1, '云逸', '云逸',
-        '2025-08-04 17:54:29', '2025-08-05 18:03:01');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184151, '根据入参分页查询认证信息', '根据入参分页查询认证信息', 'authorization:findByPage',
-        '/authorization/findByPage', 'GET', 3, 'auth', NULL, 0, 1952657828596703234, NULL, NULL, 0, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:43:57');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184152, '根据id查询认证信息详情', '根据id查询认证信息详情', 'authorization:findById',
-        '/authorization/findById/*', 'GET', 3, 'auth', NULL, 0, 1952657828596703234, NULL, NULL, 0, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-05 18:03:37');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184153, '根据入参分页查询客户端信息', '根据入参分页查询客户端信息', 'application:findByPage',
-        '/application/findByPage', 'GET', 3, 'auth', NULL, 0, 1952657433640067074, NULL, NULL, 0, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 10:02:48');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184154, '根据id查询客户端信息', '根据id查询客户端信息', 'application:findById',
-        '/application/findById/*', 'GET', 3, 'auth', NULL, 0, 1952658080221388801, NULL, NULL, 0, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 10:02:38');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184155, '根据客户端id查询客户端信息', '根据客户端id查询客户端信息', 'application:findByClientId',
-        '/application/findByClientId/*', 'GET', 3, 'auth', NULL, 0, 1952657433640067074, NULL, NULL, 0, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 10:02:48');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184156, '获取应用卡片列表数据', '获取应用卡片列表数据', 'application:cardListPage',
-        '/application/cardListPage', 'GET', 3, 'auth', NULL, 0, 1952657433640067074, '', '', 0, '', '', '', '', '', '',
-        0, 1, 0, 0, 0, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 10:02:48');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184157, '设备码-设备码验证成功页面', '设备码-设备码验证成功页面', 'activated', '/activated', 'GET',
-        3, 'auth', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 18:04:03');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184158, '设备码-设备码验证页面', '设备码-设备码验证页面', 'activate', '/activate', 'GET', 3,
-        'auth', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-05 18:04:03');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184159, '设备码-设备码验证成功页面', '设备码-设备码验证成功页面', '', '/', 'GET', 3, 'auth', NULL,
-        0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, 1, 1, '云逸', '云逸',
-        '2025-08-04 17:54:29', '2025-08-05 18:04:03');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184160, '根据id删除scope', '根据id删除scope', 'scope:removeById', '/scope/removeById/*', 'DELETE',
-        3, 'auth', NULL, 0, 1952657633259577345, '', '', 0, '', '', '', '', '', '', 0, 1, 0, 0, 0, 6, 1, 1, '云逸',
-        '云逸', '2025-08-04 17:54:29', '2025-08-05 18:05:16');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184161, '踢出登录', '踢出登录', 'authorization:offline', '/authorization/offline', 'DELETE', 3,
-        'auth', NULL, 0, 1952657828596703234, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:43:57');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184162, '根据数据id删除客户端', '根据数据id删除客户端', 'application:remove',
-        '/application/remove/*', 'DELETE', 3, 'auth', NULL, 0, 1952657433640067074, '', '', 0, '', '', '', '', '', '',
-        0, 1, 0, 0, 0, 5, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 10:03:07');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184163, 'Valid when multiple issuers are allowed', 'Valid when multiple issuers are allowed',
-        '.well-known:oauth-authorization-server', '/.well-known/oauth-authorization-server/*', 'GET', 3, 'auth', NULL,
-        0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, 1, 1, '云逸', '云逸',
-        '2025-08-04 17:54:29', '2025-08-05 18:05:30');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184164, 'Valid when multiple issuers are allowed', 'Valid when multiple issuers are allowed',
-        '.well-known:openid-configuration', '/*/.well-known/openid-configuration', 'GET', 3, 'auth', NULL, 0, 0, NULL,
-        NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, 1, 1, '云逸', '云逸',
-        '2025-08-04 17:54:29', '2025-08-05 18:05:30');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184165, '更新用户角色', '更新用户角色', 'user:updateUserRoles', '/user/updateUserRoles', 'PUT', 3,
-        'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 7, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:56:57');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184166, '修改用户信息', '修改用户信息', 'user:updateBasicUser', '/user/updateBasicUser', 'PUT', 3,
-        'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:49:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184167, '重置密码', '重置密码', 'user:resetPassword', '/user/resetPassword', 'PUT', 3, 'system',
-        NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        5, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:49:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184168, '修改角色信息', '修改角色信息', 'role:updateRole', '/role/updateRole', 'PUT', 3, 'system',
-        NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        6, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:57:14');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184169, '更新角色权限', '更新角色权限', 'role:updateRolePermissions',
-        '/role/updateRolePermissions', 'PUT', 3, 'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:57:14');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184170, '批量修改权限信息', '批量修改权限信息', 'permission:batchUpdatePermissions',
-        '/permission/batchUpdatePermissions', 'PUT', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:53:21');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184171, '根据字典类型ID查询字典类型', '根据字典类型ID查询字典类型', 'dict:type', '/dict/type/*',
-        'GET', 3, 'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, 7, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184172, '更新字典类型', '更新字典类型', 'dict:type', '/dict/type/*', 'PUT', 3, 'system', NULL, 0,
-        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184173, '删除字典类型', '删除字典类型', 'dict:type', '/dict/type/*', 'DELETE', 3, 'system', NULL,
-        0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11, 1,
-        1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184174, '根据字典项ID查询字典项', '根据字典项ID查询字典项', 'dict:item', '/dict/item/*', 'GET', 3,
-        'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 8, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184175, '更新字典项', '更新字典项', 'dict:item', '/dict/item/*', 'PUT', 3, 'system', NULL, 0,
-        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184176, '删除字典项', '删除字典项', 'dict:item', '/dict/item/*', 'DELETE', 3, 'system', NULL, 0,
-        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 12, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184177, '文件下载预签名', '文件下载预签名', 'common:pre:signed', '/common/pre/signed', 'GET', 3,
-        'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:45:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184178, '文件上传预签名', '文件上传预签名', 'common:pre:signed', '/common/pre/signed', 'PUT', 3,
-        'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:45:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184179, '删除文件预签名', '删除文件预签名', 'common:pre:signed', '/common/pre/signed', 'DELETE', 3,
-        'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:45:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184180, '添加API接口信息', '添加API接口信息', 'api-endpoint', '/api-endpoint', 'POST', 3, 'system',
-        NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        8, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184181, '修改API接口信息', '修改API接口信息', 'api-endpoint', '/api-endpoint', 'PUT', 3, 'system',
-        NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        6, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184182, '设置接口状态为忽略', '设置接口状态为忽略', 'api-endpoint:ignore', '/api-endpoint/ignore',
-        'PUT', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, 7, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184183, '用户注册', '用户注册', 'user:userRegister', '/user/userRegister', 'POST', 3, 'system',
-        NULL, 0, 1919660730064613377, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:46:51');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184184, '添加一条用户信息', '添加一条用户信息', 'user:insertBasicUser', '/user/insertBasicUser',
-        'POST', 3, 'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:49:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184185, '重新发送绑定确认', '重新发送绑定确认', 'third:user:resend-bind-confirmation',
-        '/third/user/resend-bind-confirmation', 'POST', 3, 'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:46:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184186, '获取增强的三方用户信息', '获取增强的三方用户信息', 'third:user:enhanced-third-user',
-        '/third/user/enhanced-third-user', 'POST', 3, 'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:46:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184187, '绑定邮箱', '绑定邮箱', 'third:user:bind-email', '/third/user/bind-email', 'POST', 3,
-        'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:46:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184188, '添加角色信息', '添加角色信息', 'role:insertRole', '/role/insertRole', 'POST', 3, 'system',
-        NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:57:14');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184189, '添加权限信息', '添加权限信息', 'permission:insertPermission',
-        '/permission/insertPermission', 'POST', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:53:21');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184190, '获取没有父节点的权限id列表', '获取没有父节点的权限id列表',
-        'permission:findNonParentPermissions', '/permission/findNonParentPermissions', 'POST', 3, 'system', NULL, 0,
-        1919661224031989762, '', '', 0, '', '', '', '', '', '', 0, 1, 0, 0, 0, 3, 1, 1, '云逸', '云逸',
-        '2025-08-04 17:54:29', '2025-08-06 09:53:21');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184191, '创建字典类型', '创建字典类型', 'dict:type', '/dict/type', 'POST', 3, 'system', NULL, 0,
-        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184192, '创建字典项', '创建字典项', 'dict:item', '/dict/item', 'POST', 3, 'system', NULL, 0,
-        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184193, '邮件发送', '邮件发送', 'common:email:sender', '/common/email/sender', 'POST', 3, 'system',
-        NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1, 1, '云逸',
-        '云逸', '2025-08-04 17:54:29', '2025-08-06 09:47:59');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184194, '扫描系统接口', '扫描系统接口', 'api-endpoint:scan:endpoints',
-        '/api-endpoint/scan/endpoints', 'POST', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184195, '查询API接口信息列表', '查询API接口信息列表', 'api-endpoint:list', '/api-endpoint/list',
-        'POST', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184196, '批量导入接口到权限表', '批量导入接口到权限表', 'api-endpoint:import',
-        '/api-endpoint/import', 'POST', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184197, '根据扫描批次ID导入接口', '根据扫描批次ID导入接口', 'api-endpoint:import:batch',
-        '/api-endpoint/import/batch/*', 'POST', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184198, '查询用户详情', '查询用户详情', 'user:userDetails', '/user/userDetails/*', 'GET', 3,
-        'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:49:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184199, '获取登录用户信息', '获取登录用户信息', 'user:loginUserinfo', '/user/loginUserinfo', 'GET',
-        3, 'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1,
-        1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:49:18');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184200, '获取注册时使用的邮箱验证码', '获取注册时使用的邮箱验证码', 'user:getRegisterEmailCode',
-        '/user/getRegisterEmailCode/*', 'GET', 3, 'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:49:18');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184201, '分页查询基础用户信息列表', '分页查询基础用户信息列表', 'user:findByPage',
-        '/user/findByPage', 'GET', 3, 'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:49:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184202, '三方登录用户确认绑定本地账号', '三方登录用户确认绑定本地账号', 'third:user:confirm',
-        '/third/user/confirm', 'GET', 3, 'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:49:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184203, '检查当前三方用户是否绑定本地用户', '检查当前三方用户是否绑定本地用户',
-        'third:user:check-binding', '/third/user/check-binding', 'GET', 3, 'system', NULL, 0, 0, NULL, NULL, 1, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:49:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184204, '获取绑定邮箱验证码', '获取绑定邮箱验证码', 'third:user:bind-email-code',
-        '/third/user/bind-email-code/*', 'GET', 3, 'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, 6, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:49:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184206, '查询角色详情', '查询角色详情', 'role:roleDetails', '/role/roleDetails/*', 'GET', 3,
-        'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:51:01');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184207, '根据条件查询所有角色列表', '根据条件查询所有角色列表', 'role:findRoles',
-        '/role/findRoles', 'GET', 3, 'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:51:01');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184208, '根据用户id查询角色id列表', '根据用户id查询角色id列表', 'role:findRoleIdsByUserId',
-        '/role/findRoleIdsByUserId/*', 'GET', 3, 'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:50:46');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184209, '分页查询角色信息列表', '分页查询角色信息列表', 'role:findByPage', '/role/findByPage',
-        'GET', 3, 'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:51:01');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184210, '查询权限详情', '查询权限详情', 'permission:permissionDetails',
-        '/permission/permissionDetails/*', 'GET', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:53:21');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184211, '查询权限信息列表', '查询权限信息列表', 'permission:findPermissions',
-        '/permission/findPermissions', 'GET', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:53:21');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184212, '根据角色id查询权限id列表', '根据角色id查询权限id列表',
-        'permission:findPermissionIdsByRoleId', '/permission/findPermissionIdsByRoleId/*', 'GET', 3, 'system', NULL, 0,
-        1919661224031989762, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, 1, 1,
-        '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:21');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184213, '分页查询权限信息列表', '分页查询权限信息列表', 'permission:findByPage',
-        '/permission/findByPage', 'GET', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:53:21');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184214, '查询所有字典类型', '查询所有字典类型', 'dict:type:page', '/dict/type/page', 'GET', 3,
-        'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:39');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184215, '查询所有字典项', '查询所有字典项', 'dict:type:all', '/dict/type/all', 'GET', 3, 'system',
-        NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184216, '根据字典类型编码查询字典项', '根据字典类型编码查询字典项', 'dict:item:type',
-        '/dict/item/type/*', 'GET', 3, 'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184217, '分页查询字典项', '分页查询字典项', 'dict:item:page', '/dict/item/page', 'GET', 3,
-        'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:53:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184218, '查询API扫描记录详情', '查询API扫描记录详情', 'api-scan', '/api-scan/*', 'GET', 3,
-        'system', NULL, 0, 1952647718126247937, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:54:06');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184219, '删除API扫描记录信息', '删除API扫描记录信息', 'api-scan', '/api-scan/*', 'DELETE', 3,
-        'system', NULL, 0, 1952647718126247937, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 3, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:54:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184220, '分页查询API扫描记录列表', '分页查询API扫描记录列表', 'api-scan:page', '/api-scan/page',
-        'GET', 3, 'system', NULL, 0, 1952647718126247937, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:54:56');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184221, '查询API接口详情', '查询API接口详情', 'api-endpoint', '/api-endpoint/*', 'GET', 3,
-        'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 4, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184222, '删除API接口信息', '删除API接口信息', 'api-endpoint', '/api-endpoint/*', 'DELETE', 3,
-        'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 11, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184223, '分页查询API接口列表', '分页查询API接口列表', 'api-endpoint:page', '/api-endpoint/page',
-        'GET', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, 2, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184224, '根据扫描批次ID查询接口列表', '根据扫描批次ID查询接口列表', 'api-endpoint:batch',
-        '/api-endpoint/batch/*', 'GET', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29',
-        '2025-08-06 09:55:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184225, '删除用户信息', '删除用户信息', 'user:removeById', '/user/removeById/*', 'DELETE', 3,
-        'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 8, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:56:57');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184226, '删除角色信息', '删除角色信息', 'role:removeById', '/role/removeById/*', 'DELETE', 3,
-        'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, 7, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:57:14');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952307138347184227, '删除权限信息', '删除权限信息', 'permission:removeById', '/permission/removeById/*',
-        'DELETE', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, 8, 1, 1, '云逸', '云逸', '2025-08-04 17:54:29', '2025-08-06 09:57:30');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        0, 0, 0, 4, NULL, 1, 1, '云逸', '云逸', '2025-08-04 17:53:40', '2025-08-06 13:49:23');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1952647718126247937, 'menus.pureApiScan', 'pureApiScan', 'system:api-scan:index', '/system/api-scan/index', '',
         0, 'system', NULL, 1, 1919658873598554113, '/system/api-scan/index', '', 0, 'ri:scan-2-line', '', '', '', '',
-        '', 0, 1, 0, 0, 0, 5, 1, 1, '云逸', '云逸', '2025-08-05 16:27:49', '2025-08-06 09:45:12');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        '', 0, 1, 0, 0, 0, 5, NULL, 1, 1, '云逸', '云逸', '2025-08-05 16:27:49', '2025-08-12 13:41:59');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1952657129544638465, 'menus.platformManagement', 'platform', 'platform', '/platform', '', 0, 'system', NULL, 1,
-        0, '/platform', '', 0, 'ri:planet-line', '', '', '', '', '', 0, 1, 0, 0, 0, 2, 1, 1, '云逸', '云逸',
-        '2025-08-05 17:05:13', '2025-08-06 09:49:01');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        0, '/platform', '', 0, 'ri:planet-line', '', '', '', '', '', 0, 1, 0, 0, 0, 2, NULL, 1, 1, '云逸', '云逸',
+        '2025-08-05 17:05:13', '2025-08-06 13:43:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1952657433640067074, 'menus.application', 'Application', 'platform:application:index',
         '/platform/application/index', '', 0, 'auth', NULL, 1, 1952657129544638465, '/platform/application/index', '',
-        0, 'ri:apps-line', '', '', '', '', '', 0, 1, 0, 0, 0, 1, 1, 1, '云逸', '云逸', '2025-08-05 17:06:25',
-        '2025-08-05 17:06:25');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        0, 'ri:apps-line', '', '', '', '', '', 0, 1, 0, 0, 0, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-05 17:06:25',
+        '2025-08-12 13:41:55');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1952657633259577345, 'menus.scopeManagement', 'PlatformScope', 'platform:scope:index', '/platform/scope/index',
         '', 0, '', NULL, 1, 1952657129544638465, '/platform/scope/index', '', 0, 'ep:connection', '', '', '', '', '', 0,
-        1, 0, 0, 0, 2, 1, 1, '云逸', '云逸', '2025-08-05 17:07:13', '2025-08-05 18:05:57');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        1, 0, 0, 0, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-05 17:07:13', '2025-08-12 13:41:55');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1952657828596703234, 'menus.authorization', 'Authorization', ':platform:authorization:index',
         '/platform/authorization/index', '', 0, '', NULL, 1, 1952657129544638465, '/platform/authorization/index', '',
-        0, 'ri:login-circle-line', '', '', '', '', '', 0, 1, 0, 0, 0, 3, 1, 1, '云逸', '云逸', '2025-08-05 17:08:00',
-        '2025-08-05 18:05:57');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        0, 'ri:login-circle-line', '', '', '', '', '', 0, 1, 0, 0, 0, 3, NULL, 1, 1, '云逸', '云逸',
+        '2025-08-05 17:08:00', '2025-08-12 13:41:55');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1952658080221388801, 'menus.applicationDetail', 'ApplicationDetails', 'platform:application:detail',
-        '/platform/application/detail', '', 0, '', NULL, 1, 1952657433640067074, '/platform/application/detail', '', 0,
-        'ep:help', '', '', '', '', '', 0, 0, 0, 0, 0, 1, 1, 1, '云逸', '云逸', '2025-08-05 17:09:00',
-        '2025-08-05 18:03:58');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
+        '/platform/application/detail', '', 0, '', NULL, 1, 1952657129544638465, '/platform/application/detail', '', 1,
+        'ep:help', '', '', '', '', '', 0, 0, 0, 0, 1, 1, '', 1, 1, '云逸', '云逸', '2025-08-05 17:09:00',
+        '2025-08-12 13:38:18');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
 VALUES (1952658732645376001, 'menus.pureApiEndpoints', 'ApiEndpoints', 'system:api-scan:endpoints',
-        '/system/api-scan/endpoints', '', 0, '', NULL, 1, 1952647718126247937, '/system/api-scan/endpoints', '', 0,
-        'fa-solid:cubes', '', '', '', '', '', 0, 0, 0, 0, 0, 4, 1, 1, '云逸', '云逸', '2025-08-05 17:11:35',
-        '2025-08-06 10:00:42');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952661871538835457, '测试接口', 'test', 'test', 'test', '', 0, '', NULL, 1, 0, 'test', '', 0,
-        'ri:test-tube-line', '', '', '', '', '', 0, 0, 0, 0, 0, 3, 1, 1, '云逸', '云逸', '2025-08-05 17:24:04',
-        '2025-08-06 09:49:01');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952662576219656194, '登录相关接口', 'login', 'login', 'login', '', 0, '', NULL, 1, 0, '', '', 1,
-        'ri:login-box-line', '', '', '', '', '', 0, 0, 0, 0, 0, 4, 1, 1, '云逸', '云逸', '2025-08-05 17:26:52',
-        '2025-08-05 18:03:37');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952671270177181698, '扫码登录', 'scan-qrcode', 'scan-qrcode', 'scan-qrcode', '', 0, '', NULL, 1,
-        1952662576219656194, 'scan-qrcode', '', 1, 'ri:qr-scan-2-line', '', '', '', '', '', 0, 0, 0, 0, 0, 1, 1, 1,
-        '云逸', '云逸', '2025-08-05 18:01:24', '2025-08-05 18:01:45');
-INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type, module_name,
-                            description, need_authentication, parent_id, component, redirect, deleted, icon, extra_icon,
-                            enter_transition, leave_transition, frame_src, frame_loading, keep_alive, show_link,
-                            hidden_tag, fixed_tag, show_parent, `rank`, create_by, update_by, create_name, update_name,
-                            create_time, update_time)
-VALUES (1952671616769298434, '公共接口', 'common', 'common', 'common', '', 0, '', NULL, 1, 0, 'common', '', 1,
-        'ri:creative-commons-nd-line', '', '', '', '', '', 0, 1, 0, 0, 0, 5, 1, 1, '云逸', '云逸',
-        '2025-08-05 18:02:47', '2025-08-05 18:03:37');
+        '/system/api-scan/endpoints', '', 0, 'system', NULL, 1, 1919658873598554113, '/system/api-scan/endpoints', '',
+        0, 'fa-solid:cubes', '', '', '', '', '', 0, 0, 0, 0, 0, 6, '/system/api-scan/index', 1, 1, '云逸', '云逸',
+        '2025-08-05 17:11:35', '2025-08-12 13:42:41');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952661871538835457, '测试接口', 'test', 'test', '/test', '', 0, '', NULL, 1, 0, '/test', '', 0,
+        'ri:test-tube-line', '', '', '', '', '', 0, 0, 0, 0, 0, 3, '', 1, 1, '云逸', '云逸', '2025-08-05 17:24:04',
+        '2025-08-12 13:36:17');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128257, '修改scope信息', '修改scope信息', 'scope:update', '/scope/update', 'PUT', 3, 'auth', NULL,
+        0, 1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6,
+        NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:52:24');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128258, '重置scope对应的权限', '重置scope对应的权限', 'scope:resetScopePermission',
+        '/scope/resetScopePermission', 'PUT', 3, 'auth', NULL, 0, 1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:49:02');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128259, '更新客户端信息', '更新客户端信息', 'application:update', '/application/update', 'PUT', 3,
+        'auth', NULL, 0, 1955142007110266881, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-12 13:39:51');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128260, '测试Json请求验证', '测试Json请求验证', 'test:validateJson', '/test/validateJson', 'POST',
+        3, 'auth', NULL, 0, 1952661871538835457, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:44');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128261, '测试表单验证', '测试表单验证', 'test:validateForm', '/test/validateForm', 'POST', 3,
+        'auth', NULL, 0, 1952661871538835457, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:44');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128262, '保存scope信息', '保存scope信息', 'scope:save', '/scope/save', 'POST', 3, 'auth', NULL, 0,
+        1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, NULL,
+        1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:49:46');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128263, '保存客户端信息', '保存客户端信息', 'application:save', '/application/save', 'POST', 3,
+        'auth', NULL, 0, 1952657433640067074, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-12 13:36:43');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128264, '测试手机号验证', '测试手机号验证', 'test:validatePhone', '/test/validatePhone', 'GET', 3,
+        'auth', NULL, 0, 1952661871538835457, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, 4, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:44');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128265, '查询所有的scope', '查询所有的scope', 'scope:findScopeList', '/scope/findScopeList', 'GET',
+        3, 'auth', NULL, 0, 1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:47:34');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128266, '查询scope对应的权限', '查询scope对应的权限', 'scope:findPermissionIdsByScope',
+        '/scope/findPermissionIdsByScope/*', 'GET', 3, 'auth', NULL, 0, 1952657633259577345, NULL, NULL, 0, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:48:15');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128267, '根据入参分页查询scope信息', '根据入参分页查询scope信息', 'scope:findByPage',
+        '/scope/findByPage', 'GET', 3, 'auth', NULL, 0, 1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:47:26');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128268, '根据入参分页查询认证信息', '根据入参分页查询认证信息', 'authorization:findByPage',
+        '/authorization/findByPage', 'GET', 3, 'auth', NULL, 0, 1952657828596703234, NULL, NULL, 0, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:52:32');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128269, '根据id查询认证信息详情', '根据id查询认证信息详情', 'authorization:findById',
+        '/authorization/findById/*', 'GET', 3, 'auth', NULL, 0, 1952657828596703234, NULL, NULL, 0, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:52:32');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128270, '根据入参分页查询客户端信息', '根据入参分页查询客户端信息', 'application:findByPage',
+        '/application/findByPage', 'GET', 3, 'auth', NULL, 0, 1952657433640067074, NULL, NULL, 0, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-12 13:36:43');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128271, '根据id查询客户端信息', '根据id查询客户端信息', 'application:findById',
+        '/application/findById/*', 'GET', 3, 'auth', NULL, 0, 1955142007110266881, NULL, NULL, 0, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-12 13:39:51');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128272, '根据客户端id查询客户端信息', '根据客户端id查询客户端信息', 'application:findByClientId',
+        '/application/findByClientId/*', 'GET', 3, 'auth', NULL, 0, 1955142007110266881, NULL, NULL, 0, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-12 13:39:51');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128273, '分页查询应用卡片列表数据', '分页查询应用卡片列表数据', 'application:cardListPage',
+        '/application/cardListPage', 'GET', 3, 'auth', NULL, 0, 1952657433640067074, '', '', 0, '', '', '', '', '', '',
+        0, 1, 0, 0, 0, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-12 13:36:43');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128274, '根据id删除scope', '根据id删除scope', 'scope:removeById', '/scope/removeById/*', 'DELETE',
+        3, 'auth', NULL, 0, 1952657633259577345, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 7, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:52:24');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128275, '踢出登录', '踢出登录', 'authorization:offline', '/authorization/offline', 'DELETE', 3,
+        'auth', NULL, 0, 1952657828596703234, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:52:32');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128276, '根据客户端id删除客户端', '根据客户端id删除客户端', 'application:remove',
+        '/application/remove/*', 'DELETE', 3, 'auth', NULL, 0, 1952657433640067074, NULL, NULL, 0, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-12 13:39:49');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128277, '更新用户角色', '更新用户角色', 'user:updateUserRoles', '/user/updateUserRoles', 'PUT', 3,
+        'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 8, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:52:11');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128278, '修改用户信息', '修改用户信息', 'user:updateBasicUser', '/user/updateBasicUser', 'PUT', 3,
+        'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 5, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:52:02');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128279, '重置密码', '重置密码', 'user:resetPassword', '/user/resetPassword', 'PUT', 3, 'system',
+        NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        7, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:52:11');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128280, '修改角色信息', '修改角色信息', 'role:updateRole', '/role/updateRole', 'PUT', 3, 'system',
+        NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        5, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:40');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128281, '更新角色权限', '更新角色权限', 'role:updateRolePermissions',
+        '/role/updateRolePermissions', 'PUT', 3, 'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:51:40');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128282, '批量修改权限信息', '批量修改权限信息', 'permission:batchUpdatePermissions',
+        '/permission/batchUpdatePermissions', 'PUT', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, NULL, 1, 1, '云逸', '云逸',
+        '2025-08-06 12:54:17', '2025-08-06 13:49:35');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128283, '根据字典类型ID查询字典类型', '根据字典类型ID查询字典类型', 'dict:type', '/dict/type/*',
+        'GET', 3, 'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, 4, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128284, '更新字典类型', '更新字典类型', 'dict:type', '/dict/type/*', 'PUT', 3, 'system', NULL, 0,
+        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, NULL,
+        1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128285, '删除字典类型', '删除字典类型', 'dict:type', '/dict/type/*', 'DELETE', 3, 'system', NULL,
+        0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11,
+        NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128286, '根据字典项ID查询字典项', '根据字典项ID查询字典项', 'dict:item', '/dict/item/*', 'GET', 3,
+        'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 5, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128287, '更新字典项', '更新字典项', 'dict:item', '/dict/item/*', 'PUT', 3, 'system', NULL, 0,
+        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, NULL,
+        1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128288, '删除字典项', '删除字典项', 'dict:item', '/dict/item/*', 'DELETE', 3, 'system', NULL, 0,
+        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 12, NULL,
+        1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128289, '添加API接口信息', '添加API接口信息', 'api-endpoint', '/api-endpoint', 'POST', 3, 'system',
+        NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        5, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:45:06');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128290, '修改API接口信息', '修改API接口信息', 'api-endpoint', '/api-endpoint', 'PUT', 3, 'system',
+        NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        9, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:21');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128291, '设置接口状态为忽略', '设置接口状态为忽略', 'api-endpoint:ignore', '/api-endpoint/ignore',
+        'PUT', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, 10, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:21');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128292, '用户注册', '用户注册', 'user:userRegister', '/user/userRegister', 'POST', 3, 'system',
+        NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, 1, 1,
+        '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:40:19');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128293, '添加一条用户信息', '添加一条用户信息', 'user:insertBasicUser', '/user/insertBasicUser',
+        'POST', 3, 'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, 4, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:41:16');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128294, '添加角色信息', '添加角色信息', 'role:insertRole', '/role/insertRole', 'POST', 3, 'system',
+        NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        4, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:43:43');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128295, '添加权限信息', '添加权限信息', 'permission:insertPermission',
+        '/permission/insertPermission', 'POST', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:44:50');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128296, '获取没有父节点的权限id列表', '获取没有父节点的权限id列表',
+        'permission:findNonParentPermissions', '/permission/findNonParentPermissions', 'POST', 3, 'system', NULL, 0,
+        1919661224031989762, '', '', 0, '', '', '', '', '', '', 0, 1, 0, 0, 0, 4, NULL, 1, 1, '云逸', '云逸',
+        '2025-08-06 12:54:17', '2025-08-06 13:44:50');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128297, '创建字典类型', '创建字典类型', 'dict:type', '/dict/type', 'POST', 3, 'system', NULL, 0,
+        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, NULL,
+        1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128298, '创建字典项', '创建字典项', 'dict:item', '/dict/item', 'POST', 3, 'system', NULL, 0,
+        1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, NULL,
+        1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128299, '扫描系统接口', '扫描系统接口', 'api-endpoint:scan:endpoints',
+        '/api-endpoint/scan/endpoints', 'POST', 3, 'system', NULL, 0, 1952647718126247937, NULL, NULL, 0, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-12 13:41:55');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128300, '查询API接口信息列表', '查询API接口信息列表', 'api-endpoint:list', '/api-endpoint/list',
+        'POST', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, 4, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:42:51');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128301, '批量导入接口到权限表', '批量导入接口到权限表', 'api-endpoint:import',
+        '/api-endpoint/import', 'POST', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:50:40');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128302, '根据扫描批次ID导入接口', '根据扫描批次ID导入接口', 'api-endpoint:import:batch',
+        '/api-endpoint/import/batch/*', 'POST', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:45:06');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128303, '查询用户详情', '查询用户详情', 'user:userDetails', '/user/userDetails/*', 'GET', 3,
+        'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:37:59');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128304, '获取登录用户信息', '获取登录用户信息', 'user:loginUserinfo', '/user/loginUserinfo', 'GET',
+        3, 'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5,
+        NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:37:36');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128305, '获取注册时使用的邮箱验证码', '获取注册时使用的邮箱验证码', 'user:getRegisterEmailCode',
+        '/user/getRegisterEmailCode/*', 'GET', 3, 'system', NULL, 0, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:37:36');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128306, '分页查询基础用户信息列表', '分页查询基础用户信息列表', 'user:findByPage',
+        '/user/findByPage', 'GET', 3, 'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:37:36');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128307, '查询角色详情', '查询角色详情', 'role:roleDetails', '/role/roleDetails/*', 'GET', 3,
+        'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:43:43');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128308, '根据条件查询所有角色列表', '根据条件查询所有角色列表', 'role:findRoles',
+        '/role/findRoles', 'GET', 3, 'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:43:43');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128309, '根据用户id查询角色id列表', '根据用户id查询角色id列表', 'role:findRoleIdsByUserId',
+        '/role/findRoleIdsByUserId/*', 'GET', 3, 'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:40:21');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128310, '分页查询角色信息列表', '分页查询角色信息列表', 'role:findByPage', '/role/findByPage',
+        'GET', 3, 'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:43:43');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128311, '查询权限详情', '查询权限详情', 'permission:permissionDetails',
+        '/permission/permissionDetails/*', 'GET', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:45:14');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128312, '查询权限信息列表', '查询权限信息列表', 'permission:findPermissions',
+        '/permission/findPermissions', 'GET', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:44:50');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128313, '根据角色id查询权限id列表', '根据角色id查询权限id列表',
+        'permission:findPermissionIdsByRoleId', '/permission/findPermissionIdsByRoleId/*', 'GET', 3, 'system', NULL, 0,
+        1919661224031989762, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL,
+        1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:44:50');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128314, '分页查询权限信息列表', '分页查询权限信息列表', 'permission:findByPage',
+        '/permission/findByPage', 'GET', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:44:34');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128315, '查询所有字典类型', '查询所有字典类型', 'dict:type:page', '/dict/type/page', 'GET', 3,
+        'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:44:50');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128316, '查询所有字典项', '查询所有字典项', 'dict:type:all', '/dict/type/all', 'GET', 3, 'system',
+        NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        7, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:09');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128317, '根据字典类型编码查询字典项', '根据字典类型编码查询字典项', 'dict:item:type',
+        '/dict/item/type/*', 'GET', 3, 'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:44:07');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128318, '分页查询字典项', '分页查询字典项', 'dict:item:page', '/dict/item/page', 'GET', 3,
+        'system', NULL, 0, 1952306933212164097, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:43:55');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128319, '查询API扫描记录详情', '查询API扫描记录详情', 'api-scan', '/api-scan/*', 'GET', 3,
+        'system', NULL, 0, 1952647718126247937, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-12 13:41:55');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128320, '删除API扫描记录信息', '删除API扫描记录信息', 'api-scan', '/api-scan/*', 'DELETE', 3,
+        'system', NULL, 0, 1952647718126247937, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 4, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-12 13:41:55');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128321, '分页查询API扫描记录列表', '分页查询API扫描记录列表', 'api-scan:page', '/api-scan/page',
+        'GET', 3, 'system', NULL, 0, 1952647718126247937, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-12 13:41:55');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128322, '查询API接口详情', '查询API接口详情', 'api-endpoint', '/api-endpoint/*', 'GET', 3,
+        'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 2, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:42:51');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128323, '删除API接口信息', '删除API接口信息', 'api-endpoint', '/api-endpoint/*', 'DELETE', 3,
+        'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 6, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:45:06');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128324, '分页查询API接口列表', '分页查询API接口列表', 'api-endpoint:page', '/api-endpoint/page',
+        'GET', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, 1, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:42:30');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128325, '根据扫描批次ID查询接口列表', '根据扫描批次ID查询接口列表', 'api-endpoint:batch',
+        '/api-endpoint/batch/*', 'GET', 3, 'system', NULL, 0, 1952658732645376001, NULL, NULL, 0, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17',
+        '2025-08-06 13:42:51');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128326, '删除用户信息', '删除用户信息', 'user:removeById', '/user/removeById/*', 'DELETE', 3,
+        'system', NULL, 0, 1919660730064613377, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 6, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:52:02');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128327, '删除角色信息', '删除角色信息', 'role:removeById', '/role/removeById/*', 'DELETE', 3,
+        'system', NULL, 0, 1919660995832492033, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, 6, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:51:40');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1952956369548128328, '删除权限信息', '删除权限信息', 'permission:removeById', '/permission/removeById/*',
+        'DELETE', 3, 'system', NULL, 0, 1919661224031989762, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, 6, NULL, 1, 1, '云逸', '云逸', '2025-08-06 12:54:17', '2025-08-06 13:44:50');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1955142007110266881, 'menus.applicationDetail', 'ApplicationDetails', 'platform:application:detail',
+        '/platform/application/detail', '', 0, 'auth', NULL, 1, 1952657129544638465, '/platform/application/detail', '',
+        0, 'ep:help', '', '', '', '', '', 0, 0, 0, 0, 1, 4, '/platform/application/index', 1, 1, '云逸', '云逸',
+        '2025-08-12 13:39:14', '2025-08-12 13:41:55');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1955143359093829633, 'menus.swaggerUi', 'SwaggerUi', 'SwaggerUi', '/swagger-ui', '', 1, NULL, NULL, 1, 0, '',
+        '', 0, 'ri:book-open-line', '', '', '', 'https://api.cloudflow.top/swagger-ui/index.html', 'true', 0, 1, 0, 0,
+        0, 4, '', 1, 1, '云逸', '云逸', '2025-08-12 13:44:36', '2025-08-12 13:44:36');
+INSERT INTO sys_permission (id, title, name, permission, `path`, request_method, permission_type,
+                            module_name, description, need_authentication, parent_id, component,
+                            redirect, deleted, icon, extra_icon, enter_transition,
+                            leave_transition, frame_src, frame_loading, keep_alive, show_link,
+                            hidden_tag, fixed_tag, show_parent, `rank`, active_path, create_by,
+                            update_by, create_name, update_name, create_time, update_time)
+VALUES (1955143568150523905, 'menus.monitor', 'Monitor', 'monitor', '/monitor', '', 1, '', NULL, 1, 0, '', '', 0,
+        'ep:monitor', '', '', '', 'https://api.cloudflow.top/monitor/', 'true', 0, 1, 0, 0, 0, 5, '', 1, 1, '云逸',
+        '云逸', '2025-08-12 13:45:26', '2025-08-12 13:46:39');
 
 -- ----------------------------
 -- Table structure for sys_role
@@ -1427,411 +1318,395 @@ CREATE TABLE `sys_role_permission`
 -- ----------------------------
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1924347637514170369, 1921501763071176706, 1864241504623833089, 1, 1, '云逸', '云逸', '2025-05-19 14:13:24',
-        '2025-05-19 14:13:24');
+VALUES (1921563497926279169, 1, 1, 1, 1, '云逸', '云逸', '2025-05-11 21:50:13', '2025-05-11 21:50:13');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1924347637514170370, 1921501763071176706, 1919660730064613377, 1, 1, '云逸', '云逸', '2025-05-19 14:13:24',
-        '2025-05-19 14:13:24');
+VALUES (1921563497926279170, 1, 1870104848520814594, 1, 1, '云逸', '云逸', '2025-05-11 21:50:14',
+        '2025-05-11 21:50:14');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1924347637514170371, 1921501763071176706, 1919661224031989762, 1, 1, '云逸', '云逸', '2025-05-19 14:13:24',
-        '2025-05-19 14:13:24');
+VALUES (1921563497926279171, 1, 1864241504623833089, 1, 1, '云逸', '云逸', '2025-05-11 21:50:14',
+        '2025-05-11 21:50:14');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1924347637514170372, 1921501763071176706, 1919658873598554113, 1, 1, '云逸', '云逸', '2025-05-19 14:13:24',
-        '2025-05-19 14:13:24');
+VALUES (1921563497926279172, 1, 1919661224031989762, 1, 1, '云逸', '云逸', '2025-05-11 21:50:14',
+        '2025-05-11 21:50:14');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569589959176194, 1, 1, 1, 1, '云逸', '云逸', '2025-07-25 10:22:48', '2025-07-25 10:22:48');
+VALUES (1921563497926279173, 1, 1919658873598554113, 1, 1, '云逸', '云逸', '2025-05-11 21:50:14',
+        '2025-05-11 21:50:14');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569589963370497, 1, 1870104848520814594, 1, 1, '云逸', '云逸', '2025-07-25 10:22:48',
-        '2025-07-25 10:22:48');
+VALUES (1922107705540333569, 1922107622090461185, 1, 1, 1, '云逸', '云逸', '2025-05-13 09:52:43',
+        '2025-05-13 09:52:43');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569589963370498, 1, 1864241504623833089, 1, 1, '云逸', '云逸', '2025-07-25 10:22:48',
-        '2025-07-25 10:22:48');
+VALUES (1922107705540333570, 1922107622090461185, 1864241504623833089, 1, 1, '云逸', '云逸', '2025-05-13 09:52:43',
+        '2025-05-13 09:52:43');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569589963370499, 1, 1919661224031989762, 1, 1, '云逸', '云逸', '2025-07-25 10:22:48',
-        '2025-07-25 10:22:48');
+VALUES (1922107705540333571, 1922107622090461185, 1870104848520814594, 1, 1, '云逸', '云逸', '2025-05-13 09:52:43',
+        '2025-05-13 09:52:43');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569589963370500, 1, 1948569373352734721, 1, 1, '云逸', '云逸', '2025-07-25 10:22:48',
-        '2025-07-25 10:22:48');
+VALUES (1922107705540333572, 1922107622090461185, 1919658873598554113, 1, 1, '云逸', '云逸', '2025-05-13 09:52:43',
+        '2025-05-13 09:52:43');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569589963370501, 1, 1919660730064613377, 1, 1, '云逸', '云逸', '2025-07-25 10:22:48',
-        '2025-07-25 10:22:48');
+VALUES (1922107705540333573, 1922107622090461185, 1919660730064613377, 1, 1, '云逸', '云逸', '2025-05-13 09:52:43',
+        '2025-05-13 09:52:43');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569589963370502, 1, 1919658873598554113, 1, 1, '云逸', '云逸', '2025-07-25 10:22:48',
-        '2025-07-25 10:22:48');
+VALUES (1922107705540333574, 1922107622090461185, 1919660995832492033, 1, 1, '云逸', '云逸', '2025-05-13 09:52:43',
+        '2025-05-13 09:52:43');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569710960652290, 1864508890354565121, 1864241504623833089, 1, 1, '云逸', '云逸', '2025-07-25 10:23:16',
-        '2025-07-25 10:23:16');
+VALUES (1922107705540333575, 1922107622090461185, 1919661224031989762, 1, 1, '云逸', '云逸', '2025-05-13 09:52:43',
+        '2025-05-13 09:52:43');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569710960652291, 1864508890354565121, 1919660995832492033, 1, 1, '云逸', '云逸', '2025-07-25 10:23:16',
-        '2025-07-25 10:23:16');
+VALUES (1955143593542840322, 1952971355100065793, 1, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569710960652292, 1864508890354565121, 1870104848520814594, 1, 1, '云逸', '云逸', '2025-07-25 10:23:16',
-        '2025-07-25 10:23:16');
+VALUES (1955143593542840323, 1952971355100065793, 1952956369548128324, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569710960652293, 1864508890354565121, 1919661224031989762, 1, 1, '云逸', '云逸', '2025-07-25 10:23:16',
-        '2025-07-25 10:23:16');
+VALUES (1955143593542840324, 1952971355100065793, 1952956369548128306, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569710960652294, 1864508890354565121, 1948569373352734721, 1, 1, '云逸', '云逸', '2025-07-25 10:23:16',
-        '2025-07-25 10:23:16');
+VALUES (1955143593542840325, 1952971355100065793, 1952956369548128275, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569710960652295, 1864508890354565121, 1919660730064613377, 1, 1, '云逸', '云逸', '2025-07-25 10:23:16',
-        '2025-07-25 10:23:16');
+VALUES (1955143593542840326, 1952971355100065793, 1952956369548128273, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1948569710960652296, 1864508890354565121, 1919658873598554113, 1, 1, '云逸', '云逸', '2025-07-25 10:23:16',
-        '2025-07-25 10:23:16');
+VALUES (1955143593542840327, 1952971355100065793, 1952956369548128267, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013762, 1948585988513411073, 1952657433640067074, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840328, 1952971355100065793, 1952956369548128310, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013763, 1948585988513411073, 1952658080221388801, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840329, 1952971355100065793, 1952956369548128259, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013764, 1948585988513411073, 1952307138347184137, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840330, 1952971355100065793, 1952956369548128314, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013765, 1948585988513411073, 1952307138347184131, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840331, 1952971355100065793, 1952956369548128322, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013766, 1948585988513411073, 1952307138347184154, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840332, 1952971355100065793, 1952956369548128325, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013767, 1948585988513411073, 1952307138347184156, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840333, 1952971355100065793, 1952956369548128300, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013768, 1948585988513411073, 1952307138347184153, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840334, 1952971355100065793, 1952956369548128289, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013769, 1948585988513411073, 1952307138347184155, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840335, 1952971355100065793, 1952956369548128323, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013770, 1948585988513411073, 1952307138347184162, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840336, 1952971355100065793, 1952956369548128302, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013771, 1948585988513411073, 1919658873598554113, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840337, 1952971355100065793, 1952956369548128301, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013772, 1948585988513411073, 1919660730064613377, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840338, 1952971355100065793, 1952956369548128290, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013773, 1948585988513411073, 1952307138347184201, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840339, 1952971355100065793, 1952956369548128291, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013774, 1948585988513411073, 1952307138347184198, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840340, 1952971355100065793, 1952956369548128303, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013775, 1948585988513411073, 1952307138347184184, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840341, 1952971355100065793, 1952956369548128309, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013776, 1948585988513411073, 1952307138347184166, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840342, 1952971355100065793, 1952956369548128293, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013777, 1948585988513411073, 1952307138347184167, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840343, 1952971355100065793, 1952956369548128278, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013778, 1948585988513411073, 1952307138347184208, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840344, 1952971355100065793, 1952956369548128326, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013779, 1948585988513411073, 1952307138347184165, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840345, 1952971355100065793, 1952956369548128279, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013780, 1948585988513411073, 1952307138347184225, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840346, 1952971355100065793, 1952956369548128277, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013781, 1948585988513411073, 1919660995832492033, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840347, 1952971355100065793, 1952956369548128307, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013782, 1948585988513411073, 1952307138347184209, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840348, 1952971355100065793, 1952956369548128308, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013783, 1948585988513411073, 1952307138347184207, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840349, 1952971355100065793, 1952956369548128294, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013784, 1948585988513411073, 1952307138347184206, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840350, 1952971355100065793, 1952956369548128280, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013785, 1948585988513411073, 1952307138347184188, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840351, 1952971355100065793, 1952956369548128327, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013786, 1948585988513411073, 1952307138347184169, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840352, 1952971355100065793, 1952956369548128281, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013787, 1948585988513411073, 1952307138347184168, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840353, 1952971355100065793, 1952956369548128313, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013788, 1948585988513411073, 1952307138347184226, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840354, 1952971355100065793, 1952956369548128312, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013789, 1948585988513411073, 1919661224031989762, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840355, 1952971355100065793, 1952956369548128296, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013790, 1948585988513411073, 1952307138347184213, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840356, 1952971355100065793, 1952956369548128295, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013791, 1948585988513411073, 1952307138347184211, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840357, 1952971355100065793, 1952956369548128328, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013792, 1948585988513411073, 1952307138347184190, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840358, 1952971355100065793, 1952956369548128311, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013793, 1948585988513411073, 1952307138347184210, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840359, 1952971355100065793, 1864241504623833089, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013794, 1948585988513411073, 1952307138347184189, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840360, 1952971355100065793, 1952956369548128282, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013795, 1948585988513411073, 1952307138347184170, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840361, 1952971355100065793, 1952956369548128318, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013796, 1948585988513411073, 1952307138347184212, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840362, 1952971355100065793, 1952956369548128317, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013797, 1948585988513411073, 1952307138347184227, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840363, 1952971355100065793, 1952956369548128315, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013798, 1948585988513411073, 1864241504623833089, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840364, 1952971355100065793, 1952956369548128283, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013799, 1948585988513411073, 1952306933212164097, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840365, 1952971355100065793, 1952956369548128286, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013800, 1948585988513411073, 1952307138347184214, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840366, 1952971355100065793, 1952956369548128297, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013801, 1948585988513411073, 1952307138347184215, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840367, 1952971355100065793, 1952956369548128316, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013802, 1948585988513411073, 1952307138347184217, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840368, 1952971355100065793, 1952956369548128298, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013803, 1948585988513411073, 1952307138347184216, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840369, 1952971355100065793, 1952956369548128284, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013804, 1948585988513411073, 1952307138347184191, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840370, 1952971355100065793, 1952956369548128287, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013805, 1948585988513411073, 1952307138347184192, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840371, 1952971355100065793, 1952956369548128285, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013806, 1948585988513411073, 1952307138347184171, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840372, 1952971355100065793, 1952956369548128288, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013807, 1948585988513411073, 1952307138347184174, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840373, 1952971355100065793, 1952956369548128299, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013808, 1948585988513411073, 1952307138347184172, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840374, 1952971355100065793, 1952956369548128321, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013809, 1948585988513411073, 1952307138347184175, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840375, 1952971355100065793, 1952956369548128319, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013810, 1948585988513411073, 1952307138347184173, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840376, 1952971355100065793, 1952956369548128320, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013811, 1948585988513411073, 1952307138347184176, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840377, 1952971355100065793, 1952956369548128272, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013812, 1948585988513411073, 1952647718126247937, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840378, 1952971355100065793, 1952956369548128270, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013813, 1948585988513411073, 1952307138347184218, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840379, 1952971355100065793, 1952956369548128268, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013814, 1948585988513411073, 1952307138347184220, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840380, 1952971355100065793, 1952956369548128265, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013815, 1948585988513411073, 1952307138347184219, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840381, 1952971355100065793, 1952956369548128261, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013816, 1948585988513411073, 1952658732645376001, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840382, 1952971355100065793, 1952956369548128263, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013817, 1948585988513411073, 1952307138347184224, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840383, 1952971355100065793, 1952956369548128276, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013818, 1948585988513411073, 1952307138347184223, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840384, 1952971355100065793, 1952956369548128266, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013819, 1948585988513411073, 1952307138347184195, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840385, 1952971355100065793, 1952956369548128258, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013820, 1948585988513411073, 1952307138347184221, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840386, 1952971355100065793, 1952956369548128262, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013821, 1948585988513411073, 1952307138347184194, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840387, 1952971355100065793, 1952956369548128257, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013822, 1948585988513411073, 1952307138347184181, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840388, 1952971355100065793, 1952956369548128274, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013823, 1948585988513411073, 1952307138347184182, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840389, 1952971355100065793, 1952956369548128269, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013824, 1948585988513411073, 1952307138347184180, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840390, 1952971355100065793, 1952956369548128271, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013825, 1948585988513411073, 1952307138347184197, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840391, 1952971355100065793, 1952956369548128260, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013826, 1948585988513411073, 1952307138347184196, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840392, 1952971355100065793, 1952956369548128264, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013827, 1948585988513411073, 1952307138347184222, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840393, 1952971355100065793, 1919660730064613377, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013828, 1948585988513411073, 1952307138347184139, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840394, 1952971355100065793, 1919660995832492033, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013829, 1948585988513411073, 1952307138347184142, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840395, 1952971355100065793, 1919661224031989762, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013830, 1948585988513411073, 1952307138347184152, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840396, 1952971355100065793, 1952306933212164097, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013831, 1948585988513411073, 1952657129544638465, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840397, 1952971355100065793, 1952647718126247937, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013832, 1948585988513411073, 1952657633259577345, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840398, 1952971355100065793, 1952658732645376001, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013833, 1948585988513411073, 1952307138347184140, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840399, 1952971355100065793, 1952657433640067074, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013834, 1948585988513411073, 1952307138347184141, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840400, 1952971355100065793, 1952657633259577345, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013835, 1948585988513411073, 1952307138347184134, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840401, 1952971355100065793, 1952657828596703234, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013836, 1948585988513411073, 1952307138347184129, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840402, 1952971355100065793, 1955142007110266881, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013837, 1948585988513411073, 1952307138347184160, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840403, 1952971355100065793, 1919658873598554113, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013838, 1948585988513411073, 1952307138347184130, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840404, 1952971355100065793, 1952657129544638465, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013839, 1948585988513411073, 1952657828596703234, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840405, 1952971355100065793, 1952661871538835457, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013840, 1948585988513411073, 1952307138347184151, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840406, 1952971355100065793, 1955143359093829633, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
                                  create_time, update_time)
-VALUES (1952914472673013841, 1948585988513411073, 1952307138347184161, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
-INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
-                                 create_time, update_time)
-VALUES (1952914472673013842, 1948585988513411073, 1952307138347184132, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
-INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
-                                 create_time, update_time)
-VALUES (1952914472673013843, 1948585988513411073, 1952661871538835457, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
-INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
-                                 create_time, update_time)
-VALUES (1952914472673013844, 1948585988513411073, 1952307138347184138, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
-INSERT INTO sys_role_permission (id, role_id, permission_id, create_by, update_by, create_name, update_name,
-                                 create_time, update_time)
-VALUES (1952914472673013845, 1948585988513411073, 1952307138347184133, 1, 1, '云逸', '云逸', '2025-08-06 10:07:48',
-        '2025-08-06 10:07:48');
+VALUES (1955143593542840407, 1952971355100065793, 1955143568150523905, 1, 1, '云逸', '云逸', '2025-08-12 13:45:32',
+        '2025-08-12 13:45:32');
 
 -- ----------------------------
 -- Table structure for sys_user_role
@@ -1857,27 +1732,27 @@ CREATE TABLE `sys_user_role`
 -- ----------------------------
 -- Records of sys_user_role
 -- ----------------------------
-INSERT INTO `basic-cloud-platform`.sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
-                                                  create_time, update_time)
+INSERT INTO sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
+                           create_time, update_time)
 VALUES (1921489309037510658, 1, 1862332106783637506, 1, 1, '云逸', '云逸', '2025-05-11 16:55:26',
         '2025-05-11 16:55:26');
-INSERT INTO `basic-cloud-platform`.sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
-                                                  create_time, update_time)
+INSERT INTO sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
+                           create_time, update_time)
 VALUES (1921489309037510659, 1864508890354565121, 1862332106783637506, 1, 1, '云逸', '云逸', '2025-05-11 16:55:26',
         '2025-05-11 16:55:26');
-INSERT INTO `basic-cloud-platform`.sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
-                                                  create_time, update_time)
+INSERT INTO sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
+                           create_time, update_time)
 VALUES (1923297772209012737, 1, 1920404587435859970, 1, 1, '云逸', '云逸', '2025-05-16 16:41:37',
         '2025-05-16 16:41:37');
-INSERT INTO `basic-cloud-platform`.sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
-                                                  create_time, update_time)
+INSERT INTO sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
+                           create_time, update_time)
 VALUES (1923297772209012738, 1864511627943235585, 1920404587435859970, 1, 1, '云逸', '云逸', '2025-05-16 16:41:37',
         '2025-05-16 16:41:37');
-INSERT INTO `basic-cloud-platform`.sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
-                                                  create_time, update_time)
+INSERT INTO sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
+                           create_time, update_time)
 VALUES (1948586077352964098, 1, 1, 1, 1, '云逸', '云逸', '2025-07-25 11:28:18', '2025-07-25 11:28:18');
-INSERT INTO `basic-cloud-platform`.sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
-                                                  create_time, update_time)
+INSERT INTO sys_user_role (id, role_id, user_id, create_by, update_by, create_name, update_name,
+                           create_time, update_time)
 VALUES (1948586077352964099, 1948585988513411073, 1, 1, 1, '云逸', '云逸', '2025-07-25 11:28:18',
         '2025-07-25 11:28:18');
 
