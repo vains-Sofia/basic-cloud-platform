@@ -8,6 +8,7 @@ import com.basic.framework.oauth2.core.enums.PermissionTypeEnum;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 将权限列表转换为表示动态路由器的树形结构
@@ -90,6 +91,27 @@ public class RouterConverter {
             }
         }
 
+        // 4. 重新分配 rank （前序遍历）
+        AtomicInteger counter = new AtomicInteger(1);
+        for (DynamicRouter root : tree) {
+            assignRankRecursively(root, counter);
+        }
+
         return tree;
     }
+
+    /**
+     * 前序遍历，递归分配 rank
+     */
+    private void assignRankRecursively(DynamicRouter node, AtomicInteger counter) {
+        node.getMeta().setRank(counter.getAndIncrement());
+        if (node.getChildren() != null && !node.getChildren().isEmpty()) {
+            // 子节点需要保持局部排序
+            node.getChildren().sort(Comparator.comparingInt(r -> r.getMeta().getRank()));
+            for (DynamicRouter child : node.getChildren()) {
+                assignRankRecursively(child, counter);
+            }
+        }
+    }
+
 }
