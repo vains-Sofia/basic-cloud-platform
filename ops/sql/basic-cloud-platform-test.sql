@@ -54,75 +54,161 @@ CREATE TABLE `oauth2_application`
 -- ----------------------------
 -- Records of oauth2_application
 -- ----------------------------
-INSERT INTO `oauth2_application`
-VALUES (1850087647291408385, 'oidc-client', '2024-10-26 16:10:44', '{noop}secret', NULL, '1850229112386650114', NULL,
-        '[\"client_secret_basic\"]', NULL, '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
-        '[\"http://127.0.0.1:8080/login/oauth2/code/oidc-client\",\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]',
-        '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\"]',
-        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
-        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
-        123, 123, '2024-10-26 16:10:44', '2024-10-27 01:32:51', NULL, NULL);
-INSERT INTO `oauth2_application`
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
+VALUES (1850087647291408385, 'oidc-client', '2024-10-26 16:10:44', '{noop}secret', NULL, 'OIDC专用',
+        'https://minio.cloudflow.top/user-picture/dog.9012ab1d-cfff-4a4c-be48-8c28b54c3a18.png',
+        '["client_secret_basic"]', '支持OIDC、password模式', '["refresh_token","password","authorization_code","email"]',
+        '["http://127.0.0.1:8080/login/oauth2/code/oidc-client","http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html","http://127.0.0.1:5173/OAuth2Redirect","https://www.baidu.com"]',
+        '["http://127.0.0.1:8080/"]', '["openid","profile"]',
+        '{"requireProofKey":false,"requireAuthorizationConsent":true,"jwkSetUrl":null,"tokenEndpointAuthenticationSigningAlgorithm":null,"x509CertificateSubjectDN":null}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":7200,"accessTokenTimeToLiveUnit":"Seconds","accessTokenFormat":"self-contained","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":604800,"refreshTokenTimeToLiveUnit":"Seconds","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        123, 1, '2024-10-26 16:10:44', '2025-05-29 16:47:07', NULL, '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
 VALUES (1850087647291408386, 'swagger-client', '2024-10-26 16:10:44',
-        '{bcrypt}$2a$10$OUB5yvIJuRCxBHPxuF9LF.ynmkjaywREB63gFpL48UiPBGu6lz8Au', NULL, '1850229112386650115', NULL,
-        '[\"client_secret_post\"]', NULL, '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
-        '[\"http://127.0.0.1:8080/login/oauth2/code/oidc-client\",\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8080/auth/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\",\"https://api.cloudflow.top/webjars/swagger-ui/oauth2-redirect.html\",\"https://api.cloudflow.top/swagger-ui/oauth2-redirect.html\"]',
-        '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
-        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
-        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
-        123, 123, '2024-10-26 16:10:44', '2024-10-26 17:33:23', NULL, NULL);
-INSERT INTO `oauth2_application`
-VALUES (1850087647291408387, 'device-messaging-client', '2024-10-26 16:10:44', NULL, NULL, '1850229112386650116', NULL,
-        '[\"none\"]', NULL, '[\"refresh_token\",\"urn:ietf:params:oauth:grant-type:device_code\"]', '[]', '[]',
-        '[\"message.read\",\"message.write\"]',
-        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
-        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
-        123, 123, '2024-10-26 16:10:44', '2024-10-27 01:32:51', NULL, NULL);
-INSERT INTO `oauth2_application`
+        '{bcrypt}$2a$10$OUB5yvIJuRCxBHPxuF9LF.ynmkjaywREB63gFpL48UiPBGu6lz8Au', NULL, 'Swagger专用',
+        'https://minio.cloudflow.top/user-picture/blue-girl.ee3eba52-4949-4d97-aab6-f8fa6ae44c92.png',
+        '["client_secret_post"]', '因swagger在走授权码流程时客户端认证只会在request body中，所以创建一个专用应用',
+        '["refresh_token","password","authorization_code","email"]',
+        '["http://127.0.0.1:8080/login/oauth2/code/oidc-client","http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html","http://127.0.0.1:8080/auth/swagger-ui/oauth2-redirect.html","https://api.cloudflow.top/swagger-ui/oauth2-redirect.html","http://127.0.0.1:5173/OAuth2Redirect","https://api.cloudflow.top/webjars/swagger-ui/oauth2-redirect.html","https://www.baidu.com"]',
+        '["http://127.0.0.1:8080/"]', '["openid","profile","message.read","message.write"]',
+        '{"requireProofKey":false,"requireAuthorizationConsent":true,"jwkSetUrl":null,"tokenEndpointAuthenticationSigningAlgorithm":null,"x509CertificateSubjectDN":null}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":7200,"accessTokenTimeToLiveUnit":"Seconds","accessTokenFormat":"self-contained","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":604800,"refreshTokenTimeToLiveUnit":"Seconds","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        123, 1, '2024-10-26 16:10:44', '2025-07-07 11:07:05', NULL, '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
+VALUES (1850087647291408387, 'device-messaging-client', '2024-10-26 16:10:44', NULL, NULL, '设备码流程',
+        'https://minio.cloudflow.top/user-picture/girl.f2a411ee-1cc3-49fb-bb4e-93e7c107f4af.png', '["none"]',
+        '设备码测试应用，公共客户端', '["refresh_token","urn:ietf:params:oauth:grant-type:device_code"]', '[""]', '[""]',
+        '["message.read","message.write"]',
+        '{"requireProofKey":false,"requireAuthorizationConsent":true,"jwkSetUrl":null,"tokenEndpointAuthenticationSigningAlgorithm":null,"x509CertificateSubjectDN":null}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":7200,"accessTokenTimeToLiveUnit":"Seconds","accessTokenFormat":"self-contained","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":604800,"refreshTokenTimeToLiveUnit":"Seconds","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        123, 1, '2024-10-26 16:10:44', '2025-05-29 16:48:38', NULL, '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
 VALUES (1850087647291408388, 'messaging-client', '2024-10-26 16:10:44',
-        '{bcrypt}$2a$10$YZTLFvdes7jG9wFqrEUoJ.7hnIy5ElXTzwO3QMLqbjANvzIZr2qw2', NULL, '1850229112386650117', NULL,
-        '[\"client_secret_basic\"]', NULL,
-        '[\"refresh_token\",\"password\",\"authorization_code\",\"email\",\"client_credentials\"]',
-        '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"http://127.0.0.1:8000/login/oauth2/code/client-oidc\",\"https://www.baidu.com\",\"https://api.cloudflow.top/monitor/login/oauth2/code/messaging-client-oidc\"]',
-        '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
-        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":null,\"tokenEndpointAuthenticationSigningAlgorithm\":null,\"x509CertificateSubjectDN\":null}',
-        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
-        123, NULL, '2024-10-26 16:10:44', '2024-11-06 17:43:50', NULL, NULL);
-INSERT INTO `oauth2_application`
-VALUES (1850087647291408389, 'private-key-jwt-client', '2024-10-26 16:10:44', '{noop}12345678', NULL,
-        '1850229112386650118', NULL, '[\"private_key_jwt\",\"client_secret_basic\"]', NULL,
-        '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
-        '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]',
-        '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\"]',
-        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}',
-        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
-        123, 123, '2024-10-26 16:10:44', '2024-10-27 01:32:51', NULL, NULL);
-INSERT INTO `oauth2_application`
-VALUES (1850087647291408390, 'pkce-message-client', '2024-10-26 16:10:43', NULL, NULL, 'PKCE流程', NULL, '[\"none\"]',
-        NULL, '[\"refresh_token\",\"authorization_code\"]',
-        '[\"http://127.0.0.1:5173/PkceRedirect\",\"https://authorization-example.vercel.app/PkceRedirect\",\"https://j1zr8ren8w.51xd.pub/PkceRedirect\",\"https://flow-cloud.love/PkceRedirect\",\"https://admin.cloudflow.top/PkceRedirect\"]',
-        '[\"http://127.0.0.1:8080/getCaptcha\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
-        '{\"requireProofKey\":true,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}',
-        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
-        123, 123, '2024-10-26 16:10:43', '2024-10-27 01:32:51', NULL, NULL);
-INSERT INTO `oauth2_application`
-VALUES (1850087647291408391, 'opaque-client', '2024-10-26 16:10:44', '{noop}123456', NULL, '匿名token', NULL,
-        '[\"client_secret_basic\"]', NULL, '[\"refresh_token\",\"client_credentials\",\"authorization_code\"]',
-        '[\"https://flow-cloud.love/OAuth2Redirect\",\"https://authorization-example.vercel.app/OAuth2Redirect\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://j1zr8ren8w.51xd.pub/OAuth2Redirect\"]',
-        '[]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
-        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}',
-        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":7200,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"reference\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":604800,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
-        123, 123, '2024-10-26 16:10:44', '2024-10-27 01:32:51', NULL, NULL);
-INSERT INTO `oauth2_application`
+        '{bcrypt}$2a$10$YZTLFvdes7jG9wFqrEUoJ.7hnIy5ElXTzwO3QMLqbjANvzIZr2qw2', NULL, '普通授权码',
+        'https://minio.cloudflow.top/user-picture/tree-girl.10bdd5ad-7150-4149-b5cb-a3caec06f938.png',
+        '["client_secret_basic"]', '普通授权码应用，同时支持客户端、password模式',
+        '["refresh_token","password","client_credentials","authorization_code","email"]',
+        '["http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html","http://127.0.0.1:5173/OAuth2Redirect","http://127.0.0.1:8000/login/oauth2/code/client-oidc","https://www.baidu.com","https://api.cloudflow.top/monitor/login/oauth2/code/messaging-client-oidc"]',
+        '["http://127.0.0.1:8080/"]', '["openid","profile","message.read","message.write"]',
+        '{"requireProofKey":false,"requireAuthorizationConsent":true,"jwkSetUrl":null,"tokenEndpointAuthenticationSigningAlgorithm":null,"x509CertificateSubjectDN":null}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":7200,"accessTokenTimeToLiveUnit":"Seconds","accessTokenFormat":"self-contained","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":604800,"refreshTokenTimeToLiveUnit":"Seconds","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        123, 1, '2024-10-26 16:10:44', '2025-05-29 16:49:29', NULL, '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
+VALUES (1850087647291408389, 'private-key-jwt-client', '2024-10-26 16:10:44', '{noop}12345678', NULL, 'private-key流程',
+        'https://minio.cloudflow.top/user-picture/smileboy.bc0c09ca-902e-49c1-b8e3-bb47e32cb5b3.png',
+        '["private_key_jwt","client_secret_basic"]',
+        '客户端生成 JWT（使用私钥签名），客户端通过 client_assertion 把这个签名后的 JWT 发送给授权服务器，授权服务器使用公钥验证 JWT 签名',
+        '["refresh_token","password","authorization_code","email"]',
+        '["http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html","http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc","http://127.0.0.1:5173/OAuth2Redirect"]',
+        '["http://127.0.0.1:8080/"]', '["openid","profile"]',
+        '{"requireProofKey":false,"requireAuthorizationConsent":true,"jwkSetUrl":"http://127.0.0.1:8000/jwkSet","tokenEndpointAuthenticationSigningAlgorithm":"RS256","x509CertificateSubjectDN":null}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":7200,"accessTokenTimeToLiveUnit":"Seconds","accessTokenFormat":"self-contained","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":604800,"refreshTokenTimeToLiveUnit":"Seconds","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        123, 1, '2024-10-26 16:10:44', '2025-05-29 16:49:57', NULL, '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
+VALUES (1850087647291408390, 'pkce-message-client', '2024-10-26 16:10:43', NULL, NULL, 'PKCE流程',
+        'https://minio.cloudflow.top/user-picture/aaa.aa51987f-2ca8-4b45-be75-ba8b44942933.jpg', '["none"]',
+        '测试PKCE流程专用', '["refresh_token","authorization_code"]',
+        '["https://j1zr8ren8w.51xd.pub/AuthorizeRequest","https://admin.cloudflow.top/AuthorizeRequest","http://127.0.0.1:5173/AuthorizeRequest"]',
+        '["http://127.0.0.1:8080/getCaptcha"]', '["openid","profile","message.read","message.write"]',
+        '{"requireProofKey":true,"requireAuthorizationConsent":true,"jwkSetUrl":"http://127.0.0.1:8000/jwkSet","tokenEndpointAuthenticationSigningAlgorithm":"RS256","x509CertificateSubjectDN":null}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":7200,"accessTokenTimeToLiveUnit":"Seconds","accessTokenFormat":"self-contained","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":604800,"refreshTokenTimeToLiveUnit":"Seconds","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        123, 1, '2024-10-26 16:10:43', '2025-06-17 18:10:23', NULL, '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
+VALUES (1850087647291408391, 'opaque-client', '2024-10-26 16:10:44', '{noop}123456', NULL, 'Opaque token测试',
+        'https://minio.cloudflow.top/user-picture/light-boy.289a4ec3-3ad7-40f2-a9f9-fe1e0f185201.png',
+        '["private_key_jwt","client_secret_basic"]', '此应用只会生成不透明令牌',
+        '["refresh_token","client_credentials","authorization_code"]',
+        '["https://flow-cloud.love/OAuth2Redirect","https://authorization-example.vercel.app/OAuth2Redirect","http://127.0.0.1:5173/OAuth2Redirect","https://j1zr8ren8w.51xd.pub/OAuth2Redirect"]',
+        '[""]', '["openid","profile","message.read","message.write"]',
+        '{"requireProofKey":false,"requireAuthorizationConsent":true,"jwkSetUrl":"http://127.0.0.1:8000/jwkSet","tokenEndpointAuthenticationSigningAlgorithm":"RS256","x509CertificateSubjectDN":null}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":7200,"accessTokenTimeToLiveUnit":"Seconds","accessTokenFormat":"reference","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":604800,"refreshTokenTimeToLiveUnit":"Seconds","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        123, 1, '2024-10-26 16:10:44', '2025-05-29 16:51:31', NULL, '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
 VALUES (1851513255444410369, 'private-key-jwt-client-update', '2024-10-30 06:35:34',
-        '{bcrypt}$2a$10$21/A7X6Wff11AXghTCq4febKZgIsI0Q0jIr1lZ8r0iL4WwiclGx22', NULL, 'private-key-jwt测试客户端',
-        'logo1', '[\"private_key_jwt\",\"client_secret_basic\"]', NULL,
-        '[\"refresh_token\",\"password\",\"authorization_code\",\"email\"]',
-        '[\"http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html\",\"http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc\",\"http://127.0.0.1:5173/OAuth2Redirect\",\"https://www.baidu.com\"]',
-        '[\"http://127.0.0.1:8080/\"]', '[\"openid\",\"profile\",\"message.read\",\"message.write\"]',
-        '{\"requireProofKey\":false,\"requireAuthorizationConsent\":true,\"jwkSetUrl\":\"http://127.0.0.1:8000/jwkSet\",\"tokenEndpointAuthenticationSigningAlgorithm\":\"RS256\",\"x509CertificateSubjectDN\":null}',
-        '{\"authorizationCodeTimeToLive\":300,\"authorizationCodeTimeToLiveUnit\":\"Seconds\",\"accessTokenTimeToLive\":300,\"accessTokenTimeToLiveUnit\":\"Seconds\",\"accessTokenFormat\":\"self-contained\",\"deviceCodeTimeToLive\":300,\"deviceCodeTimeToLiveUnit\":\"Seconds\",\"reuseRefreshTokens\":true,\"refreshTokenTimeToLive\":3600,\"refreshTokenTimeToLiveUnit\":\"Seconds\",\"idTokenSignatureAlgorithm\":\"RS256\",\"x509CertificateBoundAccessTokens\":false}',
-        NULL, 123, '2024-10-30 06:35:34', '2024-11-06 14:03:41', NULL, NULL);
+        '{bcrypt}$2a$10$21/A7X6Wff11AXghTCq4febKZgIsI0Q0jIr1lZ8r0iL4WwiclGx22', NULL, '通过JWT认证',
+        'https://minio.cloudflow.top/user-picture/cat.14c6c1ad-e50a-4d45-8062-a3367e350a9d.png',
+        '["private_key_jwt","client_secret_basic"]',
+        '客户端生成 JWT（使用私钥签名），客户端通过 client_assertion 把这个签名后的 JWT 发送给授权服务器，授权服务器使用公钥验证 JWT 签名',
+        '["refresh_token","password","authorization_code","email"]',
+        '["http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html","http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc","http://127.0.0.1:5173/OAuth2Redirect","https://www.baidu.com"]',
+        '["http://127.0.0.1:8080/"]', '["openid","profile","message.read","message.write"]',
+        '{"requireProofKey":false,"requireAuthorizationConsent":true,"jwkSetUrl":"http://127.0.0.1:8000/jwkSet","tokenEndpointAuthenticationSigningAlgorithm":"RS256","x509CertificateSubjectDN":null}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":300,"accessTokenTimeToLiveUnit":"Seconds","accessTokenFormat":"self-contained","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":3600,"refreshTokenTimeToLiveUnit":"Seconds","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        NULL, 1, '2024-10-30 06:35:34', '2025-05-29 16:47:26', NULL, '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
+VALUES (1927994310034784257, '61815f477db44db4b338fca1ae866d99', '2025-05-29 15:43:59',
+        '{bcrypt}$2a$10$VeB6ROiwWJDvYbHGXJzR8.tNY6nlUgU86gdA1TugVxaE9Z5SoLi86', NULL, 'OIDC流程',
+        'https://minio.cloudflow.top/user-picture/smile-girl.cf06f8aa-ff86-4891-9cc9-7b89bd89f03f.png',
+        '["none","client_secret_basic"]', '测试OIDC应用登出后的回调',
+        '["refresh_token","client_credentials","password","authorization_code"]',
+        '["http://127.0.0.1:5173/base/AuthorizeRequest","https://admin.cloudflow.top/AuthorizeRequest","https://www.baidu.com"]',
+        '["https://admin.cloudflow.top/PkceRedirect"]',
+        '["user.read","openid","profile","message.read","message.write"]',
+        '{"requireProofKey":true,"requireAuthorizationConsent":false,"jwkSetUrl":"","tokenEndpointAuthenticationSigningAlgorithm":"","x509CertificateSubjectDN":""}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":2,"accessTokenTimeToLiveUnit":"Hours","accessTokenFormat":"self-contained","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":30,"refreshTokenTimeToLiveUnit":"Days","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        1, 1, '2025-05-29 15:43:59', '2025-07-02 10:33:38', '云逸', '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
+VALUES (1927996024834031617, '083afc76767e4b1a95dde032e5e7da18', '2025-05-29 15:50:47',
+        '{bcrypt}$2a$10$PYPnfVseerXO99FBng1kxOGpinSmDuOOD4ByPv3bwfPc/O58/eO26', NULL, '客户端流程',
+        'https://minio.cloudflow.top/user-picture/rain-girl.1ebd359e-6b16-4f23-90d7-a8e195c922ae.png',
+        '["client_secret_post"]', '后端服务之间相互调用可以使用此应用通过client_credentials获取 access token',
+        '["client_credentials"]', '[""]', '[""]', '["profile","message.write"]',
+        '{"requireProofKey":false,"requireAuthorizationConsent":false,"jwkSetUrl":"","tokenEndpointAuthenticationSigningAlgorithm":"","x509CertificateSubjectDN":""}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":2,"accessTokenTimeToLiveUnit":"Hours","accessTokenFormat":"self-contained","deviceCodeTimeToLive":300,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":30,"refreshTokenTimeToLiveUnit":"Days","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        1, 1, '2025-05-29 15:50:47', '2025-05-29 16:44:58', '云逸', '云逸');
+INSERT INTO oauth2_application (id, client_id, client_id_issued_at, client_secret, client_secret_expires_at,
+                                client_name, client_logo, client_authentication_methods, description,
+                                authorization_grant_types, redirect_uris, post_logout_redirect_uris, scopes,
+                                client_settings, token_settings, create_by, update_by, create_time, update_time,
+                                create_name, update_name)
+VALUES (1942059286110208002, 'a594dc5322744f94b9e4737424988a02', '2025-07-07 11:13:10',
+        '{bcrypt}$2a$10$ztCUrkcfoxNsZfoYphtTAunOSxNuBa9aPRS3RyYexp2Y7fLUcD0Xq', NULL, 'Device Flow',
+        'https://minio.cloudflow.top/user-picture/draw-girl.01b9281f-7552-4bd9-82e5-86d3d7488696.png', '["none"]',
+        '二维码扫描登录应用，可用于Device Flow，也可用于扫码登录', '["urn:ietf:params:oauth:grant-type:device_code"]',
+        '[""]', '[""]', '["user.read","openid","profile","message.read","message.write"]',
+        '{"requireProofKey":false,"requireAuthorizationConsent":false,"jwkSetUrl":"","tokenEndpointAuthenticationSigningAlgorithm":"","x509CertificateSubjectDN":""}',
+        '{"authorizationCodeTimeToLive":300,"authorizationCodeTimeToLiveUnit":"Seconds","accessTokenTimeToLive":2,"accessTokenTimeToLiveUnit":"Hours","accessTokenFormat":"self-contained","deviceCodeTimeToLive":180,"deviceCodeTimeToLiveUnit":"Seconds","reuseRefreshTokens":true,"refreshTokenTimeToLive":30,"refreshTokenTimeToLiveUnit":"Days","idTokenSignatureAlgorithm":"RS256","x509CertificateBoundAccessTokens":false}',
+        1, 1, '2025-07-07 11:13:10', '2025-07-07 11:14:12', '云逸', '云逸');
 
 -- ----------------------------
 -- Table structure for oauth2_authorization
@@ -1808,6 +1894,23 @@ CREATE TABLE `sys_dict_type`
   COLLATE = utf8mb4_bin COMMENT = '字典类型表'
   ROW_FORMAT = Dynamic;
 
+INSERT INTO `basic-cloud-platform`.sys_dict_type (id, type_code, name, description, status, create_by, update_by,
+                                                  create_time, update_time, create_name, update_name)
+VALUES (1941019168394715138, 'GENDER', '性别', '性别字典', 'Y', 1, 1, '2025-07-04 14:20:07', '2025-07-04 14:20:07',
+        '云逸', '云逸');
+INSERT INTO `basic-cloud-platform`.sys_dict_type (id, type_code, name, description, status, create_by, update_by,
+                                                  create_time, update_time, create_name, update_name)
+VALUES (1941019564785803266, 'STATUS', '状态', '状态字典', 'Y', 1, 1, '2025-07-04 14:21:41', '2025-07-04 14:21:41',
+        '云逸', '云逸');
+INSERT INTO `basic-cloud-platform`.sys_dict_type (id, type_code, name, description, status, create_by, update_by,
+                                                  create_time, update_time, create_name, update_name)
+VALUES (1941143997022277633, 'HTTP_METHOD', '请求方式', '请求方式字典', 'Y', 1, 1, '2025-07-04 20:56:03',
+        '2025-07-18 14:08:00', '云逸', '云逸');
+INSERT INTO `basic-cloud-platform`.sys_dict_type (id, type_code, name, description, status, create_by, update_by,
+                                                  create_time, update_time, create_name, update_name)
+VALUES (1941144897803587586, 'MODULE', '所属模块', '菜单所属模块字典', 'Y', 1, 1, '2025-07-04 20:39:43',
+        '2025-07-04 22:39:43', '云逸', '云逸');
+
 -- ----------------------------
 -- Table structure for sys_dict_item
 -- ----------------------------
@@ -1833,6 +1936,55 @@ CREATE TABLE `sys_dict_item`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT = '字典项表'
   ROW_FORMAT = Dynamic;
+
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941021366520418305, 'GENDER', '2', '女性', 2, 'Y', '', 1, 1, '2025-07-04 14:28:51', '2025-07-04 23:47:39',
+        '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941022491478876162, 'GENDER', '1', '男性', 1, 'Y', '', 1, 1, '2025-07-04 14:33:19', '2025-07-04 21:40:31',
+        '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941129951204143105, 'GENDER', '0', '未知性别', 0, 'Y', '', 1, 1, '2025-07-04 21:40:19', '2025-07-04 21:40:19',
+        '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941130101435723778, 'GENDER', '9', '未说明的性别', 3, 'Y', '', 1, 1, '2025-07-04 21:40:55',
+        '2025-07-04 21:40:55', '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941130993341886466, 'STATUS', 'Y', '启用', 0, 'Y', '', 1, 1, '2025-07-04 21:44:28', '2025-07-21 09:41:35',
+        '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941131019975716865, 'STATUS', 'N', '禁用', 1, 'Y', '', 1, 1, '2025-07-04 21:44:34', '2025-07-04 21:44:34',
+        '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941144088470687745, 'HTTP_METHOD', 'GET', 'HTTP GET', 0, 'Y', '', 1, 1, '2025-07-04 22:36:30',
+        '2025-07-18 14:08:08', '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941144135048433665, 'HTTP_METHOD', 'POST', 'HTTP POST', 1, 'Y', '', 1, 1, '2025-07-04 22:36:41',
+        '2025-07-18 14:08:19', '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941144215943974914, 'HTTP_METHOD', 'PUT', 'HTTP PUT', 2, 'Y', '', 1, 1, '2025-07-04 22:37:00',
+        '2025-07-18 14:08:14', '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941144267756212225, 'HTTP_METHOD', 'DELETE', 'HTTP DELETE', 3, 'Y', '', 1, 1, '2025-07-04 22:37:13',
+        '2025-07-18 14:08:24', '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941145170768891906, 'MODULE', 'auth', '授权服务', 0, 'Y', '', 1, 1, '2025-07-04 22:40:48',
+        '2025-07-04 22:40:48', '云逸', '云逸');
+INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by,
+                           create_time, update_time, create_name, update_name)
+VALUES (1941145223994609666, 'MODULE', 'system', '系统服务', 1, 'Y', '', 1, 1, '2025-07-04 22:41:01',
+        '2025-07-04 22:41:01', '云逸', '云逸');
 
 DROP TABLE IF EXISTS `sys_api_scan_record`;
 CREATE TABLE `sys_api_scan_record`
