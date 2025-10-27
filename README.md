@@ -34,10 +34,10 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 ### ⭐ 如果这个项目对您有帮助，请点个Star支持一下！
 
 您的支持是我们持续改进和维护项目的动力！如果您觉得项目不错，请：
-- 🌟 给项目点个Star
-- 🔄 分享给更多需要的朋友
-- 🐛 提交Issue帮助我们改进
-- 🔧 贡献代码让项目更完善
+- 给项目点个Star
+- 分享给更多需要的朋友
+- 提交Issue帮助我们改进
+- 贡献代码让项目更完善
 
 ### 🔗 相关项目
 
@@ -46,11 +46,11 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 
 ### ✨ 核心特性
 
-- 🔐 **统一认证中心**：基于 Spring OAuth2 Authorization Server 实现，支持多种认证方式
-- 🚀 **微服务网关**：使用 Spring Cloud Gateway，实现统一的API路由和安全控制
-- 📊 **实时监控**：集成 Spring Boot Admin，提供实时的服务监控和告警能力
-- 🛠️ **系统服务**：完整的用户、角色、权限管理体系
-- 🔄 **分布式架构**：基于 Spring Cloud 实现服务注册发现、配置管理等
+- **统一认证中心**：基于 Spring OAuth2 Authorization Server 实现，支持多种认证方式
+- **微服务网关**：使用 Spring Cloud Gateway，实现统一的API路由和安全控制
+- **实时监控**：集成 Spring Boot Admin，提供实时的服务监控和告警能力
+- 🛠**系统服务**：完整的用户、角色、权限管理体系
+- **分布式架构**：基于 Spring Cloud 实现服务注册发现、配置管理等
 
 ### 🔧 功能列表
 
@@ -214,7 +214,7 @@ DeepWiki 是一个 AI 驱动的知识库，旨在帮助开发者更高效地获�
 3. **数据库初始化**
    ```sql
    -- 创建数据库
-   create database basic-cloud-platform character set utf8mb4 collate utf8mb4_bin;
+   create database `basic-cloud-platform` character set utf8mb4 collate utf8mb4_bin;
    
    -- 导入数据：
    -- ops/sql/basic-cloud-platform-dev.sql
