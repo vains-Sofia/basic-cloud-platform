@@ -97,4 +97,14 @@ public class AuthorizeConstants {
             "/v3/api-docs/**"
     );
 
+    /**
+     * 后台管理平台登录标识header
+     */
+    public static final String ADMIN_PLATFORM_LOGIN_HEADER_KEY = "X-Admin-Platform-Login";
+
+    /**
+     * 后台管理平台登录标识值
+     */
+    public static final String ADMIN_PLATFORM_LOGIN_HEADER_VALUE = "Admin-Platform-Login";
+
 }

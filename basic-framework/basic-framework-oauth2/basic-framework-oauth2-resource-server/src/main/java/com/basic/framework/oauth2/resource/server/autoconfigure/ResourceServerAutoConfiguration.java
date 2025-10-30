@@ -39,7 +39,6 @@ import java.util.Map;
  * @author vains
  */
 @Slf4j
-
 @Import({
         ResourceServerConfiguration.class,
         ReactiveResourceServerConfiguration.class

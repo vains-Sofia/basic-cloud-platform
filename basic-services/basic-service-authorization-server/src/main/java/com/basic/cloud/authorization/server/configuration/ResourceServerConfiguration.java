@@ -8,6 +8,7 @@ import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.core.handler.LoginFailureHandler;
 import com.basic.framework.oauth2.core.handler.LoginSuccessHandler;
 import com.basic.framework.oauth2.core.property.BasicLoginProperties;
+import com.basic.framework.oauth2.core.token.generator.StandardOAuth2TokenGenerator;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.oauth2.storage.repository.OAuth2ScopePermissionRepository;
 import com.basic.framework.redis.support.RedisOperator;
@@ -48,6 +49,8 @@ public class ResourceServerConfiguration {
 
     private final OAuth2ScopePermissionRepository scopePermissionRepository;
 
+    private final StandardOAuth2TokenGenerator standardOAuth2TokenGenerator;
+
     private final OAuth2AuthorizationRequestResolver authorizationRequestResolver;
 
     private final AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver;
@@ -82,7 +85,7 @@ public class ResourceServerConfiguration {
         http.formLogin(form -> form
                 .loginPage(basicLoginProperties.getLoginPageUri())
                 .loginProcessingUrl(basicLoginProperties.getLoginProcessingUri())
-                .successHandler(new LoginSuccessHandler(basicLoginProperties.getLoginPageUri()))
+                .successHandler(new LoginSuccessHandler(basicLoginProperties.getLoginPageUri(), standardOAuth2TokenGenerator))
                 .failureHandler(new LoginFailureHandler(basicLoginProperties.getLoginPageUri()))
         );
 
@@ -110,7 +113,7 @@ public class ResourceServerConfiguration {
         http.with(new EmailCaptchaLoginConfigurer<>(), configurer -> configurer
                 .loginPage(basicLoginProperties.getLoginPageUri())
                 .loginProcessingUrl(basicLoginProperties.getEmailLoginProcessingUri())
-                .successHandler(new LoginSuccessHandler(basicLoginProperties.getLoginPageUri()))
+                .successHandler(new LoginSuccessHandler(basicLoginProperties.getLoginPageUri(), standardOAuth2TokenGenerator))
                 .failureHandler(new LoginFailureHandler(basicLoginProperties.getLoginPageUri()))
         );
 
@@ -119,7 +122,7 @@ public class ResourceServerConfiguration {
                 .redisOperator(qrCodeRedisOperator)
                 .loginPage(basicLoginProperties.getLoginPageUri())
                 .loginProcessingUrl(basicLoginProperties.getQrCodeLoginProcessingUri())
-                .successHandler(new LoginSuccessHandler(basicLoginProperties.getLoginPageUri()))
+                .successHandler(new LoginSuccessHandler(basicLoginProperties.getLoginPageUri(), standardOAuth2TokenGenerator))
                 .failureHandler(new LoginFailureHandler(basicLoginProperties.getLoginPageUri()))
         );
 

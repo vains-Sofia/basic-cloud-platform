@@ -2,16 +2,15 @@ package com.basic.framework.oauth2.authorization.server.grant.password;
 
 import com.basic.framework.oauth2.authorization.server.core.AbstractOAuth2AuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.core.AbstractOAuth2AuthenticationToken;
+import com.basic.framework.oauth2.core.token.generator.StandardOAuth2TokenGenerator;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 
 import java.util.Map;
 
@@ -28,8 +27,8 @@ public class OAuth2PasswordAuthenticationProvider extends AbstractOAuth2Authenti
 
     private String passwordParameter = OAuth2ParameterNames.PASSWORD;
 
-    public OAuth2PasswordAuthenticationProvider(SessionRegistry sessionRegistry, OAuth2TokenGenerator<?> tokenGenerator, AuthenticationProvider authenticationProvider, OAuth2AuthorizationService authorizationService) {
-        super(sessionRegistry, tokenGenerator, authenticationProvider, authorizationService);
+    public OAuth2PasswordAuthenticationProvider(AuthenticationProvider authenticationProvider, OAuth2AuthorizationService authorizationService, StandardOAuth2TokenGenerator standardOAuth2TokenGenerator) {
+        super(authenticationProvider, authorizationService, standardOAuth2TokenGenerator);
     }
 
     @Override

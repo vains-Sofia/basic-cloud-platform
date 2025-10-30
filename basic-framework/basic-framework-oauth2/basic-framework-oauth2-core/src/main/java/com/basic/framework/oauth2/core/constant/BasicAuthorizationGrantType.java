@@ -21,4 +21,9 @@ public class BasicAuthorizationGrantType {
      */
     public static final AuthorizationGrantType PASSWORD = new AuthorizationGrantType("password");
 
+    /**
+     * 管理平台登录模式
+     */
+    public static final AuthorizationGrantType ADMIN_PLATFORM_LOGIN = new AuthorizationGrantType("admin_platform_login");
+
 }

@@ -2,24 +2,25 @@ package com.basic.framework.oauth2.authorization.server.autoconfigure;
 
 import com.basic.framework.oauth2.authorization.server.captcha.CaptchaService;
 import com.basic.framework.oauth2.authorization.server.captcha.impl.RedisCaptchaService;
-import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.introspector.BasicOpaqueTokenIntrospector;
+import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.framework.oauth2.core.annotation.ConditionalOnInMemoryStorage;
-import com.basic.framework.oauth2.core.property.BasicLoginProperties;
-import com.basic.framework.oauth2.core.token.converter.BasicJwtRedisAuthenticationConverter;
+import com.basic.framework.oauth2.core.authorization.ReactiveContextAuthorizationManager;
+import com.basic.framework.oauth2.core.authorization.RequestContextAuthorizationManager;
 import com.basic.framework.oauth2.core.constant.BasicAuthorizationGrantType;
-import com.basic.framework.oauth2.core.token.customizer.BasicIdTokenCustomizer;
-import com.basic.framework.oauth2.core.token.customizer.JwtIdTokenCustomizer;
-import com.basic.framework.oauth2.core.token.customizer.OpaqueIdTokenCustomizer;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.oauth2.DefaultAuthenticatedUser;
 import com.basic.framework.oauth2.core.domain.security.BasicGrantedAuthority;
 import com.basic.framework.oauth2.core.domain.security.ScopePermissionModel;
 import com.basic.framework.oauth2.core.enums.OAuth2AccountPlatformEnum;
-import com.basic.framework.oauth2.core.authorization.ReactiveContextAuthorizationManager;
-import com.basic.framework.oauth2.core.authorization.RequestContextAuthorizationManager;
 import com.basic.framework.oauth2.core.property.AuthorizationServerProperties;
+import com.basic.framework.oauth2.core.property.BasicLoginProperties;
 import com.basic.framework.oauth2.core.property.ResourceServerProperties;
+import com.basic.framework.oauth2.core.token.converter.BasicJwtRedisAuthenticationConverter;
+import com.basic.framework.oauth2.core.token.customizer.BasicIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.JwtIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.OpaqueIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.generator.StandardOAuth2TokenGenerator;
 import com.basic.framework.oauth2.core.token.resolver.DelegatingTokenAuthenticationResolver;
 import com.basic.framework.redis.support.RedisOperator;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -42,13 +43,16 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
@@ -57,7 +61,10 @@ import org.springframework.security.oauth2.server.authorization.client.InMemoryR
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.cors.CorsConfiguration;
@@ -68,6 +75,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -433,8 +441,59 @@ public class AuthorizationServerAutoConfiguration {
         return new BasicIdTokenCustomizer(scopePermissionOperator, permissionRedisOperator);
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator(JWKSource<SecurityContext> jwkSource,
+                                                                      OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer,
+                                                                      OAuth2TokenCustomizer<OAuth2TokenClaimsContext> tokenCustomizer) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("注入 token生成器 DelegatingOAuth2TokenGenerator.");
+        }
+
+        // Jwt 生成器
+        JwtGenerator jwtGenerator = new JwtGenerator(new NimbusJwtEncoder(jwkSource));
+        jwtGenerator.setJwtCustomizer(jwtCustomizer);
+
+        // access token 生成器
+        OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
+        accessTokenGenerator.setAccessTokenCustomizer(tokenCustomizer);
+
+        // refresh token 生成器
+        OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
+        return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public StandardOAuth2TokenGenerator standardOAuth2TokenGenerator(SessionRegistry sessionRegistry,
+                                                                     OAuth2TokenGenerator<?> tokenGenerator,
+                                                                     OAuth2AuthorizationService authorizationService,
+                                                                     RegisteredClientRepository registeredClientRepository,
+                                                                     AuthorizationServerSettings authorizationServerSettings) {
+        // 构建一个标准oauth2客户端信息
+        RegisteredClient registeredClient = RegisteredClient.withId("1849006457251749896")
+                .clientId("standard-oauth2-client")
+                .clientName("标准OAuth2应用")
+                .clientSecret("{noop}standard-oauth2-secret")
+                .authorizationGrantType(BasicAuthorizationGrantType.ADMIN_PLATFORM_LOGIN)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
+                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofHours(2)).refreshTokenTimeToLive(Duration.ofDays(30)).build())
+                .build();
+
+        // 保存标准oauth2客户端信息
+        registeredClientRepository.save(registeredClient);
+
+        if (log.isDebugEnabled()) {
+            log.debug("注入 标准 OAuth2 Token生成器 StandardOAuth2TokenGenerator.");
+        }
+        return new StandardOAuth2TokenGenerator(sessionRegistry, tokenGenerator, basicLoginProperties, authorizationService, authorizationServerSettings);
+    }
+
     @PostConstruct
     public void postConstruct() {
+        // 初始化完成后打印日志
         if (log.isDebugEnabled()) {
             log.debug("Initializing OAuth2 AuthorizationServer Configuration.");
         }

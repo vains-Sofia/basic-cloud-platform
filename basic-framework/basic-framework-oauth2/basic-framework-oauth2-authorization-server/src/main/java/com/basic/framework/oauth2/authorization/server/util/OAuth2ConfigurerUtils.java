@@ -1,18 +1,19 @@
 package com.basic.framework.oauth2.authorization.server.util;
 
-import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationConverter;
 import com.basic.framework.oauth2.authorization.server.grant.device.OAuth2DeviceClientAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationConverter;
 import com.basic.framework.oauth2.authorization.server.grant.email.OAuth2EmailCaptchaAuthenticationProvider;
 import com.basic.framework.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationConverter;
 import com.basic.framework.oauth2.authorization.server.grant.password.OAuth2PasswordAuthenticationProvider;
-import com.basic.framework.oauth2.core.token.customizer.JwtIdTokenCustomizer;
-import com.basic.framework.oauth2.core.token.customizer.OpaqueIdTokenCustomizer;
+import com.basic.framework.oauth2.authorization.server.login.email.EmailCaptchaLoginAuthenticationProvider;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.handler.ConsentAuthenticationFailureHandler;
 import com.basic.framework.oauth2.core.handler.DeviceAuthorizationResponseHandler;
 import com.basic.framework.oauth2.core.property.AuthorizationServerProperties;
+import com.basic.framework.oauth2.core.token.customizer.JwtIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.customizer.OpaqueIdTokenCustomizer;
+import com.basic.framework.oauth2.core.token.generator.StandardOAuth2TokenGenerator;
 import com.basic.framework.redis.support.RedisOperator;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
@@ -23,7 +24,6 @@ import org.springframework.core.ResolvableType;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
@@ -260,16 +260,15 @@ public class OAuth2ConfigurerUtils {
      * @param passwordParameter 密码参数名，可为空
      */
     public static void configurePasswordGrantType(HttpSecurity builder, String usernameParameter, String passwordParameter) {
-        SessionRegistry sessionRegistry = OAuth2ConfigurerUtils.getBeanOrNull(builder, SessionRegistry.class);
-        OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator = OAuth2ConfigurerUtils.getTokenGenerator(builder);
         DaoAuthenticationProvider authenticationProvider = OAuth2ConfigurerUtils.getOptionalBean(builder, DaoAuthenticationProvider.class);
+        StandardOAuth2TokenGenerator standardOAuth2TokenGenerator = OAuth2ConfigurerUtils.getOptionalBean(builder, StandardOAuth2TokenGenerator.class);
         OAuth2AuthorizationService authorizationService = OAuth2ConfigurerUtils.getAuthorizationService(builder);
 
         // 自定义密码模式认证转换器
         OAuth2PasswordAuthenticationConverter converter =
                 new OAuth2PasswordAuthenticationConverter();
         OAuth2PasswordAuthenticationProvider provider =
-                new OAuth2PasswordAuthenticationProvider(sessionRegistry, tokenGenerator, authenticationProvider, authorizationService);
+                new OAuth2PasswordAuthenticationProvider(authenticationProvider, authorizationService, standardOAuth2TokenGenerator);
         // 如果设置了账号密码参数名，则替换默认的
         if (!ObjectUtils.isEmpty(usernameParameter)) {
             converter.setUsernameParameter(usernameParameter);
@@ -295,8 +294,7 @@ public class OAuth2ConfigurerUtils {
      * @param emailCaptchaParameter 邮件验证码参数名，可为空
      */
     public static void configureEmailGrantType(HttpSecurity builder, String emailParameter, String emailCaptchaParameter) {
-        SessionRegistry sessionRegistry = OAuth2ConfigurerUtils.getBeanOrNull(builder, SessionRegistry.class);
-        OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator = OAuth2ConfigurerUtils.getTokenGenerator(builder);
+        StandardOAuth2TokenGenerator standardOAuth2TokenGenerator = OAuth2ConfigurerUtils.getOptionalBean(builder, StandardOAuth2TokenGenerator.class);
         EmailCaptchaLoginAuthenticationProvider authenticationProvider = OAuth2ConfigurerUtils.getOptionalBean(builder, EmailCaptchaLoginAuthenticationProvider.class);
         OAuth2AuthorizationService authorizationService = OAuth2ConfigurerUtils.getAuthorizationService(builder);
 
@@ -304,7 +302,7 @@ public class OAuth2ConfigurerUtils {
         OAuth2EmailCaptchaAuthenticationConverter converter =
                 new OAuth2EmailCaptchaAuthenticationConverter();
         OAuth2EmailCaptchaAuthenticationProvider provider =
-                new OAuth2EmailCaptchaAuthenticationProvider(sessionRegistry, tokenGenerator, authenticationProvider, authorizationService);
+                new OAuth2EmailCaptchaAuthenticationProvider(authenticationProvider, authorizationService, standardOAuth2TokenGenerator);
         // 如果设置了邮件、验证码参数名，则替换默认的
         if (!ObjectUtils.isEmpty(emailParameter)) {
             converter.setEmailParameter(emailParameter);
@@ -325,7 +323,7 @@ public class OAuth2ConfigurerUtils {
     /**
      * 配置自定义GrantType之设备码流程
      *
-     * @param builder                httpSecurity 实例
+     * @param builder                       httpSecurity 实例
      * @param authorizationServerProperties 认证服务自定义配置
      */
     public static void configureDeviceGrantType(HttpSecurity builder, AuthorizationServerProperties authorizationServerProperties) {

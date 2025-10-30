@@ -8,6 +8,7 @@ import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
 import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
+import com.basic.framework.oauth2.core.constant.BasicAuthorizationGrantType;
 import com.basic.framework.oauth2.core.domain.AuthenticatedUser;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import com.basic.framework.oauth2.core.util.ServletUtils;
@@ -264,9 +265,10 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
 
         // 获取授权类型
         String authorizationGrantType = authorization.getAuthorizationGrantType();
-        if (!Objects.equals(authorizationGrantType, AuthorizationGrantType.AUTHORIZATION_CODE.getValue())
+        if ((!Objects.equals(authorizationGrantType, AuthorizationGrantType.AUTHORIZATION_CODE.getValue())
+                && !Objects.equals(authorizationGrantType, BasicAuthorizationGrantType.ADMIN_PLATFORM_LOGIN.getValue()))
                 || ObjectUtils.isEmpty(authorization.getAttributes())) {
-            // 如果授权类型不是授权码模式或attributes为空，则直接返回，则直接返回
+            // 如果授权类型不是授权码模式或管理平台登录或attributes为空，则直接返回，则直接返回
             return;
         }
 
