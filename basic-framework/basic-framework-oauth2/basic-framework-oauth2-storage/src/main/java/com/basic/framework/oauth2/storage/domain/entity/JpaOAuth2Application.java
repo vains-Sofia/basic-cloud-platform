@@ -133,4 +133,8 @@ public class JpaOAuth2Application extends BasicAuditorEntity {
     @Column(name = "token_settings", nullable = false, length = 2000)
     private String tokenSettings;
 
+    @Comment(value = "系统默认客户端，不返回前端")
+    @Column(name = "system_client", nullable = false)
+    private Boolean systemClient;
+
 }

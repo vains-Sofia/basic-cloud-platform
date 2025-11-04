@@ -5,6 +5,7 @@ import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
 import com.basic.framework.oauth2.storage.core.domain.request.FindApplicationPageRequest;
 import com.basic.framework.oauth2.storage.core.domain.request.SaveApplicationRequest;
@@ -32,6 +33,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -76,6 +78,10 @@ public class JpaBasicApplicationService implements BasicApplicationService {
         }
         if (jpaOAuth2Application.getClientIdIssuedAt() == null) {
             jpaOAuth2Application.setClientIdIssuedAt(LocalDateTime.now());
+        }
+        if (Objects.equals(jpaOAuth2Application.getClientId(), AuthorizeConstants.STANDARD_OAUTH2_CLIENT_ID)) {
+            // 系统专用客户端
+            jpaOAuth2Application.setSystemClient(Boolean.TRUE);
         }
         // 添加或修改
         applicationRepository.save(jpaOAuth2Application);

@@ -16,3 +16,9 @@ spring:
       - nacos:spring-doc.yaml?refresh=true
       - nacos:federation-client.yaml?refresh=true
       - nacos:${spring.application.name}.yaml?refresh=true
+
+basic:
+  cloud:
+    login:
+      access-token-time-to-live: 2h
+      refresh-token-time-to-live: 30d

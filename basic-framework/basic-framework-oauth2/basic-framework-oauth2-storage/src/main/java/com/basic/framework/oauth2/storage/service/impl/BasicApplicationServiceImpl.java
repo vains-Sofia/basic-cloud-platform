@@ -6,6 +6,7 @@ import com.basic.framework.core.util.Sequence;
 import com.basic.framework.data.jpa.lambda.LambdaUtils;
 import com.basic.framework.data.jpa.specification.SpecificationBuilder;
 import com.basic.framework.oauth2.authorization.server.util.OAuth2JsonUtils;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.storage.converter.Application2JpaConverter;
 import com.basic.framework.oauth2.storage.converter.Jpa2ApplicationConverter;
 import com.basic.framework.oauth2.storage.converter.Jpa2ApplicationResponseConverter;
@@ -34,6 +35,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -81,6 +83,10 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
         if (jpaOAuth2Application.getClientIdIssuedAt() == null) {
             jpaOAuth2Application.setClientIdIssuedAt(LocalDateTime.now());
         }
+        if (Objects.equals(jpaOAuth2Application.getClientId(), AuthorizeConstants.STANDARD_OAUTH2_CLIENT_ID)) {
+            // 系统专用客户端
+            jpaOAuth2Application.setSystemClient(Boolean.TRUE);
+        }
         // 添加或修改
         applicationRepository.save(jpaOAuth2Application);
     }
@@ -125,6 +131,7 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
         builder.like(!ObjectUtils.isEmpty(request.getAuthorizationGrantType()),
                 JpaOAuth2Application::getAuthorizationGrantTypes, request.getAuthorizationGrantType());
 
+        builder.eq(JpaOAuth2Application::getSystemClient, Boolean.FALSE);
         // 查询
         Page<JpaOAuth2Application> applicationPage = applicationRepository.findAll(builder, pageQuery);
 
@@ -224,6 +231,8 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
         SpecificationBuilder<JpaOAuth2Application> builder = new SpecificationBuilder<>();
         builder.eq(!ObjectUtils.isEmpty(request.getClientId()),
                 JpaOAuth2Application::getClientId, request.getClientId());
+
+        builder.eq(JpaOAuth2Application::getSystemClient, Boolean.FALSE);
 
         builder.or(or -> or
                 .like(!ObjectUtils.isEmpty(request.getApplicationName()),

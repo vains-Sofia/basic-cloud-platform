@@ -11,27 +11,28 @@ CREATE TABLE `oauth2_application`
     `id`                            bigint                                                  NOT NULL COMMENT '数据主键',
     `client_id`                     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '客户端id',
     `client_id_issued_at`           timestamp                                               NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '客户端id签发时间',
-    `client_secret`                 varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '客户端秘钥',
+    `client_secret`                 varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin           DEFAULT NULL COMMENT '客户端秘钥',
     `client_secret_expires_at`      timestamp                                               NULL     DEFAULT NULL COMMENT '客户端秘钥过期时间',
     `client_name`                   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NOT NULL COMMENT '客户端名称',
-    `client_logo`                   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin  NULL     DEFAULT NULL COMMENT '客户端logo',
+    `client_logo`                   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin           DEFAULT NULL COMMENT '客户端logo',
     `client_authentication_methods` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端支持的认证方式',
-    `description`                   varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '客户端描述',
+    `description`                   varchar(1000) COLLATE utf8mb4_bin                                DEFAULT NULL COMMENT '客户端描述',
     `authorization_grant_types`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端支持的授权模式',
-    `redirect_uris`                 varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT '回调地址',
-    `post_logout_redirect_uris`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL     DEFAULT NULL COMMENT 'Open Connection登出后跳转地址',
+    `redirect_uris`                 varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          DEFAULT NULL COMMENT '回调地址',
+    `post_logout_redirect_uris`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin          DEFAULT NULL COMMENT 'Open Connection登出后跳转地址',
     `scopes`                        varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端拥有的scope',
     `client_settings`               varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端设置',
     `token_settings`                varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '客户端生成token设置',
-    `create_by`                     bigint                                                  NULL     DEFAULT NULL COMMENT '创建人',
-    `update_by`                     bigint                                                  NULL     DEFAULT NULL COMMENT '修改人',
-    `create_time`                   datetime                                                NULL     DEFAULT NULL COMMENT '创建时间',
-    `update_time`                   datetime                                                NULL     DEFAULT NULL COMMENT '修改时间',
-    `create_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL     DEFAULT NULL COMMENT '创建人名称',
-    `update_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin   NULL     DEFAULT NULL COMMENT '修改人名称',
+    `system_client`                 tinyint                                                          DEFAULT '0' COMMENT '系统默认客户端，不返回前端',
+    `create_by`                     bigint                                                           DEFAULT NULL COMMENT '创建人',
+    `update_by`                     bigint                                                           DEFAULT NULL COMMENT '修改人',
+    `create_time`                   datetime                                                         DEFAULT NULL COMMENT '创建时间',
+    `update_time`                   datetime                                                         DEFAULT NULL COMMENT '修改时间',
+    `create_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin            DEFAULT NULL COMMENT '创建人名称',
+    `update_name`                   varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin            DEFAULT NULL COMMENT '修改人名称',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
-  CHARACTER SET = utf8mb4
+  DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin
   ROW_FORMAT = DYNAMIC;
 

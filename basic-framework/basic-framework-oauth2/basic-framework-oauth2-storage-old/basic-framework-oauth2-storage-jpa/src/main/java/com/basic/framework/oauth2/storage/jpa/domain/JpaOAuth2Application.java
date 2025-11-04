@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
 
@@ -124,4 +125,7 @@ public class JpaOAuth2Application extends BasicAuditorEntity {
     @Column(name = "token_settings", nullable = false, length = 2000)
     private String tokenSettings;
 
+    @Comment(value = "系统默认客户端，不返回前端")
+    @Column(name = "system_client", nullable = false)
+    private Boolean systemClient;
 }

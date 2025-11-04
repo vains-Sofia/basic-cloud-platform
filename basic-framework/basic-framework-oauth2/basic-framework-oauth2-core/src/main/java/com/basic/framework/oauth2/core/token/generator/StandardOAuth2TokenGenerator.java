@@ -1,7 +1,6 @@
 package com.basic.framework.oauth2.core.token.generator;
 
 import com.basic.framework.oauth2.core.constant.BasicAuthorizationGrantType;
-import com.basic.framework.oauth2.core.property.BasicLoginProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionInformation;
@@ -17,10 +16,9 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeAuthenticationProvider;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContext;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.DefaultOAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -34,6 +32,8 @@ import java.security.Principal;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import static com.basic.framework.oauth2.core.constant.AuthorizeConstants.STANDARD_OAUTH2_CLIENT_ID;
+
 /**
  * 标准OAuth2 Token生成器
  *
@@ -42,8 +42,8 @@ import java.util.*;
 @Slf4j
 public record StandardOAuth2TokenGenerator(SessionRegistry sessionRegistry,
                                            OAuth2TokenGenerator<?> tokenGenerator,
-                                           BasicLoginProperties basicLoginProperties,
                                            OAuth2AuthorizationService authorizationService,
+                                           RegisteredClientRepository registeredClientRepository,
                                            AuthorizationServerSettings authorizationServerSettings) {
 
     private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
@@ -58,20 +58,10 @@ public record StandardOAuth2TokenGenerator(SessionRegistry sessionRegistry,
      */
     public OAuth2AccessTokenResponse generateByDefaultClient(Authentication principal) {
         // 构建一个标准oauth2客户端信息
-        RegisteredClient registeredClient = RegisteredClient.withId("1849006457251749896")
-                .clientId("standard-oauth2-client")
-                .clientName("标准OAuth2应用")
-                .clientSecret("{noop}standard-oauth2-secret")
-                .authorizationGrantType(BasicAuthorizationGrantType.ADMIN_PLATFORM_LOGIN)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
-                .tokenSettings(TokenSettings.builder()
-                        // 以配置文件为准
-                        .accessTokenTimeToLive(basicLoginProperties.getAccessTokenTimeToLive())
-                        .refreshTokenTimeToLive(basicLoginProperties.getRefreshTokenTimeToLive())
-                        .build()
-                )
-                .build();
+        RegisteredClient registeredClient = registeredClientRepository.findByClientId(STANDARD_OAUTH2_CLIENT_ID);
+        if (registeredClient == null) {
+            throw new OAuth2AuthenticationException("System client not found in database.");
+        }
 
         // 构建授权服务器上下文
         AuthorizationServerContext authorizationServerContext = new AuthorizationServerContext() {

@@ -68,4 +68,7 @@ public class MybatisOAuth2Application extends BasicEntity {
 
     @TableField(value = "token_settings", typeHandler = JacksonTypeHandler.class)
     private BasicTokenSettings tokenSettings;
+
+    @TableField("system_client")
+    private Boolean systemClient;
 }

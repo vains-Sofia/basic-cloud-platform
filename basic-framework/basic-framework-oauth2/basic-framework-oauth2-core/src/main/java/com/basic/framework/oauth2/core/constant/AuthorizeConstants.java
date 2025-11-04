@@ -107,4 +107,9 @@ public class AuthorizeConstants {
      */
     public static final String ADMIN_PLATFORM_LOGIN_HEADER_VALUE = "Admin-Platform-Login";
 
+    /**
+     * 标准客户端信息的client id
+     */
+    public static final String STANDARD_OAUTH2_CLIENT_ID = "system-oauth2-client";
+
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.basic.framework.core.domain.PageResult;
+import com.basic.framework.oauth2.core.constant.AuthorizeConstants;
 import com.basic.framework.oauth2.storage.core.domain.BasicApplication;
 import com.basic.framework.oauth2.storage.core.domain.request.FindApplicationPageRequest;
 import com.basic.framework.oauth2.storage.core.domain.request.SaveApplicationRequest;
@@ -25,6 +26,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 客户端服务的MybatisPlus实现
@@ -46,6 +48,11 @@ public class MybatisBasicApplicationService implements BasicApplicationService {
         BeanUtils.copyProperties(basicApplication, mybatisOAuth2Application);
         LambdaQueryWrapper<MybatisOAuth2Application> wrapper = Wrappers.lambdaQuery(MybatisOAuth2Application.class)
                 .eq(MybatisOAuth2Application::getClientId, basicApplication.getClientId());
+
+        if (Objects.equals(mybatisOAuth2Application.getClientId(), AuthorizeConstants.STANDARD_OAUTH2_CLIENT_ID)) {
+            // 系统专用客户端
+            mybatisOAuth2Application.setSystemClient(Boolean.TRUE);
+        }
         MybatisOAuth2Application selectOne = this.oAuth2ApplicationMapper.selectOne(wrapper);
         if (selectOne != null) {
             mybatisOAuth2Application.setId(selectOne.getId());

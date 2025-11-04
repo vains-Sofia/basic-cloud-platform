@@ -75,11 +75,12 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import static com.basic.framework.oauth2.core.constant.AuthorizeConstants.STANDARD_OAUTH2_CLIENT_ID;
 
 /**
  * 认证服务自动配置
@@ -464,6 +465,16 @@ public class AuthorizationServerAutoConfiguration {
         return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
     }
 
+    /**
+     * 注入标准OAuth2 Token生成器
+     *
+     * @param sessionRegistry             session管理
+     * @param tokenGenerator              Token生成器
+     * @param authorizationService        认证信息核心服务
+     * @param registeredClientRepository  客户端核心服务
+     * @param authorizationServerSettings 认证服务设置
+     * @return 标准OAuth2 Token生成器
+     */
     @Bean
     @ConditionalOnMissingBean
     public StandardOAuth2TokenGenerator standardOAuth2TokenGenerator(SessionRegistry sessionRegistry,
@@ -473,22 +484,28 @@ public class AuthorizationServerAutoConfiguration {
                                                                      AuthorizationServerSettings authorizationServerSettings) {
         // 构建一个标准oauth2客户端信息
         RegisteredClient registeredClient = RegisteredClient.withId("1849006457251749896")
-                .clientId("standard-oauth2-client")
+                .clientId(STANDARD_OAUTH2_CLIENT_ID)
                 .clientName("标准OAuth2应用")
-                .clientSecret("{noop}standard-oauth2-secret")
+                .clientSecret("{noop}".concat(STANDARD_OAUTH2_CLIENT_ID))
                 .authorizationGrantType(BasicAuthorizationGrantType.ADMIN_PLATFORM_LOGIN)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
-                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofHours(2)).refreshTokenTimeToLive(Duration.ofDays(30)).build())
+                .tokenSettings(
+                        TokenSettings.builder()
+                                .reuseRefreshTokens(true)
+                                .accessTokenTimeToLive(basicLoginProperties.getAccessTokenTimeToLive())
+                                .refreshTokenTimeToLive(basicLoginProperties.getRefreshTokenTimeToLive())
+                                .build()
+                )
                 .build();
 
         // 保存标准oauth2客户端信息
         registeredClientRepository.save(registeredClient);
 
         if (log.isDebugEnabled()) {
-            log.debug("注入 标准 OAuth2 Token生成器 StandardOAuth2TokenGenerator.");
+            log.debug("注入标准 OAuth2 Token生成器 StandardOAuth2TokenGenerator.");
         }
-        return new StandardOAuth2TokenGenerator(sessionRegistry, tokenGenerator, basicLoginProperties, authorizationService, authorizationServerSettings);
+        return new StandardOAuth2TokenGenerator(sessionRegistry, tokenGenerator, authorizationService, registeredClientRepository, authorizationServerSettings);
     }
 
     @PostConstruct
