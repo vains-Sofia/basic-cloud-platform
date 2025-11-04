@@ -18,7 +18,6 @@ import org.springframework.util.ObjectUtils;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
 
 /**
  * 重定向至登录处理
@@ -72,12 +71,6 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
             return;
         }
 
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            String headerValue = request.getHeader(headerName);
-            log.info("headerName:{},headerValue:{}", headerName, headerValue);
-        }
         StringBuffer requestUrl = request.getRequestURL();
         if (!ObjectUtils.isEmpty(request.getQueryString())) {
             requestUrl.append("?").append(request.getQueryString());
