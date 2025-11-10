@@ -1,20 +1,19 @@
 #name: "Java CI with Multi-arch Docker Image"
 
 on:
-  pull_request:
-    branches: [ main, feature-actions]
-
+  push:
+    branches: [ main , feature-actions]
 permissions:
   actions: write       # Necessary to cancel workflow executions
   checks: write        # Necessary to write reports
   pull-requests: write # Necessary to comment on PRs
-  contents: write
+  contents: read
   packages: write
   issues: write
   repository-projects: write
 jobs:
   check-build-with-maven:
-    name: build with maven on merge request
+    name: build with maven on pull request
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -29,7 +28,7 @@ jobs:
           #          distribution: 'zulu'
           #          distribution: 'temurin'
           distribution: 'oracle'
-          cache: 'maven'
+#          cache: 'maven'
           #          check-latest: false
       - name: Check maven file existence
         id: check_maven_files
@@ -40,21 +39,3 @@ jobs:
         if: steps.check_maven_files.outputs.files_exists == 'true'
         run: |
             mvn -B package -Prelease -Dmaven.test.skip=true
-  check-dependabot-merge-request:
-    name: auto-merge-dependabot-pr
-    runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
-    steps:
-      - name: Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v2
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Approve a PR
-        run: gh pr review --approve "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - uses: hmarr/auto-approve-action@v4
-        with:
-          review-message: "Auto approved automated PR"
