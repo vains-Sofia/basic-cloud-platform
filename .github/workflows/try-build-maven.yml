@@ -2,7 +2,7 @@
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, feature-actions]
 
 permissions:
   actions: write       # Necessary to cancel workflow executions
