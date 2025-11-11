@@ -1,0 +1,41 @@
+#name: "Java CI with Multi-arch Docker Image"
+
+on:
+  push:
+    branches: [ main , feature-actions]
+permissions:
+  actions: write       # Necessary to cancel workflow executions
+  checks: write        # Necessary to write reports
+  pull-requests: write # Necessary to comment on PRs
+  contents: read
+  packages: write
+  issues: write
+  repository-projects: write
+jobs:
+  check-build-with-maven:
+    name: build with maven on pull request
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '21', '25' ]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ matrix.java }}
+          #          doc https://github:com/marketplace/actions/setup-java-jdk:
+          #          distribution: 'zulu'
+          #          distribution: 'temurin'
+          distribution: 'oracle'
+#          cache: 'maven'
+          #          check-latest: false
+      - name: Check maven file existence
+        id: check_maven_files
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "pom.xml, mvnw"
+      - name: Build with Maven
+        if: steps.check_maven_files.outputs.files_exists == 'true'
+        run: |
+            mvn -B package -Prelease -Dmaven.test.skip=true
