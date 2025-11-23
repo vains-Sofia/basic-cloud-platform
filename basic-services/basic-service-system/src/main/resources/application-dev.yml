@@ -12,13 +12,7 @@ spring:
 
   config:
     import:
+      - nacos:common-env.yaml?refresh=true
       - nacos:actuator.yaml?refresh=true
       - nacos:spring-doc.yaml?refresh=true
       - nacos:${spring.application.name}.yaml?refresh=true
-
-
-
-basic:
-  cloud:
-    minio:
-      proxy-endpoint:
