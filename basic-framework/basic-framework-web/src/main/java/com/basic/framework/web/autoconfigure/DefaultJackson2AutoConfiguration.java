@@ -3,19 +3,14 @@ package com.basic.framework.web.autoconfigure;
 import com.basic.framework.web.deserializer.TimeStampLocalDateTimeDeserializer;
 import com.basic.framework.web.serizalizer.IdToStringModifier;
 import com.basic.framework.web.serizalizer.TimeStampLocalDateTimeSerializer;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,111 +19,56 @@ import java.time.format.DateTimeFormatter;
 
 import static com.basic.framework.core.constants.DateFormatConstants.*;
 
-/**
- * 时间格式化自定义处理类，自动注入ioc
- *
- * @author vains
- */
 @Slf4j
 @RequiredArgsConstructor
+@Import({WebMvcDateTimeConfiguration.class})
 public class DefaultJackson2AutoConfiguration {
 
-    /**
-     * LocalDatetime序列化
-     *
-     * @return LocalDateTimeSerializer
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public LocalDateTimeSerializer localDateTimeSerializer() {
-        return new TimeStampLocalDateTimeSerializer(Boolean.FALSE);
-    }
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+
+    private static final DateTimeFormatter TIME_FORMATTER =
+            DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
+
+    private static final DateTimeFormatter DATETIME_FORMATTER =
+            DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
     /**
-     * LocalDatetime反序列化
-     *
-     * @return LocalDateTimeDeserializer
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public LocalDateTimeDeserializer localDateTimeDeserializer() {
-        return new TimeStampLocalDateTimeDeserializer();
-    }
-
-    /**
-     * LocalDate 序列化
-     *
-     * @return LocalDateSerializer
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public LocalDateSerializer localDateSerializer() {
-        return new LocalDateSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT));
-    }
-
-    /**
-     * LocalDate 反序列化
-     *
-     * @return LocalDateDeserializer
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public LocalDateDeserializer localDateDeserializer() {
-        return new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT));
-    }
-
-    /**
-     * LocalTime 序列化
-     *
-     * @return LocalTimeSerializer
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public LocalTimeSerializer localTimeSerializer() {
-        return new LocalTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT));
-    }
-
-    /**
-     * LocalTime 反序列化
-     *
-     * @return LocalTimeDeserializer
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public LocalTimeDeserializer localTimeDeserializer() {
-        return new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT));
-    }
-
-    /**
-     * 针对于Json格式的请求响应做出自定义处理，自定义LocalDateTime、LocalDate和LocalTime的格式化
-     *
-     * @return ObjectMapper自定义
+     * 主 Jackson 配置
      */
     @Bean
     @ConditionalOnMissingBean
     public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
-        SimpleModule module = new SimpleModule();
-        // 默认只将Long类型的id转为字符串，避免前端传入Long类型的id导致精度丢失
-        module.setSerializerModifier(new IdToStringModifier());
         return builder -> {
-            builder.modules(module);
-            builder.serializerByType(LocalDateTime.class, localDateTimeSerializer());
-            builder.deserializerByType(LocalDateTime.class, localDateTimeDeserializer());
+            // JavaTimeModule 用于所有 Java 8 时间类型
+            JavaTimeModule javaTimeModule = new JavaTimeModule();
+
+            // LocalDate
+            javaTimeModule.addSerializer(LocalDate.class, new com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer(DATE_FORMATTER));
+            javaTimeModule.addDeserializer(LocalDate.class, new com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer(DATE_FORMATTER));
+
+            // LocalTime
+            javaTimeModule.addSerializer(LocalTime.class, new com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer(TIME_FORMATTER));
+            javaTimeModule.addDeserializer(LocalTime.class, new com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer(TIME_FORMATTER));
+
+            // LocalDateTime（重点：你的自定义）
+            javaTimeModule.addSerializer(LocalDateTime.class, new TimeStampLocalDateTimeSerializer(false));
+            javaTimeModule.addDeserializer(LocalDateTime.class, new TimeStampLocalDateTimeDeserializer(DATETIME_FORMATTER));
+
+            builder.modules(javaTimeModule);
+
+            // simpleDateFormat 只给 java.util.Date 用的
             builder.simpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
-            builder.serializerByType(LocalDate.class, localDateSerializer());
-            builder.deserializerByType(LocalDate.class, localDateDeserializer());
-            builder.simpleDateFormat(DEFAULT_DATE_FORMAT);
-            builder.serializerByType(LocalTime.class, localTimeSerializer());
-            builder.deserializerByType(LocalTime.class, localTimeDeserializer());
-            builder.simpleDateFormat(DEFAULT_TIME_FORMAT);
+
+            // 注册一个 Module，用于 Long → String
+            builder.postConfigurer(objectMapper -> objectMapper.setSerializerFactory(
+                    objectMapper.getSerializerFactory().withSerializerModifier(new IdToStringModifier())
+            ));
         };
     }
 
     @PostConstruct
     public void postConstruct() {
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing Custom Jackson formatting handler.");
-        }
+        log.info("Initialized optimized custom Jackson formatting.");
     }
-
 }

@@ -38,9 +38,27 @@ public class TimeStampLocalDateTimeDeserializer extends LocalDateTimeDeserialize
     @Override
     public LocalDateTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         if (parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-            // 传入时间戳时反序列化根据时间戳来序列化
-            return LocalDateTime.ofInstant(Instant.ofEpochSecond(parser.getLongValue()), ZoneId.systemDefault());
+            // 传入秒级时间戳
+            return LocalDateTime.ofInstant(
+                    Instant.ofEpochSecond(parser.getLongValue()),
+                    ZoneId.systemDefault()
+            );
         }
+
+        String value = parser.getText().trim();
+
+        // 支持 yyyy-MM-dd HH:mm:ss
+        try {
+            return LocalDateTime.parse(value,
+                    DateTimeFormatter.ofPattern(DateFormatConstants.DEFAULT_DATE_TIME_FORMAT));
+        } catch (Exception ignore) {}
+
+        // 支持 ISO 8601
+        try {
+            return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } catch (Exception ignore) {}
+
+        // 回退到父类
         return super.deserialize(parser, context);
     }
 }

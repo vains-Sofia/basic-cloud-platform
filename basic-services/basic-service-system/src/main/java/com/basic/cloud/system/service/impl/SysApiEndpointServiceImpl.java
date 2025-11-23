@@ -293,6 +293,8 @@ public class SysApiEndpointServiceImpl implements SysApiEndpointService {
                                     .ifPresent(existingPermission -> {
                                         // 设置已存在的权限ID
                                         endpoint.setExistingPermissionId(existingPermission.getId());
+                                        endpoint.setImportTime(existingPermission.getCreateTime());
+                                        endpoint.setImported(Boolean.TRUE);
                                     });
                         } else {
                             status = ScanStatusEnum.NEW;

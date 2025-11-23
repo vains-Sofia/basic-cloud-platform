@@ -37,6 +37,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisKeyValueAdapter;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -92,6 +94,7 @@ import static com.basic.framework.oauth2.core.constant.AuthorizeConstants.STANDA
 @RequiredArgsConstructor
 @Import({ServerRedisAutoConfiguration.class, RedisOperator.class})
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 @EnableConfigurationProperties({BasicLoginProperties.class, AuthorizationServerProperties.class, ResourceServerProperties.class})
 public class AuthorizationServerAutoConfiguration {
 
