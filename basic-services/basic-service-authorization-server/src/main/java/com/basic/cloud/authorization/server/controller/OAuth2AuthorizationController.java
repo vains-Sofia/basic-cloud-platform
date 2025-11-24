@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +36,6 @@ public class OAuth2AuthorizationController {
     }
 
     @GetMapping("/findByPage")
-    @PreAuthorize("hasAnyAuthority('message.read')")
     @Operation(summary = "根据入参分页查询认证信息", description = "根据入参分页查询认证信息")
     public Result<PageResult<FindAuthorizationResponse>> findAuthorizationPage(@Valid FindAuthorizationPageRequest request) {
         PageResult<FindAuthorizationResponse> authorizationPage = basicAuthorizationService.findAuthorizationPage(request);
@@ -46,7 +44,6 @@ public class OAuth2AuthorizationController {
     }
 
     @GetMapping("/findById/{id}")
-    @PreAuthorize("hasAnyAuthority('message.read')")
     @Parameter(name = "id", description = "认证信息的主键id")
     @Operation(summary = "根据id查询认证信息详情", description = "根据id查询认证信息详情")
     public Result<OAuth2Authorization> findById(@PathVariable String id) {
@@ -57,7 +54,6 @@ public class OAuth2AuthorizationController {
     }
 
     @DeleteMapping("/offline")
-    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "踢出登录", description = "根据access token撤销认证信息")
     public Result<String> offline(@Valid @RequestBody OfflineAuthorizationRequest request) {
         basicAuthorizationService.offline(request);

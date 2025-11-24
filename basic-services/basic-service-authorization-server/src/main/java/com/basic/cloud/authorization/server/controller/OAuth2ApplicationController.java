@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +32,6 @@ public class OAuth2ApplicationController {
     private final BasicApplicationService applicationService;
 
     @GetMapping("/findByClientId/{clientId}")
-    @PreAuthorize("hasAnyAuthority('message.read')")
     @Parameter(name = "clientId", description = "客户端id")
     @Operation(summary = "根据客户端id查询客户端信息", description = "根据客户端id查询客户端信息")
     public Result<BasicApplicationResponse> findByClientId(@PathVariable String clientId) {
@@ -60,7 +58,6 @@ public class OAuth2ApplicationController {
     }
 
     @GetMapping("/findByPage")
-    @PreAuthorize("hasAnyAuthority('message.read')")
     @Operation(summary = "根据入参分页查询客户端信息", description = "根据入参分页查询客户端信息")
     public Result<PageResult<BasicApplicationResponse>> findByPage(@Validated FindApplicationPageRequest request) {
         PageResult<BasicApplicationResponse> result = applicationService.findByPage(request);
@@ -75,7 +72,6 @@ public class OAuth2ApplicationController {
     }
 
     @PostMapping("/save")
-    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "保存客户端信息", description = "保存客户端信息")
     public Result<String> saveApplication(@RequestBody @Valid SaveApplicationRequest request) {
         String password = applicationService.saveApplication(request);
@@ -83,7 +79,6 @@ public class OAuth2ApplicationController {
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "更新客户端信息", description = "更新保存客户端信息")
     public Result<String> updateApplication(@RequestBody @Validated(Update.class) SaveApplicationRequest request) {
         applicationService.updateApplication(request);
@@ -91,7 +86,6 @@ public class OAuth2ApplicationController {
     }
 
     @DeleteMapping("/remove/{clientId}")
-    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "根据客户端id删除客户端", description = "根据客户端id删除客户端")
     public Result<String> remove(@PathVariable @Validated String clientId) {
         applicationService.removeByClientId(clientId);

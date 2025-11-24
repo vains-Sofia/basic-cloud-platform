@@ -174,6 +174,9 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
         if (ObjectUtils.isEmpty(request.getClientSecret())) {
             request.setClientSecret(idGenerator.generateId().toString());
         }
+        if (application.getSystemClient() == null) {
+            application.setSystemClient(Boolean.FALSE);
+        }
         String encodePassword = passwordEncoder.encode(request.getClientSecret());
         application.setClientSecret(encodePassword);
         // 设置客户端id签发时间
@@ -212,6 +215,7 @@ public class BasicApplicationServiceImpl implements BasicApplicationService {
         application.setClientId(existApplication.getClientId());
         application.setClientSecret(existApplication.getClientSecret());
         application.setClientIdIssuedAt(existApplication.getClientIdIssuedAt());
+        application.setSystemClient(existApplication.getSystemClient());
 
         // 添加审计
         application.setCreateBy(existApplication.getCreateBy());

@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +31,6 @@ public class OAuth2ScopeController {
     private final OAuth2ScopeService scopeService;
 
     @GetMapping("/findByPage")
-    @PreAuthorize("hasAnyAuthority('message.read')")
     @Operation(summary = "根据入参分页查询scope信息", description = "根据入参分页查询scope信息")
     public Result<PageResult<FindScopeResponse>> findScopePage(@Valid FindScopePageRequest request) {
 
@@ -47,7 +45,6 @@ public class OAuth2ScopeController {
     }
 
     @PostMapping("/save")
-    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "保存scope信息", description = "保存scope信息")
     public Result<String> saveScope(@RequestBody @Valid SaveScopeRequest request) {
         scopeService.saveScope(request);
@@ -55,7 +52,6 @@ public class OAuth2ScopeController {
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "修改scope信息", description = "修改scope信息")
     public Result<String> updateScope(@RequestBody @Validated(Update.class) SaveScopeRequest request) {
         scopeService.updateScope(request);
@@ -63,7 +59,6 @@ public class OAuth2ScopeController {
     }
 
     @PutMapping("/resetScopePermission")
-    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "重置scope对应的权限", description = "重置scope对应的权限")
     public Result<String> resetScopePermission(@RequestBody @Validated ResetScopePermissionRequest request) {
         scopeService.resetScopePermission(request);
@@ -71,7 +66,6 @@ public class OAuth2ScopeController {
     }
 
     @DeleteMapping("/removeById/{id}")
-    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "根据id删除scope", description = "根据id删除scope")
     public Result<String> removeScopeById(@PathVariable Long id) {
         scopeService.removeScopeById(id);
@@ -79,7 +73,6 @@ public class OAuth2ScopeController {
     }
 
     @GetMapping("/findPermissionIdsByScope/{scope}")
-    @PreAuthorize("hasAnyAuthority('message.write')")
     @Operation(summary = "查询scope对应的权限", description = "查询scope对应的权限")
     public Result<List<String>> findPermissionIdsByScope(@PathVariable String scope) {
         List<String> menuIds = scopeService.findPermissionIdsByScope(scope);
