@@ -177,6 +177,8 @@ public class BasicAuthorizationServiceImpl implements BasicAuthorizationService 
                 JpaOAuth2Authorization::getRegisteredClientId, request.getRegisteredClientId());
         builder.eq(!ObjectUtils.isEmpty(request.getAuthorizationGrantType()),
                 JpaOAuth2Authorization::getAuthorizationGrantType, request.getAuthorizationGrantType());
+
+        builder.ne(JpaOAuth2Authorization::getAuthorizationGrantType, BasicAuthorizationGrantType.ADMIN_PLATFORM_LOGIN.getValue());
         // access token签发时间是否为空
         boolean accessTokenIssuedTime = !ObjectUtils.isEmpty(request.getAccessTokenIssuedStart()) && !ObjectUtils.isEmpty(request.getAccessTokenIssuedEnd());
         // 授权码签发时间签发时间是否为空

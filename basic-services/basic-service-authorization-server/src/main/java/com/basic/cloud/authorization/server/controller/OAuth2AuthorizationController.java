@@ -11,7 +11,11 @@ import com.basic.framework.oauth2.storage.service.BasicAuthorizationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.AbstractOAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +61,24 @@ public class OAuth2AuthorizationController {
     @Operation(summary = "踢出登录", description = "根据access token撤销认证信息")
     public Result<String> offline(@Valid @RequestBody OfflineAuthorizationRequest request) {
         basicAuthorizationService.offline(request);
+        return Result.success();
+    }
+
+    @DeleteMapping("/logout")
+    @Operation(summary = "退出登录", description = "根据access token撤销认证信息并退出登录")
+    public Result<String> logout(HttpSession session) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            if (authentication.getCredentials() instanceof AbstractOAuth2Token token) {
+                OfflineAuthorizationRequest authorizationRequest = new OfflineAuthorizationRequest();
+                authorizationRequest.setAccessToken(token.getTokenValue());
+                basicAuthorizationService.offline(authorizationRequest);
+            }
+        }
+
+        if (session != null) {
+            session.invalidate();
+        }
         return Result.success();
     }
 
