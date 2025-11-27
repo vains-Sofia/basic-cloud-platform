@@ -16,7 +16,6 @@ import com.basic.framework.oauth2.storage.domain.response.QrInitResponse;
 import com.basic.framework.oauth2.storage.service.QrCodeLoginService;
 import com.basic.framework.oauth2.storage.sse.SseEmitterManager;
 import com.basic.framework.redis.support.RedisOperator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -30,16 +29,10 @@ import java.util.UUID;
  * @author vains
  */
 @Slf4j
-@RequiredArgsConstructor
-public class QrCodeLoginServiceImpl implements QrCodeLoginService {
-
-    private final SseEmitterManager sseEmitterManager;
-
-    private final RedisTemplate<String, ?> redisTemplate;
-
-    private final RedisOperator<String> stringRedisOperator;
-
-    private final RedisOperator<QrCodeStatus> redisOperator;
+public record QrCodeLoginServiceImpl(SseEmitterManager sseEmitterManager,
+                                     RedisTemplate<String, ?> redisTemplate,
+                                     RedisOperator<String> stringRedisOperator,
+                                     RedisOperator<QrCodeStatus> redisOperator) implements QrCodeLoginService {
 
     @Override
     public QrInitResponse generateQrCode() {
