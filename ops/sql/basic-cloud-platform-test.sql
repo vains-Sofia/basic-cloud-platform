@@ -1895,22 +1895,25 @@ CREATE TABLE `sys_dict_type`
   COLLATE = utf8mb4_bin COMMENT = '字典类型表'
   ROW_FORMAT = Dynamic;
 
-INSERT INTO `basic-cloud-platform`.sys_dict_type (id, type_code, name, description, status, create_by, update_by,
+INSERT INTO sys_dict_type (id, type_code, name, description, status, create_by, update_by,
                                                   create_time, update_time, create_name, update_name)
 VALUES (1941019168394715138, 'GENDER', '性别', '性别字典', 'Y', 1, 1, '2025-07-04 14:20:07', '2025-07-04 14:20:07',
         '云逸', '云逸');
-INSERT INTO `basic-cloud-platform`.sys_dict_type (id, type_code, name, description, status, create_by, update_by,
+INSERT INTO sys_dict_type (id, type_code, name, description, status, create_by, update_by,
                                                   create_time, update_time, create_name, update_name)
 VALUES (1941019564785803266, 'STATUS', '状态', '状态字典', 'Y', 1, 1, '2025-07-04 14:21:41', '2025-07-04 14:21:41',
         '云逸', '云逸');
-INSERT INTO `basic-cloud-platform`.sys_dict_type (id, type_code, name, description, status, create_by, update_by,
+INSERT INTO sys_dict_type (id, type_code, name, description, status, create_by, update_by,
                                                   create_time, update_time, create_name, update_name)
 VALUES (1941143997022277633, 'HTTP_METHOD', '请求方式', '请求方式字典', 'Y', 1, 1, '2025-07-04 20:56:03',
         '2025-07-18 14:08:00', '云逸', '云逸');
-INSERT INTO `basic-cloud-platform`.sys_dict_type (id, type_code, name, description, status, create_by, update_by,
+INSERT INTO sys_dict_type (id, type_code, name, description, status, create_by, update_by,
                                                   create_time, update_time, create_name, update_name)
 VALUES (1941144897803587586, 'MODULE', '所属模块', '菜单所属模块字典', 'Y', 1, 1, '2025-07-04 20:39:43',
         '2025-07-04 22:39:43', '云逸', '云逸');
+INSERT INTO sys_dict_type
+(id, type_code, name, description, status, create_by, update_by, create_time, update_time, create_name, update_name)
+VALUES(1992890401763430402, 'GRANT_TYPE', '授权模式', 'OAuth2授权模式', 'Y', 1, 1, '2025-11-24 17:37:53', '2025-11-24 17:37:53', '云逸', '云逸');
 
 -- ----------------------------
 -- Table structure for sys_dict_item
@@ -1986,6 +1989,30 @@ INSERT INTO sys_dict_item (id, type_code, item_code, item_name, sort_order, stat
                            create_time, update_time, create_name, update_name)
 VALUES (1941145223994609666, 'MODULE', 'system', '系统服务', 1, 'Y', '', 1, 1, '2025-07-04 22:41:01',
         '2025-07-04 22:41:01', '云逸', '云逸');
+INSERT INTO sys_dict_item
+(id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by, create_time, update_time, create_name, update_name)
+VALUES(1992890537277198338, 'GRANT_TYPE', 'password', '密码模式', 0, 'Y', '', 1, 1, '2025-11-24 17:38:25', '2025-11-24 17:38:25', '云逸', '云逸');
+INSERT INTO sys_dict_item
+(id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by, create_time, update_time, create_name, update_name)
+VALUES(1992890598971215874, 'GRANT_TYPE', 'email', '邮件模式', 1, 'Y', '', 1, 1, '2025-11-24 17:38:40', '2025-11-24 17:38:40', '云逸', '云逸');
+INSERT INTO sys_dict_item
+(id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by, create_time, update_time, create_name, update_name)
+VALUES(1992890680663674881, 'GRANT_TYPE', 'authorization_code', '授权码模式', 2, 'Y', '', 1, 1, '2025-11-24 17:38:59', '2025-11-24 17:38:59', '云逸', '云逸');
+INSERT INTO sys_dict_item
+(id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by, create_time, update_time, create_name, update_name)
+VALUES(1992890722547994626, 'GRANT_TYPE', 'refresh_token', '刷新token', 3, 'Y', '', 1, 1, '2025-11-24 17:39:09', '2025-11-24 17:39:09', '云逸', '云逸');
+INSERT INTO sys_dict_item
+(id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by, create_time, update_time, create_name, update_name)
+VALUES(1992890876319567873, 'GRANT_TYPE', 'client_credentials', '客户端模式', 4, 'Y', '', 1, 1, '2025-11-24 17:39:46', '2025-11-24 17:39:46', '云逸', '云逸');
+INSERT INTO sys_dict_item
+(id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by, create_time, update_time, create_name, update_name)
+VALUES(1992891174664605697, 'GRANT_TYPE', 'urn:ietf:params:oauth:grant-type:jwt-bearer', 'JWT 断言授权模式', 5, 'Y', '', 1, 1, '2025-11-24 17:40:57', '2025-11-24 17:40:57', '云逸', '云逸');
+INSERT INTO sys_dict_item
+(id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by, create_time, update_time, create_name, update_name)
+VALUES(1992891294122577922, 'GRANT_TYPE', 'urn:ietf:params:oauth:grant-type:device_code', '设备授权模式', 6, 'Y', '', 1, 1, '2025-11-24 17:41:25', '2025-11-24 17:41:25', '云逸', '云逸');
+INSERT INTO sys_dict_item
+(id, type_code, item_code, item_name, sort_order, status, i18n_json, create_by, update_by, create_time, update_time, create_name, update_name)
+VALUES(1992891408002125825, 'GRANT_TYPE', 'urn:ietf:params:oauth:grant-type:token-exchange', '令牌交换授权模式', 7, 'Y', '', 1, 1, '2025-11-24 17:41:52', '2025-11-24 17:41:52', '云逸', '云逸');
 
 DROP TABLE IF EXISTS `sys_api_scan_record`;
 CREATE TABLE `sys_api_scan_record`
