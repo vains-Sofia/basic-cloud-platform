@@ -15,6 +15,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Mybatis Plus 自动配置类
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Import;
  * @author vains
  */
 @Slf4j
+@EnableTransactionManagement
 @Import({BasicMetaObjectHandler.class})
 public class MybatisPlusAutoConfiguration {
 

@@ -6,8 +6,8 @@
         <artifactId>basic-services</artifactId>
         <version>0.0.1</version>
     </parent>
+
     <artifactId>basic-service-monitor</artifactId>
-    <name>Service - basic-service-monitor</name>
 
     <dependencies>
         <!-- Spring Boot web -->

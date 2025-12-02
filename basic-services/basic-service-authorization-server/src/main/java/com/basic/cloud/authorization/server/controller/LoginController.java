@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 登录接口
  *
- * @author YuJx
+ * @author vains
  */
 @Slf4j
 @RestController

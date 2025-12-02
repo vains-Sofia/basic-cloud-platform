@@ -28,8 +28,18 @@ public class FeignConstants {
     public static final String GATEWAY_APPLICATION = "gateway";
 
     /**
+     * Workflow模块的application name
+     */
+    public static final String WORKFLOW_APPLICATION = "workflow";
+
+    /**
      * system模块的ContextPath
      */
     public static final String SYSTEM_CONTEXT_PATH = "${basic.cloud.api.system.path:/system}";
+
+    /**
+     * system模块的ContextPath
+     */
+    public static final String WORKFLOW_CONTEXT_PATH = "${basic.cloud.api.workflow.path:/workflow}";
 
 }

@@ -14,6 +14,7 @@
     <description>basic-services provider services api modules</description>
     <modules>
         <module>basic-service-system-api</module>
+        <module>basic-service-workflow-api</module>
     </modules>
 
     <dependencies>

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public interface SysDictTypeClient {
      */
     @GetMapping("/page")
     @Operation(summary = "查询所有字典类型", description = "查询所有字典类型")
-    Result<DataPageResult<FindSysDictTypeResponse>> pageQuery(SysDictTypePageRequest request);
+    Result<DataPageResult<FindSysDictTypeResponse>> pageQuery(@Valid @SpringQueryMap SysDictTypePageRequest request);
 
     /**
      * 根据字典类型ID查询字典类型

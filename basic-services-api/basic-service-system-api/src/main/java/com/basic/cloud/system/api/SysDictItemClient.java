@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public interface SysDictItemClient {
      */
     @GetMapping("/page")
     @Operation(summary = "分页查询字典项", description = "分页查询字典项")
-    Result<DataPageResult<FindSysDictItemResponse>> pageQuery(SysDictItemPageRequest request);
+    Result<DataPageResult<FindSysDictItemResponse>> pageQuery(@SpringQueryMap SysDictItemPageRequest request);
 
     /**
      * 根据字典类型编码查询字典项

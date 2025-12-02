@@ -6,7 +6,7 @@
         <artifactId>basic-framework-oauth2</artifactId>
         <version>0.0.1</version>
     </parent>
-    <name>framework - basic-framework-oauth2-storage</name>
+
     <artifactId>basic-framework-oauth2-storage</artifactId>
 
     <dependencies>

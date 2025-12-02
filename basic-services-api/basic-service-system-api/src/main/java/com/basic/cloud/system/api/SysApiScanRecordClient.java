@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -30,7 +31,7 @@ public interface SysApiScanRecordClient {
      */
     @GetMapping("/page")
     @Operation(summary = "分页查询API扫描记录列表")
-    Result<DataPageResult<FindApiScanRecordResponse>> findByPage(@Valid FindApiScanRecordPageRequest request);
+    Result<DataPageResult<FindApiScanRecordResponse>> findByPage(@Valid @SpringQueryMap FindApiScanRecordPageRequest request);
 
     /**
      * 查询API扫描记录详情

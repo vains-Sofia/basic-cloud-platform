@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.basic.cloud.workflow.mapper.ProcessDefinitionMapper">
+
+    <resultMap id="BaseResultMap" type="com.basic.cloud.workflow.domain.entity.ProcessDefinition">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="processKey" column="process_key" jdbcType="VARCHAR"/>
+        <result property="processName" column="process_name" jdbcType="VARCHAR"/>
+        <result property="processXml" column="process_xml" jdbcType="VARCHAR"/>
+        <result property="processJson" column="process_json" jdbcType="VARCHAR"/>
+        <result property="category" column="category" jdbcType="VARCHAR"/>
+        <result property="version" column="version" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+        <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+        <result property="updateName" column="update_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deleted" column="deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,process_key,process_name,
+        process_xml,process_json,category,
+        version,status,remark,
+        create_by,update_by,create_name,
+        update_name,create_time,update_time,
+        deleted
+    </sql>
+
+    <select id="selectLatestDefinition" resultMap="BaseResultMap">
+        SELECT *
+        FROM process_definition t
+        WHERE t.deleted = 0
+          AND t.process_key = #{process_key}
+          AND t.version = (SELECT MAX(version)
+                           FROM process_definition
+                           WHERE process_key = #{process_key}
+                             AND deleted = 0
+                           limit 1)
+        limit 1
+    </select>
+    <select id="selectLatestDefinitionsPage"
+            resultType="com.basic.cloud.workflow.domain.entity.ProcessDefinition">
+        SELECT *
+        FROM process_definition t
+        WHERE t.deleted = 0
+
+        <if test="request.name != null and request.name != ''">
+            AND t.process_name LIKE CONCAT('%', #{request.name}, '%')
+        </if>
+
+        <if test="request.category != null and request.category != ''">
+            AND t.category = #{request.category}
+        </if>
+
+        <if test="request.status != null">
+            AND t.status = #{request.status}
+        </if>
+
+        AND t.version = (
+            SELECT MAX(version)
+            FROM process_definition
+            WHERE process_key = t.process_key
+            AND deleted = 0
+            limit 1
+        )
+
+        ORDER BY t.create_time DESC
+    </select>
+</mapper>

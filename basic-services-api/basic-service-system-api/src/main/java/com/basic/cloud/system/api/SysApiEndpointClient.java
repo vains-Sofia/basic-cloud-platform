@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public interface SysApiEndpointClient {
      */
     @GetMapping("/page")
     @Operation(summary = "分页查询API接口列表")
-    Result<DataPageResult<FindApiEndpointResponse>> findByPage(@Valid FindApiEndpointPageRequest request);
+    Result<DataPageResult<FindApiEndpointResponse>> findByPage(@Valid @SpringQueryMap FindApiEndpointPageRequest request);
 
     /**
      * 查询API接口详情
