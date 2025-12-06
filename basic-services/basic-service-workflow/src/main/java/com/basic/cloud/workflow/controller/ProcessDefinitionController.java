@@ -86,4 +86,10 @@ public class ProcessDefinitionController implements ProcessDefinitionClient {
         PageResult<ProcessDefinitionResponse> pageResult = processDefinitionService.getProcessDefinitionHistory(request);
         return Result.success(pageResult);
     }
+
+    @Override
+    public Result<String> rollback(String processKey, Integer version) {
+        processDefinitionService.rollback(processKey, version);
+        return null;
+    }
 }

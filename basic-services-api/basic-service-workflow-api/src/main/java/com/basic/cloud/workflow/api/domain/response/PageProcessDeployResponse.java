@@ -12,8 +12,8 @@ import java.util.Date;
  * @author vains
  */
 @Data
-@Schema(title = "ProcessDeploymentResponse", description = "流程部署响应bean")
-public class ProcessDeploymentResponse implements Serializable {
+@Schema(title = "PageProcessDeployResponse", description = "流程部署响应bean")
+public class PageProcessDeployResponse implements Serializable {
 
     @Schema(title = "部署 ID", description = "流程实例部署id")
     protected String id;

@@ -12,6 +12,7 @@ import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -78,5 +79,13 @@ public interface ProcessDefinitionClient {
     @Operation(summary = "查询流程定义历史", description = "用于查询同一个 process_key 下的所有版本（草稿 + 发布）")
     Result<PageResult<ProcessDefinitionResponse>> getProcessDefinitionHistory(
             @Valid @SpringQueryMap FindDefinitionHistoryPageRequest request);
+
+    @PutMapping("/rollback/{processKey}/{version}")
+    @Parameters({
+            @Parameter(name = "version", description = "要回退的版本", required = true),
+            @Parameter(name = "processKey", description = "流程定义的key", required = true)
+    })
+    @Operation(summary = "回退processKey对应的模型定义至指定版本", description = "回退processKey对应的模型定义至指定版本")
+    Result<String> rollback(@PathVariable String processKey, @PathVariable Integer version);
 
 }

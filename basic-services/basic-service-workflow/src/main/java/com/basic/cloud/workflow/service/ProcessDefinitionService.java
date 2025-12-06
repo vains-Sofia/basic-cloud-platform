@@ -90,4 +90,12 @@ public interface ProcessDefinitionService extends IService<ProcessDefinition> {
      * @return 流程定义详情
      */
     ProcessDefinitionResponse getByProcessKey(String processKey);
+
+    /**
+     * 回退processKey对应的模型定义至version版本
+     *
+     * @param processKey 流程定义key
+     * @param version    版本号
+     */
+    void rollback(String processKey, Integer version);
 }

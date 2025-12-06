@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
+
 /**
  * 针对表【process_definition(流程定义表)】的数据库操作Service实现
  *
@@ -58,8 +60,6 @@ public class ProcessDefinitionServiceImpl extends ServiceImpl<ProcessDefinitionM
             }
             // 版本递增
             processDefinition.setVersion(existsDefinition.getVersion() + 1);
-            // 置空id
-            processDefinition.setId(null);
             processDefinition.setCreateTime(existsDefinition.getCreateTime());
         }
 
@@ -208,6 +208,21 @@ public class ProcessDefinitionServiceImpl extends ServiceImpl<ProcessDefinitionM
             return processDefinitionResponse;
         }
         return null;
+    }
+
+    @Override
+    public void rollback(String processKey, Integer version) {
+        LambdaQueryWrapper<ProcessDefinition> wrapper = Wrappers.<ProcessDefinition>lambdaQuery()
+                .eq(ProcessDefinition::getProcessKey, processKey)
+                .eq(ProcessDefinition::getVersion, version);
+        List<ProcessDefinition> processDefinitions = baseMapper.selectList(wrapper);
+        Assert.notEmpty(processDefinitions, "流程定义不存在.");
+
+        ProcessDefinition processDefinition = processDefinitions.getFirst();
+        SaveProcessDefinitionRequest request = new SaveProcessDefinitionRequest();
+        BeanUtils.copyProperties(processDefinition, request);
+        request.setRemark("回退版本至v" + version);
+        this.saveProcessDefinition(request);
     }
 
     /**

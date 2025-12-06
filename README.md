@@ -1,8 +1,10 @@
+<center>
 <h2 style="margin: 30px 0 30px; text-align: center; font-weight: bold;">Basic Cloud Platform</h2>
 <h4 style="text-align: center;">基于 Spring Cloud 生态的现代化微服务平台</h4>
+</center>
 
 ---
-<div style="text-align: center">
+<center>
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/vains-Sofia/basic-cloud-platform)
 [![Static Badge](https://img.shields.io/badge/Spring%20Boot-3.4.4-6DB33F?logo=springboot)](https://docs.spring.io/spring-boot/index.html)
@@ -18,7 +20,7 @@
 [![Static Badge](https://img.shields.io/badge/License-Apache%20License%202.0-f5f5f5?logo=apache)](./LICENSE)
 ![Static Badge](https://img.shields.io/badge/Author-vains_Sofia(云逸)-blue)
 
-</div>
+</center>
 
 ---
 
