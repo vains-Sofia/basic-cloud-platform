@@ -1,17 +1,10 @@
-ARG MVN_COMMAND
-
-FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/maven:3.9.11-eclipse-temurin-25-noble AS build
-WORKDIR /app
-COPY . .
-RUN ${MVN_COMMAND}
-
-FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/openjdk:25-jdk-slim AS builder
+FROM registry.cn-guangzhou.aliyuncs.com/github-proxy/eclipse-temurin:21-jre AS builder
 WORKDIR /builder
 
-COPY --from=build /app/target/*.jar application.jar
+COPY target/*.jar application.jar
 RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
 
-FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/openjdk:25-jdk-slim
+FROM registry.cn-guangzhou.aliyuncs.com/github-proxy/eclipse-temurin:21-jre
 WORKDIR /application
 
 # 拷贝 Spring Boot 分层
@@ -23,6 +16,9 @@ COPY --from=builder /builder/extracted/application/ ./
 # 设置时区
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# 环境变量（默认留空，部署时传入）
+ENV JAVA_TOOL_OPTIONS=""
 
 ARG BUILD_PROJECT=unknown
 ARG BUILD_VERSION=0.0.1
