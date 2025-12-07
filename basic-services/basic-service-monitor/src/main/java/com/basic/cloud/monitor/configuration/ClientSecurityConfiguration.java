@@ -100,6 +100,11 @@ public class ClientSecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(login -> login.loginPage("/oauth2/authorization/messaging-client-oidc"));
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(
+                "/assets/**",
+                "/instances",
+                "/actuator/**"
+        ));
         // 添加BearerTokenAuthenticationFilter，解析请求头中的token
         http.oauth2ResourceServer(resourceServer -> resourceServer.jwt(Customizer.withDefaults()));
 
