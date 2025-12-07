@@ -96,6 +96,7 @@ public class ClientSecurityConfiguration {
         );
         http
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/assets/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(login -> login.loginPage("/oauth2/authorization/messaging-client-oidc"));
