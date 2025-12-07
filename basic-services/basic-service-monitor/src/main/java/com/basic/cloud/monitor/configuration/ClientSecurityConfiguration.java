@@ -101,7 +101,7 @@ public class ClientSecurityConfiguration {
                 )
                 .oauth2Login(login -> login.loginPage("/oauth2/authorization/messaging-client-oidc"));
         http.csrf(csrf -> csrf.ignoringRequestMatchers(
-                "/assets/**",
+                "/*/assets/**",
                 "/instances",
                 "/actuator/**"
         ));
