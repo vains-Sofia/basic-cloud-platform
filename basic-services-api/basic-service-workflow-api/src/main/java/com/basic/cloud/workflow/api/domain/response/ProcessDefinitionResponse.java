@@ -4,27 +4,34 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
+import java.util.List;
 
 /**
- * 查询流程定义响应
+ * 部署的流程定义详情
  *
  * @author vains
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ProcessDefinitionResponse extends PageProcessDefinitionResponse implements Serializable {
+@Schema(title = "DeployDefinitionResponse", description = "部署后的流程定义详情")
+public class ProcessDefinitionResponse extends PageProcessDefinitionResponse {
 
-    /**
-     * BPMN XML 内容
-     */
-    @Schema(title = "BPMN XML 内容", description = "BPMN XML 内容")
-    private String processXml;
+    @Schema(title = "资源名称", description = "xml资源名称")
+    private String resourceName;
 
-    /**
-     * 如果前端使用 bpmn-js JSON，可额外存储
-     */
-    @Schema(title = "BPMN JSON 内容", description = "预留字段，暂时没有使用")
-    private String processJson;
+    @Schema(title = "图片资源名称", description = "图片资源名称")
+    private String diagramResourceName;
+
+    @Schema(title = "启动用户", description = "启动用户")
+    private List<String> startUsers;
+
+    @Schema(title = "启动用户组", description = "启动用户组")
+    private List<String> startGroups;
+
+    @Schema(title = "启动表单key", description = "启动表单key")
+    private String startFormKey;
+
+    @Schema(title = "任务表单列表", description = "任务表单列表")
+    private List<TaskFormResponse> taskForms;
 
 }

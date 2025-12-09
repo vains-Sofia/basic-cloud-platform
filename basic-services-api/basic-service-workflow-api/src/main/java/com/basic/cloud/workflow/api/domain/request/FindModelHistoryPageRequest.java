@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FindDefinitionHistoryPageRequest extends BasicPageable {
+public class FindModelHistoryPageRequest extends BasicPageable {
 
     @NotBlank(message = "流程定义key不能为空")
     @Schema(title = "流程定义key", description = "流程定义key")

@@ -1,84 +1,42 @@
 package com.basic.cloud.workflow.api.domain.response;
 
-import com.basic.cloud.workflow.api.enums.DefinitionStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
- * 查询流程定义响应
+ * 部署后的流程定义响应bean
  *
  * @author vains
  */
 @Data
+@Schema(title = "PageDeployDefinitionResponse", description = "部署后的流程定义响应bean")
 public class PageProcessDefinitionResponse implements Serializable {
 
-    /**
-     * 主键id
-     */
-    @Schema(title = "主键id", description = "主键id")
-    private Long id;
+    @Schema(title = "流程定义 ID", description = "流程定义 ID")
+    protected String id;
 
-    /**
-     * 流程定义key
-     */
-    @Schema(title = "流程定义key", description = "流程定义key")
-    private String processKey;
+    @Schema(title = "流程名称", description = "流程名称")
+    protected String name;
 
-    /**
-     * 流程定义名称
-     */
-    @Schema(title = "流程定义名称", description = "流程定义名称")
-    private String processName;
+    @Schema(title = "流程key", description = "流程key")
+    protected String key;
 
-    /**
-     * 分类（请假、采购等）
-     */
-    @Schema(title = "分类", description = "请假、采购等")
-    private String category;
+    @Schema(title = "流程分类", description = "流程分类")
+    protected String category;
 
-    /**
-     * 模型版本
-     */
-    @Schema(title = "模型版本", description = "模型版本")
+    @Schema(title = "状态", description = "挂起 激活")
+    private Boolean suspended;
+
+    @Schema(title = "流程版本", description = "流程版本")
     private Integer version;
 
-    /**
-     * 状态：0=草稿，1=已发布，2=已禁用
-     */
-    @Schema(title = "状态", description = "状态")
-    private DefinitionStatusEnum status;
+    @Schema(title = "部署 ID", description = "流程实例部署id")
+    private String deploymentId;
 
-    /**
-     * 说明
-     */
-    @Schema(title = "流程说明", description = "流程说明")
-    private String remark;
-
-    /**
-     * 创建人名称
-     */
-    @Schema(title = "创建人名称")
-    private String createName;
-
-    /**
-     * 修改人名称
-     */
-    @Schema(title = "修改人名称")
-    private String updateName;
-
-    /**
-     * 创建时间
-     */
-    @Schema(title = "创建时间")
-    private LocalDateTime createTime;
-
-    /**
-     * 修改时间
-     */
-    @Schema(title = "修改时间")
-    private LocalDateTime updateTime;
+    @Schema(title = "部署时间", description = "部署时间")
+    private Date deploymentTime;
 
 }

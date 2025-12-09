@@ -12,8 +12,8 @@ import java.io.Serializable;
  * @author vains
  */
 @Data
-@Schema(title = "SaveProcessDefinitionRequest", description = "保存流程定义入参")
-public class SaveProcessDefinitionRequest implements Serializable {
+@Schema(title = "SaveProcessModelRequest", description = "保存流程定义入参")
+public class SaveProcessModelRequest implements Serializable {
 
     /**
      * 流程定义key

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.basic.cloud.workflow.mapper.ProcessDefinitionMapper">
+<mapper namespace="com.basic.cloud.workflow.mapper.ProcessModelMapper">
 
-    <resultMap id="BaseResultMap" type="com.basic.cloud.workflow.domain.entity.ProcessDefinition">
+    <resultMap id="BaseResultMap" type="com.basic.cloud.workflow.domain.entity.ProcessModel">
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="processKey" column="process_key" jdbcType="VARCHAR"/>
         <result property="processName" column="process_name" jdbcType="VARCHAR"/>
@@ -35,20 +35,20 @@
 
     <select id="selectLatestDefinition" resultMap="BaseResultMap">
         SELECT *
-        FROM process_definition t
+        FROM process_model t
         WHERE t.deleted = 0
           AND t.process_key = #{process_key}
           AND t.version = (SELECT MAX(version)
-                           FROM process_definition
+                           FROM process_model
                            WHERE process_key = #{process_key}
                              AND deleted = 0
                            limit 1)
         limit 1
     </select>
     <select id="selectLatestDefinitionsPage"
-            resultType="com.basic.cloud.workflow.domain.entity.ProcessDefinition">
+            resultType="com.basic.cloud.workflow.domain.entity.ProcessModel">
         SELECT *
-        FROM process_definition t
+        FROM process_model t
         WHERE t.deleted = 0
 
         <if test="request.name != null and request.name != ''">
@@ -65,7 +65,7 @@
 
         AND t.version = (
             SELECT MAX(version)
-            FROM process_definition
+            FROM process_model
             WHERE process_key = t.process_key
             AND deleted = 0
             limit 1

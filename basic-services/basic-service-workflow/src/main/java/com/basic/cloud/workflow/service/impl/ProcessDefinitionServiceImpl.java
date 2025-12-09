@@ -1,246 +1,207 @@
 package com.basic.cloud.workflow.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.basic.cloud.workflow.api.constants.FlowableConstants;
-import com.basic.cloud.workflow.api.domain.request.FindDefinitionHistoryPageRequest;
 import com.basic.cloud.workflow.api.domain.request.FindDefinitionPageRequest;
-import com.basic.cloud.workflow.api.domain.request.PublishProcessRequest;
-import com.basic.cloud.workflow.api.domain.request.SaveProcessDefinitionRequest;
-import com.basic.cloud.workflow.api.domain.response.PageProcessDefinitionResponse;
+import com.basic.cloud.workflow.api.domain.request.SuspensionStateChangeRequest;
 import com.basic.cloud.workflow.api.domain.response.ProcessDefinitionResponse;
-import com.basic.cloud.workflow.api.domain.response.PublishProcessResponse;
-import com.basic.cloud.workflow.api.enums.DefinitionStatusEnum;
-import com.basic.cloud.workflow.domain.entity.ProcessDefinition;
-import com.basic.cloud.workflow.mapper.ProcessDefinitionMapper;
+import com.basic.cloud.workflow.api.domain.response.PageProcessDefinitionResponse;
+import com.basic.cloud.workflow.api.domain.response.TaskFormResponse;
+import com.basic.cloud.workflow.api.enums.SuspensionStateEnum;
 import com.basic.cloud.workflow.service.ProcessDefinitionService;
+import com.basic.cloud.workflow.util.PaginationUtils;
+import com.basic.cloud.workflow.util.QueryBuilder;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.exception.CloudServiceException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.FlowElement;
+import org.flowable.bpmn.model.StartEvent;
+import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.RepositoryService;
-import org.springframework.beans.BeanUtils;
+import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import java.util.List;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
- * 针对表【process_definition(流程定义表)】的数据库操作Service实现
+ * 已部署的流程定义 Service 实现
  *
  * @author vains
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProcessDefinitionServiceImpl extends ServiceImpl<ProcessDefinitionMapper, ProcessDefinition>
-        implements ProcessDefinitionService {
+public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     private final RepositoryService repositoryService;
 
     @Override
-    public String saveProcessDefinition(SaveProcessDefinitionRequest processDefinitionRequest) {
-        ProcessDefinition processDefinition = new ProcessDefinition();
-        BeanUtils.copyProperties(processDefinitionRequest, processDefinition);
-
-        // 查询当前最新版本的流程定义
-        ProcessDefinition existsDefinition = baseMapper.selectLatestDefinition(processDefinitionRequest.getProcessKey());
-        if (existsDefinition == null) {
-            // 设置默认版本
-            processDefinition.setVersion(1);
-            // 设置默认状态
-            processDefinition.setStatus(DefinitionStatusEnum.DRAFT);
-        } else {
-            if (existsDefinition.getStatus() == DefinitionStatusEnum.DISABLED) {
-                throw new CloudServiceException(
-                        "流程 [" + processDefinition.getProcessKey() + "] 已被禁用，无法修改.");
+    public PageResult<PageProcessDefinitionResponse> pageQuery(FindDefinitionPageRequest request) {
+        ProcessDefinitionQuery definitionQuery = repositoryService.createProcessDefinitionQuery();
+        // 组装查询条件
+        ProcessDefinitionQuery processDefinitionQuery = QueryBuilder.of(definitionQuery)
+                .like(definitionQuery::processDefinitionNameLike, request.getName())
+                .like(definitionQuery::processDefinitionKeyLike, request.getProcessKey())
+                .like(definitionQuery::processDefinitionCategoryLike, request.getCategory())
+                .build();
+        processDefinitionQuery.latestVersion();
+        if (request.getActive() != null) {
+            if (request.getActive()) {
+                processDefinitionQuery.active();
+            } else {
+                processDefinitionQuery.suspended();
             }
-            // 版本递增
-            processDefinition.setVersion(existsDefinition.getVersion() + 1);
-            processDefinition.setCreateTime(existsDefinition.getCreateTime());
+        }
+        processDefinitionQuery.orderByDeploymentId().desc();
+
+        // 计算适用于框架内部分页的页码和每页行数
+        PaginationUtils.PageParam param = PaginationUtils.calc(Math.toIntExact(request.getCurrent()), Math.toIntExact(request.getSize()));
+        // 查询
+        List<ProcessDefinition> processDefinitions = processDefinitionQuery.listPage(param.firstResult(), param.maxResults());
+        if (!ObjectUtils.isEmpty(processDefinitions)) {
+            // 提取部署 ID
+            List<String> deploymentIds = processDefinitions.stream().map(ProcessDefinition::getDeploymentId).toList();
+            List<Deployment> deployments = repositoryService.createDeploymentQuery().deploymentIds(deploymentIds).list();
+            // 转为响应bean
+            List<PageProcessDefinitionResponse> responseList = processDefinitions
+                    .stream()
+                    .map(pd -> {
+                        PageProcessDefinitionResponse response = new PageProcessDefinitionResponse();
+                        response.setId(pd.getId());
+                        response.setName(pd.getName());
+                        response.setKey(pd.getKey());
+                        response.setCategory(pd.getCategory());
+                        response.setVersion(pd.getVersion());
+                        response.setSuspended(pd.isSuspended());
+                        response.setDeploymentId(pd.getDeploymentId());
+                        if (!ObjectUtils.isEmpty(deployments)) {
+                            // 提取部署时间
+                            Deployment deployment = deployments.stream().filter(d -> d.getId().equals(pd.getDeploymentId())).findFirst().orElse(null);
+                            response.setDeploymentTime(Optional.ofNullable(deployment).map(Deployment::getDeploymentTime).orElse(null));
+                        }
+                        return response;
+                    }).toList();
+
+            return PageResult.of(request.getCurrent(), request.getSize(), processDefinitionQuery.count(), responseList);
         }
 
-        // 添加流程定义
-        baseMapper.insert(processDefinition);
-
-        return processDefinition.getId() + "";
+        return PageResult.of(request.getCurrent(), request.getSize(), processDefinitionQuery.count(), List.of());
     }
 
     @Override
-    public void updateProcessDefinition(Long id, SaveProcessDefinitionRequest processDefinitionRequest) {
-        Assert.notNull(id, "主键id不能为空.");
-
-        // 检验是否存在
-        ProcessDefinition existingProcessDefinition = baseMapper.selectById(id);
-        if (existingProcessDefinition == null) {
-            throw new CloudServiceException("流程不存在.");
-        }
-
-        // 修改元数据，不新增版本
-        ProcessDefinition processDefinition = new ProcessDefinition();
-        BeanUtils.copyProperties(processDefinitionRequest, processDefinition);
-        processDefinition.setStatus(existingProcessDefinition.getStatus());
-        processDefinition.setVersion(existingProcessDefinition.getVersion());
-        processDefinition.setId(id);
-        processDefinition.setDeleted(existingProcessDefinition.getDeleted());
-        baseMapper.updateById(processDefinition);
-    }
-
-    @Override
-    public void deleteProcessDefinition(String processKey) {
-        Assert.hasText(processKey, "流程定义key不能为空.");
-        LambdaUpdateWrapper<ProcessDefinition> wrapper = Wrappers.lambdaUpdate(ProcessDefinition.class)
-                .eq(ProcessDefinition::getProcessKey, processKey);
-        baseMapper.delete(wrapper);
-    }
-
-    @Override
-    public ProcessDefinitionResponse getProcessDefinition(Long id) {
-        Assert.notNull(id, "主键id不能为空.");
-        ProcessDefinition processDefinition = baseMapper.selectById(id);
-        if (processDefinition != null) {
-            ProcessDefinitionResponse processDefinitionResponse = new ProcessDefinitionResponse();
-            BeanUtils.copyProperties(processDefinition, processDefinitionResponse);
-            return processDefinitionResponse;
-        }
-        return null;
-    }
-
-    @Override
-    public PageResult<PageProcessDefinitionResponse> getProcessDefinitionPage(FindDefinitionPageRequest request) {
-        // 分页查询
-        IPage<ProcessDefinition> paginated = baseMapper.
-                selectLatestDefinitionsPage(Page.of(request.getCurrent(), request.getSize()), request);
-
-        // 转为响应bean
-        IPage<PageProcessDefinitionResponse> responsePage = paginated.convert(e -> {
-            PageProcessDefinitionResponse processDefinitionResponse = new PageProcessDefinitionResponse();
-            BeanUtils.copyProperties(e, processDefinitionResponse);
-            return processDefinitionResponse;
-        });
-
-        return PageResult.of(
-                responsePage.getCurrent(), responsePage.getSize(), responsePage.getTotal(), responsePage.getRecords());
-    }
-
-    @Override
-    public PublishProcessResponse publishProcessDefinition(Long id, PublishProcessRequest request) {
-        Assert.notNull(id, "主键id不能为空.");
-        ProcessDefinition processDefinition = baseMapper.selectById(id);
-        if (processDefinition == null) {
-            throw new CloudServiceException("流程不存在.");
-        }
-
-        if (processDefinition.getStatus() == DefinitionStatusEnum.DISABLED) {
-            throw new CloudServiceException("流程已被禁用，发布失败.");
-        }
-
-        // xml特殊处理
-        String xml = resolveXml(processDefinition.getProcessXml());
-        Assert.hasText(xml, "请绘制流程图以后再发布.");
-
-        // 部署流程
-        repositoryService.createDeployment()
-                .addString((processDefinition.getProcessKey() + FlowableConstants.BPMN_XML_SUFFIX), xml)
-                .key(processDefinition.getProcessKey())
-                .name(processDefinition.getProcessName())
-                .category(processDefinition.getCategory())
-                .deploy();
-
-        // 更新流程定义为发布状态
-        if (!ObjectUtils.isEmpty(request.getRemark())) {
-            processDefinition.setRemark(request.getRemark());
-        }
-        processDefinition.setStatus(DefinitionStatusEnum.PUBLISH);
-        baseMapper.updateById(processDefinition);
-
-        // 响应
-        return new PublishProcessResponse(processDefinition.getProcessKey(), processDefinition.getVersion());
-    }
-
-    @Override
-    public void toggleDefinitionStatus(Long id, DefinitionStatusEnum statusEnum) {
-        Assert.notNull(id, "主键id不能为空.");
-        ProcessDefinition processDefinition = baseMapper.selectById(id);
-        if (processDefinition == null) {
-            throw new CloudServiceException("流程不存在.");
-        }
-        if (statusEnum == null) {
-            DefinitionStatusEnum status = processDefinition.getStatus();
-            processDefinition.setStatus(
-                    status == DefinitionStatusEnum.DRAFT ? DefinitionStatusEnum.DISABLED : DefinitionStatusEnum.DRAFT);
+    public void changeSuspensionState(String processDefinitionId, SuspensionStateChangeRequest request) {
+        // 默认激活/挂起关联的流程实例
+        boolean includeProcessInstances = request.getIncludeProcessInstances() == null || request.getIncludeProcessInstances();
+        if (Objects.equals(request.getState(), SuspensionStateEnum.ACTIVE)) {
+            if (log.isDebugEnabled()) {
+                log.debug("激活流程定义【{}】，是否激活关联的流程实例【{}】.", processDefinitionId, includeProcessInstances);
+            }
+            // 激活指定的流程定义
+            repositoryService.activateProcessDefinitionById(processDefinitionId, includeProcessInstances, (null));
         } else {
-            processDefinition.setStatus(statusEnum);
+            if (log.isDebugEnabled()) {
+                log.debug("挂起流程定义【{}】，是否挂起关联的流程实例【{}】.", processDefinitionId, includeProcessInstances);
+            }
+            // 挂起指定的流程定义
+            repositoryService.suspendProcessDefinitionById(processDefinitionId, includeProcessInstances, (null));
+        }
+    }
+
+    @Override
+    public String getBpmnXml(String processDefinitionId) {
+        Assert.hasText(processDefinitionId, "流程定义ID不能为空");
+        // 查询流程定义
+        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
+                .processDefinitionId(processDefinitionId)
+                .singleResult();
+        Assert.notNull(processDefinition, "流程定义不存在");
+        String deploymentId = processDefinition.getDeploymentId();
+        try (InputStream stream = repositoryService.getResourceAsStream(deploymentId, processDefinition.getResourceName())) {
+            return IOUtils.toString(stream, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.error("获取流程定义【{}】的BPMN XML失败.", processDefinitionId, e);
+            throw new CloudServiceException("获取流程定义" + processDefinitionId + "的BPMN XML失败");
+        }
+    }
+
+    @Override
+    public ProcessDefinitionResponse getProcessDefinitionDetail(String processDefinitionId) {
+        ProcessDefinition pd = repositoryService.createProcessDefinitionQuery()
+                .processDefinitionId(processDefinitionId)
+                .singleResult();
+        Assert.notNull(pd, "ProcessDefinition not found: " + processDefinitionId);
+
+        Deployment deployment = repositoryService.createDeploymentQuery()
+                .deploymentId(pd.getDeploymentId())
+                .singleResult();
+
+        ProcessDefinitionResponse dto = new ProcessDefinitionResponse();
+        dto.setId(pd.getId());
+        dto.setName(pd.getName());
+        dto.setKey(pd.getKey());
+        dto.setVersion(pd.getVersion());
+        dto.setCategory(pd.getCategory());
+        dto.setSuspended(pd.isSuspended());
+        dto.setDeploymentId(pd.getDeploymentId());
+        if (deployment != null) {
+            dto.setDeploymentTime(deployment.getDeploymentTime());
+        }
+        dto.setResourceName(pd.getResourceName());
+        dto.setDiagramResourceName(pd.getDiagramResourceName());
+
+        // 启动权限 & 表单绑定：Flowable 原生并不强制存放启动权限，通常业务系统在扩展表或 model/meta 存储
+        // 如果你把 startFormKey 存在 formRepository 或 processDefinition.extensionElements，可以尝试下面读取：
+
+        // task forms: 遍历 bpmn model 的 userTask extensionElements 查找 formKey
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(pd.getId());
+        List<TaskFormResponse> taskForms = getTaskFormResponses(bpmnModel);
+        dto.setTaskForms(taskForms);
+
+        // 尝试获取启动表单key
+        Collection<FlowElement> flowElements = bpmnModel.getMainProcess().getFlowElements();
+        if (!ObjectUtils.isEmpty(flowElements)) {
+            // 尝试获取开始节点
+            flowElements.stream()
+                    .filter(fe -> fe instanceof StartEvent)
+                    .findFirst()
+                    .map(StartEvent.class::cast)
+                    .ifPresent(startEvent -> dto.setStartFormKey(startEvent.getFormKey()));
         }
 
-        baseMapper.updateById(processDefinition);
-    }
+        // 启动用户/组：如果使用 identityLink 去管理启动权限，需要在自定义表或使用 processDefinition identity links（Flowable 支持）
+        // Flowable没有直接的API列出process-definition级别的 identity links，常见做法：在部署时把权限写入自定义表或 model meta
+        // 这里返回空，或在你的系统中额外查询。
+        dto.setStartUsers(Collections.emptyList());
+        dto.setStartGroups(Collections.emptyList());
 
-    @Override
-    public PageResult<ProcessDefinitionResponse> getProcessDefinitionHistory(FindDefinitionHistoryPageRequest request) {
-        LambdaQueryWrapper<ProcessDefinition> wrapper = Wrappers.lambdaQuery(ProcessDefinition.class)
-                .eq(ProcessDefinition::getProcessKey, request.getProcessKey())
-                .orderByDesc(ProcessDefinition::getUpdateTime);
-
-        // 分页查询
-        Page<ProcessDefinition> paginated = baseMapper.selectPage(Page.of(request.getCurrent(), request.getSize()), wrapper);
-
-        IPage<ProcessDefinitionResponse> responsePage = paginated.convert(e -> {
-            ProcessDefinitionResponse processDefinitionResponse = new ProcessDefinitionResponse();
-            BeanUtils.copyProperties(e, processDefinitionResponse);
-            return processDefinitionResponse;
-        });
-
-        return PageResult.of(
-                responsePage.getCurrent(), responsePage.getSize(), responsePage.getTotal(), responsePage.getRecords());
-    }
-
-    @Override
-    public ProcessDefinitionResponse getByProcessKey(String processKey) {
-        Assert.notNull(processKey, "流程定义key不能为空.");
-        ProcessDefinition processDefinition = baseMapper.selectLatestDefinition(processKey);
-        if (processDefinition != null) {
-            ProcessDefinitionResponse processDefinitionResponse = new ProcessDefinitionResponse();
-            BeanUtils.copyProperties(processDefinition, processDefinitionResponse);
-            return processDefinitionResponse;
-        }
-        return null;
-    }
-
-    @Override
-    public void rollback(String processKey, Integer version) {
-        LambdaQueryWrapper<ProcessDefinition> wrapper = Wrappers.<ProcessDefinition>lambdaQuery()
-                .eq(ProcessDefinition::getProcessKey, processKey)
-                .eq(ProcessDefinition::getVersion, version);
-        List<ProcessDefinition> processDefinitions = baseMapper.selectList(wrapper);
-        Assert.notEmpty(processDefinitions, "流程定义不存在.");
-
-        ProcessDefinition processDefinition = processDefinitions.getFirst();
-        SaveProcessDefinitionRequest request = new SaveProcessDefinitionRequest();
-        BeanUtils.copyProperties(processDefinition, request);
-        request.setRemark("回退版本至v" + version);
-        this.saveProcessDefinition(request);
+        return dto;
     }
 
     /**
-     * Camunda提供的扩展属性flowable无法发起流程
+     * 获取任务表单
      *
-     * @param processXml 流程xml
-     * @return 适用于Flowable的流程xml
+     * @param bpmnModel BPMN模型
+     * @return 任务表单列表
      */
-    private String resolveXml(String processXml) {
-        Assert.hasText(processXml, "请绘制流程图以后再发布.");
-        String bpmnXml = processXml.replaceAll("xmlns:camunda=\"http://camunda.org/schema/1.0/bpmn\"", "xmlns:flowable=\"http://flowable.org/bpmn\" ");
-        bpmnXml = bpmnXml.replaceAll("targetNamespace=\"http://bpmn.io/bpmn\"", "targetNamespace=\"http://www.flowable.org/processdef\"");
-        bpmnXml = bpmnXml.replaceAll("exporterVersion=\"5.1.2\"", "exporterVersion=\"7.1.0\"");
-        bpmnXml = bpmnXml.replaceAll("camunda:", "flowable:");
-        return bpmnXml;
+    private List<TaskFormResponse> getTaskFormResponses(BpmnModel bpmnModel) {
+        List<TaskFormResponse> taskForms = new ArrayList<>();
+        if (bpmnModel != null) {
+            for (FlowElement fe : bpmnModel.getMainProcess().getFlowElements()) {
+                if (fe instanceof UserTask ut) {
+                    TaskFormResponse t = new TaskFormResponse();
+                    t.setTaskDefinitionKey(ut.getId());
+                    t.setFormKey(ut.getFormKey());
+                    taskForms.add(t);
+                }
+            }
+        }
+        return taskForms;
     }
 }
-
-
-
-

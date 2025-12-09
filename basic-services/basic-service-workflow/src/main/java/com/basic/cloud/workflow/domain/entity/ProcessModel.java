@@ -15,8 +15,8 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName(value = "process_definition", autoResultMap = true)
-public class ProcessDefinition extends BasicEntity {
+@TableName(value = "process_model", autoResultMap = true)
+public class ProcessModel extends BasicEntity {
     /**
      * 主键
      */

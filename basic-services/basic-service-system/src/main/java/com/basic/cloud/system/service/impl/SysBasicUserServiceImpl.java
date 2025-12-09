@@ -272,6 +272,8 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
                 }
             }
         }
+        // 暂时不返回权限
+        userResponse.setAuthorities(null);
         return userResponse;
     }
 
