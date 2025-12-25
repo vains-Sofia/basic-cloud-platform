@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  * @author vains
  */
 @RequestMapping("/process-model")
-@Tag(name = "ProcessModelClient", description = "流程模型相关接口")
+@Tag(name = "流程模型相关接口", description = "流程模型相关接口")
 @FeignClient(name = FeignConstants.WORKFLOW_APPLICATION, path = FeignConstants.WORKFLOW_CONTEXT_PATH, contextId = "ProcessModelClient")
 public interface ProcessModelClient {
 

@@ -25,7 +25,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 @Slf4j
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
-@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP, keyspaceNotificationsConfigParameter = "")
+@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 public class DataRedisAutoConfiguration {
 
     private final Jackson2ObjectMapperBuilder builder;
