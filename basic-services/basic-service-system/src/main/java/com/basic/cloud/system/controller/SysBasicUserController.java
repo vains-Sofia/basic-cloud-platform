@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -113,6 +115,12 @@ public class SysBasicUserController implements SysBasicUserClient {
     public Result<String> updateUserRoles(UpdateUserRolesRequest request) {
         basicUserService.updateUserRoles(request);
         return Result.success();
+    }
+
+    @Override
+    public Result<List<FindBasicUserResponse>> getByIds(Collection<Long> ids) {
+        List<FindBasicUserResponse> users = basicUserService.getByIds(ids);
+        return Result.success(users);
     }
 
 }

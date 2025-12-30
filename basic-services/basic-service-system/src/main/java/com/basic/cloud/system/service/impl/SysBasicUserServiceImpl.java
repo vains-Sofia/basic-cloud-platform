@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -306,6 +307,17 @@ public class SysBasicUserServiceImpl implements SysBasicUserService {
             return;
         }
         userRoleRepository.saveAll(userRoles);
+    }
+
+    @Override
+    public List<FindBasicUserResponse> getByIds(Collection<Long> ids) {
+        return basicUserRepository.findAllById(ids)
+                .stream()
+                .map(u -> {
+                    FindBasicUserResponse basicUserResponse = new FindBasicUserResponse();
+                    BeanUtils.copyProperties(u, basicUserResponse);
+                    return basicUserResponse;
+                }).toList();
     }
 
     /**

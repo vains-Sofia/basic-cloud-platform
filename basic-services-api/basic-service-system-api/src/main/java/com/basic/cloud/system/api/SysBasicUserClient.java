@@ -14,11 +14,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 基础用户信息api
@@ -153,5 +157,9 @@ public interface SysBasicUserClient {
     @PutMapping("/updateUserRoles")
     @Operation(summary = "更新用户角色", description = "更新用户角色")
     Result<String> updateUserRoles(@Valid @RequestBody UpdateUserRolesRequest request);
+
+    @PostMapping("/getByIds")
+    @Operation(summary = "根据用户ID列表获取用户列表", description = "根据用户ID列表获取用户列表")
+    Result<List<FindBasicUserResponse>> getByIds(@NotEmpty @RequestBody Collection<Long> ids);
 
 }

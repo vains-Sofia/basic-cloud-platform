@@ -47,6 +47,12 @@
             <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-openfeign</artifactId>
         </dependency>
+
+        <!-- System模块api -->
+        <dependency>
+            <groupId>com.basic.cloud</groupId>
+            <artifactId>basic-service-system-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

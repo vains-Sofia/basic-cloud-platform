@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -75,6 +76,7 @@ public final class JwtIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEnco
                 redisHashOperator.set(AuthorizeConstants.JTI_USER_HASH + jti, unionId, expire);
                 // 将用户信息存储到Redis中，方便资源服务自省时获取
                 redisOperator.set((AuthorizeConstants.USERINFO_PREFIX + unionId), user, expire);
+                user.setAuthorities(Collections.emptyList());
             }
         }
 

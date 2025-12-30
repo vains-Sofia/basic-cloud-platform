@@ -60,8 +60,8 @@ public class ProcessFormServiceImpl extends ServiceImpl<ProcessFormMapper, Proce
     public PageResult<PageProcessFormResponse> pageProcessForm(FindProcessFormPageRequest request) {
         Page<ProcessForm> formPage = Page.of(request.getCurrent(), request.getSize());
         LambdaQueryWrapper<ProcessForm> wrapper = Wrappers.lambdaQuery(ProcessForm.class)
-                .like(ObjectUtils.isEmpty(request.getTitle()), ProcessForm::getTitle, request.getTitle())
-                .like(ObjectUtils.isEmpty(request.getDescription()), ProcessForm::getDescription, request.getDescription())
+                .like(!ObjectUtils.isEmpty(request.getTitle()), ProcessForm::getTitle, request.getTitle())
+                .like(!ObjectUtils.isEmpty(request.getDescription()), ProcessForm::getDescription, request.getDescription())
                 .orderByDesc(ProcessForm::getCreateTime);
         Page<ProcessForm> selectedPage = baseMapper.selectPage(formPage, wrapper);
         IPage<PageProcessFormResponse> convert = selectedPage.convert(e -> {

@@ -11,6 +11,9 @@ import com.basic.framework.core.domain.PageResult;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * 基础用户信息Service接口
  *
@@ -91,4 +94,12 @@ public interface SysBasicUserService {
      * @param request 更新用户角色入参
      */
     void updateUserRoles(@Valid UpdateUserRolesRequest request);
+
+    /**
+     * 根据用户ID列表获取用户列表
+     *
+     * @param ids 用户主键ID列表
+     * @return 用户列表
+     */
+    List<FindBasicUserResponse> getByIds(Collection<Long> ids);
 }
