@@ -1,9 +1,7 @@
 package com.basic.cloud.workflow.service;
 
 import com.basic.cloud.workflow.api.domain.request.FindTodoTaskPageRequest;
-import com.basic.cloud.workflow.api.domain.request.StartProcessRequest;
 import com.basic.cloud.workflow.api.domain.request.TaskApproveRequest;
-import com.basic.cloud.workflow.api.domain.response.StartProcessResponse;
 import com.basic.cloud.workflow.api.domain.response.TaskApproveResponse;
 import com.basic.cloud.workflow.api.domain.response.TodoTaskPageResponse;
 import com.basic.framework.core.domain.PageResult;
@@ -14,14 +12,6 @@ import com.basic.framework.core.domain.PageResult;
  * @author vains
  */
 public interface ProcessTaskService {
-
-    /**
-     * 启动流程实例
-     *
-     * @param request 启动流程参数
-     * @return 开始节点与下一个节点相关数据
-     */
-    StartProcessResponse startProcess(StartProcessRequest request);
 
     /**
      * 分页查询待办任务列表

@@ -2,9 +2,11 @@ package com.basic.cloud.workflow.controller;
 
 import com.basic.cloud.workflow.api.ProcessDefinitionClient;
 import com.basic.cloud.workflow.api.domain.request.FindDefinitionPageRequest;
+import com.basic.cloud.workflow.api.domain.request.StartProcessRequest;
 import com.basic.cloud.workflow.api.domain.request.SuspensionStateChangeRequest;
 import com.basic.cloud.workflow.api.domain.response.ProcessDefinitionResponse;
 import com.basic.cloud.workflow.api.domain.response.PageProcessDefinitionResponse;
+import com.basic.cloud.workflow.api.domain.response.StartProcessResponse;
 import com.basic.cloud.workflow.service.ProcessDefinitionService;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
@@ -44,6 +46,12 @@ public class ProcessDefinitionController implements ProcessDefinitionClient {
     public Result<String> getBpmnXml(String processDefinitionId) {
         String bpmnXml = processDefinitionService.getBpmnXml(processDefinitionId);
         return Result.success(bpmnXml);
+    }
+
+    @Override
+    public Result<StartProcessResponse> startProcess(StartProcessRequest request) {
+        StartProcessResponse response = processDefinitionService.startProcess(request);
+        return Result.success(response);
     }
 
 }

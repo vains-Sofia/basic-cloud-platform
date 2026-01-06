@@ -1,7 +1,9 @@
 package com.basic.cloud.workflow.api.domain.request;
 
+import com.basic.cloud.workflow.api.enums.ApproveActionEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,11 +22,11 @@ public class TaskApproveRequest implements Serializable {
     private String taskId;
 
     /**
-     * APPROVE / REJECT
+     * APPROVE / REJECT / COUNTERSIGN / TRANSFER
      */
-    @NotBlank(message = "审批类型不能为空")
+    @NotNull(message = "审批类型不能为空")
     @Schema(title = "审批类型", description = "审批类型")
-    private String action;
+    private ApproveActionEnum action;
 
     /**
      * 审批意见

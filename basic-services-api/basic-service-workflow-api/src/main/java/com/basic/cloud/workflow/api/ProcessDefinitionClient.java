@@ -1,9 +1,11 @@
 package com.basic.cloud.workflow.api;
 
 import com.basic.cloud.workflow.api.domain.request.FindDefinitionPageRequest;
+import com.basic.cloud.workflow.api.domain.request.StartProcessRequest;
 import com.basic.cloud.workflow.api.domain.request.SuspensionStateChangeRequest;
 import com.basic.cloud.workflow.api.domain.response.ProcessDefinitionResponse;
 import com.basic.cloud.workflow.api.domain.response.PageProcessDefinitionResponse;
+import com.basic.cloud.workflow.api.domain.response.StartProcessResponse;
 import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
@@ -40,5 +42,9 @@ public interface ProcessDefinitionClient {
     @GetMapping("/{processDefinitionId}/bpmn")
     @Operation(summary = "根据部署后的流程定义ID获取BPMN XML", description = "根据部署后的流程定义ID获取BPMN XML")
     Result<String> getBpmnXml(@PathVariable String processDefinitionId);
+
+    @PostMapping("/start")
+    @Operation(summary = "启动流程实例", description = "启动流程实例")
+    Result<StartProcessResponse> startProcess(@Valid @RequestBody StartProcessRequest request);
 
 }

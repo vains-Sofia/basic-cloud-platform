@@ -2,9 +2,7 @@ package com.basic.cloud.workflow.controller;
 
 import com.basic.cloud.workflow.api.ProcessTaskClient;
 import com.basic.cloud.workflow.api.domain.request.FindTodoTaskPageRequest;
-import com.basic.cloud.workflow.api.domain.request.StartProcessRequest;
 import com.basic.cloud.workflow.api.domain.request.TaskApproveRequest;
-import com.basic.cloud.workflow.api.domain.response.StartProcessResponse;
 import com.basic.cloud.workflow.api.domain.response.TaskApproveResponse;
 import com.basic.cloud.workflow.api.domain.response.TodoTaskPageResponse;
 import com.basic.cloud.workflow.service.ProcessTaskService;
@@ -23,12 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProcessTaskController implements ProcessTaskClient {
 
     private final ProcessTaskService processTaskService;
-
-    @Override
-    public Result<StartProcessResponse> startProcess(StartProcessRequest request) {
-        StartProcessResponse response = processTaskService.startProcess(request);
-        return Result.success(response);
-    }
 
     @Override
     public Result<PageResult<TodoTaskPageResponse>> todoTaskPage(FindTodoTaskPageRequest request) {

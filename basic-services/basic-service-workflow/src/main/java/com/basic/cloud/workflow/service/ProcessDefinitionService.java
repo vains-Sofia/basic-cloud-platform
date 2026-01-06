@@ -1,9 +1,11 @@
 package com.basic.cloud.workflow.service;
 
 import com.basic.cloud.workflow.api.domain.request.FindDefinitionPageRequest;
+import com.basic.cloud.workflow.api.domain.request.StartProcessRequest;
 import com.basic.cloud.workflow.api.domain.request.SuspensionStateChangeRequest;
 import com.basic.cloud.workflow.api.domain.response.ProcessDefinitionResponse;
 import com.basic.cloud.workflow.api.domain.response.PageProcessDefinitionResponse;
+import com.basic.cloud.workflow.api.domain.response.StartProcessResponse;
 import com.basic.framework.core.domain.PageResult;
 
 /**
@@ -44,5 +46,13 @@ public interface ProcessDefinitionService {
      * @return 流程定义详情
      */
     ProcessDefinitionResponse getProcessDefinitionDetail(String processDefinitionId);
+
+    /**
+     * 启动流程实例
+     *
+     * @param request 启动流程参数
+     * @return 开始节点与下一个节点相关数据
+     */
+    StartProcessResponse startProcess(StartProcessRequest request);
 
 }

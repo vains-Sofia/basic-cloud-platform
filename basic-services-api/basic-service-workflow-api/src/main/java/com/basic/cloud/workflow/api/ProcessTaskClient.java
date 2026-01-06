@@ -1,9 +1,7 @@
 package com.basic.cloud.workflow.api;
 
 import com.basic.cloud.workflow.api.domain.request.FindTodoTaskPageRequest;
-import com.basic.cloud.workflow.api.domain.request.StartProcessRequest;
 import com.basic.cloud.workflow.api.domain.request.TaskApproveRequest;
-import com.basic.cloud.workflow.api.domain.response.StartProcessResponse;
 import com.basic.cloud.workflow.api.domain.response.TaskApproveResponse;
 import com.basic.cloud.workflow.api.domain.response.TodoTaskPageResponse;
 import com.basic.framework.core.constants.FeignConstants;
@@ -28,10 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "流程任务相关接口", description = "流程任务相关接口")
 @FeignClient(name = FeignConstants.WORKFLOW_APPLICATION, path = FeignConstants.WORKFLOW_CONTEXT_PATH, contextId = "StartProcessClient")
 public interface ProcessTaskClient {
-
-    @PostMapping("/start")
-    @Operation(summary = "启动流程实例", description = "启动流程实例")
-    Result<StartProcessResponse> startProcess(@Valid @RequestBody StartProcessRequest request);
 
     @GetMapping("/todo/page")
     @Operation(summary = "查询我的待办任务列表", description = "查询我的待办任务列表")

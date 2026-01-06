@@ -1,27 +1,33 @@
 package com.basic.cloud.workflow.service.impl;
 
 import com.basic.cloud.workflow.api.domain.request.FindDefinitionPageRequest;
+import com.basic.cloud.workflow.api.domain.request.StartProcessRequest;
 import com.basic.cloud.workflow.api.domain.request.SuspensionStateChangeRequest;
-import com.basic.cloud.workflow.api.domain.response.PageProcessDefinitionResponse;
-import com.basic.cloud.workflow.api.domain.response.ProcessDefinitionResponse;
-import com.basic.cloud.workflow.api.domain.response.TaskFormResponse;
+import com.basic.cloud.workflow.api.domain.response.*;
 import com.basic.cloud.workflow.api.enums.SuspensionStateEnum;
 import com.basic.cloud.workflow.service.ProcessDefinitionService;
 import com.basic.cloud.workflow.util.PaginationUtils;
 import com.basic.cloud.workflow.util.QueryBuilder;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.exception.CloudServiceException;
+import com.basic.framework.oauth2.core.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.FlowElement;
 import org.flowable.bpmn.model.StartEvent;
 import org.flowable.bpmn.model.UserTask;
+import org.flowable.engine.IdentityService;
 import org.flowable.engine.RepositoryService;
+import org.flowable.engine.RuntimeService;
+import org.flowable.engine.TaskService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.repository.ProcessDefinitionQuery;
+import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.task.api.Task;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -39,6 +45,12 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
+
+    private final TaskService taskService;
+
+    private final RuntimeService runtimeService;
+
+    private final IdentityService identityService;
 
     private final RepositoryService repositoryService;
 
@@ -204,4 +216,144 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
         }
         return taskForms;
     }
+
+    @Override
+    public StartProcessResponse startProcess(StartProcessRequest request) {
+        String startUserId = SecurityUtils.getUserId() + "";
+
+        // 设置流程发起人（Flowable 标准做法）
+        identityService.setAuthenticatedUserId(startUserId);
+        Map<String, Object> variables;
+        if (org.apache.commons.lang3.ObjectUtils.isEmpty(request.getVariables())) {
+            variables = new HashMap<>(1);
+        } else {
+            variables = request.getVariables();
+        }
+        // 设置流程发起人
+        variables.put(BpmnXMLConstants.ATTRIBUTE_EVENT_START_INITIATOR, startUserId);
+
+        try {
+            // 启动流程实例
+            ProcessInstance processInstance =
+                    runtimeService.startProcessInstanceByKey(
+                            request.getProcessDefinitionKey(),
+                            request.getBusinessKey(),
+                            variables
+                    );
+
+            // 查询当前激活的任务
+            List<Task> activeTasks = taskService.createTaskQuery()
+                    .processInstanceId(processInstance.getId())
+                    .active()
+                    .list();
+
+            // 决策 nextTask
+            Task nextTask = decideNextTask(activeTasks, startUserId);
+
+            // 构建返回对象
+            StartProcessResponse response = new StartProcessResponse();
+            response.setProcessInstanceId(processInstance.getId());
+            response.setProcessDefinitionKey(request.getProcessDefinitionKey());
+            response.setBusinessKey(request.getBusinessKey());
+            response.setStartUserId(startUserId);
+
+            if (nextTask != null) {
+                response.setNextTask(buildNextTaskInfo(nextTask, startUserId));
+                response.setRedirect(RedirectInfo.taskForm(nextTask.getId()));
+            } else {
+                response.setRedirect(decideRedirect(activeTasks));
+            }
+
+            return response;
+
+        } finally {
+            identityService.setAuthenticatedUserId(null);
+        }
+    }
+
+    /**
+     * 决策“是否存在唯一可操作的下一个任务”
+     */
+    private Task decideNextTask(List<Task> tasks, String startUserId) {
+
+        if (tasks == null || tasks.isEmpty()) {
+            return null;
+        }
+
+        // ① assignee 就是发起人（最优先）
+        List<Task> assignedToMe = tasks.stream()
+                .filter(t -> startUserId.equals(t.getAssignee()))
+                .toList();
+
+        if (assignedToMe.size() == 1) {
+            return assignedToMe.getFirst();
+        }
+
+        // ② 候选人包含发起人
+        List<Task> candidateTasks = tasks.stream()
+                .filter(t -> taskService.createTaskQuery()
+                        .taskId(t.getId())
+                        .taskCandidateUser(startUserId)
+                        .count() > 0)
+                .toList();
+
+        if (candidateTasks.size() == 1) {
+            return candidateTasks.getFirst();
+        }
+
+        // ③ 只有一个任务（兜底）
+        if (tasks.size() == 1) {
+            return tasks.getFirst();
+        }
+
+        // ④ 多任务（并行 / 不确定）
+        return null;
+    }
+
+    /**
+     * 构建 NextTaskInfo
+     */
+    private NextTaskInfo buildNextTaskInfo(Task task, String startUserId) {
+
+        NextTaskInfo info = new NextTaskInfo();
+        info.setTaskId(task.getId());
+        info.setTaskDefinitionKey(task.getTaskDefinitionKey());
+        info.setTaskName(task.getName());
+        info.setAssignee(task.getAssignee());
+        info.setInitiatorTask(startUserId.equals(task.getAssignee()));
+
+        // 读取 BPMN 中的 formKey
+        String formKey = task.getFormKey();
+        info.setFormKey(formKey);
+
+//        if (formKey != null) {
+//            // 查询你自己表单系统中的版本
+//            Integer latestVersion = processFormMapper.getLatestVersion(formKey);
+//            info.setFormVersion(latestVersion);
+//        }
+
+        return info;
+    }
+
+    /**
+     * 决策前端跳转策略
+     */
+    private RedirectInfo decideRedirect(List<Task> tasks) {
+
+        if (tasks == null || tasks.isEmpty()) {
+            return RedirectInfo.none();
+        }
+
+        if (tasks.size() > 1) {
+            return RedirectInfo.taskList();
+        }
+
+        Task onlyTask = tasks.getFirst();
+        if (onlyTask.getFormKey() == null) {
+            return RedirectInfo.taskList();
+        }
+
+        return RedirectInfo.taskForm(onlyTask.getId());
+    }
+
 }
