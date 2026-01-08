@@ -1,6 +1,7 @@
 package com.basic.cloud.workflow.service.impl;
 
 import com.basic.cloud.system.api.SysBasicUserClient;
+import com.basic.cloud.system.api.SysRoleClient;
 import com.basic.cloud.system.api.domain.response.FindBasicUserResponse;
 import com.basic.cloud.workflow.api.domain.request.FindTodoTaskPageRequest;
 import com.basic.cloud.workflow.api.domain.request.TaskApproveRequest;
@@ -12,9 +13,14 @@ import com.basic.cloud.workflow.util.PaginationUtils;
 import com.basic.cloud.workflow.util.QueryBuilder;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
+import com.basic.framework.core.exception.CloudServiceException;
 import com.basic.framework.oauth2.core.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.FlowElement;
+import org.flowable.bpmn.model.Process;
+import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -40,6 +46,8 @@ public class ProcessTaskServiceImpl implements ProcessTaskService {
 
     private final TaskService taskService;
 
+    private final SysRoleClient sysRoleClient;
+
     private final RuntimeService runtimeService;
 
     private final RepositoryService repositoryService;
@@ -53,8 +61,15 @@ public class ProcessTaskServiceImpl implements ProcessTaskService {
         TaskQuery serviceTaskQuery = taskService.createTaskQuery();
         serviceTaskQuery.or()
                 .taskAssignee(userId)
-                .taskCandidateUser(userId)
-                .endOr();
+                .taskCandidateUser(userId);
+
+        // 获取角色
+        Result<List<String>> roleIdsResult = sysRoleClient.findRoleIdsByUserId(SecurityUtils.getUserId());
+        if (roleIdsResult != null && !ObjectUtils.isEmpty(roleIdsResult.getData())) {
+            serviceTaskQuery.taskCandidateGroupIn(roleIdsResult.getData());
+        }
+
+        serviceTaskQuery.endOr();
         TaskQuery taskQuery = QueryBuilder.of(serviceTaskQuery)
                 .apply(TaskQuery::active)
                 .apply(TaskQuery::orderByTaskCreateTime)
@@ -73,12 +88,28 @@ public class ProcessTaskServiceImpl implements ProcessTaskService {
 
         // 查询任务列表
         List<Task> tasks = taskQuery.listPage(param.firstResult(), param.maxResults());
+        if (ObjectUtils.isEmpty(tasks)) {
+            return PageResult.of(request.getCurrent(), request.getSize(), total, Collections.emptyList());
+        }
+
+        Set<String> defIds = tasks.stream()
+                .map(Task::getProcessDefinitionId)
+                .collect(Collectors.toSet());
 
         // 批量查询流程定义（避免 N+1）
-        Map<String, ProcessDefinition> processDefMap =
-                loadProcessDefinitions(tasks);
+        List<ProcessDefinition> defs = repositoryService
+                .createProcessDefinitionQuery()
+                .processDefinitionIds(defIds)
+                .list();
 
-        // 提取流程定义id
+        Map<String, ProcessDefinition> processDefMap = defs.stream()
+                .collect(Collectors.toMap(
+                        ProcessDefinition::getId,
+                        Function.identity()
+                ));
+
+
+        // 提取流程定义的 ID
         Set<String> processInstanceIds = tasks.stream()
                 .map(Task::getProcessInstanceId)
                 .collect(Collectors.toSet());
@@ -93,7 +124,7 @@ public class ProcessTaskServiceImpl implements ProcessTaskService {
                         ProcessInstance::getProcessInstanceId, ProcessInstance::getStartUserId, (k1, k2) -> k2)
                 );
 
-        // 所有用户id
+        // 所有用户 id
         Set<Long> userIds = instanceIdStartUserMap.values().stream().map(Long::valueOf).collect(Collectors.toSet());
 
         // 查询用户信息
@@ -191,6 +222,33 @@ public class ProcessTaskServiceImpl implements ProcessTaskService {
         );
     }
 
+    @Override
+    public void claim(String taskId) {
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        if (task == null) {
+            throw new IllegalStateException("任务不存在.");
+        }
+        if (!ObjectUtils.isEmpty(task.getAssignee())) {
+            throw new CloudServiceException("任务已被其他人领取.");
+        }
+        taskService.claim(taskId, SecurityUtils.getUserId() + "");
+    }
+
+    @Override
+    public void unclaim(String taskId) {
+        taskService.unclaim(taskId);
+    }
+
+    /**
+     * 组装待办任务
+     *
+     * @param task                   任务
+     * @param userId                 用户 ID
+     * @param processDefMap          流程定义
+     * @param instanceIdStartUserMap 实例 ID 与用户 ID
+     * @param userMap                用户信息 Map
+     * @return 待办任务响应
+     */
     private TodoTaskPageResponse buildTodoTask(
             Task task,
             String userId,
@@ -243,31 +301,38 @@ public class ProcessTaskServiceImpl implements ProcessTaskService {
         dto.setCanClaim(task.getAssignee() == null);
         dto.setInitiatorTask(userId.equals(task.getAssignee()));
 
-        return dto;
-    }
+        // 获取 BpmnModel 对象
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
+        Process mainProcess = bpmnModel != null ? bpmnModel.getMainProcess() : null;
 
-    private Map<String, ProcessDefinition> loadProcessDefinitions(
-            List<Task> tasks
-    ) {
-
-        Set<String> defIds = tasks.stream()
-                .map(Task::getProcessDefinitionId)
-                .collect(Collectors.toSet());
-
-        if (defIds.isEmpty()) {
-            return Collections.emptyMap();
+        if (mainProcess == null) {
+            return dto;
         }
 
-        List<ProcessDefinition> defs = repositoryService
-                .createProcessDefinitionQuery()
-                .processDefinitionIds(defIds)
-                .list();
+        Collection<FlowElement> flowElements = mainProcess.getFlowElements();
 
-        return defs.stream()
-                .collect(Collectors.toMap(
-                        ProcessDefinition::getId,
-                        Function.identity()
-                ));
+        // 判断是否可归还任务
+        Boolean canUnclaim = flowElements.stream()
+                .filter(Objects::nonNull)
+                .filter(flowElement -> flowElement instanceof UserTask)
+                .map(flowElement -> (UserTask) flowElement)
+                .filter(userTask -> task.getTaskDefinitionKey().equals(userTask.getId()))
+                .findFirst()
+                .map(userTask -> {
+                    if (!ObjectUtils.isEmpty(userTask.getAssignee())) {
+                        // 流程节点指定办理人：审批状态
+                        return false; // 审批
+                    } else {
+                        // 未指定实际办理人：拾取状态
+                        // 已有实际办理人：审批/归还状态
+                        // 审批或归还
+                        return !ObjectUtils.isEmpty(task.getAssignee());
+                    }
+                })
+                .orElse(null);
+        dto.setCanUnclaim(canUnclaim);
+
+        return dto;
     }
 
 }

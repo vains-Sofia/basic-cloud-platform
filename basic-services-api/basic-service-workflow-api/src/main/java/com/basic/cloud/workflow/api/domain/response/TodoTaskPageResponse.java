@@ -96,11 +96,16 @@ public class TodoTaskPageResponse implements Serializable {
     /**
      * 是否可以拾取
      */
-    private boolean canClaim;
+    private Boolean canClaim;
+
+    /**
+     * 是否可以归还
+     */
+    private Boolean canUnclaim;
 
     /**
      * 是否为当前用户任务
      */
-    private boolean initiatorTask;
+    private Boolean initiatorTask;
 
 }

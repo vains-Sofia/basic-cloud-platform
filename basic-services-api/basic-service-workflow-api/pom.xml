@@ -17,6 +17,12 @@
             <groupId>com.basic.framework</groupId>
             <artifactId>basic-framework-data-validation</artifactId>
         </dependency>
+
+        <!-- Spring Data Redis & 分布式锁 -->
+        <dependency>
+            <groupId>com.basic.framework</groupId>
+            <artifactId>basic-framework-data-redis</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -28,4 +28,18 @@ public interface ProcessTaskService {
      * @return 审批响应
      */
     TaskApproveResponse taskApprove(TaskApproveRequest request);
+
+    /**
+     * 拾取任务
+     *
+     * @param taskId 任务 ID
+     */
+    void claim(String taskId);
+
+    /**
+     * 归还任务
+     *
+     * @param taskId 任务 ID
+     */
+    void unclaim(String taskId);
 }

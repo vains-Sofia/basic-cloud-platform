@@ -33,4 +33,16 @@ public class ProcessTaskController implements ProcessTaskClient {
         TaskApproveResponse approve = processTaskService.taskApprove(request);
         return Result.success(approve);
     }
+
+    @Override
+    public Result<String> claim(String taskId) {
+        processTaskService.claim(taskId);
+        return Result.success();
+    }
+
+    @Override
+    public Result<String> unclaim(String taskId) {
+        processTaskService.unclaim(taskId);
+        return Result.success();
+    }
 }

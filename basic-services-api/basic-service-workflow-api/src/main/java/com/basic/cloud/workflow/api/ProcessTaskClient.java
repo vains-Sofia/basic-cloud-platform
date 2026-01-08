@@ -7,15 +7,13 @@ import com.basic.cloud.workflow.api.domain.response.TodoTaskPageResponse;
 import com.basic.framework.core.constants.FeignConstants;
 import com.basic.framework.core.domain.PageResult;
 import com.basic.framework.core.domain.Result;
+import com.basic.framework.redis.annotation.RedisLock;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 流程任务相关接口Client
@@ -34,5 +32,14 @@ public interface ProcessTaskClient {
     @PostMapping("/approve")
     @Operation(summary = "任务审批", description = "任务审批")
     Result<TaskApproveResponse> taskApprove(@Valid @RequestBody TaskApproveRequest request);
+
+    @PutMapping("/claim/{taskId}")
+    @Operation(summary = "拾取任务(Claim)", description = "拾取、认领、领取任务")
+    Result<String> claim(@PathVariable String taskId);
+
+    @RedisLock
+    @PutMapping("/unclaim/{taskId}")
+    @Operation(summary = "归还任务(Unclaim)", description = "归还任务、取消认领、领取任务")
+    Result<String> unclaim(@PathVariable String taskId);
 
 }
