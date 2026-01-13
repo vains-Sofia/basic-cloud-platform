@@ -10,8 +10,6 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.ott.InvalidOneTimeTokenException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.ObjectUtils;
@@ -25,8 +23,6 @@ import org.springframework.util.ObjectUtils;
 public class QrCodeLoginAuthenticationProvider extends AbstractLoginAuthenticationProvider {
 
     private final RedisOperator<QrCodeStatus> redisOperator;
-
-    private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
     public QrCodeLoginAuthenticationProvider(UserDetailsService userDetailsService, RedisOperator<QrCodeStatus> redisOperator) {
         super(userDetailsService);
@@ -65,7 +61,7 @@ public class QrCodeLoginAuthenticationProvider extends AbstractLoginAuthenticati
         // Also ensure we return the original getDetails(), so that future
         // authentication events after cache expiry contain the details
         QrCodeLoginAuthenticationToken result = QrCodeLoginAuthenticationToken.authenticated(
-                principal, this.authoritiesMapper.mapAuthorities(user.getAuthorities()));
+                principal, (null));
         result.setDetails(authentication.getDetails());
         log.debug("Authenticated user");
         return result;

@@ -7,8 +7,6 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.ObjectUtils;
@@ -22,8 +20,6 @@ import org.springframework.util.ObjectUtils;
 public class EmailCaptchaLoginAuthenticationProvider extends AbstractLoginAuthenticationProvider {
 
     private final CaptchaService captchaService;
-
-    private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
     public EmailCaptchaLoginAuthenticationProvider(UserDetailsService userDetailsService, CaptchaService captchaService) {
         super(userDetailsService);
@@ -50,7 +46,7 @@ public class EmailCaptchaLoginAuthenticationProvider extends AbstractLoginAuthen
         // Also ensure we return the original getDetails(), so that future
         // authentication events after cache expiry contain the details
         EmailCaptchaLoginAuthenticationToken result = EmailCaptchaLoginAuthenticationToken.authenticated(principal,
-                authentication.getCredentials(), this.authoritiesMapper.mapAuthorities(user.getAuthorities()));
+                authentication.getCredentials(), (null));
         result.setDetails(authentication.getDetails());
         log.debug("Authenticated user");
         return result;

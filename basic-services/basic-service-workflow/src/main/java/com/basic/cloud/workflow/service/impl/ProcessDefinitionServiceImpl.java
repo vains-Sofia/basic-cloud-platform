@@ -224,7 +224,7 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
         // 设置流程发起人（Flowable 标准做法）
         identityService.setAuthenticatedUserId(startUserId);
         Map<String, Object> variables;
-        if (org.apache.commons.lang3.ObjectUtils.isEmpty(request.getVariables())) {
+        if (ObjectUtils.isEmpty(request.getVariables())) {
             variables = new HashMap<>(1);
         } else {
             variables = request.getVariables();

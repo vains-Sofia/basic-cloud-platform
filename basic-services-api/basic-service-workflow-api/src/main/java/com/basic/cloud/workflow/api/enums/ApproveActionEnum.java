@@ -16,7 +16,7 @@ public enum ApproveActionEnum implements BasicEnum<String, ApproveActionEnum> {
 
     APPROVE("APPROVE", "同意"),
 
-    REJECT("REJECT", "驳回"),
+    REJECT("REJECT", "拒绝"),
 
     COUNTERSIGN("COUNTERSIGN", "会签"),
 

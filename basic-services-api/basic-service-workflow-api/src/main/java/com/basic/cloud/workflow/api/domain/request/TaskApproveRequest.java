@@ -15,6 +15,7 @@ import java.util.Map;
  * @author vains
  */
 @Data
+@Schema(title = "FindProcessInstanceRequest", description = "流程审批入参")
 public class TaskApproveRequest implements Serializable {
 
     @NotBlank(message = "任务ID不能为空")
